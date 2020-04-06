@@ -249,6 +249,7 @@ struct house{
   double scale = 1;
   bool compliant;
   bool quarantined = false;
+  double age_independent_mixing = 0;
   //age_dependent_mixing not added yet, since it is unused
   house(){}
   house(double latitude, double longitude, bool compliance):
@@ -269,6 +270,7 @@ struct workplace {
   double scale = 0;
   WorkplaceType workplace_type;
   bool quarantined = false;
+  double age_independent_mixing = 0;
   //age_dependent_mixing not added yet, since it is unused
 
   workplace(){}

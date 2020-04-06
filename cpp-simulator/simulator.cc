@@ -133,6 +133,46 @@ void update_all_kappa(vector<agent>& nodes, vector<house>& homes, vector<workpla
   }
 }
 
+double updated_lambda_w_age_independent(const vector<agent>& nodes, const workplace& workplace){
+  double sum_value = 0;
+
+  for (int i=0; i < workplace.individuals.size(); ++i){
+	sum_value += nodes[workplace.individuals[i]].lambda_w;
+  }
+  return workplace.scale*sum_value;
+  // Populate it afterwards...
+}
+
+double updates_lambda_w_age_independent(const vector<agent>& nodes, const house& home){
+  double sum_value = 0;
+  for (int i=0; i<home.individuals.size(); ++i){
+	sum_value += nodes[home.individuals[i]].lambda_h;
+  }
+  return home.scale*sum_value;
+  // Populate it afterwards...
+}
+
+void update_lambdas(agent&node, const vector<house>& homes, const vector<workplace>& workplaces, const vector<community>& communities, int cur_time){
+  node.lambda_incoming={0,0,0};
+
+  //No null check for home as every agent has a home
+  node.lambda_incoming[0] = node.kappa_H_incoming*homes[node.home].age_independent_mixing;
+  //FEATURE_PROPOSAL: make the mixing dependent on node.age_group;
+  if(node.workplace != WORKPLACE_HOME) {
+	node.lambda_incoming[1] = node.kappa_W_incoming* workplaces[node.workplace].age_independent_mixing;
+	//FEATURE_PROPOSAL: make the mixing dependent on node.age_group;
+  }
+  // No null check for community as every node has a community.
+  //
+  // For all communities add the community lambda with a distance
+  // related scaling factor
+  node.lambda_incoming[2] = node.kappa_C_incoming*node.zeta_a*node.funct_d_ck*communities[node.community].lambda_community_global;
+
+  node.lambda = node.lambda_incoming[0] + node.lambda_incoming[1] + node.lambda_incoming[2];
+
+}
+
+
 void run_simulation(){
   auto homes = init_homes();
   auto workplaces = init_workplaces();

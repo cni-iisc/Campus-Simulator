@@ -69,8 +69,8 @@ struct global_params{
   double INCUBATION_PERIOD_SHAPE = 2;
   double INCUBATION_PERIOD_SCALE = INCUBATION_PERIOD*SIM_STEPS_PER_DAY;// 2.29 days
 
-  double INFECTIOUSNES_SHAPE = 0.25;
-  double INFECTIOUSNES_SCALE = 4;
+  double INFECTIOUSNESS_SHAPE = 0.25;
+  double INFECTIOUSNESS_SCALE = 4;
 
   double SEVERITY_RATE = 0.5; //value used in sim.js
 
@@ -159,7 +159,7 @@ struct agent{
   int age;
   int age_group;
   double zeta_a = 1;
-  double infectiousnes = gamma(GLOBAL.INFECTIOUSNES_SHAPE, GLOBAL.INFECTIOUSNES_SCALE);
+  double infectiousness = gamma(GLOBAL.INFECTIOUSNESS_SHAPE, GLOBAL.INFECTIOUSNESS_SCALE);
   //a.k.a rho
   double severity = bernoulli(GLOBAL.SEVERITY_RATE)?1:0;
   //a.k.a S_k, is 0 or

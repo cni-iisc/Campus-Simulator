@@ -77,8 +77,28 @@ vector<workplace> init_workplaces() {
   return wps;
 }
 
+vector<community> init_community() {
+  auto comJSON = readJSONFile(input_base + "commonArea.json");
+
+  auto size = comJSON.GetArray().Size();
+  GLOBAL.num_communities = size;
+
+  vector<community> communities(size);
+
+  int index = 0;
+  // schools come first followed by workspaces, as in the JSON version
+  for (auto &elem: comJSON.GetArray()){
+	communities[index].set(elem["lat"].GetDouble(),
+						   elem["lon"].GetDouble());
+	++index;
+  }
+  return communities;
+}
+
+
 int main(){
   auto homes = init_homes();
   auto workplaces = init_workplaces();
+  auto communities = init_community();
   return 0;
 }

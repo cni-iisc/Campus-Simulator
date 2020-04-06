@@ -8,11 +8,17 @@
 std::default_random_engine GENERATOR;
 
 // Global parameters
+//
+// The default values are as in the js simulator.  These are changed
+// when the input files are read.
 struct global_params{
   double compliance_probability = 1;
+
   int num_homes = 25000;
   int num_workplaces = 5000;
   int num_schools = 0;
+  int num_communities = 198;
+  
 } GLOBAL;
 
 // return a random compliance based on GLOBAL.compliance_probability
@@ -111,6 +117,23 @@ struct workplace {
 	this->workplace_type = t;
   }
 
+};
+
+struct community {
+  location loc;
+  double lambda_community = 0;
+  double lambda_community_global = 0;
+  std::vector<agent> individuals;
+  double Q_c = 1;
+  double scale = 0;
+  bool quarantined = false;
+
+  community(){}
+  community(double latitude, double longitude):
+	loc{latitude, longitude}{}
+  void set(double latitude, double longitude){
+	this->loc = {latitude, longitude};
+  }
 };
 
 #endif

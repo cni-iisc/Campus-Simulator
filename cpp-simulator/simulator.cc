@@ -173,6 +173,60 @@ void update_lambdas(agent&node, const vector<house>& homes, const vector<workpla
 }
 
 
+double updated_lambda_c_local(const vector<agent>& nodes, community& community){
+  double sum_value = 0;
+  for(int i = 0; i < community.individuals.size(); ++i){
+	sum_value += nodes[community.individuals[i]].lambda_c;
+  }
+  return community.scale*sum_value;
+}
+
+void update_lambda_c_global(vector<community>& communities, const matrix<double>& community_distance_matrix){
+  for (int c1=0; c1 < communities.size(); ++c1){
+	double num = 0;
+	double denom = 0;
+	for (int c2 = 0;c2<communities.size(); ++c2){
+	  num += f_kernel(community_distance_matrix[c1][c2])*communities[c2].lambda_community;
+	  denom += f_kernel(community_distance_matrix[c1][c2]);
+	}
+	communities[c1].lambda_community_global = num/denom;
+  }
+}
+
+struct casualty_stats{
+  double infected = 0;
+  double affected = 0;
+  double hospitalised = 0;
+  double critical = 0;
+  double dead = 0;
+  double exposed = 0;
+  double recovered = 0;
+};
+
+casualty_stats get_infected_community(const vector<agent>& nodes, const community& community){
+  casualty_stats stat;
+  
+  for (int i=0; i<community.individuals.size(); i++){
+	if (nodes[community.individuals[i]].infection_status==Progression::exposed) {stat.exposed +=1; }
+	if (nodes[community.individuals[i]].infection_status==Progression::recovered) {stat.recovered += 1;}
+	if (nodes[community.individuals[i]].infection_status==Progression::hospitalised) {stat.hospitalised += 1;}
+	if (nodes[community.individuals[i]].infection_status==Progression::critical) {stat.critical += 1;}
+	if (nodes[community.individuals[i]].infection_status==Progression::dead) {stat.dead += 1;}
+	
+
+	if (nodes[community.individuals[i]].infection_status==Progression::infective ||
+		nodes[community.individuals[i]].infection_status==Progression::symptomatic ||
+		nodes[community.individuals[i]].infection_status==Progression::hospitalised ||
+		nodes[community.individuals[i]].infection_status==Progression::critical) {stat.infected += 1;}
+  }
+  stat.affected = stat.exposed+stat.infected+stat.recovered+stat.dead;
+  
+  //return [infected_stat,affected_stat,hospitalised_stat,critical_stat,dead_stat];
+  return stat;
+  // Populate it afterwards...
+}
+
+
 void run_simulation(){
   auto homes = init_homes();
   auto workplaces = init_workplaces();

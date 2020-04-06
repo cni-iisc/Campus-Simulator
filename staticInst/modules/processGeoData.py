@@ -26,21 +26,21 @@ def polar_to_cartesian(row):
 #compute ward-centre distance matrix
 def computeWardCentreDistance(geoDF, filepath):
   R = 6371
- 
+
   ccMatrix = geoDF[['wardNo', 'wardCentre']]
 
   ccMatrix[['lon', 'lat']] = pd.DataFrame(ccMatrix['wardCentre'].tolist(), index=ccMatrix.index)
- 
+
   ccMatrix['x'] = 0
   ccMatrix['y'] = 0
   ccMatrix['z'] = 0
   ccMatrix['x'] = ccMatrix.apply(polar_to_cartesian,axis = 1)
   ccMatrix[['x', 'y','z']] = pd.DataFrame(ccMatrix['x'].tolist(), index=ccMatrix.index)
- 
+
   ccMatrix = ccMatrix.sort_values("wardNo")
   ccMatrix = pd.DataFrame(squareform(pdist(ccMatrix[['x', 'y','z']])), columns=ccMatrix.wardNo.unique(), index=ccMatrix.wardNo.unique())
   ccMatrix = ccMatrix.reset_index()
-   
+
   ccMatrix = ccMatrix.rename(columns={"index":"ID"})
   ccMatrix.to_json(filepath, orient="records")
 
@@ -48,13 +48,14 @@ def computeWardCentreDistance(geoDF, filepath):
 def parse_geospatial_data(geojsonFile):
   geoDF = gpd.read_file(geojsonFile)
   geoDF['wardNo'] = geoDF['wardNo'].astype(int)
+  geoDF['wardIndex'] = geoDF['wardNo'] - 1
   geoDF = geoDF[['wardIndex','wardNo', 'wardName', 'geometry']]
   geoDF['wardBounds'] = geoDF.apply(lambda row: MultiPolygon(row['geometry']).bounds, axis=1)
   geoDF['wardCentre'] = geoDF.apply(lambda row: (MultiPolygon(row['geometry']).centroid.x, MultiPolygon(row['geometry']).centroid.y), axis=1)
   geoDF["neighbors"] = geoDF.apply(lambda row: ", ".join([str(ward) for ward in geoDF[~geoDF.geometry.disjoint(row['geometry'])]['wardNo'].tolist()]) , axis=1)
   return geoDF[['wardIndex', 'wardNo', 'wardBounds', 'wardCentre', 'neighbors']]
 
-  
+
 #common areas are the ward centre
 def commonAreaLocation(geoDF):
   cc = pd.DataFrame()
@@ -94,7 +95,7 @@ def schoolLocation(geoDF, schoolsNeeded):
 
   ward = []
   lat = []
-  lon = [] 
+  lon = []
   loc = []
   for space in range(int(schoolsNeeded)):
 
@@ -109,7 +110,7 @@ def schoolLocation(geoDF, schoolsNeeded):
       ln = uniform(lon1, lon2)
       lt = uniform(lat1, lat2)
       lon.append(ln)
-      lat.append(lt) 
+      lat.append(lt)
       loc.append((ln, lt))
 
 
@@ -132,7 +133,7 @@ def workplaceLocation(geoDF, workplaceNeeded):
 
   ward = []
   lat = []
-  lon = [] 
+  lon = []
   loc = []
   for space in range(int(workplaceNeeded)):
 
@@ -147,7 +148,7 @@ def workplaceLocation(geoDF, workplaceNeeded):
       ln = uniform(lon1, lon2)
       lt = uniform(lat1, lat2)
       lon.append(ln)
-      lat.append(lt) 
+      lat.append(lt)
       loc.append((ln, lt))
 
 

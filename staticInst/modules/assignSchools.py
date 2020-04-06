@@ -36,6 +36,7 @@ def assign_schools(individuals, cityGeoDF, schoolDistribution):
     cumulative_capacity = 0
     while len(student_indices)>cumulative_capacity:
         schools = schools.append(schoolLocation(cityGeoDF,  1),ignore_index=True)
+        #print("<<<<<<<DEBUG>>>>>>",len(schoolsize_values), len(schoolsize_distribution))
         temp = np.random.choice(schoolsize_values,1,p=schoolsize_distribution)[0]
         capacities.append(temp)
         cumulative_capacity = cumulative_capacity + temp
@@ -43,9 +44,9 @@ def assign_schools(individuals, cityGeoDF, schoolDistribution):
     schools['capacity'] = capacities
     schools['strength'] = np.full(len(schools),0)
     schools['students'] = [[] for x in range(0,len(schools))]
-    
-    
-    
+
+
+
     already_assigned_students = []
     for i in student_indices:
         lat = individuals.loc[i,'lat']
@@ -61,7 +62,7 @@ def assign_schools(individuals, cityGeoDF, schoolDistribution):
             index = np.random.choice(len(possible_school_id))
             individuals.at[i,'school'] = possible_school_id[index]
             schools.at[schools.loc[schools['ID']==possible_school_id[index]].index[0],'students'].append(i)
-            schools.at[schools.loc[schools['ID']==possible_school_id[index]].index[0],'strength'] = schools.loc[schools.loc[schools['ID']==possible_school_id[index]].index[0],'strength'] +1 
+            schools.at[schools.loc[schools['ID']==possible_school_id[index]].index[0],'strength'] = schools.loc[schools.loc[schools['ID']==possible_school_id[index]].index[0],'strength'] +1
             already_assigned_students.append(i)
 
     # check if schools are not full
@@ -83,6 +84,5 @@ def assign_schools(individuals, cityGeoDF, schoolDistribution):
                     already_assigned_students.append(add_to_school_id[j])
                     schools.at[i,'students'].append(add_to_school_id[j])
                     schools.at[i,'strength'] = schools.loc[i,'strength']+1
- 
+
     return individuals, schools
-    

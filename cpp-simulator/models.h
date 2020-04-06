@@ -5,7 +5,20 @@
 #include <tuple>
 #include <cmath>
 
+//Forward declarations
 struct agent;
+
+enum class Intervention {
+   no_intervention,
+   case_isolation,
+   home_quarantine,
+   lockdown,
+   case_isolation_and_home_quarantine,
+   case_isolation_and_home_quarantine_sd_70_plus,
+   lockdown_21_ci_hq_sd_70_plus_21_ci,
+   lockdown_21
+};
+
 
 template<typename T>
 using matrix = std::vector< std::vector<T> >;
@@ -43,7 +56,8 @@ inline double uniform_real(double left, double right){
 //These are parameters associated with the disease progression
 const double NUM_DAYS_TO_RECOG_SYMPTOMS = 1;
 const bool SEED_INFECTION_FROM_FILE = false;
-
+const double SELF_ISOLATION_DAYS = 7;
+const double HOME_QUARANTINE_DAYS = 14;
 
 // Beta values
 const double BETA_H = 0.47 *1.0; //Thailand data
@@ -99,6 +113,8 @@ struct global_params{
   double HOSPITAL_CRITICAL_PERIOD = MEAN_HOSPITAL_CRITICAL_PERIOD*SIM_STEPS_PER_DAY;
   double SYMPTOMATIC_FRACTION = 0.67;
 
+  Intervention INTERVENTION = Intervention::no_intervention;
+
 };
 extern global_params GLOBAL;
 
@@ -141,17 +157,6 @@ enum class Progression {
    dead
 };
 
-
-enum class Intervention {
-   no_intervention,
-   Case_isolation,
-   home_quarantine,
-   lockdown,
-   case_isolation_and_home_quarantine,
-   case_isolation_and_home_quarantine_SD_70_PLUS,
-   lockdown_21_ci_hq_sd_70_plus_21_ci,
-   lockdown_21
-};
 
 
 enum class WorkplaceType{
@@ -230,6 +235,7 @@ struct agent{
   double kappa_C_incoming = 1;
   bool quarantined = false;
 
+  
   agent(){}
 
 };

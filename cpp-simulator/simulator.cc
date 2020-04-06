@@ -1,8 +1,9 @@
 #include <vector>
 #include <algorithm>
-
+using namespace std;
 #include "models.h"
 #include "initializers.h"
+#include "interventions.h"
 
 
 double update_individual_lambda_h(const agent& node){
@@ -101,6 +102,37 @@ void update_infection(agent& node, int cur_time){
   }
 }
 
+void update_all_kappa(vector<agent>& nodes, vector<house>& homes, vector<workplace>& workplaces, vector<community> communities, int cur_time){
+  switch(GLOBAL.INTERVENTION){
+  case Intervention::no_intervention:
+	get_kappa_no_intervention(nodes, homes, workplaces, communities,cur_time);
+	break;
+  case Intervention::case_isolation:
+	get_kappa_case_isolation(nodes, homes, workplaces, communities,cur_time);
+	break;
+  case Intervention::home_quarantine:
+	get_kappa_home_quarantine(nodes, homes, workplaces, communities, cur_time);
+	break;
+  case Intervention::lockdown:
+	get_kappa_lockdown(nodes, homes, workplaces, communities, cur_time);
+	break;
+  case Intervention::case_isolation_and_home_quarantine:
+	get_kappa_CI_HQ(nodes, homes, workplaces, communities, cur_time);
+	break;
+  case Intervention::case_isolation_and_home_quarantine_sd_70_plus:
+	get_kappa_CI_HQ_70P(nodes, homes, workplaces, communities, cur_time);
+	break;
+  case Intervention::lockdown_21_ci_hq_sd_70_plus_21_ci:
+	get_kappa_LOCKDOWN_21_CI_HQ_SD_70_PLUS_21_CI(nodes, homes, workplaces, communities,cur_time);
+	break;
+  case Intervention::lockdown_21:
+	get_kappa_LOCKDOWN_21(nodes, homes, workplaces, communities,cur_time);
+	break;
+  default:
+	break;
+  }
+}
+
 void run_simulation(){
   auto homes = init_homes();
   auto workplaces = init_workplaces();
@@ -117,10 +149,11 @@ void run_simulation(){
 
   for(int time_step = 0; time_step < GLOBAL.NUM_TIMESTEPS; ++time_step){
 	for(int j = 0; j < GLOBAL.num_people; ++j){
-	  
+	  update_infection(nodes[j], time_step);
+	  nodes[j].psi_T = psi_T(nodes[j], time_step);
 	}
+	update_all_kappa(nodes, homes, workplaces, communities, time_step);
   }
-  
 }
 
 int main(){

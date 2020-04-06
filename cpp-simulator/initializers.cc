@@ -203,6 +203,7 @@ matrix<double> compute_community_distances(const vector<community>& communities)
 }
 
 void assign_individual_home_community(vector<agent>& nodes, vector<house>& homes, vector<workplace>& workplaces, vector<community>& communities){
+  //Assign individuals to homes, workplace, community
   for(int i = 0; i < nodes.size(); ++i){
 	int home = nodes[i].home;
 	homes[home].individuals.push_back(i);
@@ -219,6 +220,48 @@ void assign_individual_home_community(vector<agent>& nodes, vector<house>& homes
   }
 }
 
+// Compute scale factors for each home, workplace and community. Done once at the beginning.
+void compute_scale_homes(vector<house>& homes){
+  for (int w = 0; w < homes.size(); w++){
+	if(homes[w].individuals.size()==0){
+	  homes[w].scale = 0;
+	} else {
+	  homes[w].scale = BETA_H*homes[w].Q_h/(pow(homes[w].individuals.size(), ALPHA));
+	}
+  }
+}
+
+void compute_scale_workplaces(vector<workplace>& workplaces){
+  double beta_workplace;
+  for (int w=0; w < workplaces.size(); w++) {
+	if(workplaces[w].individuals.size()==0){
+	  workplaces[w].scale = 0;
+	} else {
+	  if(workplaces[w].workplace_type == WorkplaceType::office){
+		beta_workplace = BETA_W; //workplace
+	  } else if (workplaces[w].workplace_type == WorkplaceType::school){
+		beta_workplace = BETA_S; //school
+	  }
+	  workplaces[w].scale = beta_workplace*workplaces[w].Q_w/workplaces[w].individuals.size();
+	}
+  }
+}
+
+void compute_scale_communities(const vector<agent>& nodes, vector<community>& communities){
+  for (int w=0; w < communities.size(); w++) {
+	double sum_value = 0;
+	for (auto indiv: communities[w].individuals){
+	  sum_value += nodes[indiv].funct_d_ck;
+	}
+	if(sum_value==0){
+	  communities[w].scale = 0;
+	}
+	else communities[w].scale = BETA_C*communities[w].Q_c/sum_value;
+  }
+}
+
+
+
 void run_simulation(){
   auto homes = init_homes();
   auto workplaces = init_workplaces();
@@ -228,7 +271,11 @@ void run_simulation(){
   auto community_dist_matrix = compute_community_distances(communities);
 
   assign_individual_home_community(nodes, homes, workplaces, communities);
-  
+
+  compute_scale_homes(homes);
+  compute_scale_workplaces(workplaces);
+  compute_scale_communities(nodes, communities);
+
 }
 
 int main(){

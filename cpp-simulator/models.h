@@ -26,6 +26,21 @@ inline double uniform_real(double left, double right){
 //These are parameters associated with the disease progression
 const double NUM_DAYS_TO_RECOG_SYMPTOMS = 1;
 const bool SEED_INFECTION_FROM_FILE = false;
+
+
+// Beta values
+const double BETA_H = 0.47 *1.0; //Thailand data
+const double BETA_W = 0.47 *2; //Thailand data
+const double BETA_S = 0.94 *2; //Thailand data
+const double BETA_C = 0.097*4.85; // Thailand data. Product = 0.47
+
+const double ALPHA = 0.8;
+//exponent of number of people in a household while normalising
+//infection rate in a household.
+
+
+
+
 // Global parameters
 //
 // The default values are as in the js simulator.  These are changed

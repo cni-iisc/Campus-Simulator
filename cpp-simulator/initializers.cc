@@ -188,7 +188,7 @@ vector<agent> init_nodes(){
   return nodes;
 }
 
-matrix<double> compute_community_distances(vector<community> communities){
+matrix<double> compute_community_distances(const vector<community>& communities){
   auto wardDistJSON = readJSONFile(input_base + "wardCentreDistance.json");
   const rapidjson::Value& mat = wardDistJSON.GetArray();
   auto size = mat.Size();

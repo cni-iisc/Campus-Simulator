@@ -143,7 +143,7 @@ double updated_lambda_w_age_independent(const vector<agent>& nodes, const workpl
   // Populate it afterwards...
 }
 
-double updates_lambda_w_age_independent(const vector<agent>& nodes, const house& home){
+double updated_lambda_h_age_independent(const vector<agent>& nodes, const house& home){
   double sum_value = 0;
   for (int i=0; i<home.individuals.size(); ++i){
 	sum_value += nodes[home.individuals[i]].lambda_h;
@@ -247,6 +247,29 @@ void run_simulation(){
 	  nodes[j].psi_T = psi_T(nodes[j], time_step);
 	}
 	update_all_kappa(nodes, homes, workplaces, communities, time_step);
+
+	for (int h = 0; h < GLOBAL.num_homes; ++h){
+	  homes[h].age_independent_mixing = updated_lambda_h_age_independent(nodes, homes[h]);
+	  //FEATURE_PROPOSAL: make the mixing dependent on node.age_group;
+	}
+	for (int w = 0; w < GLOBAL.num_schools + GLOBAL.num_workplaces; ++w){
+	  workplaces[w].age_independent_mixing = updated_lambda_w_age_independent(nodes, workplaces[w]);
+	  //FEATURE_PROPOSAL: make the mixing dependent on node.age_group;
+	}
+
+	for (int c = 0; c < GLOBAL.num_communities; ++c){
+	  communities[c].lambda_community = updated_lambda_c_local(nodes, communities[c]);
+	  //TODO: output the CSV
+	  //auto temp_stats = get_infected_community(nodes, communities[c]);
+	  //let row = [time_step/SIM_STEPS_PER_DAY,c,temp_stats[0],temp_stats[1],temp_stats[2],temp_stats[3],temp_stats[4]].join(",");
+	  //csvContent += row + "\r\n";
+	}
+
+	update_lambda_c_global(communities, community_dist_matrix);
+
+	for (int j = 0; j < GLOBAL.num_people; ++j){
+	  update_lambdas(nodes[j], homes, workplaces, communities, time_step);
+	}
   }
 }
 

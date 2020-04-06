@@ -1,7 +1,7 @@
 include_paths = -Ilibs/
 headers = models.h initializers.h interventions.h updates.h
 obj = initializers.o models.o interventions.o updates.o
-opts = --std=c++14 -O3
+opts = --std=c++14 -fopenmp -O3
 CC = g++ -DDEBUG $(opts) $(include_paths)
 
 updates.o: updates.cc $(headers)
@@ -17,7 +17,7 @@ initializers.o: initializers.cc $(headers)
 	$(CC) -c initializers.cc -o initializers.o
 
 simulator: simulator.cc $(obj) $(headers)
-	$(CC) -o simulator simulator.cc $(obj);
+	$(CC) -o simulator simulator.cc $(obj)
 
 all: simulator
 

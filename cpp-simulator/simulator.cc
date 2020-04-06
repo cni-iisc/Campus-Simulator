@@ -22,16 +22,20 @@ void run_simulation(){
   compute_scale_communities(nodes, communities);
 
   for(int time_step = 0; time_step < GLOBAL.NUM_TIMESTEPS; ++time_step){
+
+#pragma omp parallel for
 	for(int j = 0; j < GLOBAL.num_people; ++j){
 	  update_infection(nodes[j], time_step);
 	  nodes[j].psi_T = psi_T(nodes[j], time_step);
 	}
+
 	update_all_kappa(nodes, homes, workplaces, communities, time_step);
 
 	for (int h = 0; h < GLOBAL.num_homes; ++h){
 	  homes[h].age_independent_mixing = updated_lambda_h_age_independent(nodes, homes[h]);
 	  //FEATURE_PROPOSAL: make the mixing dependent on node.age_group;
 	}
+
 	for (int w = 0; w < GLOBAL.num_schools + GLOBAL.num_workplaces; ++w){
 	  workplaces[w].age_independent_mixing = updated_lambda_w_age_independent(nodes, workplaces[w]);
 	  //FEATURE_PROPOSAL: make the mixing dependent on node.age_group;
@@ -47,6 +51,7 @@ void run_simulation(){
 
 	update_lambda_c_global(communities, community_dist_matrix);
 
+#pragma omp parallel for
 	for (int j = 0; j < GLOBAL.num_people; ++j){
 	  update_lambdas(nodes[j], homes, workplaces, communities, time_step);
 	}

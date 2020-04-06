@@ -22,7 +22,7 @@ double updated_lambda_h_age_independent(const std::vector<agent>& nodes, const h
 
 void update_lambdas(agent&node, const std::vector<house>& homes, const std::vector<workplace>& workplaces, const std::vector<community>& communities, int cur_time);
 
-double updated_lambda_c_local(const std::vector<agent>& nodes, community& community);
+double updated_lambda_c_local(const std::vector<agent>& nodes, const community& community);
 
 void update_lambda_c_global(std::vector<community>& communities, const matrix<double>& community_distance_matrix);
 

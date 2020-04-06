@@ -130,7 +130,6 @@ void update_all_kappa(vector<agent>& nodes, vector<house>& homes, vector<workpla
 
 double updated_lambda_w_age_independent(const vector<agent>& nodes, const workplace& workplace){
   double sum_value = 0;
-
   for (int i=0; i < workplace.individuals.size(); ++i){
 	sum_value += nodes[workplace.individuals[i]].lambda_w;
   }
@@ -168,7 +167,7 @@ void update_lambdas(agent&node, const vector<house>& homes, const vector<workpla
 }
 
 
-double updated_lambda_c_local(const vector<agent>& nodes, community& community){
+double updated_lambda_c_local(const vector<agent>& nodes, const community& community){
   double sum_value = 0;
   for(int i = 0; i < community.individuals.size(); ++i){
 	sum_value += nodes[community.individuals[i]].lambda_c;

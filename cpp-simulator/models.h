@@ -5,6 +5,9 @@
 #include <tuple>
 #include <cmath>
 
+template<typename T>
+using matrix = std::vector< std::vector<T> >;
+
 // Global parameters functions
 std::default_random_engine GENERATOR;
 

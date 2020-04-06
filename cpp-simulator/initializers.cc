@@ -6,6 +6,7 @@
 #include <fstream>
 #include <vector>
 #include <random>
+#include <string>
 
 #include "models.h"
 
@@ -187,11 +188,27 @@ vector<agent> init_nodes(){
   return nodes;
 }
 
+matrix<double> compute_community_distances(vector<community> communities){
+  auto wardDistJSON = readJSONFile(input_base + "wardCentreDistance.json");
+  const rapidjson::Value& mat = wardDistJSON.GetArray();
+  auto size = mat.Size();
+  matrix<double> dist_matrix(size, vector<double>(size));
+  for(int i = 0; i < size; ++i){
+	for(int j = i + 1; j < size; ++j){
+	  dist_matrix[i][j] = mat[i][to_string(j + 1).c_str()].GetDouble();
+	  dist_matrix[j][i] = dist_matrix[i][j];
+	}
+  }
+  return dist_matrix;
+}
+
 void run_simulation(){
   auto homes = init_homes();
   auto workplaces = init_workplaces();
   auto communities = init_community();
   auto nodes = init_nodes();
+
+  auto community_dist_matrix = compute_community_distances(communities);
 }
 
 int main(){

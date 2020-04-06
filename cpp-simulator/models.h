@@ -9,7 +9,7 @@ template<typename T>
 using matrix = std::vector< std::vector<T> >;
 
 // Global parameters functions
-std::default_random_engine GENERATOR;
+extern std::default_random_engine GENERATOR;
 
 inline double gamma(double shape, double scale){
   return std::gamma_distribution<double>(shape, scale)(GENERATOR);
@@ -82,7 +82,8 @@ struct global_params{
   double HOSPITAL_CRITICAL_PERIOD = MEAN_HOSPITAL_CRITICAL_PERIOD*SIM_STEPS_PER_DAY;
   double SYMPTOMATIC_FRACTION = 0.67;
 
-} GLOBAL;
+};
+extern global_params GLOBAL;
 
 // return a random compliance based on GLOBAL.compliance_probability
 inline bool compliance(){
@@ -92,43 +93,13 @@ inline bool compliance(){
 //Age groups (5-years)
 
 const int NUM_AGE_GROUPS = 16;
-int get_age_group(int age){
+inline int get_age_group(int age){
   int age_group = age/5;
   return std::min(age_group, NUM_AGE_GROUPS - 1);
 }
 
-
-double zeta(int age){
-	// This might change based on better age-related interaction data.
-  if(age < 5) {
-    return 0.1;
-  } else if(age < 10) {
-    return 0.25;
-  } else if(age < 15) {
-    return 0.5;
-  } else if(age < 20) {
-    return 0.75;
-  } else if(age < 65) {
-    return 1;
-  } else if(age < 70) {
-    return 0.75;
-  } else if(age < 75) {
-    return 0.5;
-  } else if(age < 85) {
-    return 0.25;
-  } else {
-    return 0.1;
-  }
-}
-
-
-double f_kernel(double dist){
-  double a = 4; // for distance in kms
-  double b = 3.8;
-  //both values are for Thailand, until we get a fit for India
-  //Same as in the JS file
-  return 1/(1 + pow(dist/a,b));
-}
+double zeta(int age);
+double f_kernel(double dist);
 
 
 // End of global parameters

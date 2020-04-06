@@ -229,7 +229,7 @@ struct agent{
 struct house{
   location loc;
   double lambda_home = 0;
-  std::vector<agent> individuals;
+  std::vector<int> individuals; //list of indices of individuals
   double Q_h = 1;
   double scale = 1;
   bool compliant;
@@ -249,7 +249,7 @@ struct house{
 struct workplace {
   location loc;
   double lambda_workplace = 0;
-  std::vector<agent> individuals;
+  std::vector<int> individuals; //list of indices of individuals
   double Q_w = 1;
   double scale = 0;
   WorkplaceType workplace_type;
@@ -271,7 +271,7 @@ struct community {
   location loc;
   double lambda_community = 0;
   double lambda_community_global = 0;
-  std::vector<agent> individuals;
+  std::vector<int> individuals; //list of indices of individuals
   double Q_c = 1;
   double scale = 0;
   bool quarantined = false;

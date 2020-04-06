@@ -202,6 +202,23 @@ matrix<double> compute_community_distances(const vector<community>& communities)
   return dist_matrix;
 }
 
+void assign_individual_home_community(vector<agent>& nodes, vector<house>& homes, vector<workplace>& workplaces, vector<community>& communities){
+  for(int i = 0; i < nodes.size(); ++i){
+	int home = nodes[i].home;
+	homes[home].individuals.push_back(i);
+	 //No checking for null as all individuals have a home
+	nodes[i].compliant = homes[home].compliant;
+	//All members of the household are set the same compliance value
+	
+	int workplace = nodes[i].workplace;
+	if(workplace != WORKPLACE_HOME){
+	  workplaces[workplace].individuals.push_back(i);
+	}
+	//No checking for null as all individuals have a community/ward
+	communities[nodes[i].community].individuals.push_back(i);
+  }
+}
+
 void run_simulation(){
   auto homes = init_homes();
   auto workplaces = init_workplaces();
@@ -209,6 +226,9 @@ void run_simulation(){
   auto nodes = init_nodes();
 
   auto community_dist_matrix = compute_community_distances(communities);
+
+  assign_individual_home_community(nodes, homes, workplaces, communities);
+  
 }
 
 int main(){

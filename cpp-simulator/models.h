@@ -5,11 +5,28 @@
 #include <tuple>
 #include <cmath>
 
+struct agent;
+
 template<typename T>
 using matrix = std::vector< std::vector<T> >;
 
 // Global parameters functions
 extern std::default_random_engine GENERATOR;
+
+//age related transition probabilities, symptomatic to hospitalised to critical to fatality.
+const double STATE_TRAN[][3] =
+  {
+   {0.0010000,   0.0500000,   0.4000000},
+   {0.0030000,   0.0500000,   0.4000000},
+   {0.0120000,   0.0500000,   0.5000000},
+   {0.0320000,   0.0500000,   0.5000000},
+   {0.0490000,   0.0630000,   0.5000000},
+   {0.1020000,   0.1220000,   0.5000000},
+   {0.1660000,   0.2740000,   0.5000000},
+   {0.2430000,   0.4320000,   0.5000000},
+   {0.2730000,   0.7090000,   0.5000000}
+  };
+
 
 inline double gamma(double shape, double scale){
   return std::gamma_distribution<double>(shape, scale)(GENERATOR);
@@ -98,8 +115,13 @@ inline int get_age_group(int age){
   return std::min(age_group, NUM_AGE_GROUPS - 1);
 }
 
+// Age index for STATE_TRAN matrix
+int get_age_index(int age);
 double zeta(int age);
 double f_kernel(double dist);
+
+// Absenteeism parameter. This may depend on the workplace type.
+double psi_T(const agent& node, double cur_time);
 
 
 // End of global parameters
@@ -158,6 +180,7 @@ struct agent{
   location loc;
   int age;
   int age_group;
+  int age_index; //For the STATE_TRAN matrix
   double zeta_a = 1;
   double infectiousness = gamma(GLOBAL.INFECTIOUSNESS_SHAPE, GLOBAL.INFECTIOUSNESS_SCALE);
   //a.k.a rho
@@ -185,9 +208,9 @@ struct agent{
 
   WorkplaceType workplace_type;
   //one of school, office, or home
-  std::tuple<double, double, double> lambda_incoming;
+  std::vector<double> lambda_incoming = std::vector<double>(3, 0);
   //infectiousness from home, workplace, community as seen by
-  //individual
+  //individual, all assined to 0 by default
 
 
   bool compliant = true;

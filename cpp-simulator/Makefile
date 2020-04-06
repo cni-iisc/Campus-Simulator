@@ -2,9 +2,10 @@ include_paths = -Ilibs/
 headers = models.h initializers.h
 obj = initializers.o models.o
 opts = --std=c++14
-CC = g++ $(opts) $(include_paths)
+CC = g++ -DDEBUG $(opts) $(include_paths)
 
 models.o: models.cc $(headers)
+	$(CC) -c models.cc -o models.o
 
 initializers.o: initializers.cc $(headers)
 	$(CC) -c initializers.cc -o initializers.o

@@ -4,6 +4,21 @@
 #include "models.h"
 #include "initializers.h"
 
+
+double update_individual_lambda_h(const agent& node){
+  return node.infective * node.kappa_T * node.infectiousness * (1 + node.severity)*node.kappa_H;
+}
+
+double update_individual_lambda_w(const agent& node){
+  return node.infective * node.kappa_T * node.infectiousness * (1 + node.severity*(2*node.psi_T-1))*node.kappa_W;
+}
+
+double update_individual_lambda_c(const agent& node){
+  return node.infective * node.kappa_T * node.infectiousness * node.funct_d_ck * (1 + node.severity)*node.kappa_C;
+	// optimised version: return node.lambda_h * node.funct_d_ck;
+}
+
+
 void run_simulation(){
   auto homes = init_homes();
   auto workplaces = init_workplaces();

@@ -135,6 +135,7 @@ vector<agent> init_nodes(){
 	int age = elem["age"].GetInt();
 	nodes[i].age = age;
 	nodes[i].age_group = get_age_group(age);
+	nodes[i].age_index = get_age_index(age);
 	nodes[i].zeta_a = zeta(age);
 
 
@@ -186,6 +187,9 @@ vector<agent> init_nodes(){
 
 	++i;
   }
+#ifdef DEBUG
+  cout << i << "\n";
+#endif
   return nodes;
 }
 

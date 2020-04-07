@@ -131,7 +131,3 @@ map<string, matrix<count_type>> run_simulation(){
   return plot_data;
 }
 
-int main(){
-  run_simulation();
-  return 0;
-}

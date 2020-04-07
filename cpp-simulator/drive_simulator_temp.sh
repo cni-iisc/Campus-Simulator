@@ -14,7 +14,7 @@ BETA_S=0.47045
 INTERVENTION=0
 output_directory="outputs/test_output"
 
-time ./drive_simulator.exe \
+command="time ./drive_simulator.exe \
 	 $NUM_DAYS \
 	 $INIT_FRAC_INFECTED \
 	 $INCUBATION_PERIOD \
@@ -29,16 +29,19 @@ time ./drive_simulator.exe \
 	 $BETA_C \
 	 $BETA_S \
 	 $INTERVENTION \
-	 $output_directory
+	 $output_directory"
 
-echo "Simulation over."
+echo $command;
+if eval $command; then
+	echo "Simulation over."
+	cd $output_directory
 
-cd $output_directory
-
-if [[ ! -v GPLOT_PATH ]];
-then
-	GPLOT_PATH="."
+	command="${GPLOT_PATH}gnuplot gnuplot_script.gnuplot"
+	echo $command;
+	if eval $command; then
+		echo "Plots generated succesfully."
+	fi;
+else
+	echo "error: see above for output"
+	exit 1;
 fi;
-
-"$GPLOT_PATH/gnuplot" gnuplot_script.gnuplot
-echo "Plots generated"

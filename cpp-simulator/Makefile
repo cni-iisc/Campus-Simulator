@@ -1,8 +1,8 @@
 include_paths = -Ilibs/
 headers = models.h initializers.h interventions.h updates.h simulator.h outputs.h
 obj = initializers.o models.o interventions.o updates.o simulator.o outputs.o
-opts = --std=c++14 -fopenmp -O3
-CC = g++ -DDEBUG $(opts) $(include_paths)
+opts = --std=c++14 -O3
+CC = g++ $(opts) $(include_paths)
 
 outputs.o: outputs.cc $(headers)
 	$(CC) -c outputs.cc -o outputs.o

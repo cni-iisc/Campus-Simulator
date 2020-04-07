@@ -8,6 +8,12 @@
 
 edaDev
 
+staticInst/data/mumbai/houses.json
+staticInst/data/mumbai/individuals.json
+staticInst/data/mumbai/workplaces.json
+staticInst/data/mumbai/schools.json
+
+
 .ipynb_checkpoints
 */.ipynb_checkpoints/*
 

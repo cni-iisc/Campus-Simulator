@@ -5,14 +5,14 @@
 #include <string>
 using namespace std;
 
-const string CSV_TERM = "\r\n";
+const string CSV_TERM = "\n";
 const char CSV_SEP = ',';
 void output_timed_csv(const vector<string>& field_row, const string& output_file, const matrix<count_type>& mat){
   ofstream fout(output_file, ios::out);
   fout << "Time" << CSV_SEP;
   auto end = field_row.end();
   auto penultimate = end - 1;
-  for(auto it = field_row.begin() + 1; it != end; ++it){
+  for(auto it = field_row.begin(); it != end; ++it){
 	fout << *it;
 	if(it != penultimate){
 	  fout<< CSV_SEP;
@@ -85,4 +85,28 @@ void output_global_params(const string& output_dir){
   fout << "ALPHA: " << GLOBAL.ALPHA << ";" << endl; 
 
   fout.close();
+}
+
+gnuplot::gnuplot(const std::string& output_directory){
+  fout.open(output_directory + "/gnuplot_script.gnuplot");
+  html_out.open(output_directory  + "/plots.html");
+  fout << "set datafile separator ','" << std::endl;
+  fout << "set key autotitle columnhead" << std::endl;
+  fout << "set term png" << std::endl;
+  fout << "set termoption noenhanced" << std::endl;
+  html_out << "<html>\n<head><title>Plots</title></head>\n<body>\n";
+}
+
+void gnuplot::plot_data(const string& name){
+  auto image_name = name + ".png";
+  fout << "set output \"" << image_name << "\"" << std::endl;
+  fout << "set title \"" <<  name << "\"" << std::endl;
+  fout << "plot \"" << name << ".csv\" using 1:2 with lines" << std::endl;
+  html_out << "<p><img src=\"" << image_name  << "\">\n";
+}
+
+gnuplot::~gnuplot(){
+  fout.close();
+  html_out << "\n</body>\n</html>\n";
+  html_out.close();
 }

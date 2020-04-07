@@ -55,9 +55,11 @@ int main(int argc, char** argv){
   auto plot_data = run_simulation();
 
   output_global_params(output_dir);
-  
+
+  gnuplot gnuplot(output_dir);
   for(const auto& elem: plot_data){
-	string csvfile_name = output_dir + "/" + elem.first + ".csv";
+	string csvfile_name = elem.first + ".csv";
+	string csvfile_path = output_dir + "/" + csvfile_name;
 	if(elem.first == "csvContent"){
 	  //This file contains everything!
 	  output_timed_csv({"community",
@@ -66,9 +68,12 @@ int main(int argc, char** argv){
 						"hospitalised",
 						"critical",
 						"dead"},
-		csvfile_name, elem.second);
+		csvfile_path, elem.second);
 	} else {
-	  output_timed_csv({elem.first}, csvfile_name, elem.second);
+	  output_timed_csv({elem.first},
+					   csvfile_path,
+					   elem.second);
+	  gnuplot.plot_data(elem.first);
 	}
   }
   return 0;

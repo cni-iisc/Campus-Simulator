@@ -98,7 +98,7 @@ vector<community> init_community() {
 }
 
 
-vector<double> compute_prob_infection_given_community(double infection_probability,bool set_uniform){
+vector<double> compute_prob_infection_given_community(double infection_probability, bool set_uniform){
   auto fracPopJSON = readJSONFile(input_base + "fractionPopulation.json");
   auto num_communities = fracPopJSON.GetArray().Size();
   if(set_uniform){
@@ -126,7 +126,7 @@ vector<agent> init_nodes(){
   auto size = indivJSON.GetArray().Size();
   GLOBAL.num_people = size;
   vector<agent> nodes(size);
-  auto community_infection_prob = compute_prob_infection_given_community(GLOBAL.INIT_FRAC_INFECTED, false);
+  auto community_infection_prob = compute_prob_infection_given_community(GLOBAL.INIT_FRAC_INFECTED, GLOBAL.USE_SAME_INFECTION_PROB_FOR_ALL_WARDS);
 
   int i = 0;
   for (auto &elem: indivJSON.GetArray()){

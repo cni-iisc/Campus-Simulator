@@ -116,6 +116,11 @@ struct global_params{
   double ALPHA = 0.8;
   //exponent of number of people in a household while normalising
   //infection rate in a household.
+
+
+  //Switches
+  //If this is false, the file quarantinedPopulation.json is needed
+  bool USE_SAME_INFECTION_PROB_FOR_ALL_WARDS = true;
 };
 extern global_params GLOBAL;
 

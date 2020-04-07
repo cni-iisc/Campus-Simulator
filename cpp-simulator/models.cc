@@ -1,6 +1,6 @@
 #include "models.h"
 
-std::default_random_engine GENERATOR;
+std::mt19937 GENERATOR(1234);
 
 global_params GLOBAL;
 

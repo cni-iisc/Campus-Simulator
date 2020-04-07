@@ -140,6 +140,9 @@ vector<agent> init_nodes(){
   auto community_infection_prob = compute_prob_infection_given_community(GLOBAL.INIT_FRAC_INFECTED, GLOBAL.USE_SAME_INFECTION_PROB_FOR_ALL_WARDS);
 
   int i = 0;
+#ifdef DEBUG
+  count_type __infected__ = 0;
+#endif
   for (auto &elem: indivJSON.GetArray()){
  	nodes[i].loc = location{elem["lat"].GetDouble(),
 							elem["lon"].GetDouble()};
@@ -192,6 +195,9 @@ vector<agent> init_nodes(){
 	nodes[i].community = community;
 	if(bernoulli(community_infection_prob[community])){
 	  nodes[i].infection_status = Progression::exposed;
+#ifdef DEBUG
+	  cerr << ++__infected__ << " Infection probability: " << community_infection_prob[community] <<  "\n";
+#endif
 	} else {
 	  nodes[i].infection_status = Progression::susceptible;
 	}
@@ -226,6 +232,9 @@ vector<agent> init_nodes(){
 	++i;
   }
   assert(i == GLOBAL.num_people);
+#ifdef DEBUG
+  cerr << "Initially infected: " << __infected__ << "\n";
+#endif
   return nodes;
 }
 

@@ -54,7 +54,7 @@ slum_schoolsize_factor = 2
 slum_householdsize_scalefactor = 2
 slum_fractions = [0.289,0.133,0,0.099,0.119,0.581,0.358,0.331,0.558,0.788,0.411,0.583,0.451,0.847,0.775,0.685,0.702,0.637,0.481,0.337,0.466,0.553,0.858,0.352]
 
-print("Creating city with a population of approximately ",miniPop,flush=True)
+print("Creating city with a population of approximately ",miniPop)
 print("")
 
 print("Reading city.geojson to get ward polygons...",end='',flush=True)

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[83]:
+# In[54]:
 
 
 import json
@@ -40,6 +40,14 @@ my_parser.add_argument( 'n', action='store',
                        default=100000)
 args = my_parser.parse_args()
 miniPop = args.n
+#miniPop = 10000
+
+#fixing for now
+slum_schoolsize_factor = 2
+slum_householdsize_scalefactor = 2
+slum_fraction = 0.42
+
+
 
 print("Creating city with a population of approximately ",miniPop,flush=True)
 print("")
@@ -82,7 +90,7 @@ def getCommunityCenterDistance(lat,lon,wardIndex):
     return distance(lat,lon,latc,lonc)
 
 
-# In[79]:
+# In[55]:
 
 
 print("Reading demographics, employment and household data (csv)...",end='',flush=True)
@@ -121,7 +129,7 @@ with open(householdfile, newline='') as csvfile:
 print("done.",flush=True)
 
 
-# In[115]:
+# In[56]:
 
 
 with open(cityprofilefile, newline='') as file:
@@ -142,7 +150,7 @@ def sampleHouseholdSize():
     return n
 
 
-# In[114]:
+# In[57]:
 
 
 agebins = cityprofiledata['age']['bins']
@@ -159,48 +167,71 @@ def sampleAge():
     return n
 
 
-# In[68]:
+# In[58]:
 
 
 totalPop = sum(wardpop)
 scale = miniPop/totalPop
 nwards = len(wardname)
 
+
+
 mwardpop = [int(a * scale) for a in wardpop]
+mslumwardpop = [int(a * scale * slum_fraction) for a in wardpop]
+mnonslumwardpop = [mwardpop[i] - mslumwardpop[i] for i in range(len(wardpop))]
 mwardemployed = [int(a * scale) for a in wardunemployed]
 mwardunemployed = [int(a * scale) for a in wardemployed]
 mwardworkforce = [int(a * scale) for a in wardworkforce]
 mwardhouseholds = [int(a * scale) for a in wardhouseholds]
 
 
-# In[69]:
+# In[59]:
 
 
 print("Creating households for each ward...",end='',flush=True)
 
+
+
 houses = []
 hid = 0
 for wardIndex in range(nwards):
-    wpop = mwardpop[wardIndex]
-    whousesno = mwardhouseholds[wardIndex]
-    currwpop = 0
-    while(currwpop < wpop):
+    wnonslumpop = mnonslumwardpop[wardIndex]
+    wslumpop = mslumwardpop[wardIndex]
+    currnonslumwpop = 0
+    currslumwpop = 0
+    while(currnonslumwpop < wnonslumpop):
         h = {}
         h["id"]=hid
         h["wardIndex"]=wardIndex
-        hid+=1
+        h["slum"]=0
+
         s = sampleHouseholdSize()
         h["size"]=s
-        currwpop+=s
+        currnonslumwpop+=s
         (lat,lon) = sampleRandomLatLong(wardIndex)
         h["lat"] = lat
         h["lon"] = lon
-
         houses.append(h)
+        hid+=1
+
+
+    while(currslumwpop < wslumpop):
+        h = {}
+        h["id"]=hid
+        h["wardIndex"]=wardIndex
+        h["slum"]=1
+        s = int(sampleHouseholdSize() * slum_householdsize_scalefactor)
+        h["size"]=s
+        currslumwpop+=s
+        (lat,lon) = sampleRandomLatLong(wardIndex)
+        h["lat"] = lat
+        h["lon"] = lon
+        houses.append(h)
+        hid+=1
 print("done.",flush=True)
 
 
-# In[71]:
+# In[60]:
 
 
 print("Creating individuals to populate the households...",end='',flush=True)
@@ -209,6 +240,8 @@ pid = 0
 individuals = []
 schoolers = [[] for _ in range(nwards)]
 workers = [[] for _ in range(nwards)]
+slum_schoolers = [[] for _ in range(nwards)]
+nonslum_schoolers = [[] for _ in range(nwards)]
 
 #this should be changed to the actual thing
 homeworkmatrix = [[(1/nwards)]*nwards]*nwards
@@ -222,6 +255,7 @@ for h in houses:
         wardIndex = h["wardIndex"]
         p["wardIndex"]=wardIndex
         p["wardNo"] = wardIndex+1
+        p["slum"] = h["slum"]
 
         p["lat"] = h["lat"]
         p["lon"] = h["lon"]
@@ -243,7 +277,11 @@ for h in houses:
             p["workplaceType"]=2 #this is school
 
             #assuming they all go to school
-            schoolers[wardIndex].append(pid)
+            #schoolers[wardIndex].append(pid)
+            if p["slum"]==1:
+                slum_schoolers[wardIndex].append(pid)
+            else:
+                nonslum_schoolers[wardIndex].append(pid)
 
         elif age>=15 and age<65:
             #decide about employment
@@ -271,7 +309,7 @@ for h in houses:
 print("done.",flush=True)
 
 
-# In[70]:
+# In[61]:
 
 
 # Just taking the code from assignWorkplaces.py
@@ -301,7 +339,7 @@ def sampleWorkplaceSize():
     return int(np.random.choice(np.arange(m_max),1,p=wsdist)[0])
 
 
-# In[72]:
+# In[62]:
 
 
 print("Assigning workplaces to people...",end='',flush=True)
@@ -328,11 +366,10 @@ for wardIndex in range(nwards):
         workplaces.append(w)
         wid+=1
 
-
 print('done.',flush=True)
 
 
-# In[73]:
+# In[63]:
 
 
 schoolsizebins = ["0-100", "100-200", "200-300", "300-400", "400-500", "500-600", "600-700", "700-800", "800-900"]
@@ -343,8 +380,6 @@ def sampleSchoolSize():
     return (100*s + random.randint(0,99))
 
 
-# In[74]:
-
 
 print("Assigning schools to people...",end='',flush=True)
 
@@ -352,24 +387,45 @@ print("Assigning schools to people...",end='',flush=True)
 schools = []
 sid = 0
 for wardIndex in range(nwards):
-    wschoolers = len(schoolers[wardIndex])
-    while len(schoolers[wardIndex])>0:
+    wslum_schoolers = len(slum_schoolers[wardIndex])
+    while len(slum_schoolers[wardIndex])>0:
         s = {"ID":sid} #capitalised in the previous code so keeping it so
         s["wardIndex"]=wardIndex
         (lat,lon) = sampleRandomLatLong(wardIndex)
         s["lat"] = lat
         s["lon"] = lon
+        s["slum"]=1
 
-        size = sampleSchoolSize()
+        size = int(sampleSchoolSize()*slum_schoolsize_factor)
+
         i = 0
-        while(i < size and len(schoolers[wardIndex])>0):
-            pid = schoolers[wardIndex].pop(random.randrange(len(schoolers[wardIndex])))
+        while(i < size and len(slum_schoolers[wardIndex])>0):
+            pid = slum_schoolers[wardIndex].pop(random.randrange(len(slum_schoolers[wardIndex])))
             individuals[pid]["school"]=sid
             i+=1
         schools.append(s)
         sid+=1
-print("done.",flush=True)
+for wardIndex in range(nwards):
+    wnonslum_schoolers = len(nonslum_schoolers[wardIndex])
+    while len(nonslum_schoolers[wardIndex])>0:
+        s = {"ID":sid} #capitalised in the previous code so keeping it so
+        s["wardIndex"]=wardIndex
+        (lat,lon) = sampleRandomLatLong(wardIndex)
+        s["lat"] = lat
+        s["lon"] = lon
+        s["slum"]=0
 
+        size = sampleSchoolSize()
+        i = 0
+        while(i < size and len(nonslum_schoolers[wardIndex])>0):
+            pid = nonslum_schoolers[wardIndex].pop(random.randrange(len(nonslum_schoolers[wardIndex])))
+            individuals[pid]["school"]=sid
+            i+=1
+        schools.append(s)
+        sid+=1
+
+
+print("done.",flush=True)
 
 print("")
 print("Created (mini)city")
@@ -380,7 +436,7 @@ print("Workplaces:",len(workplaces))
 print("")
 
 
-# In[76]:
+# In[64]:
 
 
 print("Dumping to json files...",end='',flush=True)
@@ -401,17 +457,11 @@ f.close
 print("workplaces.json, ",end='',flush=True)
 
 f = open(schoolsjson, "w")
-f.write(json.dumps(workplaces))
+f.write(json.dumps(schools))
 f.close
 print("schools.json) ... done.",flush=True)
 
 print("NOTE: Not generating commonArea.json, fractionPopulation.json, wardCenterDistance.json as they are fixed.")
-
-
-# In[ ]:
-
-
-
 
 
 # In[ ]:

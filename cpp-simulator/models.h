@@ -6,9 +6,6 @@
 #include <cmath>
 #include <string>
 
-//Forward declarations
-struct agent;
-
 enum class Intervention {
    no_intervention = 0,
    case_isolation = 1,
@@ -30,9 +27,21 @@ inline count_type stoct(const std::string& str){
   return std::stoul(str);
 }
 
-// Global parameters functions
+// Random number gnerators
 extern std::default_random_engine GENERATOR;
+inline double gamma(double shape, double scale){
+  return std::gamma_distribution<double>(shape, scale)(GENERATOR);
+}
 
+inline bool bernoulli(double p){
+  return std::bernoulli_distribution(p)(GENERATOR);
+}
+
+inline double uniform_real(double left, double right){
+  return std::uniform_real_distribution<double>(left, right)(GENERATOR);
+}
+
+// Global parameters
 //age related transition probabilities, symptomatic to hospitalised to critical to fatality.
 const double STATE_TRAN[][3] =
   {
@@ -47,18 +56,6 @@ const double STATE_TRAN[][3] =
    {0.2730000,   0.7090000,   0.5000000}
   };
 
-
-inline double gamma(double shape, double scale){
-  return std::gamma_distribution<double>(shape, scale)(GENERATOR);
-}
-
-inline bool bernoulli(double p){
-  return std::bernoulli_distribution(p)(GENERATOR);
-}
-
-inline double uniform_real(double left, double right){
-  return std::uniform_real_distribution<double>(left, right)(GENERATOR);
-}
 
 //These are parameters associated with the disease progression
 const double NUM_DAYS_TO_RECOG_SYMPTOMS = 1;
@@ -140,9 +137,6 @@ int get_age_index(int age);
 double zeta(int age);
 double f_kernel(double dist);
 
-// Absenteeism parameter. This may depend on the workplace type.
-double psi_T(const agent& node, double cur_time);
-
 
 // End of global parameters
 
@@ -151,7 +145,7 @@ struct location{
 };
 
 enum class Progression {
-   susceptible,
+   susceptible = 0,
    exposed,
    infective,
    symptomatic,
@@ -164,26 +158,13 @@ enum class Progression {
 
 
 enum class WorkplaceType{
+   home = 0,
    office = 1,
-   school = 2,
-   home = 0
+   school = 2
 };
 
 //Default workplace value for homebound individuals.
 const int WORKPLACE_HOME = -1;
-
-// Time varying properties of agents.
-//
-// Eg: whether the agent is infected, whether it is
-// hospitalized etc.
-struct agentState {
-};
-
-// Fixed properties of agents.
-// Eg: age
-struct  agentProps {
-};
-
 
 struct agent{
   location loc;
@@ -304,5 +285,12 @@ struct community {
 	this->loc = {latitude, longitude};
   }
 };
+
+
+
+// Absenteeism parameter. This may depend on the workplace type.
+double psi_T(const agent& node, double cur_time);
+
+
 
 #endif

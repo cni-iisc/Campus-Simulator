@@ -301,7 +301,7 @@ for h in houses:
         #initialising most stuff to None
         p["employed"]=None
         p["workplace"]=None
-        p["workplaceType"]=None
+        p["workplaceType"]=0
         p["school"]=None
 
         if age<=15:

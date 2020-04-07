@@ -11,6 +11,10 @@
 #include "models.h"
 #include "initializers.h"
 
+#ifdef DEBUG
+#include <cassert>
+#endif
+
 using namespace std;
 
 const string input_base = "../simulator/input_files/";
@@ -130,35 +134,46 @@ vector<agent> init_nodes(){
 
   int i = 0;
   for (auto &elem: indivJSON.GetArray()){
-	nodes[i].loc = location{elem["lat"].GetDouble(),
+ 	nodes[i].loc = location{elem["lat"].GetDouble(),
 							elem["lon"].GetDouble()};
+
+#ifdef DEBUG
+	assert(elem["age"].IsInt());
+#endif
 	int age = elem["age"].GetInt();
 	nodes[i].age = age;
 	nodes[i].age_group = get_age_group(age);
 	nodes[i].age_index = get_age_index(age);
 	nodes[i].zeta_a = zeta(age);
 
-
+#ifdef DEBUG
+	assert(elem["household"].IsInt());
+#endif
 	nodes[i].home = elem["household"].GetInt();
 
 	nodes[i].workplace = WORKPLACE_HOME; //null workplace, by default
 	nodes[i].workplace_type = WorkplaceType::home; //home, by default
-	switch(elem["workplaceType"].GetInt()){
-	case 1:
-	  if(elem["workplace"].IsNumber()){
-		nodes[i].workplace_type = WorkplaceType::office;
-		nodes[i].workplace = int(elem["workplace"].GetDouble());
-	  }
-	  break;
-	case 2:
-	  if(elem["school"].IsNumber()){
-		nodes[i].workplace_type = WorkplaceType::school;
-		nodes[i].workplace = int(elem["school"].GetDouble());
-	  }
-	default:
-	  break;
-	}
 
+	if(elem["workplaceType"].IsInt()){
+	  switch(elem["workplaceType"].GetInt()){
+	  case 1:
+		if(elem["workplace"].IsNumber()){
+		  nodes[i].workplace_type = WorkplaceType::office;
+		  nodes[i].workplace = int(elem["workplace"].GetDouble());
+		}
+		break;
+	  case 2:
+		if(elem["school"].IsNumber()){
+		  nodes[i].workplace_type = WorkplaceType::school;
+		  nodes[i].workplace = int(elem["school"].GetDouble());
+		}
+	  default:
+		break;
+	  }
+	}
+#ifdef DEBUG
+	assert(elem["wardNo"].IsInt());
+#endif
 	int community = elem["wardNo"].GetInt() - 1;
 	//minus 1 for 0-based indexing.  POSSIBLE BUG: Might need to use
 	//"wardIndex" instead, because that is the one actually sent by
@@ -174,6 +189,9 @@ vector<agent> init_nodes(){
 
 
 	if(SEED_INFECTION_FROM_FILE){
+#ifdef DEBUG
+	  assert(elem["infection_status"].GetInt());
+#endif
 	  nodes[i].infection_status = static_cast<Progression>(elem["infection_status"].GetInt());
 	  nodes[i].time_of_infection = (nodes[i].infection_status == Progression::exposed)?(-elem["time_since_infected"].GetDouble()):0;
 	} else {

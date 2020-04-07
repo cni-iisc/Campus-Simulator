@@ -1,16 +1,29 @@
 #include "updates.h"
 #include "interventions.h"
 
-inline double update_individual_lambda_h(const agent& node){
-  return node.infective * node.kappa_T * node.infectiousness * (1 + node.severity)*node.kappa_H;
+double update_individual_lambda_h(const agent& node){
+  return (node.infective?1.0:0.0)
+	* node.kappa_T
+	* node.infectiousness
+	* (1 + node.severity)
+	* node.kappa_H;
 }
 
-inline double update_individual_lambda_w(const agent& node){
-  return node.infective * node.kappa_T * node.infectiousness * (1 + node.severity*(2*node.psi_T-1))*node.kappa_W;
+double update_individual_lambda_w(const agent& node){
+  return (node.infective?1.0:0.0)
+	* node.kappa_T
+	* node.infectiousness
+	* (1 + node.severity*(2*node.psi_T-1))
+	* node.kappa_W;
 }
 
-inline double update_individual_lambda_c(const agent& node){
-  return node.infective * node.kappa_T * node.infectiousness * node.funct_d_ck * (1 + node.severity)*node.kappa_C;
+double update_individual_lambda_c(const agent& node){
+  return (node.infective?1.0:0.0)
+	* node.kappa_T
+	* node.infectiousness
+	* node.funct_d_ck
+	* (1 + node.severity)
+	* node.kappa_C;
 	// optimised version: return node.lambda_h * node.funct_d_ck;
 }
 
@@ -64,7 +77,8 @@ void update_infection(agent& node, int cur_time){
   }
   else if(node.infection_status==Progression::hospitalised
 		  && (cur_time - node.time_of_infection
-			  > (node.incubation_period+node.asymptomatic_period
+			  > (node.incubation_period
+				 + node.asymptomatic_period
 				 + node.symptomatic_period
 				 + node.hospital_regular_period))){
 	if(bernoulli(STATE_TRAN[age_index][1])){

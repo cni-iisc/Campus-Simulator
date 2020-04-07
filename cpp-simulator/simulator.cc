@@ -62,7 +62,7 @@ map<string, matrix<count_type>> run_simulation(){
 
 	for (count_type c = 0; c < GLOBAL.num_communities; ++c){
 	  communities[c].lambda_community = updated_lambda_c_local(nodes, communities[c]);
-	  //TODO: output the CSV
+
 	  auto temp_stats = get_infected_community(nodes, communities[c]);
 	  //let row = [time_step/SIM_STEPS_PER_DAY,c,temp_stats[0],temp_stats[1],temp_stats[2],temp_stats[3],temp_stats[4]].join(",");
 	  plot_data["csvContent"].push_back({

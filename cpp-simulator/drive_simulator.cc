@@ -1,38 +1,10 @@
 #include "simulator.h"
+#include "outputs.h"
 #include <cassert>
 #include <iostream>
 #include <fstream>
 #include <string>
 using namespace std;
-
-const string CSV_TERM = "\r\n";
-const char CSV_SEP = ',';
-void output_timed_csv(const vector<string>& field_row, const string& output_file, const matrix<count_type>& mat){
-  ofstream fout(output_file, ios::out);
-  fout << "Time" << CSV_SEP;
-  auto end = field_row.end();
-  auto penultimate = end - 1;
-  for(auto it = field_row.begin() + 1; it != end; ++it){
-	fout << *it;
-	if(it != penultimate){
-	  fout<< CSV_SEP;
-	}
-  }
-  fout << CSV_TERM;
-  for(const auto& row: mat){
-	auto end = row.end();
-	auto penultimate = end - 1;
-	fout << double(row[0])/GLOBAL.SIM_STEPS_PER_DAY << CSV_SEP;
-	for(auto it = row.begin() + 1; it != end; ++it){
-	  fout << *it;
-	  if(it != penultimate){
-		fout<< CSV_SEP;
-	  }
-	}
-	fout << CSV_TERM;
-  }
-  fout.close();
-}
 
 const int TOTAL_INPUT_ARGS = 15;
   // 1: NUM_DAYS
@@ -82,6 +54,8 @@ int main(int argc, char** argv){
   
   auto plot_data = run_simulation();
 
+  output_global_params(output_dir);
+  
   for(const auto& elem: plot_data){
 	string csvfile_name = output_dir + "/" + elem.first + ".csv";
 	if(elem.first == "csvContent"){

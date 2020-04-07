@@ -224,7 +224,6 @@ vector<agent> init_nodes(){
 	  nodes[i].time_of_infection = (nodes[i].infection_status == Progression::exposed)?(-uniform_real(0, nodes[i].incubation_period)):0;
 	  //Why do we take time of infection to be 0 by default?
 	}
-	//Set infective status, set the time of infection, and other age-related factors
 	nodes[i].infective = (nodes[i].infection_status == Progression::infective);
 	//POSSIBLE BUG: In the JS code, and here, infection_status is
 	//never set to infective, so the above line would be superfluous!

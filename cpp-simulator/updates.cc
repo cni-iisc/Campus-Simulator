@@ -68,7 +68,7 @@ void update_infection(agent& node, int cur_time){
 				 + node.symptomatic_period))){
 	if(bernoulli(STATE_TRAN[age_index][0])){
 	  node.infection_status = Progression::hospitalised; //move to hospitalisation
-	  node.infective = 0;
+	  node.infective = false;
 	}
 	else {
 	  node.infection_status = Progression::recovered; //move to recovered

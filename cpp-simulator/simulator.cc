@@ -15,6 +15,14 @@ map<string, matrix<count_type>> run_simulation(){
   auto communities = init_community();
   auto nodes = init_nodes();
 
+  auto community_dist_matrix = compute_community_distances(communities);
+
+  assign_individual_home_community(nodes, homes, workplaces, communities);
+
+  compute_scale_homes(homes);
+  compute_scale_workplaces(workplaces);
+  compute_scale_communities(nodes, communities);
+
   //This needs to be done after the initilization.
   map<string, matrix<count_type>> plot_data =
 	{
@@ -31,14 +39,6 @@ map<string, matrix<count_type>> run_simulation(){
   }
   plot_data["csvContent"] = {};
   plot_data["csvContent"].reserve(GLOBAL.NUM_TIMESTEPS * GLOBAL.num_communities);
-
-  auto community_dist_matrix = compute_community_distances(communities);
-
-  assign_individual_home_community(nodes, homes, workplaces, communities);
-
-  compute_scale_homes(homes);
-  compute_scale_workplaces(workplaces);
-  compute_scale_communities(nodes, communities);
 
   for(count_type time_step = 0; time_step < GLOBAL.NUM_TIMESTEPS; ++time_step){
 

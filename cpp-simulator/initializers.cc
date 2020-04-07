@@ -2,6 +2,7 @@
 #include <rapidjson/istreamwrapper.h>
 #include <rapidjson/prettywriter.h>
 #include <rapidjson/stringbuffer.h>
+#include <algorithm>
 #include <iostream>
 #include <fstream>
 #include <vector>
@@ -95,9 +96,14 @@ vector<community> init_community() {
   // schools come first followed by workspaces, as in the JSON version
   for (auto &elem: comJSON.GetArray()){
 	communities[index].set(elem["lat"].GetDouble(),
-						   elem["lon"].GetDouble());
+						   elem["lon"].GetDouble(),
+						   elem["wardNo"].GetInt());
 	++index;
   }
+  sort(communities.begin(), communities.end(),
+	   [](const auto& a, const auto& b){
+		 return a.wardNo < b.wardNo;
+	   });
   return communities;
 }
 

@@ -236,7 +236,7 @@ struct house{
   double lambda_home = 0;
   std::vector<int> individuals; //list of indices of individuals
   double Q_h = 1;
-  double scale = 1;
+  double scale = 0;
   bool compliant;
   bool quarantined = false;
   double age_independent_mixing = 0;
@@ -283,11 +283,13 @@ struct community {
   double scale = 0;
   bool quarantined = false;
 
+  int wardNo;
   community(){}
-  community(double latitude, double longitude):
-	loc{latitude, longitude}{}
-  void set(double latitude, double longitude){
+  community(double latitude, double longitude, int wardNo):
+	loc{latitude, longitude}, wardNo{wardNo}{}
+  void set(double latitude, double longitude, int wardNo){
 	this->loc = {latitude, longitude};
+	this->wardNo = wardNo;
   }
 };
 

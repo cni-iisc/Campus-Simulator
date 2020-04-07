@@ -114,10 +114,10 @@ void update_infection(agent& node, int cur_time){
 void update_all_kappa(vector<agent>& nodes, vector<house>& homes, vector<workplace>& workplaces, vector<community>& communities, int cur_time){
   switch(GLOBAL.INTERVENTION){
   case Intervention::no_intervention:
-	get_kappa_no_intervention(nodes, homes, workplaces, communities,cur_time);
+	get_kappa_no_intervention(nodes, homes, workplaces, communities, cur_time);
 	break;
   case Intervention::case_isolation:
-	get_kappa_case_isolation(nodes, homes, workplaces, communities,cur_time);
+	get_kappa_case_isolation(nodes, homes, workplaces, communities, cur_time);
 	break;
   case Intervention::home_quarantine:
 	get_kappa_home_quarantine(nodes, homes, workplaces, communities, cur_time);
@@ -132,7 +132,7 @@ void update_all_kappa(vector<agent>& nodes, vector<house>& homes, vector<workpla
 	get_kappa_CI_HQ_70P(nodes, homes, workplaces, communities, cur_time);
 	break;
   case Intervention::lockdown_21_ci_hq_sd_70_plus_21_ci:
-	get_kappa_LOCKDOWN_21_CI_HQ_SD_70_PLUS_21_CI(nodes, homes, workplaces, communities,cur_time);
+	get_kappa_LOCKDOWN_21_CI_HQ_SD_70_PLUS_21_CI(nodes, homes, workplaces, communities, cur_time);
 	break;
   case Intervention::lockdown_21:
 	get_kappa_LOCKDOWN_21(nodes, homes, workplaces, communities,cur_time);
@@ -164,20 +164,26 @@ void update_lambdas(agent&node, const vector<house>& homes, const vector<workpla
   node.lambda_incoming={0,0,0};
 
   //No null check for home as every agent has a home
-  node.lambda_incoming[0] = node.kappa_H_incoming*homes[node.home].age_independent_mixing;
+  node.lambda_incoming[0] = node.kappa_H_incoming
+	* homes[node.home].age_independent_mixing;
   //FEATURE_PROPOSAL: make the mixing dependent on node.age_group;
   if(node.workplace != WORKPLACE_HOME) {
-	node.lambda_incoming[1] = node.kappa_W_incoming* workplaces[node.workplace].age_independent_mixing;
+	node.lambda_incoming[1] = node.kappa_W_incoming
+	  * workplaces[node.workplace].age_independent_mixing;
 	//FEATURE_PROPOSAL: make the mixing dependent on node.age_group;
   }
   // No null check for community as every node has a community.
   //
   // For all communities add the community lambda with a distance
   // related scaling factor
-  node.lambda_incoming[2] = node.kappa_C_incoming*node.zeta_a*node.funct_d_ck*communities[node.community].lambda_community_global;
+  node.lambda_incoming[2] = node.kappa_C_incoming
+	* node.zeta_a
+	* node.funct_d_ck
+	* communities[node.community].lambda_community_global;
 
-  node.lambda = node.lambda_incoming[0] + node.lambda_incoming[1] + node.lambda_incoming[2];
-
+  node.lambda = node.lambda_incoming[0]
+	+ node.lambda_incoming[1]
+	+ node.lambda_incoming[2];
 }
 
 
@@ -190,11 +196,12 @@ double updated_lambda_c_local(const vector<agent>& nodes, const community& commu
 }
 
 void update_lambda_c_global(vector<community>& communities, const matrix<double>& community_distance_matrix){
-  for (int c1=0; c1 < communities.size(); ++c1){
+  for (int c1 = 0; c1 < communities.size(); ++c1){
 	double num = 0;
 	double denom = 0;
-	for (int c2 = 0;c2<communities.size(); ++c2){
-	  num += f_kernel(community_distance_matrix[c1][c2])*communities[c2].lambda_community;
+	for (int c2 = 0; c2 < communities.size(); ++c2){
+	  num += f_kernel(community_distance_matrix[c1][c2])
+		* communities[c2].lambda_community;
 	  denom += f_kernel(community_distance_matrix[c1][c2]);
 	}
 	communities[c1].lambda_community_global = num/denom;

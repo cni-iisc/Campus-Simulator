@@ -27,7 +27,7 @@ double kappa_T(const agent& node, double cur_time){
 
 void get_kappa_no_intervention(vector<agent>& nodes, const vector<house>& homes, const vector<workplace>& workplaces, const vector<community>& communities, int cur_time){
 #pragma omp parallel for
-  for (int count = 0; count < nodes.size();count ++){
+  for (int count = 0; count < nodes.size(); ++count){
 	nodes[count].kappa_T = kappa_T(nodes[count], cur_time);
 	nodes[count].kappa_H = 1;
 	nodes[count].kappa_W = 1;
@@ -41,7 +41,7 @@ void get_kappa_no_intervention(vector<agent>& nodes, const vector<house>& homes,
 
 void get_kappa_case_isolation(vector<agent>& nodes, const vector<house>& homes, const vector<workplace>& workplaces, const vector<community>& communities, int cur_time){
 #pragma omp parallel for
-  for (int count = 0; count < nodes.size(); count ++){
+  for (int count = 0; count < nodes.size(); ++count){
 	double time_since_symptoms = cur_time
 	  - (nodes[count].time_of_infection
 		 + nodes[count].incubation_period
@@ -69,12 +69,12 @@ void get_kappa_case_isolation(vector<agent>& nodes, const vector<house>& homes, 
 }
 
 void get_kappa_home_quarantine(vector<agent>& nodes, vector<house>& homes, const vector<workplace>& workplaces, const vector<community>& communities, int cur_time){
-  for(int count = 0; count < homes.size(); count++){
+  for(int count = 0; count < homes.size(); ++count){
 	//reset all homes as non-quarantined. The status will be updated depending on the household individuals.
 	homes[count].quarantined = false;
   }
 
-  for (int count = 0; count < nodes.size(); count++){
+  for (int count = 0; count < nodes.size(); ++count){
 	double time_since_symptoms = cur_time
 	  - (nodes[count].time_of_infection
 		 + nodes[count].incubation_period
@@ -89,7 +89,7 @@ void get_kappa_home_quarantine(vector<agent>& nodes, vector<house>& homes, const
   }
 
 #pragma omp parallel for
-  for (int count = 0; count < nodes.size(); count++){
+  for (int count = 0; count < nodes.size(); ++count){
 	nodes[count].kappa_T = kappa_T(nodes[count], cur_time);
 	nodes[count].kappa_H = 1;
 	nodes[count].kappa_W = 1;
@@ -113,7 +113,7 @@ void get_kappa_home_quarantine(vector<agent>& nodes, vector<house>& homes, const
 
 void get_kappa_lockdown(vector<agent>& nodes, const vector<house>& homes, const vector<workplace>& workplaces, const vector<community>& communities, int cur_time){
 #pragma omp parallel for
-  for(int count = 0; count < nodes.size();count ++){
+  for(int count = 0; count < nodes.size(); ++count){
 	nodes[count].kappa_T = kappa_T(nodes[count], cur_time);
 	if(nodes[count].compliant){
 	  nodes[count].kappa_H = 2;
@@ -148,27 +148,27 @@ void get_kappa_lockdown(vector<agent>& nodes, const vector<house>& homes, const 
 }
 
 void get_kappa_CI_HQ(vector<agent>& nodes, vector<house>& homes, const vector<workplace>& workplaces, const vector<community>& communities, int cur_time){
-  for(int count = 0; count<homes.size(); count++){
+  for(int count = 0; count<homes.size(); ++count){
 	//reset all homes as non-quarantined. The status will be
 	//updated depending on the household individuals.  Same as
 	homes[count].quarantined = false;
   }
   
-  for(int count = 0; count < nodes.size();count++){
+  for(int count = 0; count < nodes.size(); ++count){
 	double time_since_symptoms = cur_time
-	  - (nodes[count].time_of_infection+nodes[count].incubation_period
+	  - (nodes[count].time_of_infection
+		 + nodes[count].incubation_period
 		 + nodes[count].asymptomatic_period);
 	if((nodes[count].compliant) && 
 	   (time_since_symptoms > NUM_DAYS_TO_RECOG_SYMPTOMS*GLOBAL.SIM_STEPS_PER_DAY)
-	   && (time_since_symptoms <= (NUM_DAYS_TO_RECOG_SYMPTOMS
-								   +HOME_QUARANTINE_DAYS)*GLOBAL.SIM_STEPS_PER_DAY)){
+	   && (time_since_symptoms <= (NUM_DAYS_TO_RECOG_SYMPTOMS + HOME_QUARANTINE_DAYS) *GLOBAL.SIM_STEPS_PER_DAY)){
 	  //The magic number 1 = time to recognise symptoms. 
 	  homes[nodes[count].home].quarantined = true;
 	}
   }
 
 #pragma omp parallel for
-  for(int count = 0; count < nodes.size();count++){
+  for(int count = 0; count < nodes.size(); ++count){
 	nodes[count].kappa_T = kappa_T(nodes[count], cur_time);
 	nodes[count].kappa_H = 1;
 	nodes[count].kappa_W = 1;
@@ -191,16 +191,17 @@ void get_kappa_CI_HQ(vector<agent>& nodes, vector<house>& homes, const vector<wo
 }
 
 void get_kappa_CI_HQ_70P(vector<agent>& nodes, vector<house>& homes, const vector<workplace>& workplaces, const vector<community>& communities, int cur_time){
-  for(int count = 0; count<homes.size();count++){
+  for(int count = 0; count<homes.size(); ++count){
 	//reset all homes as non-quarantined. The status will be updated depending on the household individuals.
 	//Same as 
 	homes[count].quarantined = false;
   }
 
-  for (int count = 0; count < nodes.size();count++){
+  for (int count = 0; count < nodes.size(); ++count){
 	double time_since_symptoms = cur_time
 	  - (nodes[count].time_of_infection
-		 + nodes[count].incubation_period+nodes[count].asymptomatic_period);
+		 + nodes[count].incubation_period
+		 + nodes[count].asymptomatic_period);
 	if((nodes[count].compliant) && 
 	   (time_since_symptoms > NUM_DAYS_TO_RECOG_SYMPTOMS*GLOBAL.SIM_STEPS_PER_DAY) && 
 	   (time_since_symptoms <= (NUM_DAYS_TO_RECOG_SYMPTOMS+HOME_QUARANTINE_DAYS)*GLOBAL.SIM_STEPS_PER_DAY)){
@@ -210,7 +211,7 @@ void get_kappa_CI_HQ_70P(vector<agent>& nodes, vector<house>& homes, const vecto
   }
 
 #pragma omp parallel for
-  for (int count = 0; count < nodes.size();count++){
+  for (int count = 0; count < nodes.size(); ++count){
 	nodes[count].kappa_T = kappa_T(nodes[count], cur_time);
 	nodes[count].kappa_H = 1;
 	nodes[count].kappa_W = 1;
@@ -240,9 +241,9 @@ void get_kappa_LOCKDOWN_21_CI_HQ_SD_70_PLUS_21_CI(vector<agent>& nodes, vector<h
 	const double FIRST_PERIOD = 21;
 	const double SECOND_PERIOD = 21;
 	if(cur_time < FIRST_PERIOD*GLOBAL.SIM_STEPS_PER_DAY){
-	  get_kappa_lockdown(nodes, homes, workplaces, communities,cur_time);
+	  get_kappa_lockdown(nodes, homes, workplaces, communities, cur_time);
 	} else if(cur_time < (FIRST_PERIOD+SECOND_PERIOD)*GLOBAL.SIM_STEPS_PER_DAY){
-	  get_kappa_CI_HQ_70P(nodes, homes, workplaces, communities,cur_time);
+	  get_kappa_CI_HQ_70P(nodes, homes, workplaces, communities, cur_time);
 	}else{
 	  get_kappa_case_isolation(nodes, homes, workplaces, communities, cur_time);
 	}
@@ -251,9 +252,9 @@ void get_kappa_LOCKDOWN_21_CI_HQ_SD_70_PLUS_21_CI(vector<agent>& nodes, vector<h
 void get_kappa_LOCKDOWN_21(vector<agent>& nodes, vector<house>& homes, const vector<workplace>& workplaces, const vector<community>& communities, int cur_time){
   const double FIRST_PERIOD = 21;
   if(cur_time < FIRST_PERIOD*GLOBAL.SIM_STEPS_PER_DAY){
-	get_kappa_lockdown(nodes, homes, workplaces, communities,cur_time);
+	get_kappa_lockdown(nodes, homes, workplaces, communities, cur_time);
   }else{
-	get_kappa_no_intervention(nodes, homes, workplaces, communities,cur_time);
+	get_kappa_no_intervention(nodes, homes, workplaces, communities, cur_time);
   }
 }
 

@@ -9,8 +9,8 @@ MEAN_HOSPITAL_CRITICAL_PERIOD=8
 COMPLIANCE_PROBABILITY=0.7
 BETA_H=0.47
 BETA_W=0.94
-BETA_C=1.88
-BETA_S=0.47045
+BETA_C=0.47045
+BETA_S=1.88
 INTERVENTION=0
 output_directory="outputs/test_output"
 
@@ -39,7 +39,7 @@ if eval $command; then
 	command="${GPLOT_PATH}gnuplot gnuplot_script.gnuplot"
 	echo $command;
 	if eval $command; then
-		echo "Plots generated succesfully."
+		echo "Plots generated successfully."
 	fi;
 else
 	echo "error: see above for output"

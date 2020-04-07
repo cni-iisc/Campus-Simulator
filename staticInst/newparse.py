@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[54]:
+# In[ ]:
 
 
 import json
@@ -31,23 +31,28 @@ housesjson       = obasepath+"houses.json"
 workplacesjson   = obasepath+"workplaces.json"
 schoolsjson      = obasepath+"schools.json"
 
+wardCentreDistancejson = obasepath+"wardCentreDistance.json"
+commonAreajson         = obasepath+"commonArea.json"
+fractionPopulationjson = obasepath+"fractionPopulation.json"
 
-my_parser = argparse.ArgumentParser(description='Create mini-city for COVID-19 simulation')
-my_parser.add_argument( 'n', action='store',
-                       type=int,
-                       nargs='?',
-                       help='target population',
-                       default=100000)
-args = my_parser.parse_args()
-miniPop = args.n
-#miniPop = 10000
+interactive = 0
+
+if interactive:
+    miniPop = 100000
+else:
+    my_parser = argparse.ArgumentParser(description='Create mini-city for COVID-19 simulation')
+    my_parser.add_argument( 'n', action='store',
+                           type=int,
+                           nargs='?',
+                           help='target population',
+                           default=100000)
+    args = my_parser.parse_args()
+    miniPop = args.n
 
 #fixing for now
 slum_schoolsize_factor = 2
 slum_householdsize_scalefactor = 2
-slum_fraction = 0.42
-
-
+slum_fractions = [0.289,0.133,0,0.099,0.119,0.581,0.358,0.331,0.558,0.788,0.411,0.583,0.451,0.847,0.775,0.685,0.702,0.637,0.481,0.337,0.466,0.553,0.858,0.352]
 
 print("Creating city with a population of approximately ",miniPop,flush=True)
 print("")
@@ -66,11 +71,12 @@ geoDF["neighbors"] = geoDF.apply(lambda row: ", ".join([str(ward) for ward in ge
 print("done.",flush=True)
 
 def sampleRandomLatLong(wardIndex):
-    (lat1,lon1,lat2,lon2) = geoDF['wardBounds'][wardIndex]
+    #I'm not sure why the order is longitude followed by latitude
+    (lon1,lat1,lon2,lat2) = geoDF['wardBounds'][wardIndex]
     while True:
         lat = random.uniform(lat1,lat2)
         lon = random.uniform(lon1,lon2)
-        point = Point(lat,lon)
+        point = Point(lon,lat)
         if MultiPolygon(geoDF['geometry'][wardIndex]).contains(point):
             return (lat,lon)
 
@@ -90,7 +96,8 @@ def getCommunityCenterDistance(lat,lon,wardIndex):
     return distance(lat,lon,latc,lonc)
 
 
-# In[55]:
+
+# In[ ]:
 
 
 print("Reading demographics, employment and household data (csv)...",end='',flush=True)
@@ -129,7 +136,7 @@ with open(householdfile, newline='') as csvfile:
 print("done.",flush=True)
 
 
-# In[56]:
+# In[ ]:
 
 
 with open(cityprofilefile, newline='') as file:
@@ -150,7 +157,7 @@ def sampleHouseholdSize():
     return n
 
 
-# In[57]:
+# In[ ]:
 
 
 agebins = cityprofiledata['age']['bins']
@@ -167,7 +174,7 @@ def sampleAge():
     return n
 
 
-# In[58]:
+# In[ ]:
 
 
 totalPop = sum(wardpop)
@@ -177,7 +184,7 @@ nwards = len(wardname)
 
 
 mwardpop = [int(a * scale) for a in wardpop]
-mslumwardpop = [int(a * scale * slum_fraction) for a in wardpop]
+mslumwardpop = [int(mwardpop[i] * slum_fractions[i] * scale) for i in range(nwards)]
 mnonslumwardpop = [mwardpop[i] - mslumwardpop[i] for i in range(len(wardpop))]
 mwardemployed = [int(a * scale) for a in wardunemployed]
 mwardunemployed = [int(a * scale) for a in wardemployed]
@@ -185,7 +192,7 @@ mwardworkforce = [int(a * scale) for a in wardworkforce]
 mwardhouseholds = [int(a * scale) for a in wardhouseholds]
 
 
-# In[59]:
+# In[ ]:
 
 
 print("Creating households for each ward...",end='',flush=True)
@@ -231,7 +238,7 @@ for wardIndex in range(nwards):
 print("done.",flush=True)
 
 
-# In[60]:
+# In[ ]:
 
 
 print("Creating individuals to populate the households...",end='',flush=True)
@@ -309,7 +316,7 @@ for h in houses:
 print("done.",flush=True)
 
 
-# In[61]:
+# In[ ]:
 
 
 # Just taking the code from assignWorkplaces.py
@@ -339,7 +346,7 @@ def sampleWorkplaceSize():
     return int(np.random.choice(np.arange(m_max),1,p=wsdist)[0])
 
 
-# In[62]:
+# In[ ]:
 
 
 print("Assigning workplaces to people...",end='',flush=True)
@@ -369,7 +376,7 @@ for wardIndex in range(nwards):
 print('done.',flush=True)
 
 
-# In[63]:
+# In[ ]:
 
 
 schoolsizebins = ["0-100", "100-200", "200-300", "300-400", "400-500", "500-600", "600-700", "700-800", "800-900"]
@@ -436,7 +443,33 @@ print("Workplaces:",len(workplaces))
 print("")
 
 
-# In[64]:
+# In[ ]:
+
+
+commonAreas = []
+for i in range(nwards):
+    c = {"ID":i}
+    c["wardNo"] = i+1
+    (lon,lat)= geoDF['wardCentre'][i]
+    c["lat"] = lat
+    c["lon"] = lon
+    commonAreas.append(c)
+
+fractionPopulations = []
+for i in range(nwards):
+    w = {"wardNo":i+1}
+    w["totalPopulation"] = wardpop[i]
+    w["fracPopulation"] = wardpop[i]/totalPop
+    fractionPopulations.append(w)
+
+wardCentreDistances = [ {"ID":i+1} for i in range(nwards)]
+for i in range(nwards):
+    for j in range(nwards):
+        d = distance(commonAreas[i]["lat"],commonAreas[i]["lon"],commonAreas[j]["lat"],commonAreas[j]["lon"])
+        wardCentreDistances[i][str(j+1)]=d
+
+
+# In[ ]:
 
 
 print("Dumping to json files...",end='',flush=True)
@@ -459,9 +492,28 @@ print("workplaces.json, ",end='',flush=True)
 f = open(schoolsjson, "w")
 f.write(json.dumps(schools))
 f.close
-print("schools.json) ... done.",flush=True)
+print("schools.json, ",end='',flush=True)
 
-print("NOTE: Not generating commonArea.json, fractionPopulation.json, wardCenterDistance.json as they are fixed.")
+
+# In[ ]:
+
+
+f = open(commonAreajson, "w")
+f.write(json.dumps(commonAreas))
+f.close
+print("commonArea.json, ",end='',flush=True)
+
+f = open(fractionPopulationjson, "w")
+f.write(json.dumps(fractionPopulations))
+f.close
+print("fractionPopulation.json, ",end='',flush=True)
+
+f = open(wardCentreDistancejson, "w")
+f.write(json.dumps(wardCentreDistances))
+f.close
+print("wardCentreDistance.json) ... done.",flush=True)
+
+
 
 
 # In[ ]:

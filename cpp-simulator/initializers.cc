@@ -73,14 +73,14 @@ vector<workplace> init_workplaces() {
 				   WorkplaceType::school);
 	++index;
   }
-
+  assert(index == GLOBAL.num_schools);
   for (auto &elem: wpJSON.GetArray()){
 	wps[index].set(elem["lat"].GetDouble(),
 				   elem["lon"].GetDouble(),
 				   WorkplaceType::office);
 	++index;
   }
-
+  assert(index == GLOBAL.num_schools + GLOBAL.num_workplaces);
   return wps;
 }
 
@@ -100,6 +100,7 @@ vector<community> init_community() {
 						   elem["wardNo"].GetInt());
 	++index;
   }
+  assert(index == GLOBAL.num_communities);
   sort(communities.begin(), communities.end(),
 	   [](const auto& a, const auto& b){
 		 return a.wardNo < b.wardNo;
@@ -117,13 +118,13 @@ vector<double> compute_prob_infection_given_community(double infection_probabili
   else {
 	auto fracQuarantinesJSON = readJSONFile(input_base + "quarantinedPopulation.json");
 	const rapidjson::Value& quar_array = fracQuarantinesJSON.GetArray();
+	const rapidjson::Value& frac_array = fracPopJSON.GetArray();
 	vector<double> prob_infec_given_community(num_communities);
-	int index = 0;
-	for(auto &elem: fracPopJSON.GetArray()){
+	for(int index = 0; index < num_communities; ++index){
 	  prob_infec_given_community[index] =
-		infection_probability *
-		quar_array[index]["fracQuarantined"].GetDouble() /
-		elem["fracPopulation"].GetDouble();
+		infection_probability
+		* quar_array[index]["fracQuarantined"].GetDouble()
+		/ frac_array[index]["fracPopulation"].GetDouble();
 	  ++index;
 	}
 	return prob_infec_given_community;
@@ -152,6 +153,10 @@ vector<agent> init_nodes(){
 	nodes[i].age_index = get_age_index(age);
 	nodes[i].zeta_a = zeta(age);
 
+	nodes[i].infectiousness = gamma(GLOBAL.INFECTIOUSNESS_SHAPE,
+									GLOBAL.INFECTIOUSNESS_SCALE);
+	nodes[i].severity = bernoulli(GLOBAL.SEVERITY_RATE)?1:0;
+	
 #ifdef DEBUG
 	assert(elem["household"].IsInt());
 #endif
@@ -193,6 +198,15 @@ vector<agent> init_nodes(){
 
 	nodes[i].funct_d_ck = f_kernel(elem["CommunityCentreDistance"].GetDouble());
 
+	nodes[i].incubation_period = gamma(GLOBAL.INCUBATION_PERIOD_SHAPE,
+									   GLOBAL.INCUBATION_PERIOD_SCALE);
+	nodes[i].asymptomatic_period = gamma(1.0,
+										 GLOBAL.ASYMPTOMATIC_PERIOD);
+	nodes[i].symptomatic_period = gamma(1.0,
+										GLOBAL.SYMPTOMATIC_PERIOD);
+	
+	nodes[i].hospital_regular_period = GLOBAL.HOSPITAL_REGULAR_PERIOD;
+	nodes[i].hospital_critical_period = GLOBAL.HOSPITAL_CRITICAL_PERIOD;
 
 	if(SEED_INFECTION_FROM_FILE){
 #ifdef DEBUG
@@ -211,9 +225,7 @@ vector<agent> init_nodes(){
 
 	++i;
   }
-#ifdef DEBUG
-  cout << i << "\n";
-#endif
+  assert(i == GLOBAL.num_people);
   return nodes;
 }
 
@@ -251,18 +263,20 @@ void assign_individual_home_community(vector<agent>& nodes, vector<house>& homes
 
 // Compute scale factors for each home, workplace and community. Done once at the beginning.
 void compute_scale_homes(vector<house>& homes){
-  for (int w = 0; w < homes.size(); w++){
+  for (int w = 0; w < homes.size(); ++w){
 	if(homes[w].individuals.size()==0){
 	  homes[w].scale = 0;
 	} else {
-	  homes[w].scale = GLOBAL.BETA_H*homes[w].Q_h/(pow(homes[w].individuals.size(), GLOBAL.ALPHA));
+	  homes[w].scale = GLOBAL.BETA_H
+		* homes[w].Q_h
+		/(pow(homes[w].individuals.size(), GLOBAL.ALPHA));
 	}
   }
 }
 
 void compute_scale_workplaces(vector<workplace>& workplaces){
   double beta_workplace;
-  for (int w=0; w < workplaces.size(); w++) {
+  for (int w=0; w < workplaces.size(); ++w) {
 	if(workplaces[w].individuals.size()==0){
 	  workplaces[w].scale = 0;
 	} else {
@@ -271,13 +285,15 @@ void compute_scale_workplaces(vector<workplace>& workplaces){
 	  } else if (workplaces[w].workplace_type == WorkplaceType::school){
 		beta_workplace = GLOBAL.BETA_S; //school
 	  }
-	  workplaces[w].scale = beta_workplace*workplaces[w].Q_w/workplaces[w].individuals.size();
+	  workplaces[w].scale = beta_workplace
+		* workplaces[w].Q_w
+		/ workplaces[w].individuals.size();
 	}
   }
 }
 
 void compute_scale_communities(const vector<agent>& nodes, vector<community>& communities){
-  for (int w=0; w < communities.size(); w++) {
+  for (int w=0; w < communities.size(); ++w) {
 	double sum_value = 0;
 	for (auto indiv: communities[w].individuals){
 	  sum_value += nodes[indiv].funct_d_ck;
@@ -285,7 +301,9 @@ void compute_scale_communities(const vector<agent>& nodes, vector<community>& co
 	if(sum_value==0){
 	  communities[w].scale = 0;
 	}
-	else communities[w].scale = GLOBAL.BETA_C*communities[w].Q_c/sum_value;
+	else communities[w].scale = GLOBAL.BETA_C
+		   * communities[w].Q_c
+		   / sum_value;
   }
 }
 

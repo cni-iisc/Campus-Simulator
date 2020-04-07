@@ -177,9 +177,9 @@ struct agent{
   int age_group;
   int age_index; //For the STATE_TRAN matrix
   double zeta_a = 1;
-  double infectiousness = gamma(GLOBAL.INFECTIOUSNESS_SHAPE, GLOBAL.INFECTIOUSNESS_SCALE);
+  double infectiousness;
   //a.k.a rho
-  double severity = bernoulli(GLOBAL.SEVERITY_RATE)?1:0;
+  double severity;
   //a.k.a S_k, is 0 or
   int home; //index of household
   int workplace;
@@ -198,7 +198,7 @@ struct agent{
   double lambda = 0;
 
   double kappa_T = 1;
-  double psi_T = -0;
+  double psi_T = 0;
   double funct_d_ck;
 
   WorkplaceType workplace_type;
@@ -213,12 +213,12 @@ struct agent{
   double kappa_W = 1;
   double kappa_C = 1;
 
-  double incubation_period = gamma(GLOBAL.INCUBATION_PERIOD_SHAPE, GLOBAL.INCUBATION_PERIOD_SCALE);
-  double asymptomatic_period = gamma(1, GLOBAL.ASYMPTOMATIC_PERIOD);
-  double symptomatic_period = gamma(1, GLOBAL.SYMPTOMATIC_PERIOD);
+  double incubation_period;
+  double asymptomatic_period;
+  double symptomatic_period;
 
-  double hospital_regular_period = GLOBAL.HOSPITAL_REGULAR_PERIOD;
-  double hospital_critical_period = GLOBAL.HOSPITAL_CRITICAL_PERIOD;
+  double hospital_regular_period;
+  double hospital_critical_period;
 
   double kappa_H_incoming = 1;
   double kappa_W_incoming = 1;

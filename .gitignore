@@ -13,6 +13,12 @@ staticInst/data/mumbai/individuals.json
 staticInst/data/mumbai/workplaces.json
 staticInst/data/mumbai/schools.json
 
+cpp-simulator/initializers.o
+cpp-simulator/interventions.o
+cpp-simulator/models.o
+cpp-simulator/simulator
+cpp-simulator/updates.o
+
 
 .ipynb_checkpoints
 */.ipynb_checkpoints/*

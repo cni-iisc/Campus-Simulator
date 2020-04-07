@@ -27,13 +27,13 @@ double updated_lambda_c_local(const std::vector<agent>& nodes, const community& 
 void update_lambda_c_global(std::vector<community>& communities, const matrix<double>& community_distance_matrix);
 
 struct casualty_stats{
-  double infected = 0;
-  double affected = 0;
-  double hospitalised = 0;
-  double critical = 0;
-  double dead = 0;
-  double exposed = 0;
-  double recovered = 0;
+  count_type infected = 0;
+  count_type affected = 0;
+  count_type hospitalised = 0;
+  count_type critical = 0;
+  count_type dead = 0;
+  count_type exposed = 0;
+  count_type recovered = 0;
 };
 
 casualty_stats get_infected_community(const std::vector<agent>& nodes, const community& community);

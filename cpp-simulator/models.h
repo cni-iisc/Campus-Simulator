@@ -23,6 +23,9 @@ enum class Intervention {
 template<typename T>
 using matrix = std::vector< std::vector<T> >;
 
+//Type for storing counts
+using count_type = unsigned int;
+
 // Global parameters functions
 extern std::default_random_engine GENERATOR;
 
@@ -79,16 +82,16 @@ const double ALPHA = 0.8;
 struct global_params{
   double compliance_probability = 1;
 
-  int num_homes = 25000;
-  int num_workplaces = 5000;
-  int num_schools = 0;
-  int num_communities = 198;
+  count_type num_homes = 25000;
+  count_type num_workplaces = 5000;
+  count_type num_schools = 0;
+  count_type num_communities = 198;
 
-  int num_people = 100000;
+  count_type num_people = 100000;
 
-  int NUM_DAYS = 120; //Number of days. Simulation duration
-  int SIM_STEPS_PER_DAY = 4; //Number of simulation steps per day.
-  int NUM_TIMESTEPS = NUM_DAYS*SIM_STEPS_PER_DAY; //
+  count_type NUM_DAYS = 120; //Number of days. Simulation duration
+  count_type SIM_STEPS_PER_DAY = 4; //Number of simulation steps per day.
+  count_type NUM_TIMESTEPS = NUM_DAYS*SIM_STEPS_PER_DAY; //
   double INIT_FRAC_INFECTED = 0.0001; // Initial number of people infected
 
   double INCUBATION_PERIOD = 2.25;

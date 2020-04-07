@@ -231,7 +231,7 @@ void compute_scale_homes(vector<house>& homes){
 	if(homes[w].individuals.size()==0){
 	  homes[w].scale = 0;
 	} else {
-	  homes[w].scale = BETA_H*homes[w].Q_h/(pow(homes[w].individuals.size(), ALPHA));
+	  homes[w].scale = GLOBAL.BETA_H*homes[w].Q_h/(pow(homes[w].individuals.size(), GLOBAL.ALPHA));
 	}
   }
 }
@@ -243,9 +243,9 @@ void compute_scale_workplaces(vector<workplace>& workplaces){
 	  workplaces[w].scale = 0;
 	} else {
 	  if(workplaces[w].workplace_type == WorkplaceType::office){
-		beta_workplace = BETA_W; //workplace
+		beta_workplace = GLOBAL.BETA_W; //workplace
 	  } else if (workplaces[w].workplace_type == WorkplaceType::school){
-		beta_workplace = BETA_S; //school
+		beta_workplace = GLOBAL.BETA_S; //school
 	  }
 	  workplaces[w].scale = beta_workplace*workplaces[w].Q_w/workplaces[w].individuals.size();
 	}
@@ -261,7 +261,7 @@ void compute_scale_communities(const vector<agent>& nodes, vector<community>& co
 	if(sum_value==0){
 	  communities[w].scale = 0;
 	}
-	else communities[w].scale = BETA_C*communities[w].Q_c/sum_value;
+	else communities[w].scale = GLOBAL.BETA_C*communities[w].Q_c/sum_value;
   }
 }
 

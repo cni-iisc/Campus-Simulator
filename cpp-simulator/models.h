@@ -4,19 +4,20 @@
 #include <random>
 #include <tuple>
 #include <cmath>
+#include <string>
 
 //Forward declarations
 struct agent;
 
 enum class Intervention {
-   no_intervention,
-   case_isolation,
-   home_quarantine,
-   lockdown,
-   case_isolation_and_home_quarantine,
-   case_isolation_and_home_quarantine_sd_70_plus,
-   lockdown_21_ci_hq_sd_70_plus_21_ci,
-   lockdown_21
+   no_intervention = 0,
+   case_isolation = 1,
+   home_quarantine = 2,
+   lockdown = 3,
+   case_isolation_and_home_quarantine = 4,
+   case_isolation_and_home_quarantine_sd_70_plus = 5,
+   lockdown_21_ci_hq_sd_70_plus_21_ci = 6,
+   lockdown_21 = 7
 };
 
 
@@ -24,7 +25,10 @@ template<typename T>
 using matrix = std::vector< std::vector<T> >;
 
 //Type for storing counts
-using count_type = unsigned int;
+using count_type = unsigned long;
+inline count_type stoct(const std::string& str){
+  return std::stoul(str);
+}
 
 // Global parameters functions
 extern std::default_random_engine GENERATOR;
@@ -62,25 +66,13 @@ const bool SEED_INFECTION_FROM_FILE = false;
 const double SELF_ISOLATION_DAYS = 7;
 const double HOME_QUARANTINE_DAYS = 14;
 
-// Beta values
-const double BETA_H = 0.47 *1.0; //Thailand data
-const double BETA_W = 0.47 *2; //Thailand data
-const double BETA_S = 0.94 *2; //Thailand data
-const double BETA_C = 0.097*4.85; // Thailand data. Product = 0.47
-
-const double ALPHA = 0.8;
-//exponent of number of people in a household while normalising
-//infection rate in a household.
-
-
-
 
 // Global parameters
 //
 // The default values are as in the js simulator.  These are changed
 // when the input files are read.
 struct global_params{
-  double compliance_probability = 1;
+  double COMPLIANCE_PROBABILITY = 1;
 
   count_type num_homes = 25000;
   count_type num_workplaces = 5000;
@@ -118,12 +110,21 @@ struct global_params{
 
   Intervention INTERVENTION = Intervention::no_intervention;
 
+  // Beta values
+  double BETA_H = 0.47 *1.0; //Thailand data
+  double BETA_W = 0.47 *2; //Thailand data
+  double BETA_S = 0.94 *2; //Thailand data
+  double BETA_C = 0.097*4.85; // Thailand data. Product = 0.47
+
+  double ALPHA = 0.8;
+  //exponent of number of people in a household while normalising
+  //infection rate in a household.
 };
 extern global_params GLOBAL;
 
 // return a random compliance based on GLOBAL.compliance_probability
 inline bool compliance(){
-  return bernoulli(GLOBAL.compliance_probability);
+  return bernoulli(GLOBAL.COMPLIANCE_PROBABILITY);
 }
 
 //Age groups (5-years)

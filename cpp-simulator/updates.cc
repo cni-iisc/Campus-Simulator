@@ -204,7 +204,7 @@ casualty_stats get_infected_community(const vector<agent>& nodes, const communit
 		nodes[community.individuals[i]].infection_status==Progression::hospitalised ||
 		nodes[community.individuals[i]].infection_status==Progression::critical) {stat.infected += 1;}
   }
-  stat.affected = stat.exposed+stat.infected+stat.recovered+stat.dead;
+  stat.affected = stat.exposed + stat.infected + stat.recovered + stat.dead;
   
   //return [infected_stat,affected_stat,hospitalised_stat,critical_stat,dead_stat];
   return stat;

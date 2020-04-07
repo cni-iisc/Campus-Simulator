@@ -57,9 +57,11 @@ slum_fractions = [0.289,0.133,0,0.099,0.119,0.581,0.358,0.331,0.558,0.788,0.411,
 print("Creating city with a population of approximately ",miniPop,flush=True)
 print("")
 
+
+# In[ ]:
+
+
 print("Reading city.geojson to get ward polygons...",end='',flush=True)
-
-
 geoDF = gpd.read_file(citygeojsonfile)
 geoDF['wardNo'] = geoDF['wardNo'].astype(int)
 geoDF['wardIndex'] = geoDF['wardNo'] - 1
@@ -67,8 +69,18 @@ geoDF = geoDF[['wardIndex','wardNo', 'wardName', 'geometry']]
 geoDF['wardBounds'] = geoDF.apply(lambda row: MultiPolygon(row['geometry']).bounds, axis=1)
 geoDF['wardCentre'] = geoDF.apply(lambda row: (MultiPolygon(row['geometry']).centroid.x, MultiPolygon(row['geometry']).centroid.y), axis=1)
 geoDF["neighbors"] = geoDF.apply(lambda row: ", ".join([str(ward) for ward in geoDF[~geoDF.geometry.disjoint(row['geometry'])]['wardNo'].tolist()]) , axis=1)
-
 print("done.",flush=True)
+
+print("Parsing slum clusters...",end='',flush=True)
+geoDFslums = gpd.read_file("data/base/mumbai/slumClusters.geojson")
+wardslums = [[] for _ in range(len(geoDF))]
+
+for i in range(len(geoDFslums)):
+    for j in range(len(geoDF)):
+        if geoDFslums["geometry"][i].intersects(geoDF["geometry"][j]):
+            wardslums[j].append(i)
+print("done.",flush=True)
+
 
 def sampleRandomLatLong(wardIndex):
     #I'm not sure why the order is longitude followed by latitude
@@ -80,6 +92,30 @@ def sampleRandomLatLong(wardIndex):
         if MultiPolygon(geoDF['geometry'][wardIndex]).contains(point):
             return (lat,lon)
 
+def sampleRandomLatLong_s(wardIndex,slumflag):
+    #slumflag = 1 => get point in slum
+    
+    #I'm not sure why the order is longitude followed by latitude
+    (lon1,lat1,lon2,lat2) = geoDF['wardBounds'][wardIndex]
+    attempts = 0
+    while attempts<30:
+        attempts+=1
+        lat = random.uniform(lat1,lat2)
+        lon = random.uniform(lon1,lon2)
+        point = Point(lon,lat)
+        if MultiPolygon(geoDF['geometry'][wardIndex]).contains(point):
+            for i in wardslums[wardIndex]:
+                if geoDFslums["geometry"][i].contains(point):
+                    if slumflag==1:
+                        return (lat,lon)
+                else:
+                    if slumflag==0:
+                        return(lat,lon)
+    #Just sample a random point in the ward if unsuccessful
+    #print("Gave up on sampleRandomLatLong_s with ",wardIndex,slumflag)
+    return sampleRandomLatLong(wardIndex)
+        
+        
 def distance(lat1, lon1, lat2, lon2):
     radius = 6371 # km
 
@@ -215,7 +251,7 @@ for wardIndex in range(nwards):
         s = sampleHouseholdSize()
         h["size"]=s
         currnonslumwpop+=s
-        (lat,lon) = sampleRandomLatLong(wardIndex)
+        (lat,lon) = sampleRandomLatLong_s(wardIndex,0)
         h["lat"] = lat
         h["lon"] = lon
         houses.append(h)
@@ -230,7 +266,7 @@ for wardIndex in range(nwards):
         s = int(sampleHouseholdSize() * slum_householdsize_scalefactor)
         h["size"]=s
         currslumwpop+=s
-        (lat,lon) = sampleRandomLatLong(wardIndex)
+        (lat,lon) = sampleRandomLatLong_s(wardIndex,1)
         h["lat"] = lat
         h["lon"] = lon
         houses.append(h)
@@ -301,7 +337,7 @@ for h in houses:
         #initialising most stuff to None
         p["employed"]=None
         p["workplace"]=None
-        p["workplaceType"]=None
+        p["workplaceType"]=0
         p["school"]=None
 
         if age<=15:
@@ -424,7 +460,7 @@ for wardIndex in range(nwards):
     while len(slum_schoolers[wardIndex])>0:
         s = {"ID":sid} #capitalised in the previous code so keeping it so
         s["wardIndex"]=wardIndex
-        (lat,lon) = sampleRandomLatLong(wardIndex)
+        (lat,lon) = sampleRandomLatLong_s(wardIndex,1)
         s["lat"] = lat
         s["lon"] = lon
         s["slum"]=1
@@ -443,7 +479,7 @@ for wardIndex in range(nwards):
     while len(nonslum_schoolers[wardIndex])>0:
         s = {"ID":sid} #capitalised in the previous code so keeping it so
         s["wardIndex"]=wardIndex
-        (lat,lon) = sampleRandomLatLong(wardIndex)
+        (lat,lon) = sampleRandomLatLong_s(wardIndex,0)
         s["lat"] = lat
         s["lon"] = lon
         s["slum"]=0

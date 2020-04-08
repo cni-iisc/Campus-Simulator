@@ -17,6 +17,8 @@ import argparse
 import os
 import sys
 
+ODmatrixflag = 1
+
 interactive = 0
 default_miniPop = 100000
 default_ibasepath = 'data/base/mumbai/'
@@ -28,14 +30,17 @@ if interactive:
     obasepath = default_obasepath
 else:
     my_parser = argparse.ArgumentParser(description='Create mini-city for COVID-19 simulation')
-    my_parser.add_argument('-n', help='target population', default=default_miniPop)
-    my_parser.add_argument('-i', help='input folder', default=default_ibasepath)
-    my_parser.add_argument('-o', help='output folder', default=default_obasepath)
+    my_parser.add_argument('-n', type=int,help='target population (def:'+str(default_miniPop)+')', default=default_miniPop)
+    my_parser.add_argument('-i', help='input folder (def:'+default_ibasepath+')', default=default_ibasepath)
+    my_parser.add_argument('-o', help='output folder (def:'+default_obasepath+')', default=default_obasepath)
     args = my_parser.parse_args()
     miniPop = args.n
     ibasepath = args.i
+    if ibasepath[-1]!='/':
+        ibasepath = ibasepath + '/'
     obasepath = args.o
-
+    if obasepath[-]!='/':
+        obasepath = obasepath + '/'
 
 citygeojsonfile  = ibasepath+"city.geojson"
 demographicsfile = ibasepath+"demographics_2011.csv"
@@ -304,6 +309,8 @@ homeworkmatrix = [[0.3409,0.0682,0.0491,0.1800,0.2019,0.0169,0.0182,0.0118,0.013
 [0.0649,0.0130,0.0093,0.0343,0.0384,0.0254,0.0273,0.0178,0.0195,0.0166,0.0142,0.0304,0.0287,0.0094,0.0191,0.0115,0.0845,0.0266,0.0340,0.0696,0.0251,0.0248,0.2080,0.1475],
 [0.0649,0.0130,0.0093,0.0343,0.0384,0.0254,0.0273,0.0178,0.0195,0.0166,0.0142,0.0304,0.0287,0.0094,0.0191,0.0115,0.0845,0.0266,0.0340,0.0696,0.0251,0.0248,0.2080,0.1475]]
 
+if ODmatrixflag==0:
+    homeworkmatrix = [[(1/nwards) for _ in range(nwards)] for _ in range(nwards)]
 
 # In[ ]:
 

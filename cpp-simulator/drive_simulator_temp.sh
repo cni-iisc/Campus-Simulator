@@ -56,3 +56,7 @@ do
 	echo "*****************"
 	echo "*****************"
 done;
+
+echo "Now plotting consolidated plots for all interventions"
+python plot_all_interventions.py "${output_directory_base}"
+

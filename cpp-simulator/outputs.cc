@@ -3,7 +3,41 @@
 #include <fstream>
 #include <iostream>
 #include <string>
+#include <cassert>
 using namespace std;
+
+
+string intervention_rep(Intervention i){
+  switch(i){
+  case Intervention::no_intervention:
+	return "no_intervention";
+	break;
+  case Intervention::case_isolation:
+	return "case_isolation";
+	break;
+  case Intervention::home_quarantine:
+	return "home_quarantine";
+	break;
+  case Intervention::lockdown:
+	return "lockdown";
+	break;
+  case Intervention::case_isolation_and_home_quarantine:
+	return "case_isolation_and_home_quarantine";
+	break;
+  case Intervention::case_isolation_and_home_quarantine_sd_70_plus:
+	return "case_isolation_and_home_quarantine_sd_70_plus";
+	break;
+  case Intervention::lockdown_21_ci_hq_sd_70_plus_21_ci:
+	return "lockdown_21_ci_hq_sd_70_plus_21_ci";
+	break;
+  case Intervention::lockdown_21:
+	return "lockdown_21";
+	break;
+  default:
+	assert(false);
+	break;
+  }
+}
 
 const string CSV_TERM = "\n";
 const char CSV_SEP = ',';
@@ -96,7 +130,11 @@ gnuplot::gnuplot(const std::string& output_directory){
   fout << "set key autotitle columnhead" << std::endl;
   fout << "set term png" << std::endl;
   fout << "set termoption noenhanced" << std::endl;
-  html_out << "<html>\n<head><title>Plots</title></head>\n<body>\n";
+  auto intervention = intervention_rep(GLOBAL.INTERVENTION);
+  html_out << "<html>\n<head><title>Plots: Intervention = "
+		   << intervention
+		   << "</title></head>\n<body>\n"
+	       << "<h1>Intervention = " << intervention << "</h1>\n";
 }
 
 void gnuplot::plot_data(const string& name){

@@ -112,10 +112,10 @@ void update_infection(agent& node, int cur_time){
 	  node.infection_status = Progression::recovered;//move to recovered
 	  node.infective = false;
 	}
-	node.lambda_h = update_individual_lambda_h(node);
-	node.lambda_w = update_individual_lambda_w(node);
-	node.lambda_c = update_individual_lambda_c(node);
   }
+  node.lambda_h = update_individual_lambda_h(node);
+  node.lambda_w = update_individual_lambda_w(node);
+  node.lambda_c = update_individual_lambda_c(node);
 }
 
 void update_all_kappa(vector<agent>& nodes, vector<house>& homes, vector<workplace>& workplaces, vector<community>& communities, int cur_time){

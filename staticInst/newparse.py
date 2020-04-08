@@ -39,7 +39,7 @@ else:
     if ibasepath[-1]!='/':
         ibasepath = ibasepath + '/'
     obasepath = args.o
-    if obasepath[-]!='/':
+    if obasepath[-1]!='/':
         obasepath = obasepath + '/'
 
 citygeojsonfile  = ibasepath+"city.geojson"

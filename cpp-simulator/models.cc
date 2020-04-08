@@ -56,7 +56,7 @@ double f_kernel(double dist){
   double b = 3.8;
   //both values are for Thailand, until we get a fit for India
   //Same as in the JS file
-  return 1/(1 + pow(dist/a,b));
+  return 1.0/(1.0 + pow(dist/a,b));
 }
 
 // Absenteeism parameter. This may depend on the workplace type.
@@ -67,17 +67,17 @@ double psi_T(const agent& node, double cur_time){
 	}
 	double PSI_THRESHOLD = GLOBAL.SIM_STEPS_PER_DAY;
 	double time_since_infection = cur_time - node.time_of_infection;
-	double scale_factor = 0.5;
-	if(node.workplace_type == WorkplaceType::school){
-	  scale_factor = 0.1;  //school
-	}
-	else if(node.workplace_type == WorkplaceType::office){
-	  scale_factor = 0.5;  //office
-	}
 	if(time_since_infection < PSI_THRESHOLD){
 	  return 0;
 	}
 	else{
+	  double scale_factor = 0.5;
+	  if(node.workplace_type == WorkplaceType::school){
+		scale_factor = 0.1;  //school
+	  }
+	  else if(node.workplace_type == WorkplaceType::office){
+		scale_factor = 0.5;  //office
+	  }
 	  return scale_factor;
 	}
 }

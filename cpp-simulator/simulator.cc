@@ -8,6 +8,12 @@ using namespace std;
 #include "interventions.h"
 #include "updates.h"
 
+#ifdef DEBUG
+#include <iostream>
+#include <cstdlib>
+using std::cerr;
+#endif
+
 
 map<string, matrix<count_type>> run_simulation(){
   auto homes = init_homes();

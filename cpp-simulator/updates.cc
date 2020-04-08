@@ -1,6 +1,13 @@
 #include "updates.h"
 #include "interventions.h"
 
+#ifdef DEBUG
+#include <iostream>
+#include <cstdlib>
+#include <algorithm>
+using std::cerr;
+#endif
+
 double update_individual_lambda_h(const agent& node){
   return (node.infective?1.0:0.0)
 	* node.kappa_T
@@ -43,13 +50,13 @@ void update_infection(agent& node, int cur_time){
 	update_lambda_stats(node);
   }
   else if(node.infection_status==Progression::exposed
-		  && (cur_time - node.time_of_infection
+		  && (double(cur_time) - node.time_of_infection
 			  > node.incubation_period)){
 	node.infection_status = Progression::infective; //move to infective state
 	node.infective = true;
   }
   else if(node.infection_status==Progression::infective
-		  && (cur_time - node.time_of_infection
+		  && (double(cur_time) - node.time_of_infection
 			  > (node.incubation_period
 				 + node.asymptomatic_period))){
 	if(bernoulli(GLOBAL.SYMPTOMATIC_FRACTION)){
@@ -62,7 +69,7 @@ void update_infection(agent& node, int cur_time){
 	}
   }
   else if(node.infection_status==Progression::symptomatic
-		  && (cur_time - node.time_of_infection
+		  && (double(cur_time) - node.time_of_infection
 			  > (node.incubation_period
 				 + node.asymptomatic_period
 				 + node.symptomatic_period))){
@@ -76,7 +83,7 @@ void update_infection(agent& node, int cur_time){
 	}
   }
   else if(node.infection_status==Progression::hospitalised
-		  && (cur_time - node.time_of_infection
+		  && (double(cur_time) - node.time_of_infection
 			  > (node.incubation_period
 				 + node.asymptomatic_period
 				 + node.symptomatic_period
@@ -91,7 +98,7 @@ void update_infection(agent& node, int cur_time){
 	}
   }
   else if(node.infection_status==Progression::critical
-		  && (cur_time - node.time_of_infection
+		  && (double(cur_time) - node.time_of_infection
 			  > (node.incubation_period
 				 + node.asymptomatic_period
 				 + node.symptomatic_period
@@ -144,7 +151,7 @@ void update_all_kappa(vector<agent>& nodes, vector<house>& homes, vector<workpla
 
 double updated_lambda_w_age_independent(const vector<agent>& nodes, const workplace& workplace){
   double sum_value = 0;
-  for (int i=0; i < workplace.individuals.size(); ++i){
+  for (count_type i=0; i < workplace.individuals.size(); ++i){
 	sum_value += nodes[workplace.individuals[i]].lambda_w;
   }
   return workplace.scale*sum_value;
@@ -153,7 +160,7 @@ double updated_lambda_w_age_independent(const vector<agent>& nodes, const workpl
 
 double updated_lambda_h_age_independent(const vector<agent>& nodes, const house& home){
   double sum_value = 0;
-  for (int i=0; i<home.individuals.size(); ++i){
+  for (count_type i=0; i<home.individuals.size(); ++i){
 	sum_value += nodes[home.individuals[i]].lambda_h;
   }
   return home.scale*sum_value;
@@ -189,17 +196,18 @@ void update_lambdas(agent&node, const vector<house>& homes, const vector<workpla
 
 double updated_lambda_c_local(const vector<agent>& nodes, const community& community){
   double sum_value = 0;
-  for(int i = 0; i < community.individuals.size(); ++i){
+  for(count_type i = 0; i < community.individuals.size(); ++i){
 	sum_value += nodes[community.individuals[i]].lambda_c;
   }
+
   return community.scale*sum_value;
 }
 
 void update_lambda_c_global(vector<community>& communities, const matrix<double>& community_distance_matrix){
-  for (int c1 = 0; c1 < communities.size(); ++c1){
+  for (count_type c1 = 0; c1 < communities.size(); ++c1){
 	double num = 0;
 	double denom = 0;
-	for (int c2 = 0; c2 < communities.size(); ++c2){
+	for (count_type c2 = 0; c2 < communities.size(); ++c2){
 	  num += f_kernel(community_distance_matrix[c1][c2])
 		* communities[c2].lambda_community;
 	  denom += f_kernel(community_distance_matrix[c1][c2]);
@@ -212,7 +220,7 @@ void update_lambda_c_global(vector<community>& communities, const matrix<double>
 casualty_stats get_infected_community(const vector<agent>& nodes, const community& community){
   casualty_stats stat;
   
-  for (int i=0; i<community.individuals.size(); i++){
+  for (count_type i=0; i<community.individuals.size(); ++i){
 	if (nodes[community.individuals[i]].infection_status==Progression::exposed) {stat.exposed +=1; }
 	if (nodes[community.individuals[i]].infection_status==Progression::recovered) {stat.recovered += 1;}
 	if (nodes[community.individuals[i]].infection_status==Progression::hospitalised) {stat.hospitalised += 1;}

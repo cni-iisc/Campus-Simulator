@@ -42,7 +42,7 @@ vector<house> init_homes(){
   vector<house> homes(size);
   GLOBAL.num_homes = size;
 
-  int index = 0;
+  count_type index = 0;
   for (auto &elem: houseJSON.GetArray()){
 	homes[index].set(elem["lat"].GetDouble(),
 					 elem["lon"].GetDouble(),
@@ -65,7 +65,7 @@ vector<workplace> init_workplaces() {
   auto size = wp_size +  school_size;
   vector<workplace> wps(size);
 
-  int index = 0;
+  count_type index = 0;
   // schools come first followed by workspaces, as in the JSON version
   for (auto &elem: schoolJSON.GetArray()){
 	wps[index].set(elem["lat"].GetDouble(),
@@ -92,7 +92,7 @@ vector<community> init_community() {
 
   vector<community> communities(size);
 
-  int index = 0;
+  count_type index = 0;
   // schools come first followed by workspaces, as in the JSON version
   for (auto &elem: comJSON.GetArray()){
 	communities[index].set(elem["lat"].GetDouble(),
@@ -120,7 +120,7 @@ vector<double> compute_prob_infection_given_community(double infection_probabili
 	const rapidjson::Value& quar_array = fracQuarantinesJSON.GetArray();
 	const rapidjson::Value& frac_array = fracPopJSON.GetArray();
 	vector<double> prob_infec_given_community(num_communities);
-	for(int index = 0; index < num_communities; ++index){
+	for(count_type index = 0; index < num_communities; ++index){
 	  prob_infec_given_community[index] =
 		infection_probability
 		* quar_array[index]["fracQuarantined"].GetDouble()
@@ -139,10 +139,8 @@ vector<agent> init_nodes(){
   vector<agent> nodes(size);
   auto community_infection_prob = compute_prob_infection_given_community(GLOBAL.INIT_FRAC_INFECTED, GLOBAL.USE_SAME_INFECTION_PROB_FOR_ALL_WARDS);
 
-  int i = 0;
-#ifdef DEBUG
-  count_type __infected__ = 0;
-#endif
+  count_type i = 0;
+
   for (auto &elem: indivJSON.GetArray()){
  	nodes[i].loc = location{elem["lat"].GetDouble(),
 							elem["lon"].GetDouble()};
@@ -188,16 +186,13 @@ vector<agent> init_nodes(){
 #ifdef DEBUG
 	assert(elem["wardNo"].IsInt());
 #endif
-	int community = elem["wardNo"].GetInt() - 1;
+	count_type community = elem["wardNo"].GetInt() - 1;
 	//minus 1 for 0-based indexing.  POSSIBLE BUG: Might need to use
 	//"wardIndex" instead, because that is the one actually sent by
 	//the generator scripts.
 	nodes[i].community = community;
 	if(bernoulli(community_infection_prob[community])){
 	  nodes[i].infection_status = Progression::exposed;
-#ifdef DEBUG
-	  cerr << ++__infected__ << " Infection probability: " << community_infection_prob[community] <<  "\n";
-#endif
 	} else {
 	  nodes[i].infection_status = Progression::susceptible;
 	}
@@ -231,9 +226,6 @@ vector<agent> init_nodes(){
 	++i;
   }
   assert(i == GLOBAL.num_people);
-#ifdef DEBUG
-  cerr << "Initially infected: " << __infected__ << "\n";
-#endif
   return nodes;
 }
 
@@ -242,8 +234,9 @@ matrix<double> compute_community_distances(const vector<community>& communities)
   const rapidjson::Value& mat = wardDistJSON.GetArray();
   auto size = mat.Size();
   matrix<double> dist_matrix(size, vector<double>(size));
-  for(int i = 0; i < size; ++i){
-	for(int j = i + 1; j < size; ++j){
+  for(count_type i = 0; i < size; ++i){
+	dist_matrix[i][i] = 0;
+	for(count_type j = i + 1; j < size; ++j){
 	  dist_matrix[i][j] = mat[i][to_string(j + 1).c_str()].GetDouble();
 	  dist_matrix[j][i] = dist_matrix[i][j];
 	}
@@ -253,7 +246,7 @@ matrix<double> compute_community_distances(const vector<community>& communities)
 
 void assign_individual_home_community(vector<agent>& nodes, vector<house>& homes, vector<workplace>& workplaces, vector<community>& communities){
   //Assign individuals to homes, workplace, community
-  for(int i = 0; i < nodes.size(); ++i){
+  for(count_type i = 0; i < nodes.size(); ++i){
 	int home = nodes[i].home;
 	homes[home].individuals.push_back(i);
 	 //No checking for null as all individuals have a home
@@ -271,7 +264,7 @@ void assign_individual_home_community(vector<agent>& nodes, vector<house>& homes
 
 // Compute scale factors for each home, workplace and community. Done once at the beginning.
 void compute_scale_homes(vector<house>& homes){
-  for (int w = 0; w < homes.size(); ++w){
+  for (count_type w = 0; w < homes.size(); ++w){
 	if(homes[w].individuals.size()==0){
 	  homes[w].scale = 0;
 	} else {
@@ -283,11 +276,11 @@ void compute_scale_homes(vector<house>& homes){
 }
 
 void compute_scale_workplaces(vector<workplace>& workplaces){
-  double beta_workplace;
-  for (int w=0; w < workplaces.size(); ++w) {
+  for (count_type w=0; w < workplaces.size(); ++w) {
 	if(workplaces[w].individuals.size()==0){
 	  workplaces[w].scale = 0;
 	} else {
+	  double beta_workplace = 0;
 	  if(workplaces[w].workplace_type == WorkplaceType::office){
 		beta_workplace = GLOBAL.BETA_W; //workplace
 	  } else if (workplaces[w].workplace_type == WorkplaceType::school){
@@ -301,7 +294,7 @@ void compute_scale_workplaces(vector<workplace>& workplaces){
 }
 
 void compute_scale_communities(const vector<agent>& nodes, vector<community>& communities){
-  for (int w=0; w < communities.size(); ++w) {
+  for (count_type w=0; w < communities.size(); ++w) {
 	double sum_value = 0;
 	for (auto indiv: communities[w].individuals){
 	  sum_value += nodes[indiv].funct_d_ck;
@@ -310,8 +303,7 @@ void compute_scale_communities(const vector<agent>& nodes, vector<community>& co
 	  communities[w].scale = 0;
 	}
 	else communities[w].scale = GLOBAL.BETA_C
-		   * communities[w].Q_c
-		   / sum_value;
+		   * communities[w].Q_c / sum_value;
   }
 }
 

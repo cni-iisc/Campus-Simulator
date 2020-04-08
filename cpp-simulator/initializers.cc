@@ -224,7 +224,7 @@ vector<agent> init_nodes(){
 	//never set to infective, so the above line would be superfluous!
 
 	//Travel
-	nodes[i].travels = bernoulli(GLOBAL.P_TRAIN);
+	nodes[i].has_to_travel = bernoulli(GLOBAL.P_TRAIN);
 
 	//Does the individual live in a slum?  In that case we need to
 	//scale the contribution to their infection rates by a factor.

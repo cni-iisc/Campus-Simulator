@@ -239,14 +239,22 @@ struct agent{
 
 
   //Transporation
-  bool travels = false; //does the agent take a train
+  bool has_to_travel = false; //does the agent take a train to go to
+							  //work?
   double commute_distance = 0; //in km
 
   //Multiplication factor for high population density areas, such as slums
   double hd_area_factor = 1.0;
   
   agent(){}
-
+  // Is the agent curently traveling?
+  inline bool travels() const {
+  return has_to_travel
+	&& !(quarantined
+		 || infection_status == Progression::hospitalised
+		 || infection_status == Progression::critical
+		 || infection_status == Progression::dead);
+  }
 };
 
 

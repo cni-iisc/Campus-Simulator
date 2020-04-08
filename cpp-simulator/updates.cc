@@ -189,16 +189,22 @@ double updated_lambda_h_age_independent(const vector<agent>& nodes, const house&
 }
 
 double updated_travel_fraction(const vector<agent>& nodes){
-  double num = 0, denom = 0;
+  double infected_distance = 0, total_distance = 0;
+  count_type actual_travellers = 0, usual_travellers = 0;
   for(const auto& node: nodes){
-	if(node.travels && !node.quarantined){
-	  denom += node.commute_distance;
+	if(node.has_to_travel){
+	  ++usual_travellers;
+	}
+	if(node.travels()){
+	  ++actual_travellers ;
+	  total_distance += node.commute_distance;
 	  if(node.infective){
-		num += node.commute_distance;
+		infected_distance += node.commute_distance;
 	  }
 	}
   }
-  return num/denom;
+  return (infected_distance/total_distance)
+	* double(actual_travellers)/double(usual_travellers);
 }
 
 
@@ -230,7 +236,7 @@ void update_lambdas(agent&node, const vector<house>& homes, const vector<workpla
 						   //density area, eg, a slum
   
   //Travel only happens at "odd" times, twice a day
-  if((cur_time % 2) && node.travels){
+  if((cur_time % 2) && node.travels()){
 	node.lambda_incoming[3] = GLOBAL.BETA_TRAVEL
 	  * node.commute_distance
 	  * travel_fraction;

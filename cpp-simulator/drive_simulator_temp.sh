@@ -23,7 +23,7 @@ do
 		mkdir -p "${output_directory}";
 	fi;
 	echo "Output will be genrerated for this intervention in ${output_directory}."
-	command="time ./drive_simulator.exe \
+	command="time ./drive_simulator \
 	 $NUM_DAYS \ $INIT_FRAC_INFECTED \ $INCUBATION_PERIOD \ $MEAN_ASYMPTOMATIC_PERIOD \
 	 $MEAN_SYMPTOMATIC_PERIOD \
 	 $SYMPTOMATIC_FRACTION \

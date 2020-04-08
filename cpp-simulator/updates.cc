@@ -188,8 +188,23 @@ double updated_lambda_h_age_independent(const vector<agent>& nodes, const house&
   // Populate it afterwards...
 }
 
-void update_lambdas(agent&node, const vector<house>& homes, const vector<workplace>& workplaces, const vector<community>& communities, int cur_time){
-  node.lambda_incoming={0,0,0};
+double updated_travel_fraction(const vector<agent>& nodes){
+  double num = 0, denom = 0;
+  for(const auto& node: nodes){
+	if(node.travels && !node.quarantined){
+	  denom += node.commute_distance;
+	  if(node.infective){
+		num += node.commute_distance;
+	  }
+	}
+  }
+  return num/denom;
+}
+
+
+void update_lambdas(agent&node, const vector<house>& homes, const vector<workplace>& workplaces, const vector<community>& communities, double travel_fraction, int cur_time){
+  node.lambda_incoming={0,0,0,0};
+  //Contributions from home, workplace, community, and travel
 
   //No null check for home as every agent has a home
   node.lambda_incoming[0] = node.kappa_H_incoming
@@ -209,9 +224,18 @@ void update_lambdas(agent&node, const vector<house>& homes, const vector<workpla
 	* node.funct_d_ck
 	* communities[node.community].lambda_community_global;
 
+  //Travel only happens at "odd" times, twice a day
+  if((cur_time % 2) && node.travels){
+	node.lambda_incoming[3] = GLOBAL.BETA_TRAVEL
+	  * node.commute_distance
+	  * travel_fraction;
+  }
+	 
+
   node.lambda = node.lambda_incoming[0]
 	+ node.lambda_incoming[1]
-	+ node.lambda_incoming[2];
+	+ node.lambda_incoming[2]
+	+ node.lambda_incoming[3];
 }
 
 

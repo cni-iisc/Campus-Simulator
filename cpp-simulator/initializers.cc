@@ -223,6 +223,9 @@ vector<agent> init_nodes(){
 	//POSSIBLE BUG: In the JS code, and here, infection_status is
 	//never set to infective, so the above line would be superfluous!
 
+	//Travel
+	nodes[i].travels = bernoulli(GLOBAL.P_TRAIN);
+	
 	++i;
   }
   assert(i == GLOBAL.num_people);
@@ -256,6 +259,12 @@ void assign_individual_home_community(vector<agent>& nodes, vector<house>& homes
 	int workplace = nodes[i].workplace;
 	if(workplace != WORKPLACE_HOME){
 	  workplaces[workplace].individuals.push_back(i);
+
+	  //Since the individual is not home_bound, compute their
+	  //commute_distance
+	  nodes[i].commute_distance
+		= earth_distance(workplaces[workplace].loc,
+						 homes[home].loc);
 	}
 	//No checking for null as all individuals have a community/ward
 	communities[nodes[i].community].individuals.push_back(i);

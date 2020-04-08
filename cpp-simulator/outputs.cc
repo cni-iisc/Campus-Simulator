@@ -118,6 +118,11 @@ void output_global_params(const string& output_dir){
 
   fout << "ALPHA: " << GLOBAL.ALPHA << ";" << endl; 
 
+  //Transport
+  fout << "BETA_TRAVEL: " << GLOBAL.BETA_TRAVEL << ";" << endl;
+  fout << "P_TRAIN: " << GLOBAL.P_TRAIN << ";" << endl;
+
+  
   fout << "USE_SAME_INFECTION_PROB_FOR_ALL_WARDS: " << GLOBAL.USE_SAME_INFECTION_PROB_FOR_ALL_WARDS << ";" << endl;
 
   fout.close();

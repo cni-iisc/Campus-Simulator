@@ -1,4 +1,5 @@
 #include "models.h"
+#include <cmath>
 
 std::mt19937 GENERATOR(1234);
 
@@ -82,3 +83,18 @@ double psi_T(const agent& node, double cur_time){
 	}
 }
 
+const double HALF_PI = atan2(1.0, 0.0);
+const double DEGREE = HALF_PI/90.0; //1 degree in radians
+const double EARTH_RADIUS = 6371.0; //in KM
+double earth_distance(location a, location b){
+  double delta_lon = DEGREE*(a.lon - b.lon);
+  double delta_lat = DEGREE*(a.lat - b.lat);
+
+  // The Haversine formula
+  double angle
+	= 2*asin(sqrt(pow(sin(delta_lat/2), 2)
+				  + (cos(DEGREE*a.lat)
+					 * cos(DEGREE*b.lat)
+					 * pow(sin(delta_lon/2), 2))));
+  return angle*EARTH_RADIUS;
+}

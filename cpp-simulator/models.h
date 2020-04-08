@@ -119,6 +119,10 @@ struct global_params{
   //exponent of number of people in a household while normalising
   //infection rate in a household.
 
+  //Transport
+  double BETA_TRAVEL = 1.0;// Validate against data
+  double P_TRAIN = 0.9;
+  //Probability with which an agent takes a train
 
   //Switches
   //If this is false, the file quarantinedPopulation.json is needed
@@ -148,8 +152,11 @@ double f_kernel(double dist);
 // End of global parameters
 
 struct location{
-  double lat, lon; //latitude and longitude
+  double lat, lon; //latitude and longitude, in degrees
 };
+
+//Distance between two locations given by their latitude and longitude, in degrees
+double earth_distance(location a, location b);
 
 enum class Progression {
    susceptible = 0,
@@ -227,6 +234,10 @@ struct agent{
   double kappa_C_incoming = 1;
   bool quarantined = false;
 
+
+  //Transporation
+  bool travels = false; //does the agent take a train
+  double commute_distance = 0; //in km
   
   agent(){}
 

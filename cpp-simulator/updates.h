@@ -10,6 +10,8 @@ double update_individual_lambda_w(const agent& node);
 
 double update_individual_lambda_c(const agent& node);
 
+//This function is currently a NO-OP Its purpose is to collect
+//addition intrincic data about the model.
 void update_lambda_stats(const agent& node);
 
 void update_infection(agent& node, int cur_time);
@@ -20,7 +22,9 @@ double updated_lambda_w_age_independent(const std::vector<agent>& nodes, const w
 
 double updated_lambda_h_age_independent(const std::vector<agent>& nodes, const house& home);
 
-void update_lambdas(agent&node, const std::vector<house>& homes, const std::vector<workplace>& workplaces, const std::vector<community>& communities, int cur_time);
+double updated_travel_fraction(const std::vector<agent>& nodes);
+
+void update_lambdas(agent&node, const std::vector<house>& homes, const std::vector<workplace>& workplaces, const std::vector<community>& communities, double travel_fraction, int cur_time);
 
 double updated_lambda_c_local(const std::vector<agent>& nodes, const community& community);
 

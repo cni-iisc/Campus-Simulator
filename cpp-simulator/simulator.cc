@@ -29,6 +29,8 @@ map<string, matrix<count_type>> run_simulation(){
   compute_scale_workplaces(workplaces);
   compute_scale_communities(nodes, communities);
 
+  double travel_fraction = 0;
+  
   //This needs to be done after the initilization.
   map<string, matrix<count_type>> plot_data =
 	{
@@ -89,9 +91,12 @@ map<string, matrix<count_type>> run_simulation(){
 
 	update_lambda_c_global(communities, community_dist_matrix);
 
+
+	travel_fraction = updated_travel_fraction(nodes);
+	
 #pragma omp parallel for
 	for (count_type j = 0; j < GLOBAL.num_people; ++j){
-	  update_lambdas(nodes[j], homes, workplaces, communities, time_step);
+	  update_lambdas(nodes[j], homes, workplaces, communities, travel_fraction, time_step);
 	}
 	
 	//Get data for this simulation step

@@ -16,12 +16,14 @@
 #include <cassert>
 #endif
 
-using namespace std;
+using std::string;
+using std::vector;
+using std::to_string;
 
 const string input_base = "../simulator/input_files/";
 
 auto readJSONFile(string filename){
-  ifstream ifs(filename, ifstream::in);
+  std::ifstream ifs(filename, std::ifstream::in);
   rapidjson::IStreamWrapper isw(ifs);
   rapidjson::Document d;
   d.ParseStream(isw);

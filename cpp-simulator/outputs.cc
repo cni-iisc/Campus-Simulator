@@ -4,8 +4,10 @@
 #include <iostream>
 #include <string>
 #include <cassert>
-using namespace std;
 
+using std::string;
+using std::vector;
+using std::endl;
 
 string intervention_rep(Intervention i){
   switch(i){
@@ -42,7 +44,7 @@ string intervention_rep(Intervention i){
 const string CSV_TERM = "\n";
 const char CSV_SEP = ',';
 void output_timed_csv(const vector<string>& field_row, const string& output_file, const matrix<count_type>& mat){
-  ofstream fout(output_file, ios::out);
+  std::ofstream fout(output_file, std::ios::out);
   fout << "Time" << CSV_SEP;
   auto end = field_row.end();
   auto penultimate = end - 1;
@@ -70,7 +72,7 @@ void output_timed_csv(const vector<string>& field_row, const string& output_file
 
 
 void output_global_params(const string& output_dir){
-  ofstream fout(output_dir + "/global_params.txt", ios::out);
+  std::ofstream fout(output_dir + "/global_params.txt", std::ios::out);
 
   fout << "COMPLIANCE_PROBABILITY: " << GLOBAL.COMPLIANCE_PROBABILITY << ";" << endl; 
   

@@ -8,6 +8,8 @@
 using std::cerr;
 #endif
 
+using std::vector;
+
 double update_individual_lambda_h(const agent& node){
   return (node.infective?1.0:0.0)
 	* node.kappa_T

@@ -1,6 +1,8 @@
 #include "models.h"
 #include "interventions.h"
 
+using std::vector;
+
 double kappa_T(const agent& node, double cur_time){
   double val = 0;
   if(!node.infective){

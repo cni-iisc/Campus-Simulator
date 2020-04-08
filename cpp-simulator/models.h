@@ -92,8 +92,10 @@ struct global_params{
   double INCUBATION_PERIOD_SHAPE = 2;
   double INCUBATION_PERIOD_SCALE = INCUBATION_PERIOD*SIM_STEPS_PER_DAY;// 2.29 days
 
-  double INFECTIOUSNESS_SHAPE = 1;
-  double INFECTIOUSNESS_SCALE = 1;
+  //POSSIBLE BUG: Both of these should be one according to the paper,
+  //but these are the values used in the JS simulator
+  double INFECTIOUSNESS_SHAPE = 0.25;
+  double INFECTIOUSNESS_SCALE = 4;  
 
   double SEVERITY_RATE = 0.5; //value used in sim.js
 

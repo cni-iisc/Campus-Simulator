@@ -11,6 +11,7 @@ BETA_H=0.47
 BETA_W=0.94
 BETA_C=0.47045
 BETA_S=1.88
+BETA_TRAVEL=10.0
 INTERVENTION=0
 output_directory_base="outputs/test_output"
 
@@ -34,6 +35,7 @@ do
 	 $BETA_W \
 	 $BETA_C \
 	 $BETA_S \
+     $BETA_TRAVEL \
 	 $INTERVENTION \
 	 $output_directory"
 

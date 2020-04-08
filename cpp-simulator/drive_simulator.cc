@@ -6,7 +6,7 @@
 #include <string>
 using namespace std;
 
-const int TOTAL_INPUT_ARGS = 15;
+const int TOTAL_INPUT_ARGS = 16;
   // 1: NUM_DAYS
   // 2: INIT_FRAC_INFECTED
   // 3: INCUBATION_PERIOD
@@ -20,8 +20,9 @@ const int TOTAL_INPUT_ARGS = 15;
   // 11: BETA_W
   // 12: BETA_C
   // 13: BETA_S
-  // 14: INTERVENTION
-  // 15: output directory
+  // 14: BETA_TRAVEL
+  // 15: INTERVENTION
+  // 16: output directory
   
 int main(int argc, char** argv){
   cout << "Number of arguments provided: " << argc << endl;
@@ -47,10 +48,11 @@ int main(int argc, char** argv){
   GLOBAL.BETA_W = stod(argv[11]);
   GLOBAL.BETA_C = stod(argv[12]);
   GLOBAL.BETA_S = stod(argv[13]);
+  GLOBAL.BETA_TRAVEL = stod(argv[14]);
+  
+  GLOBAL.INTERVENTION = static_cast<Intervention>(stoi(argv[15]));
 
-  GLOBAL.INTERVENTION = static_cast<Intervention>(stoi(argv[14]));
-
-  string output_dir(argv[15]);
+  string output_dir(argv[16]);
   
   auto plot_data = run_simulation();
 

@@ -120,7 +120,7 @@ struct global_params{
   //infection rate in a household.
 
   //Transport
-  double BETA_TRAVEL = 1.0;// Validate against data
+  double BETA_TRAVEL = 10.0;// Validate against data
   double P_TRAIN = 0.9;
   //Probability with which an agent takes a train
 
@@ -250,7 +250,7 @@ struct agent{
   // Is the agent curently traveling?
   inline bool travels() const {
   return has_to_travel
-	&& !(quarantined
+	&& !((quarantined && compliant)
 		 || infection_status == Progression::hospitalised
 		 || infection_status == Progression::critical
 		 || infection_status == Progression::dead);

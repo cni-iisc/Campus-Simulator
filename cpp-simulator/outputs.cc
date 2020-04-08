@@ -122,6 +122,8 @@ void output_global_params(const string& output_dir){
   fout << "BETA_TRAVEL: " << GLOBAL.BETA_TRAVEL << ";" << endl;
   fout << "P_TRAIN: " << GLOBAL.P_TRAIN << ";" << endl;
 
+  //Multiplicative fatcor for infection rates in high density areas
+  fout << "HD_AREA_FACTOR: " << GLOBAL.HD_AREA_FACTOR << ";" << endl;
   
   fout << "USE_SAME_INFECTION_PROB_FOR_ALL_WARDS: " << GLOBAL.USE_SAME_INFECTION_PROB_FOR_ALL_WARDS << ";" << endl;
 

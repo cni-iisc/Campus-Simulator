@@ -124,6 +124,9 @@ struct global_params{
   double P_TRAIN = 0.9;
   //Probability with which an agent takes a train
 
+  //Multiplicative fatcor for infection rates in high density areas
+  double HD_AREA_FACTOR = 2.0;
+  
   //Switches
   //If this is false, the file quarantinedPopulation.json is needed
   bool USE_SAME_INFECTION_PROB_FOR_ALL_WARDS = true;
@@ -238,6 +241,9 @@ struct agent{
   //Transporation
   bool travels = false; //does the agent take a train
   double commute_distance = 0; //in km
+
+  //Multiplication factor for high population density areas, such as slums
+  double hd_area_factor = 1.0;
   
   agent(){}
 

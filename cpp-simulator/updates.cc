@@ -208,7 +208,10 @@ void update_lambdas(agent&node, const vector<house>& homes, const vector<workpla
 
   //No null check for home as every agent has a home
   node.lambda_incoming[0] = node.kappa_H_incoming
-	* homes[node.home].age_independent_mixing;
+	* homes[node.home].age_independent_mixing
+	* node.hd_area_factor; //If the agent lives in a hig population
+						   //density area, eg, a slum
+  
   //FEATURE_PROPOSAL: make the mixing dependent on node.age_group;
   if(node.workplace != WORKPLACE_HOME) {
 	node.lambda_incoming[1] = node.kappa_W_incoming
@@ -222,8 +225,10 @@ void update_lambdas(agent&node, const vector<house>& homes, const vector<workpla
   node.lambda_incoming[2] = node.kappa_C_incoming
 	* node.zeta_a
 	* node.funct_d_ck
-	* communities[node.community].lambda_community_global;
-
+	* communities[node.community].lambda_community_global
+	* node.hd_area_factor; //If the agent lives in a hig population
+						   //density area, eg, a slum
+  
   //Travel only happens at "odd" times, twice a day
   if((cur_time % 2) && node.travels){
 	node.lambda_incoming[3] = GLOBAL.BETA_TRAVEL

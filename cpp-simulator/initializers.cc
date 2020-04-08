@@ -211,7 +211,7 @@ vector<agent> init_nodes(){
 
 	if(SEED_INFECTION_FROM_FILE){
 #ifdef DEBUG
-	  assert(elem["infection_status"].GetInt());
+	  assert(elem["infection_status"].IsInt());
 #endif
 	  nodes[i].infection_status = static_cast<Progression>(elem["infection_status"].GetInt());
 	  nodes[i].time_of_infection = (nodes[i].infection_status == Progression::exposed)?(-elem["time_since_infected"].GetDouble()):0;
@@ -225,7 +225,16 @@ vector<agent> init_nodes(){
 
 	//Travel
 	nodes[i].travels = bernoulli(GLOBAL.P_TRAIN);
-	
+
+	//Does the individual live in a slum?  In that case we need to
+	//scale the contribution to their infection rates by a factor.
+#ifdef DEBUG
+	assert(elem["slum"].IsInt());
+#endif
+	if(elem["slum"].GetInt()){
+	  nodes[i].hd_area_factor = GLOBAL.HD_AREA_FACTOR;
+	}
+	  
 	++i;
   }
   assert(i == GLOBAL.num_people);

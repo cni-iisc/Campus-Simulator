@@ -17,37 +17,44 @@ import argparse
 import os
 import sys
 
+ODmatrixflag = 1
 
-ibasepath = "data/base/mumbai/"
+interactive = 0
+default_miniPop = 100000
+default_ibasepath = 'data/base/mumbai/'
+default_obasepath = 'data/mumbai/'
+
+if interactive:
+    miniPop = 100000
+    ibasepath = default_ibasepath
+    obasepath = default_obasepath
+else:
+    my_parser = argparse.ArgumentParser(description='Create mini-city for COVID-19 simulation')
+    my_parser.add_argument('-n', type=int,help='target population (def:'+str(default_miniPop)+')', default=default_miniPop)
+    my_parser.add_argument('-i', help='input folder (def:'+default_ibasepath+')', default=default_ibasepath)
+    my_parser.add_argument('-o', help='output folder (def:'+default_obasepath+')', default=default_obasepath)
+    args = my_parser.parse_args()
+    miniPop = args.n
+    ibasepath = args.i
+    if ibasepath[-1]!='/':
+        ibasepath = ibasepath + '/'
+    obasepath = args.o
+    if obasepath[-1]!='/':
+        obasepath = obasepath + '/'
+
 citygeojsonfile  = ibasepath+"city.geojson"
 demographicsfile = ibasepath+"demographics_2011.csv"
 employmentfile   = ibasepath+"employment_2011.csv"
 householdfile    = ibasepath+"households_2011.csv"
 cityprofilefile  = ibasepath+"cityProfile.json"
 
-obasepath = "data/mumbai/"
-individualsjson  = obasepath+"individuals.json"
-housesjson       = obasepath+"houses.json"
-workplacesjson   = obasepath+"workplaces.json"
-schoolsjson      = obasepath+"schools.json"
-
+individualsjson        = obasepath+"individuals.json"
+housesjson             = obasepath+"houses.json"
+workplacesjson         = obasepath+"workplaces.json"
+schoolsjson            = obasepath+"schools.json"
 wardCentreDistancejson = obasepath+"wardCentreDistance.json"
 commonAreajson         = obasepath+"commonArea.json"
 fractionPopulationjson = obasepath+"fractionPopulation.json"
-
-interactive = 0
-
-if interactive:
-    miniPop = 100000
-else:
-    my_parser = argparse.ArgumentParser(description='Create mini-city for COVID-19 simulation')
-    my_parser.add_argument( 'n', action='store',
-                           type=int,
-                           nargs='?',
-                           help='target population',
-                           default=100000)
-    args = my_parser.parse_args()
-    miniPop = args.n
 
 #fixing for now
 slum_schoolsize_factor = 2
@@ -94,7 +101,7 @@ def sampleRandomLatLong(wardIndex):
 
 def sampleRandomLatLong_s(wardIndex,slumflag):
     #slumflag = 1 => get point in slum
-    
+
     #I'm not sure why the order is longitude followed by latitude
     (lon1,lat1,lon2,lat2) = geoDF['wardBounds'][wardIndex]
     attempts = 0
@@ -114,8 +121,8 @@ def sampleRandomLatLong_s(wardIndex,slumflag):
     #Just sample a random point in the ward if unsuccessful
     #print("Gave up on sampleRandomLatLong_s with ",wardIndex,slumflag)
     return sampleRandomLatLong(wardIndex)
-        
-        
+
+
 def distance(lat1, lon1, lat2, lon2):
     radius = 6371 # km
 
@@ -130,7 +137,7 @@ def distance(lat1, lon1, lat2, lon2):
 def getCommunityCenterDistance(lat,lon,wardIndex):
     (latc,lonc) = geoDF['wardCentre'][wardIndex]
     return distance(lat,lon,latc,lonc)
-                                                        
+
 
 
 # In[ ]:
@@ -247,7 +254,7 @@ for wardIndex in range(nwards):
         h["id"]=hid
         h["wardIndex"]=wardIndex
         h["slum"]=0
-        
+
         s = sampleHouseholdSize()
         h["size"]=s
         currnonslumwpop+=s
@@ -302,6 +309,8 @@ homeworkmatrix = [[0.3409,0.0682,0.0491,0.1800,0.2019,0.0169,0.0182,0.0118,0.013
 [0.0649,0.0130,0.0093,0.0343,0.0384,0.0254,0.0273,0.0178,0.0195,0.0166,0.0142,0.0304,0.0287,0.0094,0.0191,0.0115,0.0845,0.0266,0.0340,0.0696,0.0251,0.0248,0.2080,0.1475],
 [0.0649,0.0130,0.0093,0.0343,0.0384,0.0254,0.0273,0.0178,0.0195,0.0166,0.0142,0.0304,0.0287,0.0094,0.0191,0.0115,0.0845,0.0266,0.0340,0.0696,0.0251,0.0248,0.2080,0.1475]]
 
+if ODmatrixflag==0:
+    homeworkmatrix = [[(1/nwards) for _ in range(nwards)] for _ in range(nwards)]
 
 # In[ ]:
 
@@ -466,7 +475,7 @@ for wardIndex in range(nwards):
         s["slum"]=1
 
         size = int(sampleSchoolSize()*slum_schoolsize_factor)
-        
+
         i = 0
         while(i < size and len(slum_schoolers[wardIndex])>0):
             pid = slum_schoolers[wardIndex].pop(random.randrange(len(slum_schoolers[wardIndex])))
@@ -493,7 +502,7 @@ for wardIndex in range(nwards):
         schools.append(s)
         sid+=1
 
-        
+
 print("done.",flush=True)
 
 print("")
@@ -523,11 +532,11 @@ for i in range(nwards):
     w["totalPopulation"] = wardpop[i]
     w["fracPopulation"] = wardpop[i]/totalPop
     fractionPopulations.append(w)
-    
+
 wardCentreDistances = [ {"ID":i+1} for i in range(nwards)]
 for i in range(nwards):
     for j in range(nwards):
-        d = distance(commonAreas[i]["lat"],commonAreas[i]["lon"],commonAreas[j]["lat"],commonAreas[j]["lon"]) 
+        d = distance(commonAreas[i]["lat"],commonAreas[i]["lon"],commonAreas[j]["lat"],commonAreas[j]["lon"])
         wardCentreDistances[i][str(j+1)]=d
 
 
@@ -535,6 +544,9 @@ for i in range(nwards):
 
 
 print("Dumping to json files...",end='',flush=True)
+
+if not os.path.exists(obasepath):
+    os.makedirs(obasepath)
 
 f = open(individualsjson, "w")
 f.write(json.dumps(individuals))
@@ -575,11 +587,7 @@ f.write(json.dumps(wardCentreDistances))
 f.close
 print("wardCentreDistance.json) ... done.",flush=True)
 
-        
+
 
 
 # In[ ]:
-
-
-
-

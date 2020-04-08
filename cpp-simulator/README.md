@@ -44,9 +44,8 @@ with a message indicating success after a little while (~25s on my
 computer with 1,00,000 agents).
 
 The output can now be seen by using your favorite browser to open the
-`plots.html` file in the output directory you specified above.  There
-will be one ouput directory per intervention, containing the plots
-just for that intervention.  In addition, there will also be a top
-level directory with plots which plot the observable variables for all
-the interventions on the same plot.
+`plots.html` file in the output directories.
+
+	- There will be one ouput directory per intervention (inside the directory you specified), containing the plots just for that intervention.
+	- In addition, in the top level directory (the one you specified)q with plots which plot the observable variables for all the interventions on the same plot.
 

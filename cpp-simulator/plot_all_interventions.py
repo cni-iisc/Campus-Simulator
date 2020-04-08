@@ -22,7 +22,15 @@ for var_name in var_names:
     for INTERVENTION in range(0, 8):
         dfs[var_name].append(pandas.read_csv(Path(output_base, f"intervention_{INTERVENTION}", f"{var_name}.csv")))
 
-combined_dfs = {}
+
+html_out = open(Path(output_base, "plots.html"), "w")
+print("<html>\n"
+      "<head><title>Plots: All interventions</title></head>\n"
+      "<body>\n"
+      "  <h1>All interventions</h1>\n",
+      file = html_out
+)
+
 for var_name in var_names:
     df = dfs[var_name][0];
     df.rename(columns={var_name: intervention(0)}, inplace = True)
@@ -30,9 +38,13 @@ for var_name in var_names:
         df[intervention(i)] = dfs[var_name][i][var_name]
 
     ax = df.plot(x = "Time", title = var_name)
-    output_path = Path(output_base, f"{var_name}.png")
+    image_name =  f"{var_name}.png"
+    output_path = Path(output_base, image_name)
     print(f"Saving {var_name} plot in {output_path}", flush=True)
     ax.figure.savefig(output_path)
+    print("<p><img src=\"" + image_name + "\">\n",
+        file=html_out)
 
+html_out.close()
 
 

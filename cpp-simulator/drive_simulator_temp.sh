@@ -12,13 +12,19 @@ BETA_W=0.94
 BETA_C=0.47045
 BETA_S=1.88
 INTERVENTION=0
-output_directory="outputs/test_output"
+output_directory_base="outputs/test_output"
 
-command="time ./drive_simulator.exe \
-	 $NUM_DAYS \
-	 $INIT_FRAC_INFECTED \
-	 $INCUBATION_PERIOD \
-	 $MEAN_ASYMPTOMATIC_PERIOD \
+for INTERVENTION in `seq 0 7`;
+do
+	echo "Running with INTERVENTION=${INTERVENTION}..."
+	output_directory="${output_directory_base}/intervention_${INTERVENTION}"
+	if [ ! -d "${output_directory}" ];
+	then
+		mkdir -p "${output_directory}";
+	fi;
+	echo "Output will be genrerated for this intervention in ${output_directory}."
+	command="time ./drive_simulator.exe \
+	 $NUM_DAYS \ $INIT_FRAC_INFECTED \ $INCUBATION_PERIOD \ $MEAN_ASYMPTOMATIC_PERIOD \
 	 $MEAN_SYMPTOMATIC_PERIOD \
 	 $SYMPTOMATIC_FRACTION \
 	 $MEAN_HOSPITAL_REGULAR_PERIOD \
@@ -31,17 +37,22 @@ command="time ./drive_simulator.exe \
 	 $INTERVENTION \
 	 $output_directory"
 
-echo $command;
-if eval $command; then
-	echo "Simulation over."
-	cd $output_directory
-
-	command="${GPLOT_PATH}gnuplot gnuplot_script.gnuplot"
 	echo $command;
 	if eval $command; then
-		echo "Plots generated successfully."
+		echo "Simulation over for INTERVENTION=${INTERVENTION}."
+		cur=`pwd`;
+		cd $output_directory
+
+		command="${GPLOT_PATH}gnuplot gnuplot_script.gnuplot"
+		echo $command;
+		if eval $command; then
+			echo "Plots generated successfully for INTERVENTION=${INTERVENTION}."
+		fi;
+		cd "$cur";
+	else
+		echo "error with INTERVENTION=${INTERVENTION}: see above for output"
 	fi;
-else
-	echo "error: see above for output"
-	exit 1;
-fi;
+	echo "Done with INTERVENTION=${INTERVENTION}"
+	echo "*****************"
+	echo "*****************"
+done;

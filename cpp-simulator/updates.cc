@@ -39,15 +39,20 @@ void update_lambda_stats(const agent& node){}
 
 void update_infection(agent& node, int cur_time){
   int age_index = node.age_index;
-
+  bool transition = false;
   //console.log(1-Math.exp(-node['lambda']/SIM_STEPS_PER_DAY))
   ///TODO: Parametrise transition times
-  if (node.infection_status==Progression::susceptible
-	  && bernoulli(1-exp(-node.lambda/GLOBAL.SIM_STEPS_PER_DAY))){
-	node.infection_status = Progression::exposed; //move to exposed state
-	node.time_of_infection = cur_time;
-	node.infective = false;
-	update_lambda_stats(node);
+  if (node.infection_status==Progression::susceptible){
+	//#pragma omp critical
+	{
+	  transition = bernoulli(1-exp(-node.lambda/GLOBAL.SIM_STEPS_PER_DAY));
+	}
+	if(transition){
+	  node.infection_status = Progression::exposed; //move to exposed state
+	  node.time_of_infection = cur_time;
+	  node.infective = false;
+	  update_lambda_stats(node);
+	}
   }
   else if(node.infection_status==Progression::exposed
 		  && (double(cur_time) - node.time_of_infection
@@ -59,7 +64,11 @@ void update_infection(agent& node, int cur_time){
 		  && (double(cur_time) - node.time_of_infection
 			  > (node.incubation_period
 				 + node.asymptomatic_period))){
-	if(bernoulli(GLOBAL.SYMPTOMATIC_FRACTION)){
+	//#pragma omp critical
+	{
+	  transition = bernoulli(GLOBAL.SYMPTOMATIC_FRACTION);
+	}
+	if(transition){
 	  node.infection_status = Progression::symptomatic; //move to symptomatic
 	  node.infective = true;
 	}
@@ -73,7 +82,11 @@ void update_infection(agent& node, int cur_time){
 			  > (node.incubation_period
 				 + node.asymptomatic_period
 				 + node.symptomatic_period))){
-	if(bernoulli(STATE_TRAN[age_index][0])){
+	//#pragma omp critical
+	{
+	  transition = bernoulli(STATE_TRAN[age_index][0]);
+	}
+	if(transition){
 	  node.infection_status = Progression::hospitalised; //move to hospitalisation
 	  node.infective = false;
 	}
@@ -88,7 +101,11 @@ void update_infection(agent& node, int cur_time){
 				 + node.asymptomatic_period
 				 + node.symptomatic_period
 				 + node.hospital_regular_period))){
-	if(bernoulli(STATE_TRAN[age_index][1])){
+	//#pragma omp critical
+	{
+	  transition = bernoulli(STATE_TRAN[age_index][1]);
+	}
+	if(transition){
 	  node.infection_status = Progression::critical; //move to critical care
 	  node.infective = false;
 	}
@@ -104,7 +121,11 @@ void update_infection(agent& node, int cur_time){
 				 + node.symptomatic_period
 				 + node.hospital_regular_period
 				 + node.hospital_critical_period))){
-	if(bernoulli(STATE_TRAN[age_index][2])){
+	//#pragma omp critical
+	{
+	  transition = bernoulli(STATE_TRAN[age_index][2]);
+	}
+	if(transition){
 	  node.infection_status = Progression::dead;//move to dead
 	  node.infective = false;
 	}

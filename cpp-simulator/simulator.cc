@@ -48,7 +48,12 @@ map<string, matrix<count_type>> run_simulation(){
 
   for(count_type time_step = 0; time_step < GLOBAL.NUM_TIMESTEPS; ++time_step){
 
-#pragma omp parallel for
+	//#pragma omp parallel for
+	//
+	// Since update_infection uses a random number generator with
+	// global state, parallelizing this loop is not straightforward.
+	// Puttting the generator in a critical section can keep it
+	// correct, but slows down the code too much.
 	for(count_type j = 0; j < GLOBAL.num_people; ++j){
 	  update_infection(nodes[j], time_step);
 	  nodes[j].psi_T = psi_T(nodes[j], time_step);

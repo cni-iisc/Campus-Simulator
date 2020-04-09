@@ -81,7 +81,9 @@ print("done.",flush=True)
 
 # In[ ]:
 
-
+slum_flag = 0
+slumcluster_flag = 0
+slumpoints_precomputed = 0
 if os.path.exists(slumfracfile):
     print(slumfracfile,"exists... processing slum data",flush=True)
     slum_flag = 1
@@ -92,7 +94,10 @@ if os.path.exists(slumfracfile):
             if row[0]=='wardIndex':
                 continue
             slum_fractions.append(float(row[2]))
-
+    
+    if os.path.exists(ibasepath + 'slumpoints/0.csv'):
+        slumpoints_precomputed = 1
+    
     if os.path.exists(slumclusterfile):
         slumcluster_flag=1
         print("Slum clustter file found. Parsing slum clusters...",end='',flush=True)
@@ -112,65 +117,6 @@ else:
     slumcluster_flag=0
     print(slumfracfile,"does not exist... not processing slum data",flush=True)
 
-
-# In[ ]:
-
-
-def sampleRandomLatLong(wardIndex):
-    #I'm not sure why the order is longitude followed by latitude
-    (lon1,lat1,lon2,lat2) = geoDF['wardBounds'][wardIndex]
-    while True:
-        lat = random.uniform(lat1,lat2)
-        lon = random.uniform(lon1,lon2)
-        point = Point(lon,lat)
-        if MultiPolygon(geoDF['geometry'][wardIndex]).contains(point):
-            return (lat,lon)
-
-def sampleRandomLatLong_s(wardIndex,slumbit):
-    #slumbit = 0 => get point in nonslum
-    #slumbit = 1 => get point in slum
-    
-    if slumcluster_flag==0:
-        return sampleRandomLatLong(wardIndex)
-
-    #I'm not sure why the order is longitude followed by latitude
-    (lon1,lat1,lon2,lat2) = geoDF['wardBounds'][wardIndex]
-
-    attempts = 0
-    while attempts<30:
-        attempts+=1
-        lat = random.uniform(lat1,lat2)
-        lon = random.uniform(lon1,lon2)
-        point = Point(lon,lat)
-        if MultiPolygon(geoDF['geometry'][wardIndex]).contains(point):
-            for i in wardslums[wardIndex]:
-                if geoDFslums["geometry"][i].contains(point):
-                    if slumbit==1:
-                        return (lat,lon)
-                else:
-                    if slumbit==0:
-                        return(lat,lon)
-    #Just sample a random point in the ward if unsuccessful
-    #print("Gave up on sampleRandomLatLong_s with ",wardIndex,slumflag)
-    return sampleRandomLatLong(wardIndex)
-        
-        
-def distance(lat1, lon1, lat2, lon2):
-    radius = 6371 # km
-
-    dlat = math.radians(lat2-lat1)
-    dlon = math.radians(lon2-lon1)
-    a = math.sin(dlat/2) * math.sin(dlat/2) + math.cos(math.radians(lat1))         * math.cos(math.radians(lat2)) * math.sin(dlon/2) * math.sin(dlon/2)
-    c = 2 * math.atan2(math.sqrt(a), math.sqrt(1-a))
-    d = radius * c
-
-    return d
-
-def getCommunityCenterDistance(lat,lon,wardIndex):
-    #I'm not sure why the order is longitude followed by latitude
-    (lonc,latc) = geoDF['wardCentre'][wardIndex]
-    return distance(lat,lon,latc,lonc)
-                                                        
 
 
 # In[ ]:
@@ -272,7 +218,89 @@ else:
     mslumwardpop = [0]*nwards
     mnonslumwardpop = mwardpop.copy()
 
+# In[ ]:
+slumpoints=[[] for _ in range(nwards)]
+if slumpoints_precomputed:
+    print("Loading precomputed slum points...",end='',flush=True)
+    for i in range(nwards):
+        with open(ibasepath+'slumpoints/'+str(i)+'.csv', newline='') as csvfile:
+            reader = csv.reader(csvfile, delimiter=',')
+            for row in reader:
+                lat = float(row[0])
+                lon = float(row[1])
+                slumpoints[i].append((lat,lon))
+    print("done",flush=True)
 
+def sampleRandomLatLong(wardIndex):
+    #I'm not sure why the order is longitude followed by latitude
+    (lon1,lat1,lon2,lat2) = geoDF['wardBounds'][wardIndex]
+    while True:
+        lat = random.uniform(lat1,lat2)
+        lon = random.uniform(lon1,lon2)
+        point = Point(lon,lat)
+        if MultiPolygon(geoDF['geometry'][wardIndex]).contains(point):
+            return (lat,lon)
+
+def sampleRandomLatLong_s(wardIndex,slumbit):
+    #slumbit = 0 => get point in nonslum
+    #slumbit = 1 => get point in slum
+    
+    if slumcluster_flag==0:
+        return sampleRandomLatLong(wardIndex)
+
+    #I'm not sure why the order is longitude followed by latitude
+    (lon1,lat1,lon2,lat2) = geoDF['wardBounds'][wardIndex]
+
+    if slumpoints_precomputed:
+        if slumbit==1:
+            if len(slumpoints[wardIndex])==0:
+                return sampleRandomLatLong(wardIndex)
+            i = random.randint(0,len(slumpoints[wardIndex])-1)
+            return slumpoints[wardIndex][i]
+        else:
+            #Just going to return a random point in the ward
+            return sampleRandomLatLong(wardIndex)
+    
+    #If not precomputed, do rejection sampling
+    attempts = 0
+    while attempts<30:
+        attempts+=1
+        lat = random.uniform(lat1,lat2)
+        lon = random.uniform(lon1,lon2)
+        point = Point(lon,lat)
+        if MultiPolygon(geoDF['geometry'][wardIndex]).contains(point):
+            for i in wardslums[wardIndex]:
+                if geoDFslums["geometry"][i].contains(point):
+                    if slumbit==1:
+                        return (lat,lon)
+                else:
+                    if slumbit==0:
+                        return(lat,lon)
+    #Just sample a random point in the ward if unsuccessful
+    #print("Gave up on sampleRandomLatLong_s with ",wardIndex,slumflag)
+    return sampleRandomLatLong(wardIndex)
+        
+        
+def distance(lat1, lon1, lat2, lon2):
+    radius = 6371 # km
+
+    dlat = math.radians(lat2-lat1)
+    dlon = math.radians(lon2-lon1)
+    a = math.sin(dlat/2) * math.sin(dlat/2) + math.cos(math.radians(lat1))         * math.cos(math.radians(lat2)) * math.sin(dlon/2) * math.sin(dlon/2)
+    c = 2 * math.atan2(math.sqrt(a), math.sqrt(1-a))
+    d = radius * c
+
+    return d
+
+def getCommunityCenterDistance(lat,lon,wardIndex):
+    #I'm not sure why the order is longitude followed by latitude
+    (lonc,latc) = geoDF['wardCentre'][wardIndex]
+    return distance(lat,lon,latc,lonc)
+                                                        
+
+
+    
+    
 # In[ ]:
 
 

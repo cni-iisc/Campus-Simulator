@@ -18,6 +18,33 @@ HD_AREA_EXPONENT=0.3
 output_directory_base="outputs/test_output_timing"
 input_directory="../simulator/input_files"
 
+
+usage(){
+	echo "Usage: [ -i base_of_input_directory ] [ -o base_of_output_directory ]"
+}
+
+while getopts "hi:o:" option; do
+	case ${option} in
+		h)
+			usage;
+			exit 0;
+			;;
+		i)
+			input_directory=${OPTARG};
+			;;
+		o)
+			output_directory_base=${OPTARG};
+			;;
+		\?)
+			usage;
+			exit 1;
+			;;
+	esac;
+done;
+
+echo "Input directory is: ${input_directory}"
+echo "Output directory is: ${output_directory_base}"
+
 for INTERVENTION in `seq 0 7`;
 do
 	echo "Running with INTERVENTION=${INTERVENTION}..."

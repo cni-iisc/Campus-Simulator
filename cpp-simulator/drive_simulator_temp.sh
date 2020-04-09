@@ -13,6 +13,8 @@ BETA_C=0.47045
 BETA_S=1.88
 BETA_TRAVEL=10.0
 INTERVENTION=0
+HD_AREA_FACTOR=2.0
+HD_AREA_EXPONENT=0.3
 output_directory_base="outputs/test_output_timing"
 input_directory="../simulator/input_files"
 
@@ -41,6 +43,8 @@ do
 	 $BETA_S \
 	 $BETA_TRAVEL \
 	 $INTERVENTION \
+	 $HD_AREA_FACTOR \
+	 $HD_AREA_EXPONENT \
 	 $output_directory \
 	 $input_directory"
 

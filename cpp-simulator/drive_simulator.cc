@@ -6,7 +6,7 @@
 #include <string>
 using namespace std;
 
-const int TOTAL_INPUT_ARGS = 17;
+const int TOTAL_INPUT_ARGS = 19;
   // 1: NUM_DAYS
   // 2: INIT_FRAC_INFECTED
   // 3: INCUBATION_PERIOD
@@ -22,8 +22,10 @@ const int TOTAL_INPUT_ARGS = 17;
   // 13: BETA_S
   // 14: BETA_TRAVEL
   // 15: INTERVENTION
-  // 16: output directory
-  // 17: input directory
+  // 16: HD_AREA_FACTOR
+  // 17: HD_AREA_EXPONENT
+  // 18: output directory
+  // 19: input directory
   
 int main(int argc, char** argv){
   cout << "Number of arguments provided: " << argc << endl;
@@ -50,12 +52,15 @@ int main(int argc, char** argv){
   GLOBAL.BETA_C = stod(argv[12]);
   GLOBAL.BETA_S = stod(argv[13]);
   GLOBAL.BETA_TRAVEL = stod(argv[14]);
+
+  GLOBAL.HD_AREA_FACTOR = stod(argv[15]);
+  GLOBAL.HD_AREA_EXPONENT = stod(argv[16]);
   
-  GLOBAL.INTERVENTION = static_cast<Intervention>(stoi(argv[15]));
+  GLOBAL.INTERVENTION = static_cast<Intervention>(stoi(argv[17]));
 
-  string output_dir(argv[16]);
+  string output_dir(argv[18]);
 
-  GLOBAL.input_base = argv[17];
+  GLOBAL.input_base = argv[19];
   if(GLOBAL.input_base != ""
 	 && GLOBAL.input_base[GLOBAL.input_base.size() - 1] != '/'){ 
 	GLOBAL.input_base += '/';

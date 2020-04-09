@@ -266,7 +266,7 @@ mwardworkforce = [int(a * scale) for a in wardworkforce]
 mwardhouseholds = [int(a * scale) for a in wardhouseholds]
 
 if slum_flag:
-    mslumwardpop = [int(mwardpop[i] * slum_fractions[i] * scale) for i in range(nwards)]
+    mslumwardpop = [int(mwardpop[i] * slum_fractions[i]) for i in range(nwards)]
     mnonslumwardpop = [mwardpop[i] - mslumwardpop[i] for i in range(len(wardpop))]
 else:
     mslumwardpop = [0]*nwards

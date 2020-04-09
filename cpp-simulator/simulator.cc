@@ -8,20 +8,39 @@ using namespace std;
 #include "interventions.h"
 #include "updates.h"
 
-#ifdef DEBUG
+#if defined DEBUG || defined TIMING
 #include <iostream>
 #include <cstdlib>
 using std::cerr;
 #endif
 
+#ifdef TIMING
+#include <chrono>
+
+template <class T>
+auto duration(const std::chrono::time_point<T>& start, const std::chrono::time_point<T>& end){
+  return std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+}
+#endif
 
 map<string, matrix<count_type>> run_simulation(){
+#ifdef TIMING
+  cerr << "simulator: starting JSON read\n";
+  auto start_time = std::chrono::high_resolution_clock::now();
+#endif
+  
   auto homes = init_homes();
   auto workplaces = init_workplaces();
   auto communities = init_community();
   auto nodes = init_nodes();
 
   auto community_dist_matrix = compute_community_distances(communities);
+
+#ifdef TIMING
+    auto end_time = std::chrono::high_resolution_clock::now();
+	cerr << "simulator: time for JSON reads (ms): " << duration(start_time, end_time) << "\n";
+	start_time = std::chrono::high_resolution_clock::now();
+#endif
 
   assign_individual_home_community(nodes, homes, workplaces, communities);
 
@@ -47,6 +66,14 @@ map<string, matrix<count_type>> run_simulation(){
   }
   plot_data["csvContent"] = {};
   plot_data["csvContent"].reserve(GLOBAL.NUM_TIMESTEPS * GLOBAL.num_communities);
+
+#ifdef TIMING
+  end_time = std::chrono::high_resolution_clock::now();
+  cerr << "simulator: time for setup after JSON reads (ms): " << duration(start_time, end_time) << "\n";
+
+  cerr << "simulator: starting simulation\n";
+  start_time = std::chrono::high_resolution_clock::now();
+#endif
 
   for(count_type time_step = 0; time_step < GLOBAL.NUM_TIMESTEPS; ++time_step){
 
@@ -144,6 +171,13 @@ map<string, matrix<count_type>> run_simulation(){
 	plot_data["num_recovered"].push_back({time_step, n_recovered});
 	plot_data["num_affected"].push_back({time_step, n_affected});
   }
+
+#ifdef TIMING
+  end_time = std::chrono::high_resolution_clock::now();
+  cerr << "simulator: simulation time (ms): " << duration(start_time, end_time) << "\n";
+#endif
+  
+
   return plot_data;
 }
 

@@ -20,8 +20,6 @@ using std::string;
 using std::vector;
 using std::to_string;
 
-const string input_base = "../simulator/input_files/";
-
 auto readJSONFile(string filename){
   std::ifstream ifs(filename, std::ifstream::in);
   rapidjson::IStreamWrapper isw(ifs);
@@ -39,7 +37,7 @@ auto prettyJSON(const rapidjson::Document& d){
 
 
 vector<house> init_homes(){
-  auto houseJSON = readJSONFile(input_base + "houses.json");
+  auto houseJSON = readJSONFile(GLOBAL.input_base + "houses.json");
   auto size = houseJSON.GetArray().Size();
   vector<house> homes(size);
   GLOBAL.num_homes = size;
@@ -55,8 +53,8 @@ vector<house> init_homes(){
 }
 
 vector<workplace> init_workplaces() {
-  auto schoolJSON = readJSONFile(input_base + "schools.json");
-  auto wpJSON = readJSONFile(input_base + "workplaces.json");
+  auto schoolJSON = readJSONFile(GLOBAL.input_base + "schools.json");
+  auto wpJSON = readJSONFile(GLOBAL.input_base + "workplaces.json");
 
   auto school_size = schoolJSON.GetArray().Size();
   GLOBAL.num_schools = school_size;
@@ -87,7 +85,7 @@ vector<workplace> init_workplaces() {
 }
 
 vector<community> init_community() {
-  auto comJSON = readJSONFile(input_base + "commonArea.json");
+  auto comJSON = readJSONFile(GLOBAL.input_base + "commonArea.json");
 
   auto size = comJSON.GetArray().Size();
   GLOBAL.num_communities = size;
@@ -112,13 +110,13 @@ vector<community> init_community() {
 
 
 vector<double> compute_prob_infection_given_community(double infection_probability, bool set_uniform){
-  auto fracPopJSON = readJSONFile(input_base + "fractionPopulation.json");
+  auto fracPopJSON = readJSONFile(GLOBAL.input_base + "fractionPopulation.json");
   auto num_communities = fracPopJSON.GetArray().Size();
   if(set_uniform){
 	return vector<double>(num_communities, infection_probability);
   }
   else {
-	auto fracQuarantinesJSON = readJSONFile(input_base + "quarantinedPopulation.json");
+	auto fracQuarantinesJSON = readJSONFile(GLOBAL.input_base + "quarantinedPopulation.json");
 	const rapidjson::Value& quar_array = fracQuarantinesJSON.GetArray();
 	const rapidjson::Value& frac_array = fracPopJSON.GetArray();
 	vector<double> prob_infec_given_community(num_communities);
@@ -135,7 +133,7 @@ vector<double> compute_prob_infection_given_community(double infection_probabili
 
 
 vector<agent> init_nodes(){
-  auto indivJSON = readJSONFile(input_base + "individuals.json");
+  auto indivJSON = readJSONFile(GLOBAL.input_base + "individuals.json");
   auto size = indivJSON.GetArray().Size();
   GLOBAL.num_people = size;
   vector<agent> nodes(size);
@@ -228,15 +226,22 @@ vector<agent> init_nodes(){
 	//Travel
 	nodes[i].has_to_travel = bernoulli(GLOBAL.P_TRAIN);
 
-	//Does the individual live in a slum?  In that case we need to
-	//scale the contribution to their infection rates by a factor.
+	// Does the individual live in a slum?  In that case we need to
+	// scale the contribution to their infection rates by a factor.
+	//
+	// Only use this feature if the field is present in the
+	// "individuals" input files.
+	if(elem.HasMember("slum")){
+
 #ifdef DEBUG
-	assert(elem["slum"].IsInt());
+	  assert(elem["slum"].IsInt());
 #endif
-	if(elem["slum"].GetInt()){
-	  nodes[i].hd_area_factor = GLOBAL.HD_AREA_FACTOR;
+
+	  if(elem["slum"].GetInt()){
+		nodes[i].hd_area_factor = GLOBAL.HD_AREA_FACTOR;
+	  }
 	}
-	  
+
 	++i;
   }
   assert(i == GLOBAL.num_people);
@@ -244,7 +249,7 @@ vector<agent> init_nodes(){
 }
 
 matrix<double> compute_community_distances(const vector<community>& communities){
-  auto wardDistJSON = readJSONFile(input_base + "wardCentreDistance.json");
+  auto wardDistJSON = readJSONFile(GLOBAL.input_base + "wardCentreDistance.json");
   const rapidjson::Value& mat = wardDistJSON.GetArray();
   auto size = mat.Size();
   matrix<double> dist_matrix(size, vector<double>(size));

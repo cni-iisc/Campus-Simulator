@@ -6,7 +6,7 @@
 #include <string>
 using namespace std;
 
-const int TOTAL_INPUT_ARGS = 16;
+const int TOTAL_INPUT_ARGS = 17;
   // 1: NUM_DAYS
   // 2: INIT_FRAC_INFECTED
   // 3: INCUBATION_PERIOD
@@ -23,6 +23,7 @@ const int TOTAL_INPUT_ARGS = 16;
   // 14: BETA_TRAVEL
   // 15: INTERVENTION
   // 16: output directory
+  // 17: input directory
   
 int main(int argc, char** argv){
   cout << "Number of arguments provided: " << argc << endl;
@@ -53,6 +54,14 @@ int main(int argc, char** argv){
   GLOBAL.INTERVENTION = static_cast<Intervention>(stoi(argv[15]));
 
   string output_dir(argv[16]);
+
+  GLOBAL.input_base = argv[17];
+  if(GLOBAL.input_base != ""
+	 && GLOBAL.input_base[GLOBAL.input_base.size() - 1] != '/'){ 
+	GLOBAL.input_base += '/';
+	//Make sure the path of the input_base
+	//directory is terminated by a "/"
+  }
   
   auto plot_data = run_simulation();
 

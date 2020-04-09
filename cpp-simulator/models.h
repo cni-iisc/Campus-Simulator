@@ -28,7 +28,12 @@ inline count_type stoct(const std::string& str){
 }
 
 // Random number gnerators
+#ifdef MERSENNE_TWISTER
 extern std::mt19937 GENERATOR;
+#else
+extern std::default_random_engine GENERATOR;
+#endif
+
 inline double gamma(double shape, double scale){
   return std::gamma_distribution<double>(shape, scale)(GENERATOR);
 }
@@ -130,6 +135,9 @@ struct global_params{
   //Switches
   //If this is false, the file quarantinedPopulation.json is needed
   bool USE_SAME_INFECTION_PROB_FOR_ALL_WARDS = true;
+
+  //Input and output
+  std::string input_base;
 };
 extern global_params GLOBAL;
 
@@ -245,6 +253,8 @@ struct agent{
 
   //Multiplication factor for high population density areas, such as slums
   double hd_area_factor = 1.0;
+  //only used if in the input file, some individuals are assigned to
+  //slums or other high population density areas
   
   agent(){}
   // Is the agent curently traveling?

@@ -21,9 +21,9 @@ const int TOTAL_INPUT_ARGS = 19;
   // 12: BETA_C
   // 13: BETA_S
   // 14: BETA_TRAVEL
-  // 15: INTERVENTION
-  // 16: HD_AREA_FACTOR
-  // 17: HD_AREA_EXPONENT
+  // 15: HD_AREA_FACTOR
+  // 16: HD_AREA_EXPONENT
+  // 17: INTERVENTION
   // 18: output directory
   // 19: input directory
   

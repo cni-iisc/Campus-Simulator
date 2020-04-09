@@ -253,6 +253,8 @@ struct agent{
 
   //Multiplication factor for high population density areas, such as slums
   double hd_area_factor = 1.0;
+  //only used if in the input file, some individuals are assigned to
+  //slums or other high population density areas
   
   agent(){}
   // Is the agent curently traveling?

@@ -226,15 +226,22 @@ vector<agent> init_nodes(){
 	//Travel
 	nodes[i].has_to_travel = bernoulli(GLOBAL.P_TRAIN);
 
-	//Does the individual live in a slum?  In that case we need to
-	//scale the contribution to their infection rates by a factor.
+	// Does the individual live in a slum?  In that case we need to
+	// scale the contribution to their infection rates by a factor.
+	//
+	// Only use this feature if the field is present in the
+	// "individuals" input files.
+	if(elem.HasMember("slum")){
+
 #ifdef DEBUG
-	assert(elem["slum"].IsInt());
+	  assert(elem["slum"].IsInt());
 #endif
-	if(elem["slum"].GetInt()){
-	  nodes[i].hd_area_factor = GLOBAL.HD_AREA_FACTOR;
+
+	  if(elem["slum"].GetInt()){
+		nodes[i].hd_area_factor = GLOBAL.HD_AREA_FACTOR;
+	  }
 	}
-	  
+
 	++i;
   }
   assert(i == GLOBAL.num_people);

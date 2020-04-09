@@ -216,9 +216,9 @@ with open(cityprofilefile, newline='') as file:
 
 hbins = cityprofiledata['householdSize']['bins']
 hweights = cityprofiledata['householdSize']['weights']
-
+hweights[0]=hweights[0] + 1- sum(hweights)
 def sampleHouseholdSize():
-    s = np.random.choice(hbins,1,hweights)[0]
+    s = np.random.choice(hbins,1,p=hweights)[0]
     if '+' in s:
         n = int(s[:-1])
     elif '-' in s:
@@ -234,10 +234,10 @@ def sampleHouseholdSize():
 
 agebins = cityprofiledata['age']['bins']
 ageweights = cityprofiledata['age']['weights']
-
+ageweights[0] = ageweights[0] + 1 - sum(ageweights)
 
 def sampleAge():
-    s = np.random.choice(agebins,1,ageweights)[0]
+    s = np.random.choice(agebins,1,p=ageweights)[0]
     if '+' in s:
         n = int(s[:-1])
     else:
@@ -330,7 +330,8 @@ if os.path.exists(ODMatrixfile):
 else:
     print(ODMatrixfile, "not found. Using uniform ODmatrix.",flush=True)
     homeworkmatrix = [[(1/nwards) for _ in range(nwards)] for _ in range(nwards)]
-
+for i in range(nwards):
+    homeworkmatrix[i][0] = homeworkmatrix[i][0] + 1 - sum(homeworkmatrix[i])
 
 # In[ ]:
 
@@ -391,7 +392,7 @@ for h in houses:
                 p["employed"]=1
 
                 p["workplace"]="TODO"
-                workplaceward = int(np.random.choice(list(range(nwards)),1,homeworkmatrix[wardIndex])[0])
+                workplaceward = int(np.random.choice(list(range(nwards)),1,p=homeworkmatrix[wardIndex])[0])
                 p["workplaceward"]=workplaceward
                 p["workplaceType"]=1
                 workers[workplaceward].append(pid)
@@ -473,9 +474,9 @@ print('done.',flush=True)
 
 schoolsizebins = ["0-100", "100-200", "200-300", "300-400", "400-500", "500-600", "600-700", "700-800", "800-900"]
 schoolsizebinweights = [0.0185, 0.1204, 0.2315, 0.2315, 0.1574, 0.0889, 0.063, 0.0481, 0.0408]
-
+schoolsizebinweights[0] = schoolsizebinweights[0] + 1 - sum(schoolsizebinweights)
 def sampleSchoolSize():
-    s = int(np.random.choice(list(range(len(schoolsizebinweights))),1,schoolsizebinweights)[0])
+    s = int(np.random.choice(list(range(len(schoolsizebinweights))),1,p=schoolsizebinweights)[0])
     return (100*s + random.randint(0,99))
 
 

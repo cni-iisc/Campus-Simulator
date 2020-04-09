@@ -32,15 +32,19 @@ else:
     my_parser.add_argument('-i', help='input folder', default=default_ibasepath)
     my_parser.add_argument('-o', help='output folder', default=default_obasepath)
     args = my_parser.parse_args()
-    miniPop = args.n
+    miniPop = int(args.n)
     ibasepath = args.i
     obasepath = args.o
+if ibasepath[-1]!='/':
+    ibasepath = ibasepath+'/'
+if obasepath[-1]!='/':
+    obasepath = obasepath+'/'
 
-
+    
 citygeojsonfile  = ibasepath+"city.geojson"
-demographicsfile = ibasepath+"demographics_2011.csv"
-employmentfile   = ibasepath+"employment_2011.csv"
-householdfile    = ibasepath+"households_2011.csv"
+demographicsfile = ibasepath+"demographics.csv"
+employmentfile   = ibasepath+"employment.csv"
+householdfile    = ibasepath+"households.csv"
 cityprofilefile  = ibasepath+"cityProfile.json"
 slumfracfile     = ibasepath+"slumFraction.csv"
 slumclusterfile  = ibasepath+"slumClusters.geojson"

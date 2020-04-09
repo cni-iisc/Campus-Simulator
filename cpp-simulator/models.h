@@ -131,6 +131,8 @@ struct global_params{
 
   //Multiplicative fatcor for infection rates in high density areas
   double HD_AREA_FACTOR = 2.0;
+
+  double HD_AREA_EXPONENT = 0.3;
   
   //Switches
   //If this is false, the file quarantinedPopulation.json is needed
@@ -253,6 +255,7 @@ struct agent{
 
   //Multiplication factor for high population density areas, such as slums
   double hd_area_factor = 1.0;
+  double hd_area_exponent = 0;
   //only used if in the input file, some individuals are assigned to
   //slums or other high population density areas
   

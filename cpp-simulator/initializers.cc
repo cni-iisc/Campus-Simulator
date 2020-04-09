@@ -239,6 +239,7 @@ vector<agent> init_nodes(){
 
 	  if(elem["slum"].GetInt()){
 		nodes[i].hd_area_factor = GLOBAL.HD_AREA_FACTOR;
+		nodes[i].hd_area_exponent = GLOBAL.HD_AREA_EXPONENT;
 	  }
 	}
 

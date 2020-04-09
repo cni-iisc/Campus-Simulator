@@ -26,7 +26,10 @@ do
 	fi;
 	echo "Output will be genrerated for this intervention in ${output_directory}."
 	command="time ./drive_simulator \
-	 $NUM_DAYS \ $INIT_FRAC_INFECTED \ $INCUBATION_PERIOD \ $MEAN_ASYMPTOMATIC_PERIOD \
+	 $NUM_DAYS \
+	 $INIT_FRAC_INFECTED \
+	 $INCUBATION_PERIOD \
+	 $MEAN_ASYMPTOMATIC_PERIOD \
 	 $MEAN_SYMPTOMATIC_PERIOD \
 	 $SYMPTOMATIC_FRACTION \
 	 $MEAN_HOSPITAL_REGULAR_PERIOD \
@@ -36,7 +39,7 @@ do
 	 $BETA_W \
 	 $BETA_C \
 	 $BETA_S \
-     $BETA_TRAVEL \
+	 $BETA_TRAVEL \
 	 $INTERVENTION \
 	 $output_directory \
 	 $input_directory"

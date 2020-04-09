@@ -54,15 +54,17 @@ Now  to actually run the code, you will have to edit the file
 1) All the input parameters.
 
 2) The directory where the output will be generated (The
-`output_directory_base` parameter in the file).
+	`output_directory_base` parameter in the file).  This option can
+	also be passed to the script from the command line as shown below.
 
 3) The directory in which the input files reside. (The
-`input_directory` parameter in the file.)
+	`input_directory` parameter in the file.)  This option can also be
+	passed to the script from the command line as shown below.
 
 Once you have fixed the prameters, you can run the script as
 
 ```
-bash drive_simulator_temp.sh
+bash drive_simulator_temp.sh [-i input_directory] [-o output_directory_base]
 ```
 
 in the `cpp-simulator` directory.  If everything works, it will end

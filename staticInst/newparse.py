@@ -17,36 +17,34 @@ import argparse
 import os
 import sys
 
-ODmatrixflag = 1
-
 interactive = 0
-default_miniPop = 100000
+default_miniPop = 10000
 default_ibasepath = 'data/base/mumbai/'
 default_obasepath = 'data/mumbai/'
 
 if interactive:
-    miniPop = 100000
+    miniPop = 10000
     ibasepath = default_ibasepath
     obasepath = default_obasepath
 else:
     my_parser = argparse.ArgumentParser(description='Create mini-city for COVID-19 simulation')
-    my_parser.add_argument('-n', type=int,help='target population (def:'+str(default_miniPop)+')', default=default_miniPop)
-    my_parser.add_argument('-i', help='input folder (def:'+default_ibasepath+')', default=default_ibasepath)
-    my_parser.add_argument('-o', help='output folder (def:'+default_obasepath+')', default=default_obasepath)
+    my_parser.add_argument('-n', help='target population', default=default_miniPop)
+    my_parser.add_argument('-i', help='input folder', default=default_ibasepath)
+    my_parser.add_argument('-o', help='output folder', default=default_obasepath)
     args = my_parser.parse_args()
     miniPop = args.n
     ibasepath = args.i
-    if ibasepath[-1]!='/':
-        ibasepath = ibasepath + '/'
     obasepath = args.o
-    if obasepath[-1]!='/':
-        obasepath = obasepath + '/'
+
 
 citygeojsonfile  = ibasepath+"city.geojson"
 demographicsfile = ibasepath+"demographics_2011.csv"
 employmentfile   = ibasepath+"employment_2011.csv"
 householdfile    = ibasepath+"households_2011.csv"
 cityprofilefile  = ibasepath+"cityProfile.json"
+slumfracfile     = ibasepath+"slumFraction.csv"
+slumclusterfile  = ibasepath+"slumClusters.geojson"
+ODMatrixfile     = ibasepath+"ODMatrix.csv"
 
 individualsjson        = obasepath+"individuals.json"
 housesjson             = obasepath+"houses.json"
@@ -59,14 +57,9 @@ fractionPopulationjson = obasepath+"fractionPopulation.json"
 #fixing for now
 slum_schoolsize_factor = 2
 slum_householdsize_scalefactor = 2
-slum_fractions = [0.289,0.133,0,0.099,0.119,0.581,0.358,0.331,0.558,0.788,0.411,0.583,0.451,0.847,0.775,0.685,0.702,0.637,0.481,0.337,0.466,0.553,0.858,0.352]
 
 print("Creating city with a population of approximately ",miniPop,flush=True)
 print("")
-
-
-# In[ ]:
-
 
 print("Reading city.geojson to get ward polygons...",end='',flush=True)
 geoDF = gpd.read_file(citygeojsonfile)
@@ -78,15 +71,42 @@ geoDF['wardCentre'] = geoDF.apply(lambda row: (MultiPolygon(row['geometry']).cen
 geoDF["neighbors"] = geoDF.apply(lambda row: ", ".join([str(ward) for ward in geoDF[~geoDF.geometry.disjoint(row['geometry'])]['wardNo'].tolist()]) , axis=1)
 print("done.",flush=True)
 
-print("Parsing slum clusters...",end='',flush=True)
-geoDFslums = gpd.read_file("data/base/mumbai/slumClusters.geojson")
-wardslums = [[] for _ in range(len(geoDF))]
 
-for i in range(len(geoDFslums)):
-    for j in range(len(geoDF)):
-        if geoDFslums["geometry"][i].intersects(geoDF["geometry"][j]):
-            wardslums[j].append(i)
-print("done.",flush=True)
+# In[ ]:
+
+
+if os.path.exists(slumfracfile):
+    print(slumfracfile,"exists... processing slum data",flush=True)
+    slum_flag = 1
+    slum_fractions = []
+    with open(slumfracfile, newline='') as csvfile:
+        reader = csv.reader(csvfile, delimiter=',')
+        for row in reader:
+            if row[0]=='wardIndex':
+                continue
+            slum_fractions.append(float(row[2]))
+
+    if os.path.exists(slumclusterfile):
+        slumcluster_flag=1
+        print("Slum clustter file found. Parsing slum clusters...",end='',flush=True)
+        geoDFslums = gpd.read_file(slumclusterfile)
+        wardslums = [[] for _ in range(len(geoDF))]
+
+        for i in range(len(geoDFslums)):
+            for j in range(len(geoDF)):
+                if geoDFslums["geometry"][i].intersects(geoDF["geometry"][j]):
+                    wardslums[j].append(i)
+        print("done.",flush=True)
+    else:
+        slumcluster_flag=0
+        print("Slum clustter file not found.",end='',flush=True)
+else:
+    slum_flag=0
+    slumcluster_flag=0
+    print(slumfracfile,"does not exist... not processing slum data",flush=True)
+
+
+# In[ ]:
 
 
 def sampleRandomLatLong(wardIndex):
@@ -99,11 +119,16 @@ def sampleRandomLatLong(wardIndex):
         if MultiPolygon(geoDF['geometry'][wardIndex]).contains(point):
             return (lat,lon)
 
-def sampleRandomLatLong_s(wardIndex,slumflag):
-    #slumflag = 1 => get point in slum
+def sampleRandomLatLong_s(wardIndex,slumbit):
+    #slumbit = 0 => get point in nonslum
+    #slumbit = 1 => get point in slum
+    
+    if slumcluster_flag==0:
+        return sampleRandomLatLong(wardIndex)
 
     #I'm not sure why the order is longitude followed by latitude
     (lon1,lat1,lon2,lat2) = geoDF['wardBounds'][wardIndex]
+
     attempts = 0
     while attempts<30:
         attempts+=1
@@ -113,16 +138,16 @@ def sampleRandomLatLong_s(wardIndex,slumflag):
         if MultiPolygon(geoDF['geometry'][wardIndex]).contains(point):
             for i in wardslums[wardIndex]:
                 if geoDFslums["geometry"][i].contains(point):
-                    if slumflag==1:
+                    if slumbit==1:
                         return (lat,lon)
                 else:
-                    if slumflag==0:
+                    if slumbit==0:
                         return(lat,lon)
     #Just sample a random point in the ward if unsuccessful
     #print("Gave up on sampleRandomLatLong_s with ",wardIndex,slumflag)
     return sampleRandomLatLong(wardIndex)
-
-
+        
+        
 def distance(lat1, lon1, lat2, lon2):
     radius = 6371 # km
 
@@ -137,7 +162,7 @@ def distance(lat1, lon1, lat2, lon2):
 def getCommunityCenterDistance(lat,lon,wardIndex):
     (latc,lonc) = geoDF['wardCentre'][wardIndex]
     return distance(lat,lon,latc,lonc)
-
+                                                        
 
 
 # In[ ]:
@@ -227,19 +252,23 @@ nwards = len(wardname)
 
 
 mwardpop = [int(a * scale) for a in wardpop]
-mslumwardpop = [int(mwardpop[i] * slum_fractions[i] * scale) for i in range(nwards)]
-mnonslumwardpop = [mwardpop[i] - mslumwardpop[i] for i in range(len(wardpop))]
 mwardemployed = [int(a * scale) for a in wardunemployed]
 mwardunemployed = [int(a * scale) for a in wardemployed]
 mwardworkforce = [int(a * scale) for a in wardworkforce]
 mwardhouseholds = [int(a * scale) for a in wardhouseholds]
+
+if slum_flag:
+    mslumwardpop = [int(mwardpop[i] * slum_fractions[i] * scale) for i in range(nwards)]
+    mnonslumwardpop = [mwardpop[i] - mslumwardpop[i] for i in range(len(wardpop))]
+else:
+    mslumwardpop = [0]*nwards
+    mnonslumwardpop = mwardpop.copy()
 
 
 # In[ ]:
 
 
 print("Creating households for each ward...",end='',flush=True)
-
 
 
 houses = []
@@ -253,8 +282,9 @@ for wardIndex in range(nwards):
         h = {}
         h["id"]=hid
         h["wardIndex"]=wardIndex
-        h["slum"]=0
-
+        if slum_flag:
+            h["slum"]=0
+        
         s = sampleHouseholdSize()
         h["size"]=s
         currnonslumwpop+=s
@@ -264,12 +294,13 @@ for wardIndex in range(nwards):
         houses.append(h)
         hid+=1
 
-
+    #if slum_flag=0, then wslumpop = 0
     while(currslumwpop < wslumpop):
         h = {}
         h["id"]=hid
         h["wardIndex"]=wardIndex
-        h["slum"]=1
+        if slum_flag:
+            h["slum"]=1
         s = int(sampleHouseholdSize() * slum_householdsize_scalefactor)
         h["size"]=s
         currslumwpop+=s
@@ -284,33 +315,18 @@ print("done.",flush=True)
 # In[ ]:
 
 
-homeworkmatrix = [[0.3409,0.0682,0.0491,0.1800,0.2019,0.0169,0.0182,0.0118,0.0130,0.0092,0.0079,0.0169,0.0160,0.0023,0.0048,0.0029,0.0058,0.0015,0.0019,0.0039,0.0014,0.0014,0.0142,0.0101],
-[0.3409,0.0682,0.0491,0.1800,0.2019,0.0169,0.0182,0.0118,0.0130,0.0092,0.0079,0.0169,0.0160,0.0023,0.0048,0.0029,0.0058,0.0015,0.0019,0.0039,0.0014,0.0014,0.0142,0.0101],
-[0.3409,0.0682,0.0491,0.1800,0.2019,0.0169,0.0182,0.0118,0.0130,0.0092,0.0079,0.0169,0.0160,0.0023,0.0048,0.0029,0.0058,0.0015,0.0019,0.0039,0.0014,0.0014,0.0142,0.0101],
-[0.3409,0.0682,0.0491,0.1800,0.2019,0.0169,0.0182,0.0118,0.0130,0.0092,0.0079,0.0169,0.0160,0.0023,0.0048,0.0029,0.0058,0.0015,0.0019,0.0039,0.0014,0.0014,0.0142,0.0101],
-[0.3409,0.0682,0.0491,0.1800,0.2019,0.0169,0.0182,0.0118,0.0130,0.0092,0.0079,0.0169,0.0160,0.0023,0.0048,0.0029,0.0058,0.0015,0.0019,0.0039,0.0014,0.0014,0.0142,0.0101],
-[0.0893,0.0179,0.0128,0.0471,0.0529,0.1861,0.2004,0.1303,0.1432,0.0129,0.0111,0.0237,0.0223,0.0047,0.0096,0.0057,0.0019,0.0030,0.0038,0.0077,0.0028,0.0028,0.0047,0.0034],
-[0.0893,0.0179,0.0128,0.0471,0.0529,0.1861,0.2004,0.1303,0.1432,0.0129,0.0111,0.0237,0.0223,0.0047,0.0096,0.0057,0.0019,0.0030,0.0038,0.0077,0.0028,0.0028,0.0047,0.0034],
-[0.0893,0.0179,0.0128,0.0471,0.0529,0.1861,0.2004,0.1303,0.1432,0.0129,0.0111,0.0237,0.0223,0.0047,0.0096,0.0057,0.0019,0.0030,0.0038,0.0077,0.0028,0.0028,0.0047,0.0034],
-[0.0893,0.0179,0.0128,0.0471,0.0529,0.1861,0.2004,0.1303,0.1432,0.0129,0.0111,0.0237,0.0223,0.0047,0.0096,0.0057,0.0019,0.0030,0.0038,0.0077,0.0028,0.0028,0.0047,0.0034],
-[0.0284,0.0057,0.0041,0.0150,0.0168,0.0141,0.0152,0.0099,0.0108,0.1474,0.1266,0.2706,0.2554,0.0047,0.0096,0.0057,0.0019,0.0074,0.0094,0.0193,0.0070,0.0069,0.0047,0.0034],
-[0.0284,0.0057,0.0041,0.0150,0.0168,0.0141,0.0152,0.0099,0.0108,0.1474,0.1266,0.2706,0.2554,0.0047,0.0096,0.0057,0.0019,0.0074,0.0094,0.0193,0.0070,0.0069,0.0047,0.0034],
-[0.0284,0.0057,0.0041,0.0150,0.0168,0.0141,0.0152,0.0099,0.0108,0.1474,0.1266,0.2706,0.2554,0.0047,0.0096,0.0057,0.0019,0.0074,0.0094,0.0193,0.0070,0.0069,0.0047,0.0034],
-[0.0284,0.0057,0.0041,0.0150,0.0168,0.0141,0.0152,0.0099,0.0108,0.1474,0.1266,0.2706,0.2554,0.0047,0.0096,0.0057,0.0019,0.0074,0.0094,0.0193,0.0070,0.0069,0.0047,0.0034],
-[0.0442,0.0088,0.0064,0.0233,0.0262,0.0251,0.0271,0.0176,0.0193,0.0146,0.0125,0.0268,0.0253,0.1484,0.3033,0.1820,0.0152,0.0015,0.0019,0.0038,0.0014,0.0014,0.0374,0.0266],
-[0.0442,0.0088,0.0064,0.0233,0.0262,0.0251,0.0271,0.0176,0.0193,0.0146,0.0125,0.0268,0.0253,0.1484,0.3033,0.1820,0.0152,0.0015,0.0019,0.0038,0.0014,0.0014,0.0374,0.0266],
-[0.0442,0.0088,0.0064,0.0233,0.0262,0.0251,0.0271,0.0176,0.0193,0.0146,0.0125,0.0268,0.0253,0.1484,0.3033,0.1820,0.0152,0.0015,0.0019,0.0038,0.0014,0.0014,0.0374,0.0266],
-[0.0649,0.0130,0.0093,0.0343,0.0384,0.0254,0.0273,0.0178,0.0195,0.0166,0.0142,0.0304,0.0287,0.0094,0.0191,0.0115,0.0845,0.0266,0.0340,0.0696,0.0251,0.0248,0.2080,0.1475],
-[0.0487,0.0097,0.0070,0.0257,0.0288,0.0141,0.0152,0.0099,0.0108,0.0461,0.0396,0.0846,0.0798,0.0023,0.0048,0.0029,0.0019,0.0827,0.1057,0.2166,0.0780,0.0771,0.0047,0.0034],
-[0.0487,0.0097,0.0070,0.0257,0.0288,0.0141,0.0152,0.0099,0.0108,0.0461,0.0396,0.0846,0.0798,0.0023,0.0048,0.0029,0.0019,0.0827,0.1057,0.2166,0.0780,0.0771,0.0047,0.0034],
-[0.0487,0.0097,0.0070,0.0257,0.0288,0.0141,0.0152,0.0099,0.0108,0.0461,0.0396,0.0846,0.0798,0.0023,0.0048,0.0029,0.0019,0.0827,0.1057,0.2166,0.0780,0.0771,0.0047,0.0034],
-[0.0487,0.0097,0.0070,0.0257,0.0288,0.0141,0.0152,0.0099,0.0108,0.0461,0.0396,0.0846,0.0798,0.0023,0.0048,0.0029,0.0019,0.0827,0.1057,0.2166,0.0780,0.0771,0.0047,0.0034],
-[0.0487,0.0097,0.0070,0.0257,0.0288,0.0141,0.0152,0.0099,0.0108,0.0461,0.0396,0.0846,0.0798,0.0023,0.0048,0.0029,0.0019,0.0827,0.1057,0.2166,0.0780,0.0771,0.0047,0.0034],
-[0.0649,0.0130,0.0093,0.0343,0.0384,0.0254,0.0273,0.0178,0.0195,0.0166,0.0142,0.0304,0.0287,0.0094,0.0191,0.0115,0.0845,0.0266,0.0340,0.0696,0.0251,0.0248,0.2080,0.1475],
-[0.0649,0.0130,0.0093,0.0343,0.0384,0.0254,0.0273,0.0178,0.0195,0.0166,0.0142,0.0304,0.0287,0.0094,0.0191,0.0115,0.0845,0.0266,0.0340,0.0696,0.0251,0.0248,0.2080,0.1475]]
-
-if ODmatrixflag==0:
+homeworkmatrix = []
+if os.path.exists(ODMatrixfile):
+    with open(ODMatrixfile, newline='') as csvfile:
+        reader = csv.reader(csvfile, delimiter=',')
+        for row in reader:
+            if row[0]=='wardNo':
+                continue
+            homeworkmatrix.append(list(map(lambda x: float(x),row[1:])))
+else:
+    print(ODMatrixfile, "not found. Using uniform ODmatrix.",flush=True)
     homeworkmatrix = [[(1/nwards) for _ in range(nwards)] for _ in range(nwards)]
+
 
 # In[ ]:
 
@@ -333,7 +349,8 @@ for h in houses:
         wardIndex = h["wardIndex"]
         p["wardIndex"]=wardIndex
         p["wardNo"] = wardIndex+1
-        p["slum"] = h["slum"]
+        if slum_flag:
+            p["slum"] = h["slum"]
 
         p["lat"] = h["lat"]
         p["lon"] = h["lon"]
@@ -356,7 +373,7 @@ for h in houses:
 
             #assuming they all go to school
             #schoolers[wardIndex].append(pid)
-            if p["slum"]==1:
+            if slum_flag ==1 and p["slum"]==1:
                 slum_schoolers[wardIndex].append(pid)
             else:
                 nonslum_schoolers[wardIndex].append(pid)
@@ -464,25 +481,27 @@ print("Assigning schools to people...",end='',flush=True)
 #assigning school to people who want go to school
 schools = []
 sid = 0
-for wardIndex in range(nwards):
-    wslum_schoolers = len(slum_schoolers[wardIndex])
-    while len(slum_schoolers[wardIndex])>0:
-        s = {"ID":sid} #capitalised in the previous code so keeping it so
-        s["wardIndex"]=wardIndex
-        (lat,lon) = sampleRandomLatLong_s(wardIndex,1)
-        s["lat"] = lat
-        s["lon"] = lon
-        s["slum"]=1
+if slum_flag:
+    for wardIndex in range(nwards):
+        wslum_schoolers = len(slum_schoolers[wardIndex])
+        while len(slum_schoolers[wardIndex])>0:
+            s = {"ID":sid} #capitalised in the previous code so keeping it so
+            s["wardIndex"]=wardIndex
+            (lat,lon) = sampleRandomLatLong_s(wardIndex,1)
+            s["lat"] = lat
+            s["lon"] = lon
+            s["slum"]=1
 
-        size = int(sampleSchoolSize()*slum_schoolsize_factor)
+            size = int(sampleSchoolSize()*slum_schoolsize_factor)
 
-        i = 0
-        while(i < size and len(slum_schoolers[wardIndex])>0):
-            pid = slum_schoolers[wardIndex].pop(random.randrange(len(slum_schoolers[wardIndex])))
-            individuals[pid]["school"]=sid
-            i+=1
-        schools.append(s)
-        sid+=1
+            i = 0
+            while(i < size and len(slum_schoolers[wardIndex])>0):
+                pid = slum_schoolers[wardIndex].pop(random.randrange(len(slum_schoolers[wardIndex])))
+                individuals[pid]["school"]=sid
+                i+=1
+            schools.append(s)
+            sid+=1
+
 for wardIndex in range(nwards):
     wnonslum_schoolers = len(nonslum_schoolers[wardIndex])
     while len(nonslum_schoolers[wardIndex])>0:
@@ -491,7 +510,8 @@ for wardIndex in range(nwards):
         (lat,lon) = sampleRandomLatLong_s(wardIndex,0)
         s["lat"] = lat
         s["lon"] = lon
-        s["slum"]=0
+        if slum_flag:
+            s["slum"]=0
 
         size = sampleSchoolSize()
         i = 0
@@ -502,7 +522,7 @@ for wardIndex in range(nwards):
         schools.append(s)
         sid+=1
 
-
+        
 print("done.",flush=True)
 
 print("")
@@ -532,11 +552,11 @@ for i in range(nwards):
     w["totalPopulation"] = wardpop[i]
     w["fracPopulation"] = wardpop[i]/totalPop
     fractionPopulations.append(w)
-
+    
 wardCentreDistances = [ {"ID":i+1} for i in range(nwards)]
 for i in range(nwards):
     for j in range(nwards):
-        d = distance(commonAreas[i]["lat"],commonAreas[i]["lon"],commonAreas[j]["lat"],commonAreas[j]["lon"])
+        d = distance(commonAreas[i]["lat"],commonAreas[i]["lon"],commonAreas[j]["lat"],commonAreas[j]["lon"]) 
         wardCentreDistances[i][str(j+1)]=d
 
 
@@ -545,25 +565,22 @@ for i in range(nwards):
 
 print("Dumping to json files...",end='',flush=True)
 
-if not os.path.exists(obasepath):
-    os.makedirs(obasepath)
-
-f = open(individualsjson, "w")
+f = open(individualsjson, "w+")
 f.write(json.dumps(individuals))
 f.close
 print("(individuals.json, ",end='',flush=True)
 
-f = open(housesjson, "w")
+f = open(housesjson, "w+")
 f.write(json.dumps(houses))
 f.close
 print("houses.json, ",end='',flush=True)
 
-f = open(workplacesjson, "w")
+f = open(workplacesjson, "w+")
 f.write(json.dumps(workplaces))
 f.close
 print("workplaces.json, ",end='',flush=True)
 
-f = open(schoolsjson, "w")
+f = open(schoolsjson, "w+")
 f.write(json.dumps(schools))
 f.close
 print("schools.json, ",end='',flush=True)
@@ -572,22 +589,32 @@ print("schools.json, ",end='',flush=True)
 # In[ ]:
 
 
-f = open(commonAreajson, "w")
+f = open(commonAreajson, "w+")
 f.write(json.dumps(commonAreas))
 f.close
 print("commonArea.json, ",end='',flush=True)
 
-f = open(fractionPopulationjson, "w")
+f = open(fractionPopulationjson, "w+")
 f.write(json.dumps(fractionPopulations))
 f.close
 print("fractionPopulation.json, ",end='',flush=True)
 
-f = open(wardCentreDistancejson, "w")
+f = open(wardCentreDistancejson, "w+")
 f.write(json.dumps(wardCentreDistances))
 f.close
 print("wardCentreDistance.json) ... done.",flush=True)
+
+        
+
+
+# In[ ]:
+
 
 
 
 
 # In[ ]:
+
+
+
+

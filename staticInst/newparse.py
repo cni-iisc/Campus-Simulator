@@ -73,8 +73,7 @@ geoDF = geoDF[['wardIndex','wardNo', 'wardName', 'geometry']]
 geoDF['wardBounds'] = geoDF.apply(lambda row: MultiPolygon(row['geometry']).bounds, axis=1)
 
 ##!! Note that the geojson file has coordinates in (longitude, latitude) order!
-##!! Hence the below order of x and y
-geoDF['wardCentre'] = geoDF.apply(lambda row: (MultiPolygon(row['geometry']).centroid.y, MultiPolygon(row['geometry']).centroid.x), axis=1)
+geoDF['wardCentre'] = geoDF.apply(lambda row: (MultiPolygon(row['geometry']).centroid.x, MultiPolygon(row['geometry']).centroid.y), axis=1)
 
 geoDF["neighbors"] = geoDF.apply(lambda row: ", ".join([str(ward) for ward in geoDF[~geoDF.geometry.disjoint(row['geometry'])]['wardNo'].tolist()]) , axis=1)
 print("done.",flush=True)
@@ -168,7 +167,8 @@ def distance(lat1, lon1, lat2, lon2):
     return d
 
 def getCommunityCenterDistance(lat,lon,wardIndex):
-    (latc,lonc) = geoDF['wardCentre'][wardIndex]
+    #I'm not sure why the order is longitude followed by latitude
+    (lonc,latc) = geoDF['wardCentre'][wardIndex]
     return distance(lat,lon,latc,lonc)
                                                         
 
@@ -550,6 +550,7 @@ commonAreas = []
 for i in range(nwards):
     c = {"ID":i}
     c["wardNo"] = i+1
+    #I'm not sure why the order is longitude followed by latitude
     (lon,lat)= geoDF['wardCentre'][i]
     c["lat"] = lat
     c["lon"] = lon

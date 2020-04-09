@@ -56,6 +56,12 @@ int main(int argc, char** argv){
   string output_dir(argv[16]);
 
   GLOBAL.input_base = argv[17];
+  if(GLOBAL.input_base != ""
+	 && GLOBAL.input_base[GLOBAL.input_base.size() - 1] != '/'){ 
+	GLOBAL.input_base += '/';
+	//Make sure the path of the input_base
+	//directory is terminated by a "/"
+  }
   
   auto plot_data = run_simulation();
 

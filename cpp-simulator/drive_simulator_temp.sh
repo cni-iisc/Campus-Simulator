@@ -14,7 +14,7 @@ BETA_S=1.88
 BETA_TRAVEL=10.0
 INTERVENTION=0
 output_directory_base="outputs/test_output_timing"
-input_directory="../simulator/input_files/"
+input_directory="../simulator/input_files"
 
 for INTERVENTION in `seq 0 7`;
 do

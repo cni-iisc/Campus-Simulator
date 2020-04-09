@@ -1,7 +1,16 @@
+#Set this to -fopenmp to enable compiling with openmp
+parallel = -fopenmp
+
+#Set this to -DTIMING to enable timing output
+timing = -DTIMING
+
+#Set this to -DDEBUG to enable debugging output
+debug = 
+
 include_paths = -Ilibs/
 headers = models.h initializers.h interventions.h updates.h simulator.h outputs.h
 obj = initializers.o models.o interventions.o updates.o simulator.o outputs.o
-opts = --std=c++14 -O3 -fopenmp
+opts = --std=c++14 -O3 $(timing) $(debug) $(parallel)
 CC = g++ $(opts) $(include_paths)
 
 outputs.o: outputs.cc $(headers)

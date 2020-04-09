@@ -28,7 +28,12 @@ inline count_type stoct(const std::string& str){
 }
 
 // Random number gnerators
+#ifdef MERSENNE_TWISTER
 extern std::mt19937 GENERATOR;
+#else
+extern std::default_random_engine GENERATOR;
+#endif
+
 inline double gamma(double shape, double scale){
   return std::gamma_distribution<double>(shape, scale)(GENERATOR);
 }

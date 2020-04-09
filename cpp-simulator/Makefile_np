@@ -7,10 +7,13 @@ timing = -DTIMING
 #Set this to -DDEBUG to enable debugging output
 debug = 
 
+#Set this to -DMERSENNE_TWISTER to use the Mersenne twister 19937 Random number generator
+random = -DMERSENNE_TWISTER
+
 include_paths = -Ilibs/
 headers = models.h initializers.h interventions.h updates.h simulator.h outputs.h
 obj = initializers.o models.o interventions.o updates.o simulator.o outputs.o
-opts = --std=c++14 -O3 $(timing) $(debug) $(parallel)
+opts = --std=c++14 -O3 $(parallel) $(timing) $(debug) $(random)
 CC = g++ $(opts) $(include_paths)
 
 outputs.o: outputs.cc $(headers)

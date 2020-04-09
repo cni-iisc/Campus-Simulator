@@ -135,6 +135,9 @@ struct global_params{
   //Switches
   //If this is false, the file quarantinedPopulation.json is needed
   bool USE_SAME_INFECTION_PROB_FOR_ALL_WARDS = true;
+
+  //Input and output
+  std::string input_base;
 };
 extern global_params GLOBAL;
 

@@ -13,7 +13,8 @@ BETA_C=0.47045
 BETA_S=1.88
 BETA_TRAVEL=10.0
 INTERVENTION=0
-output_directory_base="outputs/test_output"
+output_directory_base="outputs/test_output_timing"
+input_directory="../simulator/input_files/"
 
 for INTERVENTION in `seq 0 7`;
 do
@@ -37,7 +38,8 @@ do
 	 $BETA_S \
      $BETA_TRAVEL \
 	 $INTERVENTION \
-	 $output_directory"
+	 $output_directory \
+	 $input_directory"
 
 	echo $command;
 	if eval $command; then

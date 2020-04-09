@@ -40,7 +40,7 @@ if ibasepath[-1]!='/':
 if obasepath[-1]!='/':
     obasepath = obasepath+'/'
 
-    
+
 citygeojsonfile  = ibasepath+"city.geojson"
 demographicsfile = ibasepath+"demographics.csv"
 employmentfile   = ibasepath+"employment.csv"
@@ -94,10 +94,10 @@ if os.path.exists(slumfracfile):
             if row[0]=='wardIndex':
                 continue
             slum_fractions.append(float(row[2]))
-    
+
     if os.path.exists(ibasepath + 'slumpoints/0.csv'):
         slumpoints_precomputed = 1
-    
+
     if os.path.exists(slumclusterfile):
         slumcluster_flag=1
         print("Slum clustter file found. Parsing slum clusters...",end='',flush=True)
@@ -244,7 +244,7 @@ def sampleRandomLatLong(wardIndex):
 def sampleRandomLatLong_s(wardIndex,slumbit):
     #slumbit = 0 => get point in nonslum
     #slumbit = 1 => get point in slum
-    
+
     if slumcluster_flag==0:
         return sampleRandomLatLong(wardIndex)
 
@@ -260,7 +260,7 @@ def sampleRandomLatLong_s(wardIndex,slumbit):
         else:
             #Just going to return a random point in the ward
             return sampleRandomLatLong(wardIndex)
-    
+
     #If not precomputed, do rejection sampling
     attempts = 0
     while attempts<30:
@@ -279,8 +279,8 @@ def sampleRandomLatLong_s(wardIndex,slumbit):
     #Just sample a random point in the ward if unsuccessful
     #print("Gave up on sampleRandomLatLong_s with ",wardIndex,slumflag)
     return sampleRandomLatLong(wardIndex)
-        
-        
+
+
 def distance(lat1, lon1, lat2, lon2):
     radius = 6371 # km
 
@@ -296,11 +296,11 @@ def getCommunityCenterDistance(lat,lon,wardIndex):
     #I'm not sure why the order is longitude followed by latitude
     (lonc,latc) = geoDF['wardCentre'][wardIndex]
     return distance(lat,lon,latc,lonc)
-                                                        
 
 
-    
-    
+
+
+
 # In[ ]:
 
 
@@ -320,7 +320,7 @@ for wardIndex in range(nwards):
         h["wardIndex"]=wardIndex
         if slum_flag:
             h["slum"]=0
-        
+
         s = sampleHouseholdSize()
         h["size"]=s
         currnonslumwpop+=s
@@ -559,7 +559,7 @@ for wardIndex in range(nwards):
         schools.append(s)
         sid+=1
 
-        
+
 print("done.",flush=True)
 
 print("")
@@ -590,11 +590,11 @@ for i in range(nwards):
     w["totalPopulation"] = wardpop[i]
     w["fracPopulation"] = wardpop[i]/totalPop
     fractionPopulations.append(w)
-    
+
 wardCentreDistances = [ {"ID":i+1} for i in range(nwards)]
 for i in range(nwards):
     for j in range(nwards):
-        d = distance(commonAreas[i]["lat"],commonAreas[i]["lon"],commonAreas[j]["lat"],commonAreas[j]["lon"]) 
+        d = distance(commonAreas[i]["lat"],commonAreas[i]["lon"],commonAreas[j]["lat"],commonAreas[j]["lon"])
         wardCentreDistances[i][str(j+1)]=d
 
 
@@ -602,6 +602,9 @@ for i in range(nwards):
 
 
 print("Dumping to json files...",end='',flush=True)
+
+if not os.path.exists(obasepath):
+    os.makedirs(obasepath)
 
 f = open(individualsjson, "w+")
 f.write(json.dumps(individuals))
@@ -642,12 +645,6 @@ f.write(json.dumps(wardCentreDistances))
 f.close
 print("wardCentreDistance.json) ... done.",flush=True)
 
-        
-
-
-# In[ ]:
-
-
 
 
 
@@ -656,3 +653,5 @@ print("wardCentreDistance.json) ... done.",flush=True)
 
 
 
+
+# In[ ]:

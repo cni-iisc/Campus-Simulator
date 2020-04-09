@@ -71,7 +71,11 @@ geoDF['wardNo'] = geoDF['wardNo'].astype(int)
 geoDF['wardIndex'] = geoDF['wardNo'] - 1
 geoDF = geoDF[['wardIndex','wardNo', 'wardName', 'geometry']]
 geoDF['wardBounds'] = geoDF.apply(lambda row: MultiPolygon(row['geometry']).bounds, axis=1)
-geoDF['wardCentre'] = geoDF.apply(lambda row: (MultiPolygon(row['geometry']).centroid.x, MultiPolygon(row['geometry']).centroid.y), axis=1)
+
+##!! Note that the geojson file has coordinates in (longitude, latitude) order!
+##!! Hence the below order of x and y
+geoDF['wardCentre'] = geoDF.apply(lambda row: (MultiPolygon(row['geometry']).centroid.y, MultiPolygon(row['geometry']).centroid.x), axis=1)
+
 geoDF["neighbors"] = geoDF.apply(lambda row: ", ".join([str(ward) for ward in geoDF[~geoDF.geometry.disjoint(row['geometry'])]['wardNo'].tolist()]) , axis=1)
 print("done.",flush=True)
 

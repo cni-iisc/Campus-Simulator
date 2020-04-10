@@ -17,6 +17,10 @@ HD_AREA_EXPONENT=0.3
 INTERVENTION=0
 output_directory_base="outputs/test_output_timing"
 input_directory="../simulator/input_files"
+# Set this to "--SEED_HD_AREA_POPULATION" to seed hd area population
+# as well.
+# SEED_HD_AREA_POPULATION="--SEED_HD_AREA_POPULATION"
+SEED_HD_AREA_POPULATION=
 
 
 usage(){
@@ -55,6 +59,7 @@ do
 	fi;
 	echo "Output will be genrerated for this intervention in ${output_directory}."
 	command="time ./drive_simulator \
+     $SEED_HD_AREA_POPULATION \
 	 --NUM_DAYS $NUM_DAYS \
 	 --INIT_FRAC_INFECTED $INIT_FRAC_INFECTED \
 	 --INCUBATION_PERIOD $INCUBATION_PERIOD \

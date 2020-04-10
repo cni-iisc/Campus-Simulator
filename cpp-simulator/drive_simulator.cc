@@ -35,6 +35,8 @@ int main(int argc, char** argv){
 
   options.add_options()
 	("h,help", "display description of program options")
+	("SEED_HD_AREA_POPULATION", "seed those living in high-density areas as well",
+	 cxxopts::value<bool>()->default_value(DEFAULTS.SEED_HD_AREA_POPULATION))
 	("NUM_DAYS", "number of days in the simulation",
 	 cxxopts::value<count_type>()->default_value(DEFAULTS.NUM_DAYS))
 	("INIT_FRAC_INFECTED", "initial probability of a person being infected",

@@ -21,4 +21,6 @@ private:
   std::ofstream html_out;
 };
 
+void check_stream(const std::ofstream& fout, const std::string& path);
+
 #endif

@@ -126,12 +126,16 @@ int main(int argc, char** argv){
 	//Make sure the path of the input_base
 	//directory is terminated by a "/"
   }
-  
+
+  //Initialize output folders
+  gnuplot gnuplot(output_dir);
+
+  //Run simulations
   auto plot_data = run_simulation();
 
+  //Start output
   output_global_params(output_dir);
 
-  gnuplot gnuplot(output_dir);
   for(const auto& elem: plot_data){
 	std::string csvfile_name = elem.first + ".csv";
 	std::string csvfile_path = output_dir + "/" + csvfile_name;

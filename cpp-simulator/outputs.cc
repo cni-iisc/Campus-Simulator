@@ -8,6 +8,17 @@
 using std::string;
 using std::vector;
 using std::endl;
+using std::cerr;
+
+void check_stream(const std::ofstream& fout, const std::string& path){
+  if(!fout){
+	cerr << "simulator: could not open file "
+		 << path << "\n"
+		 << "simulator: please make sure the directory exists\n";
+	exit(1);
+  }
+}
+
 
 string intervention_rep(Intervention i){
   switch(i){
@@ -45,6 +56,8 @@ const string CSV_TERM = "\n";
 const char CSV_SEP = ',';
 void output_timed_csv(const vector<string>& field_row, const string& output_file, const matrix<count_type>& mat){
   std::ofstream fout(output_file, std::ios::out);
+  check_stream(fout, output_file);
+  
   fout << "Time" << CSV_SEP;
   auto end = field_row.end();
   auto penultimate = end - 1;
@@ -72,7 +85,9 @@ void output_timed_csv(const vector<string>& field_row, const string& output_file
 
 
 void output_global_params(const string& output_dir){
+  std::string global_params_path = output_dir + "/global_params.txt";
   std::ofstream fout(output_dir + "/global_params.txt", std::ios::out);
+  check_stream(fout, global_params_path);
 
   fout << "COMPLIANCE_PROBABILITY: " << GLOBAL.COMPLIANCE_PROBABILITY << ";" << endl; 
   
@@ -135,8 +150,14 @@ void output_global_params(const string& output_dir){
 }
 
 gnuplot::gnuplot(const std::string& output_directory){
-  fout.open(output_directory + "/gnuplot_script.gnuplot");
-  html_out.open(output_directory  + "/plots.html");
+  std::string gnuplot_script_path = output_directory + "/gnuplot_script.gnuplot";
+  fout.open(gnuplot_script_path);
+  check_stream(fout, gnuplot_script_path);
+
+  std::string plots_path = output_directory + "/plots.html";
+  html_out.open(plots_path);
+  check_stream(html_out, plots_path);
+  
   fout << "set datafile separator ','" << std::endl;
   fout << "set key autotitle columnhead" << std::endl;
   fout << "set term png" << std::endl;

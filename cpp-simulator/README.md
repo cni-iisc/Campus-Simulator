@@ -71,6 +71,16 @@ in the `cpp-simulator` directory.  If everything works, it will end
 with a message indicating success after a little while (~25s per
 intervention on my computer with 1,00,000 agents).
 
+The main simulator executable is in `drive_simulator`.  It runs for a
+single intervention stratey, and all the parameters can be specfied on
+the command line via named arguments (this is the program called by
+the `drive_simulator_temp.sh` script above).  To see the option you
+can run the following command in the the `cpp-simulator` directory:
+
+```
+./drive_simulator -h
+```
+
 ## Viewing the output
 
 The output can now be seen by using your favorite browser to open the

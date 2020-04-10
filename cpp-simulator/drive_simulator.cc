@@ -1,66 +1,123 @@
 #include "simulator.h"
 #include "outputs.h"
+#include "defaults.h"
 #include <cassert>
 #include <iostream>
 #include <fstream>
 #include <string>
-using namespace std;
+#include <cxxopts.hpp>
 
-const int TOTAL_INPUT_ARGS = 19;
-  // 1: NUM_DAYS
-  // 2: INIT_FRAC_INFECTED
-  // 3: INCUBATION_PERIOD
-  // 4: MEAN_ASYMPTOMATIC_PERIOD
-  // 5: MEAN_SYMPTOMATIC_PERIOD
-  // 6: SYMPTOMATIC_FRACTION
-  // 7: MEAN_HOSPITAL_REGULAR_PERIOD
-  // 8: MEAN_HOSPITAL_CRITICAL_PERIOD
-  // 9: COMPLIANCE_PROBABILITY
-  // 10: BETA_H
-  // 11: BETA_W
-  // 12: BETA_C
-  // 13: BETA_S
-  // 14: BETA_TRAVEL
-  // 15: HD_AREA_FACTOR
-  // 16: HD_AREA_EXPONENT
-  // 17: INTERVENTION
-  // 18: output directory
-  // 19: input directory
-  
+// Input Arguments
+// 1: NUM_DAYS
+// 2: INIT_FRAC_INFECTED
+// 3: INCUBATION_PERIOD
+// 4: MEAN_ASYMPTOMATIC_PERIOD
+// 5: MEAN_SYMPTOMATIC_PERIOD
+// 6: SYMPTOMATIC_FRACTION
+// 7: MEAN_HOSPITAL_REGULAR_PERIOD
+// 8: MEAN_HOSPITAL_CRITICAL_PERIOD
+// 9: COMPLIANCE_PROBABILITY
+// 10: BETA_H
+// 11: BETA_W
+// 12: BETA_C
+// 13: BETA_S
+// 14: BETA_TRAVEL
+// 15: HD_AREA_FACTOR
+// 16: HD_AREA_EXPONENT
+// 17: INTERVENTION
+// 18: output directory
+// 19: input directory
+
 int main(int argc, char** argv){
-  cout << "Number of arguments provided: " << argc << endl;
-  assert(argc == TOTAL_INPUT_ARGS + 1);
-  GLOBAL.NUM_DAYS = stoct(argv[1]);
+
+  cxxopts::Options options(argv[0],
+						  "Simulate the mean field agent model");
+
+  options.add_options()
+	("h,help", "display description of program options")
+	("NUM_DAYS", "number of days in the simulation",
+	 cxxopts::value<count_type>()->default_value(DEFAULTS.NUM_DAYS))
+	("INIT_FRAC_INFECTED", "initial probability of a person being infected",
+	 cxxopts::value<double>()->default_value(DEFAULTS.INIT_FRAC_INFECTED))
+	("INCUBATION_PERIOD", "incubation period",
+	 cxxopts::value<double>()->default_value(DEFAULTS.INCUBATION_PERIOD))
+	("MEAN_ASYMPTOMATIC_PERIOD", "mean asymptomati period",
+	 cxxopts::value<double>()->default_value(DEFAULTS.MEAN_ASYMPTOMATIC_PERIOD))
+	("MEAN_SYMPTOMATIC_PERIOD", "mean symptomatic period",
+	 cxxopts::value<double>()->default_value(DEFAULTS.MEAN_SYMPTOMATIC_PERIOD))
+	("SYMPTOMATIC_FRACTION", "fraction of people who develop symptoms",
+	 cxxopts::value<double>()->default_value(DEFAULTS.SYMPTOMATIC_FRACTION))
+	("MEAN_HOSPITAL_REGULAR_PERIOD", "mean period of regular hospitalization",
+	 cxxopts::value<double>()->default_value(DEFAULTS.MEAN_HOSPITAL_REGULAR_PERIOD))
+	("MEAN_HOSPITAL_CRITICAL_PERIOD", "mean period of critical care hospitalization",
+	 cxxopts::value<double>()->default_value(DEFAULTS.MEAN_HOSPITAL_CRITICAL_PERIOD))
+	("COMPLIANCE_PROBABILITY", "default compliance probability",
+	 cxxopts::value<double>()->default_value(DEFAULTS.COMPLIANCE_PROBABILITY))
+	("BETA_H", "the beta_home parameter",
+	 cxxopts::value<double>()->default_value(DEFAULTS.BETA_H))
+	("BETA_W", "the beta_workplace parameter",
+	 cxxopts::value<double>()->default_value(DEFAULTS.BETA_W))
+	("BETA_C", "the beta_community parameter",
+	 cxxopts::value<double>()->default_value(DEFAULTS.BETA_C))
+	("BETA_S", "the beta_school parameter",
+	 cxxopts::value<double>()->default_value(DEFAULTS.BETA_S))
+	("BETA_TRAVEL", "the beta_travel parameter",
+	 cxxopts::value<double>()->default_value(DEFAULTS.BETA_TRAVEL))
+	("HD_AREA_FACTOR", "multiplicative factor for high density areas",
+	 cxxopts::value<double>()->default_value(DEFAULTS.HD_AREA_FACTOR))
+	("HD_AREA_EXPONENT", "exponent for community size for high density areas",
+	 cxxopts::value<double>()->default_value(DEFAULTS.HD_AREA_EXPONENT))
+	("INTERVENTION", "index of the intervention",
+	 cxxopts::value<count_type>()->default_value(DEFAULTS.INTERVENTION))
+	("output_directory", "output directory",
+	 cxxopts::value<std::string>()->default_value(DEFAULTS.output_dir))
+	("input_directory", "input directory",
+	 cxxopts::value<std::string>()->default_value(DEFAULTS.input_base));
+  
+  auto optvals = options.parse(argc, argv);
+  
+  if(optvals.count("help")){
+	std::cout << options.help() << std::endl;
+	return 0;
+  }
+  
+  //Save options
+  GLOBAL.NUM_DAYS = optvals["NUM_DAYS"].as<count_type>();
+  GLOBAL.INIT_FRAC_INFECTED = optvals["INIT_FRAC_INFECTED"].as<double>();
+  GLOBAL.INCUBATION_PERIOD = optvals["INCUBATION_PERIOD"].as<double>();
+  GLOBAL.MEAN_ASYMPTOMATIC_PERIOD = optvals["MEAN_ASYMPTOMATIC_PERIOD"].as<double>();
+  GLOBAL.MEAN_SYMPTOMATIC_PERIOD = optvals["MEAN_SYMPTOMATIC_PERIOD"].as<double>();
+  GLOBAL.SYMPTOMATIC_FRACTION = optvals["SYMPTOMATIC_FRACTION"].as<double>();
+  GLOBAL.MEAN_HOSPITAL_REGULAR_PERIOD = optvals["MEAN_HOSPITAL_REGULAR_PERIOD"].as<double>();
+  GLOBAL.MEAN_HOSPITAL_CRITICAL_PERIOD = optvals["MEAN_HOSPITAL_CRITICAL_PERIOD"].as<double>();
+  GLOBAL.COMPLIANCE_PROBABILITY = optvals["COMPLIANCE_PROBABILITY"].as<double>();
+
+  GLOBAL.BETA_H = optvals["BETA_H"].as<double>();
+  GLOBAL.BETA_W = optvals["BETA_W"].as<double>();
+  GLOBAL.BETA_C = optvals["BETA_C"].as<double>();
+  GLOBAL.BETA_S = optvals["BETA_S"].as<double>();
+  GLOBAL.BETA_TRAVEL = optvals["BETA_TRAVEL"].as<double>();
+
+  GLOBAL.HD_AREA_FACTOR = optvals["HD_AREA_FACTOR"].as<double>();
+  GLOBAL.HD_AREA_EXPONENT = optvals["HD_AREA_EXPONENT"].as<double>();
+  
+  GLOBAL.INTERVENTION
+	= static_cast<Intervention>(optvals["INTERVENTION"].as<count_type>());
+
+  std::string output_dir(optvals["output_directory"].as<std::string>());
+
+  GLOBAL.input_base = optvals["input_directory"].as<std::string>();
+  //Done saving options
+  
+  //Compute parametrs based on options
   GLOBAL.NUM_TIMESTEPS = GLOBAL.NUM_DAYS*GLOBAL.SIM_STEPS_PER_DAY;
-  GLOBAL.INIT_FRAC_INFECTED = stod(argv[2]);
-  GLOBAL.INCUBATION_PERIOD = stod(argv[3]);
   GLOBAL.INCUBATION_PERIOD_SCALE = GLOBAL.INCUBATION_PERIOD*GLOBAL.SIM_STEPS_PER_DAY;
-  GLOBAL.MEAN_ASYMPTOMATIC_PERIOD = stod(argv[4]);
-  GLOBAL.MEAN_SYMPTOMATIC_PERIOD = stod(argv[5]);
-  GLOBAL.SYMPTOMATIC_FRACTION = stod(argv[6]);
-  GLOBAL.MEAN_HOSPITAL_REGULAR_PERIOD = stod(argv[7]);
-  GLOBAL.MEAN_HOSPITAL_CRITICAL_PERIOD = stod(argv[8]);
-  GLOBAL.COMPLIANCE_PROBABILITY = stod(argv[9]);
 
   GLOBAL.ASYMPTOMATIC_PERIOD = GLOBAL.MEAN_ASYMPTOMATIC_PERIOD*GLOBAL.SIM_STEPS_PER_DAY;
   GLOBAL.SYMPTOMATIC_PERIOD = GLOBAL.MEAN_SYMPTOMATIC_PERIOD*GLOBAL.SIM_STEPS_PER_DAY;
   GLOBAL.HOSPITAL_REGULAR_PERIOD = GLOBAL.MEAN_HOSPITAL_REGULAR_PERIOD*GLOBAL.SIM_STEPS_PER_DAY;
   GLOBAL.HOSPITAL_CRITICAL_PERIOD = GLOBAL.MEAN_HOSPITAL_CRITICAL_PERIOD*GLOBAL.SIM_STEPS_PER_DAY;
 
-  GLOBAL.BETA_H = stod(argv[10]);
-  GLOBAL.BETA_W = stod(argv[11]);
-  GLOBAL.BETA_C = stod(argv[12]);
-  GLOBAL.BETA_S = stod(argv[13]);
-  GLOBAL.BETA_TRAVEL = stod(argv[14]);
-
-  GLOBAL.HD_AREA_FACTOR = stod(argv[15]);
-  GLOBAL.HD_AREA_EXPONENT = stod(argv[16]);
-  
-  GLOBAL.INTERVENTION = static_cast<Intervention>(stoi(argv[17]));
-
-  string output_dir(argv[18]);
-
-  GLOBAL.input_base = argv[19];
   if(GLOBAL.input_base != ""
 	 && GLOBAL.input_base[GLOBAL.input_base.size() - 1] != '/'){ 
 	GLOBAL.input_base += '/';
@@ -74,8 +131,8 @@ int main(int argc, char** argv){
 
   gnuplot gnuplot(output_dir);
   for(const auto& elem: plot_data){
-	string csvfile_name = elem.first + ".csv";
-	string csvfile_path = output_dir + "/" + csvfile_name;
+	std::string csvfile_name = elem.first + ".csv";
+	std::string csvfile_path = output_dir + "/" + csvfile_name;
 	if(elem.first == "csvContent"){
 	  //This file contains everything!
 	  output_timed_csv({"community",

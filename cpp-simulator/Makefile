@@ -10,8 +10,8 @@ debug =
 #Set this to -DMERSENNE_TWISTER to use the Mersenne twister 19937 Random number generator
 random = -DMERSENNE_TWISTER
 
-include_paths = -Ilibs/
-headers = models.h initializers.h interventions.h updates.h simulator.h outputs.h
+include_paths = -Ilibs/ -Ilibs/cxxopts-2.2.0/include/
+headers = models.h initializers.h interventions.h updates.h simulator.h outputs.h defaults.h
 obj = initializers.o models.o interventions.o updates.o simulator.o outputs.o
 opts = --std=c++14 -O3 $(parallel) $(timing) $(debug) $(random)
 CC = g++ $(opts) $(include_paths)

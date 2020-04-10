@@ -197,7 +197,6 @@ vector<agent> init_nodes(){
 	//
 	// Only use this feature if the field is present in the
 	// "individuals" input files.
-	bool hd_area_resident = false;
 	if(elem.HasMember("slum")){
 
 #ifdef DEBUG
@@ -205,14 +204,14 @@ vector<agent> init_nodes(){
 #endif
 
 	  if(elem["slum"].GetInt()){
-		hd_area_resident = true;
+		nodes[i].hd_area_resident = true;
 		nodes[i].hd_area_factor = GLOBAL.HD_AREA_FACTOR;
 		nodes[i].hd_area_exponent = GLOBAL.HD_AREA_EXPONENT;
 	  }
 	}
-
+	
 	nodes[i].community = community;
-	if((!hd_area_resident || GLOBAL.SEED_HD_AREA_POPULATION)
+	if((!nodes[i].hd_area_resident || GLOBAL.SEED_HD_AREA_POPULATION)
 	   && bernoulli(community_infection_prob[community])){
 	  //Always seed non-high-density-ares residents
 	  //High-density-area residents seeded based on global flag.

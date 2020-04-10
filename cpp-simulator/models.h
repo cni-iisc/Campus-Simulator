@@ -257,6 +257,7 @@ struct agent{
 							  //work?
   double commute_distance = 0; //in km
 
+  bool hd_area_resident = false;
   //Multiplication factor for high population density areas, such as slums
   double hd_area_factor = 1.0;
   double hd_area_exponent = 0;

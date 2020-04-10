@@ -142,7 +142,8 @@ int main(int argc, char** argv){
 						"affected",
 						"hospitalised",
 						"critical",
-						"dead"},
+						"dead",
+						"hd_area_affected"},
 		csvfile_path, elem.second);
 	} else {
 	  output_timed_csv({elem.first},

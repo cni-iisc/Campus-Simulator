@@ -38,6 +38,7 @@ struct casualty_stats{
   count_type dead = 0;
   count_type exposed = 0;
   count_type recovered = 0;
+  count_type hd_area_affected = 0;
 };
 
 casualty_stats get_infected_community(const std::vector<agent>& nodes, const community& community);

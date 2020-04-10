@@ -112,7 +112,8 @@ map<string, matrix<count_type>> run_simulation(){
 		  temp_stats.affected,
 		  temp_stats.hospitalised,
 		  temp_stats.critical,
-		  temp_stats.dead
+		  temp_stats.dead,
+		  temp_stats.hd_area_affected
 		});
 	}
 

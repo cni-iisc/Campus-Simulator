@@ -16,7 +16,7 @@ struct defaults{
   std::string BETA_S = "1.88";
   std::string BETA_TRAVEL = "10.0";
   std::string HD_AREA_FACTOR = "2.0";
-  std::string HD_AREA_EXPONENT = "0.3";
+  std::string HD_AREA_EXPONENT = "0";
   std::string INTERVENTION = "0";
   std::string output_dir = "outputs/test_output_timing";
   std::string input_base = "../simulator/input_files";

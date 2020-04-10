@@ -190,8 +190,32 @@ vector<agent> init_nodes(){
 	//minus 1 for 0-based indexing.  POSSIBLE BUG: Might need to use
 	//"wardIndex" instead, because that is the one actually sent by
 	//the generator scripts.
+
+
+	// Does the individual live in a slum?  In that case we need to
+	// scale the contribution to their infection rates by a factor.
+	//
+	// Only use this feature if the field is present in the
+	// "individuals" input files.
+	bool hd_area_resident = false;
+	if(elem.HasMember("slum")){
+
+#ifdef DEBUG
+	  assert(elem["slum"].IsInt());
+#endif
+
+	  if(elem["slum"].GetInt()){
+		hd_area_resident = true;
+		nodes[i].hd_area_factor = GLOBAL.HD_AREA_FACTOR;
+		nodes[i].hd_area_exponent = GLOBAL.HD_AREA_EXPONENT;
+	  }
+	}
+
 	nodes[i].community = community;
-	if(bernoulli(community_infection_prob[community])){
+	if((!hd_area_resident || GLOBAL.SEED_HD_AREA_POPULATION)
+	   && bernoulli(community_infection_prob[community])){
+	  //Always seed non-high-density-ares residents
+	  //High-density-area residents seeded based on global flag.
 	  nodes[i].infection_status = Progression::exposed;
 	} else {
 	  nodes[i].infection_status = Progression::susceptible;
@@ -225,23 +249,6 @@ vector<agent> init_nodes(){
 
 	//Travel
 	nodes[i].has_to_travel = bernoulli(GLOBAL.P_TRAIN);
-
-	// Does the individual live in a slum?  In that case we need to
-	// scale the contribution to their infection rates by a factor.
-	//
-	// Only use this feature if the field is present in the
-	// "individuals" input files.
-	if(elem.HasMember("slum")){
-
-#ifdef DEBUG
-	  assert(elem["slum"].IsInt());
-#endif
-
-	  if(elem["slum"].GetInt()){
-		nodes[i].hd_area_factor = GLOBAL.HD_AREA_FACTOR;
-		nodes[i].hd_area_exponent = GLOBAL.HD_AREA_EXPONENT;
-	  }
-	}
 
 	++i;
   }

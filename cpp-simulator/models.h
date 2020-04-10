@@ -138,6 +138,10 @@ struct global_params{
   //If this is false, the file quarantinedPopulation.json is needed
   bool USE_SAME_INFECTION_PROB_FOR_ALL_WARDS = true;
 
+  //If this is true, then the initial seeding is for all individuals,
+  //not just those residing in non-high-density areas
+  bool SEED_HD_AREA_POPULATION = false;
+
   //Input and output
   std::string input_base;
 };

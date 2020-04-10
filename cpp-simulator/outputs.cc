@@ -129,7 +129,8 @@ void output_global_params(const string& output_dir){
   fout << "HD_AREA_EXPONENT: " << GLOBAL.HD_AREA_EXPONENT << ";" << endl;
   
   fout << "USE_SAME_INFECTION_PROB_FOR_ALL_WARDS: " << GLOBAL.USE_SAME_INFECTION_PROB_FOR_ALL_WARDS << ";" << endl;
-
+  fout << "SEED_HD_AREA_POPULATION: " << GLOBAL.SEED_HD_AREA_POPULATION << ";" << endl;
+  
   fout.close();
 }
 

@@ -1,8 +1,11 @@
+#ifndef DEFAULTS_H_
+#define DEFAULTS_H_
 #include <string>
 
 struct defaults{
   std::string NUM_DAYS = "120";
   std::string INIT_FRAC_INFECTED = "0.0001";
+  std::string INIT_FIXED_NUMBER_INFECTED = "100";
   std::string INCUBATION_PERIOD = "2.25";
   std::string MEAN_ASYMPTOMATIC_PERIOD = "0.5";
   std::string MEAN_SYMPTOMATIC_PERIOD = "5";
@@ -21,4 +24,8 @@ struct defaults{
   std::string output_dir = "outputs/test_output_timing";
   std::string input_base = "../simulator/input_files";
   std::string SEED_HD_AREA_POPULATION = "false";
+  std::string SEED_ONLY_NON_COMMUTER = "false";
+  std::string SEED_FIXED_NUMBER = "false";
 } DEFAULTS;
+
+#endif

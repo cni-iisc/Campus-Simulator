@@ -59,8 +59,8 @@ commonAreajson         = obasepath+"commonArea.json"
 fractionPopulationjson = obasepath+"fractionPopulation.json"
 
 #fixing for now
-slum_schoolsize_factor = 2
-slum_householdsize_scalefactor = 2
+slum_schoolsize_factor = 1
+slum_householdsize_scalefactor = 1
 
 print("Creating city with a population of approximately ",miniPop,flush=True)
 print("")

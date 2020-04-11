@@ -101,7 +101,15 @@ void output_global_params(const string& output_dir){
   fout << "NUM_DAYS: " << GLOBAL.NUM_DAYS << ";" << endl;  //Number of days. Simulation duration
   fout << "SIM_STEPS_PER_DAY: " << GLOBAL.SIM_STEPS_PER_DAY << ";" << endl;  //Number of simulation steps per day.
   fout << "NUM_TIMESTEPS: " << GLOBAL.NUM_TIMESTEPS << ";" << endl;  //
+
+  fout << "SEED_FIXED_NUMBER: " << GLOBAL.SEED_FIXED_NUMBER << "; " << endl;
   fout << "INIT_FRAC_INFECTED: " << GLOBAL.INIT_FRAC_INFECTED << ";" << endl;  // Initial number of people infected
+  if(GLOBAL.SEED_FIXED_NUMBER){
+	fout << "#Since SEED_FIXED_NUMBER is set, INIT_FRAC_INFECTED is overridden by INIT_FIXED_NUMBER_INFECTED\n";
+	fout << "INIT_FIXED_NUMBER_INFECTED: " << GLOBAL.INIT_FIXED_NUMBER_INFECTED  << ";" << endl;
+  }
+  fout << "#Actual number of initial infections: " << GLOBAL.INIT_ACTUALLY_INFECTED << ";" << endl;
+
   
   fout << "INCUBATION_PERIOD: " << GLOBAL.INCUBATION_PERIOD << ";" << endl; 
   fout << "MEAN_ASYMPTOMATIC_PERIOD: " << GLOBAL.MEAN_ASYMPTOMATIC_PERIOD << ";" << endl; 
@@ -145,7 +153,9 @@ void output_global_params(const string& output_dir){
   
   fout << "USE_SAME_INFECTION_PROB_FOR_ALL_WARDS: " << GLOBAL.USE_SAME_INFECTION_PROB_FOR_ALL_WARDS << ";" << endl;
   fout << "SEED_HD_AREA_POPULATION: " << GLOBAL.SEED_HD_AREA_POPULATION << ";" << endl;
+  fout << "SEED_ONLY_NON_COMMUTER: " << GLOBAL.SEED_ONLY_NON_COMMUTER << ";" << endl;
   
+
   fout.close();
 }
 

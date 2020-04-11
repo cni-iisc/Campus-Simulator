@@ -131,6 +131,51 @@ vector<double> compute_prob_infection_given_community(double infection_probabili
   }
 }
 
+void seed_initial_infection_at_node(agent& node, double time_of_infection){
+  node.infection_status = Progression::exposed;
+  node.time_of_infection = time_of_infection;
+  ++GLOBAL.INIT_ACTUALLY_INFECTED;
+}
+
+template <class T>
+void set_node_initial_infection(agent& node,
+								double community_infection_probability,
+								int node_index,
+								const T& elem,
+								vector<count_type>& seed_candidates
+								){
+  if(SEED_INFECTION_FROM_FILE){
+#ifdef DEBUG
+	assert(elem["infection_status"].IsInt());
+#endif
+	if(elem["infection_status"].GetInt()){
+	  seed_initial_infection_at_node(node, -elem["time_since_infected"].GetDouble());
+	}
+  }
+  else {
+	//Infections not being seeded from file
+	bool seed_candidate =
+	  (GLOBAL.SEED_HD_AREA_POPULATION || !node.hd_area_resident)
+	  && !(GLOBAL.SEED_ONLY_NON_COMMUTER && node.has_to_travel);
+
+	if(GLOBAL.SEED_FIXED_NUMBER){
+	  if(seed_candidate){
+		seed_candidates.push_back(node_index);
+	  }
+	}
+	else {
+	  if(seed_candidate
+		 && bernoulli(community_infection_probability)){
+		// Always seed non-high-density-ares residents
+		// High-density-area residents seeded based on global flag.
+		seed_initial_infection_at_node(node, -uniform_real(0, node.incubation_period));
+	  }
+	}
+  }
+  // node.infective = (node.infection_status == Progression::infective);
+  // POSSIBLE BUG: In the JS code, and here, infection_status is
+  // never set to infective, so the above line would be superfluous!
+}
 
 vector<agent> init_nodes(){
   auto indivJSON = readJSONFile(GLOBAL.input_base + "individuals.json");
@@ -141,6 +186,9 @@ vector<agent> init_nodes(){
 
   count_type i = 0;
 
+  vector<count_type> seed_candidates;
+  seed_candidates.reserve(size);
+  
   for (auto &elem: indivJSON.GetArray()){
  	nodes[i].loc = location{elem["lat"].GetDouble(),
 							elem["lon"].GetDouble()};
@@ -211,15 +259,6 @@ vector<agent> init_nodes(){
 	}
 	
 	nodes[i].community = community;
-	if((!nodes[i].hd_area_resident || GLOBAL.SEED_HD_AREA_POPULATION)
-	   && bernoulli(community_infection_prob[community])){
-	  //Always seed non-high-density-ares residents
-	  //High-density-area residents seeded based on global flag.
-	  nodes[i].infection_status = Progression::exposed;
-	} else {
-	  nodes[i].infection_status = Progression::susceptible;
-	}
-
 	nodes[i].funct_d_ck = f_kernel(elem["CommunityCentreDistance"].GetDouble());
 
 	nodes[i].incubation_period = gamma(GLOBAL.INCUBATION_PERIOD_SHAPE,
@@ -232,26 +271,36 @@ vector<agent> init_nodes(){
 	nodes[i].hospital_regular_period = GLOBAL.HOSPITAL_REGULAR_PERIOD;
 	nodes[i].hospital_critical_period = GLOBAL.HOSPITAL_CRITICAL_PERIOD;
 
-	if(SEED_INFECTION_FROM_FILE){
-#ifdef DEBUG
-	  assert(elem["infection_status"].IsInt());
-#endif
-	  nodes[i].infection_status = static_cast<Progression>(elem["infection_status"].GetInt());
-	  nodes[i].time_of_infection = (nodes[i].infection_status == Progression::exposed)?(-elem["time_since_infected"].GetDouble()):0;
-	} else {
-	  nodes[i].time_of_infection = (nodes[i].infection_status == Progression::exposed)?(-uniform_real(0, nodes[i].incubation_period)):0;
-	  //Why do we take time of infection to be 0 by default?
-	}
-	nodes[i].infective = (nodes[i].infection_status == Progression::infective);
-	//POSSIBLE BUG: In the JS code, and here, infection_status is
-	//never set to infective, so the above line would be superfluous!
-
 	//Travel
 	nodes[i].has_to_travel = bernoulli(GLOBAL.P_TRAIN);
+
+	//Now procees node to check if it could be an initial seed given
+	//all its other data
+	set_node_initial_infection(nodes[i],
+							   community_infection_prob[community],
+							   i, elem,
+							   seed_candidates);
 
 	++i;
   }
   assert(i == GLOBAL.num_people);
+
+  // If seeding a fixed number, go through the list of seed candidates
+  // and seed a randomly chosen fixed number of them
+  if(GLOBAL.SEED_FIXED_NUMBER){
+	count_type candidate_list_size = seed_candidates.size();
+	if (candidate_list_size > GLOBAL.INIT_FIXED_NUMBER_INFECTED){
+
+	  //Randomly permute the list of candidates
+	  std::shuffle(seed_candidates.begin(), seed_candidates.end(), GENERATOR);
+	  
+	}
+	count_type num = std::min(candidate_list_size, GLOBAL.INIT_FIXED_NUMBER_INFECTED);
+	for(count_type j = 0; j < num; ++j){
+	  seed_initial_infection_at_node(nodes[seed_candidates[j]],
+									 -uniform_real(0, nodes[seed_candidates[j]].incubation_period));
+	}
+  }
   return nodes;
 }
 

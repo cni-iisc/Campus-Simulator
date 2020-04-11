@@ -37,10 +37,16 @@ int main(int argc, char** argv){
 	("h,help", "display description of program options")
 	("SEED_HD_AREA_POPULATION", "seed those living in high-density areas as well",
 	 cxxopts::value<bool>()->default_value(DEFAULTS.SEED_HD_AREA_POPULATION))
+	("SEED_ONLY_NON_COMMUTER", "seed only those who do not take public transit",
+	 cxxopts::value<bool>()->default_value(DEFAULTS.SEED_ONLY_NON_COMMUTER))
+	("SEED_FIXED_NUMBER", "seed a fixed number of initial infections.  If this option is provided, INIT_FRAC_INFECTED is ignored in favour of INIT_FIXED_NUMBER_INFECTED",
+	 cxxopts::value<bool>()->default_value(DEFAULTS.SEED_FIXED_NUMBER))
 	("NUM_DAYS", "number of days in the simulation",
 	 cxxopts::value<count_type>()->default_value(DEFAULTS.NUM_DAYS))
-	("INIT_FRAC_INFECTED", "initial probability of a person being infected",
+	("INIT_FRAC_INFECTED", "initial probability of a person being infected.  If --SEED_FIXED_NUMBER is provided, this is ignored in favour of INIT_FIXED_NUMBER_INFECTED",
 	 cxxopts::value<double>()->default_value(DEFAULTS.INIT_FRAC_INFECTED))
+	("INIT_FIXED_NUMBER_INFECTED", "initial number of people infected.  If --SEED_FIXED_NUMBER is provided, this supersed INIT_FRAC_INFECTED",
+	 cxxopts::value<count_type>()->default_value(DEFAULTS.INIT_FIXED_NUMBER_INFECTED))
 	("INCUBATION_PERIOD", "incubation period",
 	 cxxopts::value<double>()->default_value(DEFAULTS.INCUBATION_PERIOD))
 	("MEAN_ASYMPTOMATIC_PERIOD", "mean asymptomati period",
@@ -84,8 +90,12 @@ int main(int argc, char** argv){
   }
   
   //Save options
+  GLOBAL.SEED_HD_AREA_POPULATION = optvals["SEED_HD_AREA_POPULATION"].count();
+  GLOBAL.SEED_ONLY_NON_COMMUTER = optvals["SEED_ONLY_NON_COMMUTER"].count();
+  GLOBAL.SEED_FIXED_NUMBER = optvals["SEED_FIXED_NUMBER"].count();
   GLOBAL.NUM_DAYS = optvals["NUM_DAYS"].as<count_type>();
   GLOBAL.INIT_FRAC_INFECTED = optvals["INIT_FRAC_INFECTED"].as<double>();
+  GLOBAL.INIT_FIXED_NUMBER_INFECTED = optvals["INIT_FIXED_NUMBER_INFECTED"].as<count_type>();
   GLOBAL.INCUBATION_PERIOD = optvals["INCUBATION_PERIOD"].as<double>();
   GLOBAL.MEAN_ASYMPTOMATIC_PERIOD = optvals["MEAN_ASYMPTOMATIC_PERIOD"].as<double>();
   GLOBAL.MEAN_SYMPTOMATIC_PERIOD = optvals["MEAN_SYMPTOMATIC_PERIOD"].as<double>();

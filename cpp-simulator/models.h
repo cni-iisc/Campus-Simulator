@@ -142,8 +142,22 @@ struct global_params{
   //not just those residing in non-high-density areas
   bool SEED_HD_AREA_POPULATION = false;
 
+  //If this is true, then only those who do not have to use public
+  //transport (i.e, with has_no_travel set to false) are initially
+  //seeded
+  bool SEED_ONLY_NON_COMMUTER = false;
+
+  //If this is true, only a fixed number of initial infections is
+  //seeded
+  bool SEED_FIXED_NUMBER = false;
+  count_type INIT_FIXED_NUMBER_INFECTED = 0;
+  
+
   //Input and output
   std::string input_base;
+
+  //Status
+  count_type INIT_ACTUALLY_INFECTED = 0;
 };
 extern global_params GLOBAL;
 
@@ -211,8 +225,10 @@ struct agent{
   int workplace;
 
   int community;
-  double time_of_infection;
-  Progression infection_status;
+  double time_of_infection = 0;
+  //Why do we take time of infection to be 0 by default?
+  Progression infection_status = Progression::susceptible;
+
   bool infective = false;
 
   double lambda_h = 0;

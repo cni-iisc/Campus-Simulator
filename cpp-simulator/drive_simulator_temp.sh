@@ -21,6 +21,17 @@ input_directory="../simulator/input_files"
 # as well.
 # SEED_HD_AREA_POPULATION="--SEED_HD_AREA_POPULATION"
 SEED_HD_AREA_POPULATION=
+# Set this to "--SEED_ONLY_NON_COMMUTER" to seed only those who do not
+# take public transit
+# SEED_ONLY_NON_COMMUTER="--SEED_ONLY_NON_COMMUTER"
+SEED_ONLY_NON_COMMUTER=
+# Set this to "--SEED_FIXED_NUMBER" to seed only a fixed number of
+# people. In this case, the value of INIT_FRAC_INFECTED will be
+# ignored in favour of the value of INIT_FIXED_NUMBER_INFECTED
+SEED_FIXED_NUMBER="--SEED_FIXED_NUMBER"
+# SEED_FIXED_NUMBER=
+INIT_FIXED_NUMBER_INFECTED=100
+
 
 
 usage(){
@@ -60,8 +71,11 @@ do
 	echo "Output will be genrerated for this intervention in ${output_directory}."
 	command="time ./drive_simulator \
      $SEED_HD_AREA_POPULATION \
+	 $SEED_ONLY_NON_COMMUTER \
+	 $SEED_FIXED_NUMBER \
 	 --NUM_DAYS $NUM_DAYS \
 	 --INIT_FRAC_INFECTED $INIT_FRAC_INFECTED \
+	 --INIT_FIXED_NUMBER_INFECTED $INIT_FIXED_NUMBER_INFECTED \
 	 --INCUBATION_PERIOD $INCUBATION_PERIOD \
 	 --MEAN_ASYMPTOMATIC_PERIOD $MEAN_ASYMPTOMATIC_PERIOD \
 	 --MEAN_SYMPTOMATIC_PERIOD $MEAN_SYMPTOMATIC_PERIOD \

@@ -17,20 +17,37 @@ interventions = {
     7: "lockdown_21"
 }
 
-var_names = ["num_infected",
-	 "num_exposed",
-	 "num_hospitalised",
-	 "num_critical",
-	 "num_fatalities",
-	 "num_recovered",
-	 "num_affected"
+var_names = [
+    "num_infected",
+    "num_exposed",
+    "num_hospitalised",
+    "num_critical",
+    "num_fatalities",
+    "num_recovered",
+    "num_affected",
 ]
+
+derived_var_names = ["case_fatality_ratio"];
 
 dfs = defaultdict(list)
 
-for var_name in var_names:
-    for INTERVENTION in range(0, INTERVENTION_NOS + 1):
+for INTERVENTION in range(0, INTERVENTION_NOS + 1):
+    # variables read from files
+    for var_name in var_names:
         dfs[var_name].append(pandas.read_csv(Path(output_base, f"intervention_{INTERVENTION}", f"{var_name}.csv")))
+
+    #derived variables
+    dfs["case_fatality_ratio"].append(
+        dfs["num_fatalities"][INTERVENTION].rename(
+            columns = {"num_fatalities": "case_fatality_ratio"}
+        )
+    )
+    dfs["case_fatality_ratio"][INTERVENTION]["case_fatality_ratio"] = (
+        dfs["case_fatality_ratio"][INTERVENTION]["case_fatality_ratio"] /
+        dfs["num_affected"][INTERVENTION]["num_affected"]
+    )
+
+
 
 
 html_out = open(Path(output_base, "plots.html"), "w")
@@ -52,7 +69,7 @@ print("  </table>\n", file = html_out)
       
 
 
-for var_name in var_names:
+for var_name in var_names + derived_var_names:
     df = dfs[var_name][0];
     df.rename(columns={var_name: str(0)}, inplace = True)
     for i in range(1, 8):

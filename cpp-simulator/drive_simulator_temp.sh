@@ -94,6 +94,7 @@ do
 		cd "$cur";
 	else
 		echo "error with INTERVENTION=${INTERVENTION}: see above for output"
+		exit 1;
 	fi;
 	echo "Done with INTERVENTION=${INTERVENTION}"
 	echo "*****************"

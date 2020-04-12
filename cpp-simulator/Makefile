@@ -11,34 +11,33 @@ debug =
 random = -DMERSENNE_TWISTER
 
 include_paths = -Ilibs/ -Ilibs/cxxopts-2.2.0/include/
-headers = models.h initializers.h interventions.h updates.h simulator.h outputs.h defaults.h
-obj = initializers.o models.o interventions.o updates.o simulator.o outputs.o
-opts = --std=c++14 -O3 $(parallel) $(timing) $(debug) $(random)
-CC = g++ $(opts) $(include_paths)
+obj = initializers.o models.o interventions.o updates.o simulator.o outputs.o drive_simulator.o
 
-outputs.o: outputs.cc $(headers)
-	$(CC) -c outputs.cc -o outputs.o
+DEPFLAGS = -MMD -MP -MF $*.d
 
-simulator.o: simulator.cc $(headers)
-	$(CC) -c simulator.cc -o simulator.o
+CPPFLAGS = --std=c++14 -O3 $(DEPFLAGS) $(include_paths) $(parallel) $(timing) $(debug) $(random)
 
-updates.o: updates.cc $(headers)
-	$(CC) -c updates.cc -o updates.o
 
-interventions.o: interventions.cc $(headers)
-	$(CC) -c interventions.cc -o interventions.o
-
-models.o: models.cc $(headers)
-	$(CC) -c models.cc -o models.o
-
-initializers.o: initializers.cc $(headers)
-	$(CC) -c initializers.cc -o initializers.o
-
-drive_simulator: drive_simulator.cc $(obj) $(headers)
-	$(CC) -o drive_simulator drive_simulator.cc $(obj)
 
 all: drive_simulator
 
+drive_simulator: $(obj)
+	g++ $(CPPFLAGS) $^ -o $@
+
+%.o : $.cc %.d
+	g++ $(CPPFLAGS) -c $<
+
+$(DEPDIR):
+	mkdir -p $@
+
+
+DEPFILES := $(obj:%.o=%.d)
+$(DEPFILES):
+
+
+.PHONY: clean
 clean:
-	rm drive_simulator $(obj)
+	rm drive_simulator *.o
+
+include $(wildcard $(DEPFILES))
 

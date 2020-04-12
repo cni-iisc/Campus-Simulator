@@ -14,7 +14,10 @@ enum class Intervention {
    case_isolation_and_home_quarantine = 4,
    case_isolation_and_home_quarantine_sd_70_plus = 5,
    lockdown_21_ci_hq_sd_70_plus_21_ci = 6,
-   lockdown_21 = 7
+   lockdown_21 = 7,
+   ld_21_ci_hq_sd70_sc_21_sc_42 = 8,
+   ld_21_ci_hq_sd70_sc_21 = 9,
+   ld_21_ci_hq_sd70_sc_oe_30 = 10
 };
 
 
@@ -158,6 +161,11 @@ struct global_params{
 
   //Status
   count_type INIT_ACTUALLY_INFECTED = 0;
+
+  //Calibration
+  double CALIBRATION_DELAY = 22; //Assuming Simulator starts on March 1
+  double DAYS_BEFORE_LOCKDOWN = 24; //March 1 - March 24
+  double NUM_DAYS_BEFORE_INTERVENTIONS = CALIBRATION_DELAY + DAYS_BEFORE_LOCKDOWN;
 };
 extern global_params GLOBAL;
 

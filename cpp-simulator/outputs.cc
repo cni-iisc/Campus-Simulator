@@ -45,6 +45,14 @@ string intervention_rep(Intervention i){
 	break;
   case Intervention::lockdown_21:
 	return "lockdown_21";
+  case Intervention::ld_21_ci_hq_sd70_sc_21_sc_42:
+	return "ld_21_ci_hq_sd70_sc_21_sc_42";
+	break;
+  case Intervention::ld_21_ci_hq_sd70_sc_21:
+	return "ld_21_ci_hq_sd70_sc_21";
+	break;
+  case Intervention::ld_21_ci_hq_sd70_sc_oe_30:
+	return "ld_21_ci_hq_sd70_sc_oe_30";
 	break;
   default:
 	assert(false);

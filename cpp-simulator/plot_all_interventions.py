@@ -25,6 +25,11 @@ var_names = [
     "num_fatalities",
     "num_recovered",
     "num_affected",
+    "susceptible_lambda",
+    "susceptible_lambda_H",
+    "susceptible_lambda_W",
+    "susceptible_lambda_C",
+    "susceptible_lambda_T",
 ]
 
 derived_var_names = ["case_fatality_ratio"];

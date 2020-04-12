@@ -52,12 +52,13 @@ string intervention_rep(Intervention i){
   }
 }
 
-const string CSV_TERM = "\n";
+const std::string CSV_TERM = "\n";
 const char CSV_SEP = ',';
-void output_timed_csv(const vector<string>& field_row, const string& output_file, const matrix<count_type>& mat){
+template <class T>
+void output_timed_csv(const std::vector<std::string>& field_row, const std::string& output_file, const timed_csv_data<T>& mat){
   std::ofstream fout(output_file, std::ios::out);
   check_stream(fout, output_file);
-  
+
   fout << "Time" << CSV_SEP;
   auto end = field_row.end();
   auto penultimate = end - 1;
@@ -69,10 +70,10 @@ void output_timed_csv(const vector<string>& field_row, const string& output_file
   }
   fout << CSV_TERM;
   for(const auto& row: mat){
-	auto end = row.end();
+	auto end = std::get<1>(row).end();
 	auto penultimate = end - 1;
-	fout << double(row[0])/GLOBAL.SIM_STEPS_PER_DAY << CSV_SEP;
-	for(auto it = row.begin() + 1; it != end; ++it){
+	fout << double(std::get<0>(row))/GLOBAL.SIM_STEPS_PER_DAY << CSV_SEP;
+	for(auto it = std::get<1>(row).begin(); it < end; ++it){
 	  fout << *it;
 	  if(it != penultimate){
 		fout<< CSV_SEP;
@@ -82,7 +83,6 @@ void output_timed_csv(const vector<string>& field_row, const string& output_file
   }
   fout.close();
 }
-
 
 void output_global_params(const string& output_dir){
   std::string global_params_path = output_dir + "/global_params.txt";
@@ -159,6 +159,7 @@ void output_global_params(const string& output_dir){
   fout.close();
 }
 
+
 gnuplot::gnuplot(const std::string& output_directory){
   std::string gnuplot_script_path = output_directory + "/gnuplot_script.gnuplot";
   fout.open(gnuplot_script_path);
@@ -191,4 +192,40 @@ gnuplot::~gnuplot(){
   fout.close();
   html_out << "\n</body>\n</html>\n";
   html_out.close();
+}
+
+
+void output_csv_files(const std::string& output_directory,
+					  gnuplot& gnuplot,
+					  const plot_data_struct& plot_data){
+  for(const auto& elem: plot_data.nums){
+	std::string csvfile_name = elem.first + ".csv";
+	std::string csvfile_path = output_directory + "/" + csvfile_name;
+	if(elem.first == "csvContent"){
+	  //This file contains everything!
+	  output_timed_csv({"community",
+						"infected",
+						"affected",
+						"hospitalised",
+						"critical",
+						"dead",
+						"hd_area_affected"},
+		csvfile_path, elem.second);
+	} else {
+	  output_timed_csv({elem.first},
+					   csvfile_path,
+					   elem.second);
+	  gnuplot.plot_data(elem.first);
+	}
+  }
+
+  //Now output lambdas
+  for(const auto& elem: plot_data.susceptible_lambdas){
+	std::string csvfile_name = elem.first + ".csv";
+	std::string csvfile_path = output_directory + "/" + csvfile_name;
+	output_timed_csv({elem.first},
+					 csvfile_path,
+					 elem.second);
+	gnuplot.plot_data(elem.first);
+  }
 }

@@ -7,26 +7,6 @@
 #include <string>
 #include <cxxopts.hpp>
 
-// Input Arguments
-// 1: NUM_DAYS
-// 2: INIT_FRAC_INFECTED
-// 3: INCUBATION_PERIOD
-// 4: MEAN_ASYMPTOMATIC_PERIOD
-// 5: MEAN_SYMPTOMATIC_PERIOD
-// 6: SYMPTOMATIC_FRACTION
-// 7: MEAN_HOSPITAL_REGULAR_PERIOD
-// 8: MEAN_HOSPITAL_CRITICAL_PERIOD
-// 9: COMPLIANCE_PROBABILITY
-// 10: BETA_H
-// 11: BETA_W
-// 12: BETA_C
-// 13: BETA_S
-// 14: BETA_TRAVEL
-// 15: HD_AREA_FACTOR
-// 16: HD_AREA_EXPONENT
-// 17: INTERVENTION
-// 18: output directory
-// 19: input directory
 
 int main(int argc, char** argv){
 
@@ -146,25 +126,6 @@ int main(int argc, char** argv){
   //Start output
   output_global_params(output_dir);
 
-  for(const auto& elem: plot_data){
-	std::string csvfile_name = elem.first + ".csv";
-	std::string csvfile_path = output_dir + "/" + csvfile_name;
-	if(elem.first == "csvContent"){
-	  //This file contains everything!
-	  output_timed_csv({"community",
-						"infected",
-						"affected",
-						"hospitalised",
-						"critical",
-						"dead",
-						"hd_area_affected"},
-		csvfile_path, elem.second);
-	} else {
-	  output_timed_csv({elem.first},
-					   csvfile_path,
-					   elem.second);
-	  gnuplot.plot_data(elem.first);
-	}
-  }
+  output_csv_files(output_dir, gnuplot, plot_data);
   return 0;
 }

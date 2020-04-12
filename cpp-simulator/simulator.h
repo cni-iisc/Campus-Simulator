@@ -1,9 +1,11 @@
 #ifndef SIMULATOR_H_
 #define SIMULATOR_H_
 #include "models.h"
+#include "outputs.h"
 #include <map>
 #include <string>
 
-std::map<std::string, matrix<count_type>> run_simulation();
+plot_data_struct run_simulation();
+
 
 #endif

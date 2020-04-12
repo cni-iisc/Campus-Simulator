@@ -7,6 +7,7 @@ using namespace std;
 #include "initializers.h"
 #include "interventions.h"
 #include "updates.h"
+#include "simulator.h"
 
 #if defined DEBUG || defined TIMING
 #include <iostream>
@@ -23,7 +24,7 @@ auto duration(const std::chrono::time_point<T>& start, const std::chrono::time_p
 }
 #endif
 
-map<string, matrix<count_type>> run_simulation(){
+plot_data_struct run_simulation(){
 #ifdef TIMING
   cerr << "simulator: starting JSON read\n";
   auto start_time = std::chrono::high_resolution_clock::now();
@@ -51,7 +52,8 @@ map<string, matrix<count_type>> run_simulation(){
   double travel_fraction = 0;
   
   //This needs to be done after the initilization.
-  map<string, matrix<count_type>> plot_data =
+  plot_data_struct plot_data;
+  plot_data.nums =
 	{
 	 {"num_infected", {}},
 	 {"num_exposed", {}},
@@ -61,11 +63,11 @@ map<string, matrix<count_type>> run_simulation(){
 	 {"num_recovered", {}},
 	 {"num_affected", {}}
 	};
-  for(auto& elem: plot_data){
+  for(auto& elem: plot_data.nums){
 	elem.second.reserve(GLOBAL.NUM_TIMESTEPS);
   }
-  plot_data["csvContent"] = {};
-  plot_data["csvContent"].reserve(GLOBAL.NUM_TIMESTEPS * GLOBAL.num_communities);
+  plot_data.nums["csvContent"] = {};
+  plot_data.nums["csvContent"].reserve(GLOBAL.NUM_TIMESTEPS * GLOBAL.num_communities);
 
 #ifdef TIMING
   end_time = std::chrono::high_resolution_clock::now();
@@ -105,8 +107,7 @@ map<string, matrix<count_type>> run_simulation(){
 
 	  auto temp_stats = get_infected_community(nodes, communities[c]);
 	  //let row = [time_step/SIM_STEPS_PER_DAY,c,temp_stats[0],temp_stats[1],temp_stats[2],temp_stats[3],temp_stats[4]].join(",");
-	  plot_data["csvContent"].push_back({
-		  time_step,
+	  plot_data.nums["csvContent"].push_back({time_step, {
 		  c,
 		  temp_stats.infected,
 		  temp_stats.affected,
@@ -114,7 +115,7 @@ map<string, matrix<count_type>> run_simulation(){
 		  temp_stats.critical,
 		  temp_stats.dead,
 		  temp_stats.hd_area_affected
-		});
+		  }});
 	}
 
 	update_lambda_c_global(communities, community_dist_matrix);
@@ -164,13 +165,13 @@ map<string, matrix<count_type>> run_simulation(){
 		n_affected += 1;
 	  }
 	}
-	plot_data["num_infected"].push_back({time_step, n_infected});
-	plot_data["num_exposed"].push_back({time_step, n_exposed});
-	plot_data["num_hospitalised"].push_back({time_step, n_hospitalised});
-	plot_data["num_critical"].push_back({time_step, n_critical});
-	plot_data["num_fatalities"].push_back({time_step, n_fatalities});
-	plot_data["num_recovered"].push_back({time_step, n_recovered});
-	plot_data["num_affected"].push_back({time_step, n_affected});
+	plot_data.nums["num_infected"].push_back({time_step, {n_infected}});
+	plot_data.nums["num_exposed"].push_back({time_step, {n_exposed}});
+	plot_data.nums["num_hospitalised"].push_back({time_step, {n_hospitalised}});
+	plot_data.nums["num_critical"].push_back({time_step, {n_critical}});
+	plot_data.nums["num_fatalities"].push_back({time_step, {n_fatalities}});
+	plot_data.nums["num_recovered"].push_back({time_step, {n_recovered}});
+	plot_data.nums["num_affected"].push_back({time_step, {n_affected}});
   }
 
 #ifdef TIMING

@@ -2,7 +2,7 @@
 #include <cmath>
 
 #ifdef MERSENNE_TWISTER
-std::mt19937 GENERATOR(1234);
+std::mt19937_64 GENERATOR(1234);
 #else
 std::default_random_engine GENERATOR;
 #endif

@@ -29,7 +29,7 @@ inline count_type stoct(const std::string& str){
 
 // Random number gnerators
 #ifdef MERSENNE_TWISTER
-extern std::mt19937 GENERATOR;
+extern std::mt19937_64 GENERATOR;
 #else
 extern std::default_random_engine GENERATOR;
 #endif

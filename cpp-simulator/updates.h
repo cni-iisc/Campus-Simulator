@@ -10,11 +10,13 @@ double update_individual_lambda_w(const agent& node);
 
 double update_individual_lambda_c(const agent& node);
 
-//This function is currently a NO-OP Its purpose is to collect
-//addition intrincic data about the model.
-void update_lambda_stats(const agent& node);
+struct node_update_status{
+  bool new_infection = false;
+  bool new_symptomatic = false;
+};
 
-void update_infection(agent& node, int cur_time);
+//Returns whether the node was infected or turned symptomatic in this time step
+node_update_status update_infection(agent& node, int cur_time);
 
 void update_all_kappa(std::vector<agent>& nodes, std::vector<house>& homes, std::vector<workplace>& workplaces, std::vector<community>& communities, int cur_time);
 

@@ -1,5 +1,5 @@
 NUM_DAYS=120
-INIT_FRAC_INFECTED=0.0001
+INIT_FRAC_INFECTED=0.001
 INCUBATION_PERIOD=2.25
 MEAN_ASYMPTOMATIC_PERIOD=0.5
 MEAN_SYMPTOMATIC_PERIOD=5
@@ -7,16 +7,18 @@ SYMPTOMATIC_FRACTION=0.67
 MEAN_HOSPITAL_REGULAR_PERIOD=8
 MEAN_HOSPITAL_CRITICAL_PERIOD=8
 COMPLIANCE_PROBABILITY=0.9
-BETA_H=0.47
-BETA_W=0.94
-BETA_C=0.47045
-BETA_S=1.88
-BETA_TRAVEL=10.0
+BETA_H=1.2410293733942703
+BETA_W=0.9289438506612563
+BETA_C=0.23195981755789088
+BETA_S=1.8387669724845188
+BETA_TRAVEL=0
 HD_AREA_FACTOR=2.0
 HD_AREA_EXPONENT=0
 INTERVENTION=0
 output_directory_base="outputs/test_output_timing"
 input_directory="../simulator/input_files"
+CALIBRATION_DELAY=0
+DAYS_BEFORE_LOCKDOWN=0
 # Set this to "--SEED_HD_AREA_POPULATION" to seed hd area population
 # as well.
 # SEED_HD_AREA_POPULATION="--SEED_HD_AREA_POPULATION"
@@ -49,7 +51,7 @@ done;
 echo "Input directory is: ${input_directory}"
 echo "Output directory is: ${output_directory_base}"
 
-for INTERVENTION in `seq 0 7`;
+for INTERVENTION in  0 3 7 8 9 10; #`seq 3 3`;
 do
 	echo "Running with INTERVENTION=${INTERVENTION}..."
 	output_directory="${output_directory_base}/intervention_${INTERVENTION}"
@@ -78,7 +80,9 @@ do
 	 --HD_AREA_EXPONENT $HD_AREA_EXPONENT \
 	 --INTERVENTION $INTERVENTION \
 	 --output_directory $output_directory \
-	 --input_directory $input_directory"
+	 --input_directory $input_directory\
+	 --CALIBRATION_DELAY $CALIBRATION_DELAY\
+	 --DAYS_BEFORE_LOCKDOWN $DAYS_BEFORE_LOCKDOWN"
 
 	echo $command;
 	if eval $command; then

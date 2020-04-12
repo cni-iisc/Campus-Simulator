@@ -74,7 +74,11 @@ int main(int argc, char** argv){
 	("output_directory", "output directory",
 	 cxxopts::value<std::string>()->default_value(DEFAULTS.output_dir))
 	("input_directory", "input directory",
-	 cxxopts::value<std::string>()->default_value(DEFAULTS.input_base));
+	 cxxopts::value<std::string>()->default_value(DEFAULTS.input_base))
+	("CALIBRATION_DELAY", "delay observed in calibration.",
+	cxxopts::value<double>()->default_value(DEFAULTS.CALIBRATION_DELAY))
+	("DAYS_BEFORE_LOCKDOWN", "no intervention period prior to interventions",
+	cxxopts::value<double>()->default_value(DEFAULTS.DAYS_BEFORE_LOCKDOWN));
   
   auto optvals = options.parse(argc, argv);
   
@@ -105,6 +109,10 @@ int main(int argc, char** argv){
   
   GLOBAL.INTERVENTION
 	= static_cast<Intervention>(optvals["INTERVENTION"].as<count_type>());
+  
+  GLOBAL.CALIBRATION_DELAY = optvals["CALIBRATION_DELAY"].as<double>();
+  GLOBAL.DAYS_BEFORE_LOCKDOWN = optvals["DAYS_BEFORE_LOCKDOWN"].as<double>();
+  GLOBAL.NUM_DAYS_BEFORE_INTERVENTIONS = GLOBAL.CALIBRATION_DELAY + GLOBAL.DAYS_BEFORE_LOCKDOWN;
 
   std::string output_dir(optvals["output_directory"].as<std::string>());
 
@@ -120,6 +128,7 @@ int main(int argc, char** argv){
   GLOBAL.HOSPITAL_REGULAR_PERIOD = GLOBAL.MEAN_HOSPITAL_REGULAR_PERIOD*GLOBAL.SIM_STEPS_PER_DAY;
   GLOBAL.HOSPITAL_CRITICAL_PERIOD = GLOBAL.MEAN_HOSPITAL_CRITICAL_PERIOD*GLOBAL.SIM_STEPS_PER_DAY;
 
+  
   if(GLOBAL.input_base != ""
 	 && GLOBAL.input_base[GLOBAL.input_base.size() - 1] != '/'){ 
 	GLOBAL.input_base += '/';

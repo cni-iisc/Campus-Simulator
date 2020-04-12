@@ -218,4 +218,14 @@ void output_csv_files(const std::string& output_directory,
 	  gnuplot.plot_data(elem.first);
 	}
   }
+
+  //Now output lambdas
+  for(const auto& elem: plot_data.susceptible_lambdas){
+	std::string csvfile_name = elem.first + ".csv";
+	std::string csvfile_path = output_directory + "/" + csvfile_name;
+	output_timed_csv({elem.first},
+					 csvfile_path,
+					 elem.second);
+	gnuplot.plot_data(elem.first);
+  }
 }

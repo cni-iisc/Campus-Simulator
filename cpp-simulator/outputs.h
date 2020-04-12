@@ -17,7 +17,7 @@ using timed_csv_data = std::vector<timed_csv_row<T>>;
 
 struct plot_data_struct{
   std::map<std::string, timed_csv_data<count_type>> nums;
-  timed_csv_data<double> total_lambda_for_suceptibles;
+  std::map<std::string, timed_csv_data<double>> susceptible_lambdas;
 };
 
 

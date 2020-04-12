@@ -69,6 +69,18 @@ plot_data_struct run_simulation(){
   plot_data.nums["csvContent"] = {};
   plot_data.nums["csvContent"].reserve(GLOBAL.NUM_TIMESTEPS * GLOBAL.num_communities);
 
+  plot_data.susceptible_lambdas =
+	{
+	 {"susceptible_lambda", {}},
+	 {"susceptible_lambda_H", {}},
+	 {"susceptible_lambda_W", {}},
+	 {"susceptible_lambda_C", {}},
+	 {"susceptible_lambda_T", {}}
+	};
+  for(auto& elem: plot_data.susceptible_lambdas){
+	elem.second.reserve(GLOBAL.NUM_TIMESTEPS);
+  }
+
 #ifdef TIMING
   end_time = std::chrono::high_resolution_clock::now();
   cerr << "simulator: time for setup after JSON reads (ms): " << duration(start_time, end_time) << "\n";
@@ -122,10 +134,23 @@ plot_data_struct run_simulation(){
 
 
 	travel_fraction = updated_travel_fraction(nodes);
+
+	double susceptible_lambda = 0,
+	  susceptible_lambda_H = 0,
+	  susceptible_lambda_W = 0,
+	  susceptible_lambda_C = 0,
+	  susceptible_lambda_T = 0;
 	
-#pragma omp parallel for
+#pragma omp parallel for reduction (+:susceptible_lambda, susceptible_lambda_H, susceptible_lambda_W, susceptible_lambda_C, susceptible_lambda_T)
 	for (count_type j = 0; j < GLOBAL.num_people; ++j){
 	  update_lambdas(nodes[j], homes, workplaces, communities, travel_fraction, time_step);
+	  if(nodes[j].infection_status == Progression::susceptible){
+		susceptible_lambda += nodes[j].lambda;
+		susceptible_lambda_H += nodes[j].lambda_incoming[0];
+		susceptible_lambda_W += nodes[j].lambda_incoming[1];
+		susceptible_lambda_C += nodes[j].lambda_incoming[2];
+		susceptible_lambda_T += nodes[j].lambda_incoming[3];
+	  }
 	}
 	
 	//Get data for this simulation step
@@ -172,6 +197,13 @@ plot_data_struct run_simulation(){
 	plot_data.nums["num_fatalities"].push_back({time_step, {n_fatalities}});
 	plot_data.nums["num_recovered"].push_back({time_step, {n_recovered}});
 	plot_data.nums["num_affected"].push_back({time_step, {n_affected}});
+
+	plot_data.susceptible_lambdas["susceptible_lambda"].push_back({time_step, {susceptible_lambda}});
+	plot_data.susceptible_lambdas["susceptible_lambda_H"].push_back({time_step, {susceptible_lambda_H}});
+	plot_data.susceptible_lambdas["susceptible_lambda_W"].push_back({time_step, {susceptible_lambda_W}});
+	plot_data.susceptible_lambdas["susceptible_lambda_C"].push_back({time_step, {susceptible_lambda_C}});
+	plot_data.susceptible_lambdas["susceptible_lambda_T"].push_back({time_step, {susceptible_lambda_T}});
+
   }
 
 #ifdef TIMING

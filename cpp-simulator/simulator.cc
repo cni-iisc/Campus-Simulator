@@ -23,6 +23,9 @@ auto duration(const std::chrono::time_point<T>& start, const std::chrono::time_p
 }
 #endif
 
+
+constexpr count_type AGENT_INCOMING_LAMBDA_COMPONENTS = 4;
+
 plot_data_struct run_simulation(){
 #ifdef TIMING
   cerr << "simulator: starting JSON read\n";
@@ -76,6 +79,24 @@ plot_data_struct run_simulation(){
 	 {"susceptible_lambda_C", {}},
 	 {"susceptible_lambda_T", {}}
 	};
+
+  plot_data.total_lambda_fractions =
+	{
+	 {"total_fraction_lambda_H", {}},
+	 {"total_fraction_lambda_W", {}},
+	 {"total_fraction_lambda_C", {}},
+	 {"total_fraction_lambda_T", {}}
+	};
+
+  plot_data.mean_lambda_fractions =
+	{
+	 {"mean_fraction_lambda_H", {}},
+	 {"mean_fraction_lambda_W", {}},
+	 {"mean_fraction_lambda_C", {}},
+	 {"mean_fraction_lambda_T", {}}
+	};
+
+  
   for(auto& elem: plot_data.susceptible_lambdas){
 	elem.second.reserve(GLOBAL.NUM_TIMESTEPS);
   }
@@ -87,9 +108,18 @@ plot_data_struct run_simulation(){
   cerr << "simulator: starting simulation\n";
   start_time = std::chrono::high_resolution_clock::now();
 #endif
+  vector<double> total_lambda_fraction_data(AGENT_INCOMING_LAMBDA_COMPONENTS);
+  vector<double> mean_lambda_fraction_data(AGENT_INCOMING_LAMBDA_COMPONENTS);
 
   for(count_type time_step = 0; time_step < GLOBAL.NUM_TIMESTEPS; ++time_step){
 
+	std::fill(total_lambda_fraction_data.begin(),
+			  total_lambda_fraction_data.end(), 0);
+	std::fill(mean_lambda_fraction_data.begin(),
+			  mean_lambda_fraction_data.end(), 0);
+
+	count_type num_new_infections = 0;
+	
 	//#pragma omp parallel for
 	//
 	// Since update_infection uses a random number generator with
@@ -97,8 +127,20 @@ plot_data_struct run_simulation(){
 	// Puttting the generator in a critical section can keep it
 	// correct, but slows down the code too much.
 	for(count_type j = 0; j < GLOBAL.num_people; ++j){
-	  update_infection(nodes[j], time_step);
+	  bool new_infection = update_infection(nodes[j], time_step);
 	  nodes[j].psi_T = psi_T(nodes[j], time_step);
+
+	  if(new_infection){
+		++num_new_infections;
+		for(count_type pos = 0; pos < AGENT_INCOMING_LAMBDA_COMPONENTS; ++pos){
+		  total_lambda_fraction_data[pos] += nodes[j].lambda_incoming[pos];
+		  mean_lambda_fraction_data[pos]
+			+= ((nodes[j].lambda_incoming[pos] / nodes[j].lambda)
+				- mean_lambda_fraction_data[pos]) / num_new_infections;
+		  // update the mean fraction with the new data point:
+		  // (nodes[j].lambda_incoming[pos] / nodes[j].lambda)
+		}
+	  }
 	}
 
 	update_all_kappa(nodes, homes, workplaces, communities, time_step);
@@ -203,6 +245,24 @@ plot_data_struct run_simulation(){
 	plot_data.susceptible_lambdas["susceptible_lambda_C"].push_back({time_step, {susceptible_lambda_C}});
 	plot_data.susceptible_lambdas["susceptible_lambda_T"].push_back({time_step, {susceptible_lambda_T}});
 
+	double total_lambda_fraction_data_sum
+	  = std::accumulate(total_lambda_fraction_data.begin(),
+						total_lambda_fraction_data.end(), 0);
+	//Convert to fraction
+	for (auto& num: total_lambda_fraction_data){
+	  num /= total_lambda_fraction_data_sum;
+	}
+	plot_data.total_lambda_fractions["total_fraction_lambda_H"].push_back({time_step, {total_lambda_fraction_data[0]}});
+	plot_data.total_lambda_fractions["total_fraction_lambda_W"].push_back({time_step, {total_lambda_fraction_data[1]}});
+	plot_data.total_lambda_fractions["total_fraction_lambda_C"].push_back({time_step, {total_lambda_fraction_data[2]}});
+	plot_data.total_lambda_fractions["total_fraction_lambda_T"].push_back({time_step, {total_lambda_fraction_data[3]}});
+
+	plot_data.mean_lambda_fractions["mean_fraction_lambda_H"].push_back({time_step, {mean_lambda_fraction_data[0]}});
+	plot_data.mean_lambda_fractions["mean_fraction_lambda_W"].push_back({time_step, {mean_lambda_fraction_data[1]}});
+	plot_data.mean_lambda_fractions["mean_fraction_lambda_C"].push_back({time_step, {mean_lambda_fraction_data[2]}});
+	plot_data.mean_lambda_fractions["mean_fraction_lambda_T"].push_back({time_step, {mean_lambda_fraction_data[3]}});
+
+	
   }
 
 #ifdef TIMING

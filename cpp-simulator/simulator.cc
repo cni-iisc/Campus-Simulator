@@ -63,7 +63,8 @@ plot_data_struct run_simulation(){
 	 {"num_critical", {}},
 	 {"num_fatalities", {}},
 	 {"num_recovered", {}},
-	 {"num_affected", {}}
+	 {"num_affected", {}},
+	 {"num_cases", {}}
 	};
   for(auto& elem: plot_data.nums){
 	elem.second.reserve(GLOBAL.NUM_TIMESTEPS);
@@ -110,6 +111,7 @@ plot_data_struct run_simulation(){
 #endif
   vector<double> total_lambda_fraction_data(AGENT_INCOMING_LAMBDA_COMPONENTS);
   vector<double> mean_lambda_fraction_data(AGENT_INCOMING_LAMBDA_COMPONENTS);
+  count_type num_cases = 0; // Total number of agents who have progessed to symptomatic so far
 
   for(count_type time_step = 0; time_step < GLOBAL.NUM_TIMESTEPS; ++time_step){
 
@@ -127,10 +129,10 @@ plot_data_struct run_simulation(){
 	// Puttting the generator in a critical section can keep it
 	// correct, but slows down the code too much.
 	for(count_type j = 0; j < GLOBAL.num_people; ++j){
-	  bool new_infection = update_infection(nodes[j], time_step);
+	  auto node_update_status = update_infection(nodes[j], time_step);
 	  nodes[j].psi_T = psi_T(nodes[j], time_step);
 
-	  if(new_infection){
+	  if(node_update_status.new_infection){
 		++num_new_infections;
 		for(count_type pos = 0; pos < AGENT_INCOMING_LAMBDA_COMPONENTS; ++pos){
 		  total_lambda_fraction_data[pos] += nodes[j].lambda_incoming[pos];
@@ -140,6 +142,9 @@ plot_data_struct run_simulation(){
 		  // update the mean fraction with the new data point:
 		  // (nodes[j].lambda_incoming[pos] / nodes[j].lambda)
 		}
+	  }
+	  if(node_update_status.new_symptomatic){
+		++num_cases;
 	  }
 	}
 
@@ -238,6 +243,7 @@ plot_data_struct run_simulation(){
 	plot_data.nums["num_fatalities"].push_back({time_step, {n_fatalities}});
 	plot_data.nums["num_recovered"].push_back({time_step, {n_recovered}});
 	plot_data.nums["num_affected"].push_back({time_step, {n_affected}});
+	plot_data.nums["num_cases"].push_back({time_step, {num_cases}});
 
 	plot_data.susceptible_lambdas["susceptible_lambda"].push_back({time_step, {susceptible_lambda}});
 	plot_data.susceptible_lambdas["susceptible_lambda_H"].push_back({time_step, {susceptible_lambda_H}});

@@ -10,8 +10,13 @@ double update_individual_lambda_w(const agent& node);
 
 double update_individual_lambda_c(const agent& node);
 
-//Returns true if the node was infected in this time step
-bool update_infection(agent& node, int cur_time);
+struct node_update_status{
+  bool new_infection = false;
+  bool new_symptomatic = false;
+};
+
+//Returns whether the node was infected or turned symptomatic in this time step
+node_update_status update_infection(agent& node, int cur_time);
 
 void update_all_kappa(std::vector<agent>& nodes, std::vector<house>& homes, std::vector<workplace>& workplaces, std::vector<community>& communities, int cur_time);
 

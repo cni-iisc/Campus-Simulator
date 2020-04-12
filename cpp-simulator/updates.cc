@@ -37,11 +37,11 @@ double update_individual_lambda_c(const agent& node){
 }
 
 
-//Returns true if the node was infected in this time step
-bool update_infection(agent& node, int cur_time){
+//Returns whether the node was infected or turned symptomatic in this time step
+node_update_status update_infection(agent& node, int cur_time){
   int age_index = node.age_index;
   bool transition = false;
-  bool infected_now = false;
+  node_update_status update_status;
   //console.log(1-Math.exp(-node['lambda']/SIM_STEPS_PER_DAY))
   ///TODO: Parametrise transition times
   if (node.infection_status==Progression::susceptible){
@@ -53,7 +53,7 @@ bool update_infection(agent& node, int cur_time){
 	  node.infection_status = Progression::exposed; //move to exposed state
 	  node.time_of_infection = cur_time;
 	  node.infective = false;
-	  infected_now = true;
+	  update_status.new_infection = true;
 	}
   }
   else if(node.infection_status==Progression::exposed
@@ -73,6 +73,7 @@ bool update_infection(agent& node, int cur_time){
 	if(transition){
 	  node.infection_status = Progression::symptomatic; //move to symptomatic
 	  node.infective = true;
+	  update_status.new_symptomatic = true;
 	}
 	else {
 	  node.infection_status = Progression::recovered; //move to recovered
@@ -140,7 +141,7 @@ bool update_infection(agent& node, int cur_time){
   node.lambda_w = update_individual_lambda_w(node);
   node.lambda_c = update_individual_lambda_c(node);
 
-  return infected_now;
+  return update_status;
 }
 
 void update_all_kappa(vector<agent>& nodes, vector<house>& homes, vector<workplace>& workplaces, vector<community>& communities, int cur_time){

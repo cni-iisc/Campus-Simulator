@@ -20,6 +20,7 @@ struct plot_data_struct{
   std::map<std::string, timed_csv_data<double>> susceptible_lambdas;
   std::map<std::string, timed_csv_data<double>> total_lambda_fractions;
   std::map<std::string, timed_csv_data<double>> mean_lambda_fractions;
+  std::map<std::string, timed_csv_data<double>> cumulative_mean_lambda_fractions;
 };
 
 

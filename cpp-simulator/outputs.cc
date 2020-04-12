@@ -256,4 +256,14 @@ void output_csv_files(const std::string& output_directory,
 					 elem.second);
 	gnuplot.plot_data(elem.first);
   }
+  
+  //Now output fractional lambda contributions: cumulative mean version
+  for(const auto& elem: plot_data.cumulative_mean_lambda_fractions){
+	std::string csvfile_name = elem.first + ".csv";
+	std::string csvfile_path = output_directory + "/" + csvfile_name;
+	output_timed_csv({elem.first},
+					 csvfile_path,
+					 elem.second);
+	gnuplot.plot_data(elem.first);
+  }
 }

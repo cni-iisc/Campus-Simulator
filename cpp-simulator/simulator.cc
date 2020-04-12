@@ -97,6 +97,14 @@ plot_data_struct run_simulation(){
 	 {"mean_fraction_lambda_T", {}}
 	};
 
+  plot_data.cumulative_mean_lambda_fractions = 
+	{
+	 {"cumulative_mean_fraction_lambda_H", {}},
+	 {"cumulative_mean_fraction_lambda_W", {}},
+	 {"cumulative_mean_fraction_lambda_C", {}},
+	 {"cumulative_mean_fraction_lambda_T", {}}
+	};
+
   
   for(auto& elem: plot_data.susceptible_lambdas){
 	elem.second.reserve(GLOBAL.NUM_TIMESTEPS);
@@ -111,7 +119,10 @@ plot_data_struct run_simulation(){
 #endif
   vector<double> total_lambda_fraction_data(AGENT_INCOMING_LAMBDA_COMPONENTS);
   vector<double> mean_lambda_fraction_data(AGENT_INCOMING_LAMBDA_COMPONENTS);
+  vector<double> cumulative_mean_lambda_fraction_data(AGENT_INCOMING_LAMBDA_COMPONENTS, 0);
   count_type num_cases = 0; // Total number of agents who have progessed to symptomatic so far
+
+  count_type num_total_infections = 0; //Total number of individuals who have become infected so far
 
   for(count_type time_step = 0; time_step < GLOBAL.NUM_TIMESTEPS; ++time_step){
 
@@ -134,13 +145,19 @@ plot_data_struct run_simulation(){
 
 	  if(node_update_status.new_infection){
 		++num_new_infections;
+		++num_total_infections;
 		for(count_type pos = 0; pos < AGENT_INCOMING_LAMBDA_COMPONENTS; ++pos){
 		  total_lambda_fraction_data[pos] += nodes[j].lambda_incoming[pos];
+		  auto normalized_lambda = (nodes[j].lambda_incoming[pos] / nodes[j].lambda);
+		  
 		  mean_lambda_fraction_data[pos]
-			+= ((nodes[j].lambda_incoming[pos] / nodes[j].lambda)
-				- mean_lambda_fraction_data[pos]) / num_new_infections;
-		  // update the mean fraction with the new data point:
-		  // (nodes[j].lambda_incoming[pos] / nodes[j].lambda)
+			+= (normalized_lambda - mean_lambda_fraction_data[pos]) / num_new_infections;
+		  
+		  cumulative_mean_lambda_fraction_data[pos]
+			+= (normalized_lambda - cumulative_mean_lambda_fraction_data[pos]) / num_total_infections;
+		  
+		  // update the mean fractions with the new data point normalized_lambda
+		  
 		}
 	  }
 	  if(node_update_status.new_symptomatic){
@@ -267,6 +284,15 @@ plot_data_struct run_simulation(){
 	plot_data.mean_lambda_fractions["mean_fraction_lambda_W"].push_back({time_step, {mean_lambda_fraction_data[1]}});
 	plot_data.mean_lambda_fractions["mean_fraction_lambda_C"].push_back({time_step, {mean_lambda_fraction_data[2]}});
 	plot_data.mean_lambda_fractions["mean_fraction_lambda_T"].push_back({time_step, {mean_lambda_fraction_data[3]}});
+
+	plot_data.cumulative_mean_lambda_fractions["cumulative_mean_fraction_lambda_H"].push_back({time_step,
+																							   {cumulative_mean_lambda_fraction_data[0]}});
+	plot_data.cumulative_mean_lambda_fractions["cumulative_mean_fraction_lambda_W"].push_back({time_step,
+																							   {cumulative_mean_lambda_fraction_data[1]}});
+	plot_data.cumulative_mean_lambda_fractions["cumulative_mean_fraction_lambda_C"].push_back({time_step,
+																							   {cumulative_mean_lambda_fraction_data[2]}});
+	plot_data.cumulative_mean_lambda_fractions["cumulative_mean_fraction_lambda_T"].push_back({time_step,
+																							   {cumulative_mean_lambda_fraction_data[3]}});
 
 	
   }

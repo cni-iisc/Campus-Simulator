@@ -5,7 +5,6 @@
 using namespace std;
 #include "models.h"
 #include "initializers.h"
-#include "interventions.h"
 #include "updates.h"
 #include "simulator.h"
 

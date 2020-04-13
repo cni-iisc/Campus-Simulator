@@ -196,7 +196,7 @@ with open(csv_file_name, "w") as csv_file:
                     if not output_directory_path.exists():
                         output_directory_path.mkdir()
                     
-                    command = ["./drive_simulator.exe"] + [f"--{key}={value}" for (key, value) in options.items()]
+                    command = ["./drive_simulator"] + [f"--{key}={value}" for (key, value) in options.items()]
                     
                     logging.info(f"Run number = {run_index}\n"
                           f"BETA_H = {BETA_H}\n"

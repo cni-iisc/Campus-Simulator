@@ -261,9 +261,9 @@ struct agent{
 
   WorkplaceType workplace_type;
   //one of school, office, or home
-  std::vector<double> lambda_incoming = std::vector<double>(3, 0);
-  //infectiousness from home, workplace, community as seen by
-  //individual, all assined to 0 by default
+  std::vector<double> lambda_incoming;
+  //infectiousness from home, workplace, community, travel as seen by
+  //individual
 
 
   bool compliant = true;

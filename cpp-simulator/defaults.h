@@ -13,6 +13,8 @@ struct defaults{
   std::string MEAN_HOSPITAL_REGULAR_PERIOD = "8";
   std::string MEAN_HOSPITAL_CRITICAL_PERIOD = "8";
   std::string COMPLIANCE_PROBABILITY = "0.9";
+  std::string F_KERNEL_A = "10.751";
+  std::string F_KERNEL_B = "5.384";
   std::string BETA_H = "1.227";
   std::string BETA_W = "0.919";
   std::string BETA_C = "0.233";

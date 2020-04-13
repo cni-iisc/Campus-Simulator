@@ -41,6 +41,10 @@ int main(int argc, char** argv){
 	 cxxopts::value<double>()->default_value(DEFAULTS.MEAN_HOSPITAL_CRITICAL_PERIOD))
 	("COMPLIANCE_PROBABILITY", "default compliance probability",
 	 cxxopts::value<double>()->default_value(DEFAULTS.COMPLIANCE_PROBABILITY))
+	("F_KERNEL_A", "the 'a' parameter in the distance kernel, for distance in km",
+	 cxxopts::value<double>()->default_value(DEFAULTS.F_KERNEL_A))
+	("F_KERNEL_B", "the 'b' parameter in the distance kernel, for distance in km",
+	 cxxopts::value<double>()->default_value(DEFAULTS.F_KERNEL_B))
 	("BETA_H", "the beta_home parameter",
 	 cxxopts::value<double>()->default_value(DEFAULTS.BETA_H))
 	("BETA_W", "the beta_workplace parameter",
@@ -87,7 +91,9 @@ int main(int argc, char** argv){
   GLOBAL.MEAN_HOSPITAL_REGULAR_PERIOD = optvals["MEAN_HOSPITAL_REGULAR_PERIOD"].as<double>();
   GLOBAL.MEAN_HOSPITAL_CRITICAL_PERIOD = optvals["MEAN_HOSPITAL_CRITICAL_PERIOD"].as<double>();
   GLOBAL.COMPLIANCE_PROBABILITY = optvals["COMPLIANCE_PROBABILITY"].as<double>();
-
+  GLOBAL.F_KERNEL_A = optvals["F_KERNEL_A"].as<double>();
+  GLOBAL.F_KERNEL_B = optvals["F_KERNEL_B"].as<double>();
+  
   GLOBAL.BETA_H = optvals["BETA_H"].as<double>();
   GLOBAL.BETA_W = optvals["BETA_W"].as<double>();
   GLOBAL.BETA_C = optvals["BETA_C"].as<double>();

@@ -97,6 +97,14 @@ struct global_params{
   double MEAN_HOSPITAL_REGULAR_PERIOD = 8;
   double MEAN_HOSPITAL_CRITICAL_PERIOD = 8;
 
+  //Distance kernel parameters.
+  //
+  //These correspond to ones from Bangalore. Actual parameters for any
+  //given city are given at input.
+  double F_KERNEL_A = 10.751;
+  double F_KERNEL_B = 5.384;
+	
+  
   double INCUBATION_PERIOD_SHAPE = 2;
   double INCUBATION_PERIOD_SCALE = INCUBATION_PERIOD*SIM_STEPS_PER_DAY;// 2.29 days
 

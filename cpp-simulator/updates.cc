@@ -92,6 +92,7 @@ node_update_status update_infection(agent& node, int cur_time){
 	if(transition){
 	  node.infection_status = Progression::hospitalised; //move to hospitalisation
 	  node.infective = false;
+	  update_status.new_hospitalization = true;
 	}
 	else {
 	  node.infection_status = Progression::recovered; //move to recovered

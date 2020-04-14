@@ -9,6 +9,7 @@
 
 
 int main(int argc, char** argv){
+  SEED_RNG();
 
   cxxopts::Options options(argv[0],
 						  "Simulate the mean field agent model");
@@ -68,7 +69,11 @@ int main(int argc, char** argv){
 	("CALIBRATION_DELAY", "delay observed in calibration",
 	 cxxopts::value<double>()->default_value(DEFAULTS.CALIBRATION_DELAY))
 	("DAYS_BEFORE_LOCKDOWN", "no intervention period prior to interventions",
-	 cxxopts::value<double>()->default_value(DEFAULTS.DAYS_BEFORE_LOCKDOWN));
+	 cxxopts::value<double>()->default_value(DEFAULTS.DAYS_BEFORE_LOCKDOWN))
+	("PROVIDE_INITIAL_SEED",
+	 "provide an initial seed to the simulator. If this is not provided, the simulator uses "
+	 "std::random_device to get the random seed.",
+	 cxxopts::value<count_type>());
 
   auto optvals = options.parse(argc, argv);
   
@@ -113,6 +118,13 @@ int main(int argc, char** argv){
   std::string output_dir(optvals["output_directory"].as<std::string>());
 
   GLOBAL.input_base = optvals["input_directory"].as<std::string>();
+
+  if(optvals["PROVIDE_INITIAL_SEED"].count()){
+	//Initial seed was provided
+	SEED_RNG_PROVIDED_SEED(optvals["PROVIDE_INITIAL_SEED"].as<count_type>()); 
+  } else {
+	SEED_RNG(); //No Initial seed was provided
+  }
   //Done saving options
   
   //Compute parametrs based on options

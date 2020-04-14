@@ -64,7 +64,8 @@ plot_data_struct run_simulation(){
 	 {"num_fatalities", {}},
 	 {"num_recovered", {}},
 	 {"num_affected", {}},
-	 {"num_cases", {}}
+	 {"num_cases", {}},
+	 {"num_cumulative_hospitalizations", {}}
 	};
   for(auto& elem: plot_data.nums){
 	elem.second.reserve(GLOBAL.NUM_TIMESTEPS);
@@ -121,8 +122,11 @@ plot_data_struct run_simulation(){
   vector<double> mean_lambda_fraction_data(AGENT_INCOMING_LAMBDA_COMPONENTS);
   vector<double> cumulative_mean_lambda_fraction_data(AGENT_INCOMING_LAMBDA_COMPONENTS, 0);
   count_type num_cases = 0; // Total number of agents who have progessed to symptomatic so far
+  count_type num_cumulative_hospitalizations = 0; //Total number of agents who have had to go to the hospital so far
 
-  count_type num_total_infections = 0; //Total number of individuals who have become infected so far
+  count_type num_total_infections = 0;
+  //Total number of individuals who have become infected via transmission so far
+  //This does not included the initially seeded infections
 
   for(count_type time_step = 0; time_step < GLOBAL.NUM_TIMESTEPS; ++time_step){
 
@@ -162,6 +166,9 @@ plot_data_struct run_simulation(){
 	  }
 	  if(node_update_status.new_symptomatic){
 		++num_cases;
+	  }
+	  if(node_update_status.new_hospitalization){
+		++num_cumulative_hospitalizations;
 	  }
 	}
 
@@ -261,6 +268,7 @@ plot_data_struct run_simulation(){
 	plot_data.nums["num_recovered"].push_back({time_step, {n_recovered}});
 	plot_data.nums["num_affected"].push_back({time_step, {n_affected}});
 	plot_data.nums["num_cases"].push_back({time_step, {num_cases}});
+	plot_data.nums["num_cumulative_hospitalizations"].push_back({time_step, {num_cumulative_hospitalizations}});
 
 	plot_data.susceptible_lambdas["susceptible_lambda"].push_back({time_step, {susceptible_lambda}});
 	plot_data.susceptible_lambdas["susceptible_lambda_H"].push_back({time_step, {susceptible_lambda_H}});

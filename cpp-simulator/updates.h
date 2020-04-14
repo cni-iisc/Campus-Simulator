@@ -13,6 +13,7 @@ double update_individual_lambda_c(const agent& node);
 struct node_update_status{
   bool new_infection = false;
   bool new_symptomatic = false;
+  bool new_hospitalization = false;
 };
 
 //Returns whether the node was infected or turned symptomatic in this time step

@@ -90,7 +90,7 @@ def calculate_means_lambda_CPP(output_directory_base, num_sims,results_dir):
 ###########################
 continue_run = True
 resolution = 4
-num_sims = 2
+num_sims = 10
 count = 0
 while (continue_run):
     

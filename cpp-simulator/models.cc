@@ -17,6 +17,14 @@ void SEED_RNG(){
 #endif
 }
 
+void SEED_RNG_PROVIDED_SEED(count_type seed){
+#ifdef MERSENNE_TWISTER
+  //TODO: Use better seeding.  This just seeds with a 32 bit integer.
+  GENERATOR.seed(seed);
+#endif
+}
+
+
 global_params GLOBAL;
 
 double zeta(int age){

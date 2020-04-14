@@ -77,7 +77,7 @@ def calibrate(resolution,count):
     plt.savefig('./data/combined_plot_log_scale')
     plt.close()      
     # consider data of interest based on threshold
-    dead_data = dead_data[dead_data>=threshold] #Add [0:10] for NY and wuhan!
+    dead_data = dead_data[dead_data>=threshold][0:16] #Add [0:10] for NY and wuhan! #0:16 for India to cosider death data from 10-200
      
     indices_of_interest = np.where(np.logical_and(dead_simulation>=lower_threshold, dead_simulation<=upper_threshold))
     dead_simulation = dead_simulation[indices_of_interest]
@@ -107,9 +107,17 @@ def calibrate(resolution,count):
         return [flag, 1, 0,0, 0, shift_in_data - indices_of_interest[0][0]/resolution]
     # if not, calibrate for slope
     else:
-        step_beta_h = -1*lambda_h_diff/(10+count)
-        step_beta_w = -1*lambda_w_diff/(10+count)
-        step_beta_c = -1*lambda_c_diff/(10+count)
-        beta_scale_factor = max(min(np.exp(slope_diff),1.5), 0.66)
-        return [flag, beta_scale_factor, step_beta_h, step_beta_w, step_beta_c,0]
-    
+        if count<=5:
+            step_beta_h = -1*lambda_h_diff/(3+count)
+            step_beta_w = -1*lambda_w_diff/(3+count)
+            step_beta_c = -1*lambda_c_diff/(3+count)
+            beta_scale_factor = max(min(np.exp(slope_diff),1.5), 0.66)
+            return [flag, beta_scale_factor, step_beta_h, step_beta_w, step_beta_c,0]
+            
+        else:
+            step_beta_h = -1*lambda_h_diff/(10+count)
+            step_beta_w = -1*lambda_w_diff/(10+count)
+            step_beta_c = -1*lambda_c_diff/(10+count)
+            beta_scale_factor = max(min(np.exp(slope_diff),1.5), 0.66)
+            return [flag, beta_scale_factor, step_beta_h, step_beta_w, step_beta_c,0]
+        

@@ -4,7 +4,6 @@ from pathlib import Path
 import sys
 
 output_base = sys.argv[1]
-INTERVENTION_NOS = 7
 
 interventions = {
     0: "no_intervention",
@@ -14,8 +13,14 @@ interventions = {
     4: "case_isolation_and_home_quarantine",
     5: "case_isolation_and_home_quarantine_sd_70_plus",
     6: "lockdown_21_ci_hq_sd_70_plus_21_ci",
-    7: "lockdown_21"
+    7: "lockdown_21",
+    8: "ld_21_ci_hq_sd70_sc_21_sc_42",
+    9: "ld_21_ci_hq_sd70_sc_21",
+    10: "ld_21_ci_hq_sd70_sc_oe_30"
 }
+
+INTERVENTION_NOS = 7
+APPLIED_INTERVENTIONS = list(range(0, INTERVENTION_NOS + 1))
 
 var_names = [
     "num_infected",
@@ -25,31 +30,28 @@ var_names = [
     "num_fatalities",
     "num_recovered",
     "num_affected",
-    "susceptible_lambda",
-    "susceptible_lambda_H",
-    "susceptible_lambda_W",
-    "susceptible_lambda_C",
-    "susceptible_lambda_T",
+    "num_cases",
+    "num_cumulative_hospitalizations",
 ]
 
-derived_var_names = ["case_fatality_ratio"];
+derived_var_names = ["case_fatality_risk"];
 
 dfs = defaultdict(list)
 
-for INTERVENTION in range(0, INTERVENTION_NOS + 1):
+for INTERVENTION in APPLIED_INTERVENTIONS:
     # variables read from files
     for var_name in var_names:
         dfs[var_name].append(pandas.read_csv(Path(output_base, f"intervention_{INTERVENTION}", f"{var_name}.csv")))
 
     #derived variables
-    dfs["case_fatality_ratio"].append(
+    dfs["case_fatality_risk"].append(
         dfs["num_fatalities"][INTERVENTION].rename(
-            columns = {"num_fatalities": "case_fatality_ratio"}
+            columns = {"num_fatalities": "case_fatality_risk"}
         )
     )
-    dfs["case_fatality_ratio"][INTERVENTION]["case_fatality_ratio"] = (
-        dfs["case_fatality_ratio"][INTERVENTION]["case_fatality_ratio"] /
-        dfs["num_affected"][INTERVENTION]["num_affected"]
+    dfs["case_fatality_risk"][INTERVENTION]["case_fatality_risk"] = (
+        dfs["case_fatality_risk"][INTERVENTION]["case_fatality_risk"] /
+        dfs["num_cases"][INTERVENTION]["num_cases"]
     )
 
 
@@ -64,14 +66,13 @@ print("<html>\n"
       file = html_out
 )
 
-for key in range(0, INTERVENTION_NOS + 1):
+for key in APPLIED_INTERVENTIONS:
     print(f"<tr><td>{key}</td>\n",
           f"    <td>{interventions[key]}</td>\n",
           f"</tr>", file = html_out)
     
 
 print("  </table>\n", file = html_out)
-      
 
 
 for var_name in var_names + derived_var_names:
@@ -89,5 +90,3 @@ for var_name in var_names + derived_var_names:
         file=html_out)
 
 html_out.close()
-
-

@@ -13,6 +13,9 @@ staticInst/data/mumbai/individuals.json
 staticInst/data/mumbai/workplaces.json
 staticInst/data/mumbai/schools.json
 
+staticInst/data/mumbai*
+staticInst/data/bangalore*
+
 cpp-simulator/simulator
 cpp-simulator/drive_simulator
 cpp-simulator/*.o
@@ -20,6 +23,10 @@ cpp-simulator/outputs
 
 .ipynb_checkpoints
 */.ipynb_checkpoints/*
+
+#c++ related stuff
+*.d
+
 
 # IPython
 profile_default/

@@ -104,7 +104,7 @@ def calibrate(resolution,count):
     # if slopes match, report delay
     if abs(lambda_h_diff)<0.01 and abs(lambda_w_diff)<0.01 and abs(lambda_c_diff)<0.01 and abs(slope_diff)<slope_tolerence: 
         flag = True
-        return [flag, 1, 0,0, 0, shift_in_data - indices_of_interest[0][0]/resolution]
+        return [flag, 1, 0,0, 0, shift_in_data - 1- indices_of_interest[0][0]/resolution]
     # if not, calibrate for slope
     else:
         if count<=5:

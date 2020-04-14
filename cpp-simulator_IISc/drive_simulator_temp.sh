@@ -14,7 +14,7 @@ BETA_S=1.8387669724845188
 BETA_TRAVEL=0
 HD_AREA_FACTOR=2.0
 HD_AREA_EXPONENT=0
-INTERVENTION=0
+INTERVENTION=11
 output_directory_base="outputs/test_output_timing"
 input_directory="../simulator/input_files"
 CALIBRATION_DELAY=22
@@ -51,8 +51,8 @@ done;
 echo "Input directory is: ${input_directory}"
 echo "Output directory is: ${output_directory_base}"
 
-for INTERVENTION in  0 3 7 8 9 10; #`seq 3 3`;
-do
+# for INTERVENTION in  0 3 7 8 9 10; #`seq 3 3`;
+# do
 	echo "Running with INTERVENTION=${INTERVENTION}..."
 	output_directory="${output_directory_base}/intervention_${INTERVENTION}"
 	if [ ! -d "${output_directory}" ];
@@ -102,8 +102,8 @@ do
 	echo "Done with INTERVENTION=${INTERVENTION}"
 	echo "*****************"
 	echo "*****************"
-done;
+# done;
 
-echo "Now plotting consolidated plots for all interventions"
-python plot_all_interventions.py "${output_directory_base}"
+# echo "Now plotting consolidated plots for all interventions"
+# python plot_all_interventions.py "${output_directory_base}"
 

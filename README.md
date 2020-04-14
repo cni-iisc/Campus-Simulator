@@ -62,7 +62,7 @@ In case, you are working with instantiating a new city, please create the data f
 The instantiated static files for Bangalore are now used to simulate the spread of the CoVID-19 infection spread based on a Markovian model. The design document contains detailed specifications about the mode,=l.
 
 To set-up a running instance of the simulator, you would first need to switch to the directory `markov_simuls/simulator`
-The simulator looks for the instantiated files for Bangalore in the simulator directory and thus copy the data files generated at `staticInst/data/bangalore` into `simulator/`.
+The simulator looks for the instantiated files for Bangalore in the simulator directory and thus copy the data files generated at `staticInst/data/bangalore` into `/input_files (root of the repository)`.
 
 Now, we also need to setup a web-server to serve the simulator on the web-browser. This is done using the SimpleHTTPServer script avaialble by default in Python.
 

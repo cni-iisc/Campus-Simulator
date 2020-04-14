@@ -5,7 +5,6 @@ const WEBPAGE_VERSION = true;
 //simulation inputs
 
 
-
 NUM_DAYS = 120; //Number of days. Simulation duration
 SIM_STEPS_PER_DAY = 4; //Number of simulation steps per day.
 NUM_TIMESTEPS = NUM_DAYS * SIM_STEPS_PER_DAY; //
@@ -312,7 +311,7 @@ function init_nodes() {
             node['infection_status'] = individuals_json[i]['infection_status'];
             node['time_of_infection'] = node['infection_status'] == EXPOSED ? (individuals_json[i]['time_of_infection'] * SIM_STEPS_PER_DAY - node['incubation_period']) : 0;
             /*if(node['infection_status']==EXPOSED){
-                console.log(node['time_of_infection']);
+                //console.log(node['time_of_infection']);
             }*/
         } else if (SEEDING_MODE == RANDOM_SEEDING_WARDWISE) {
             node['infection_status'] = (Math.random() < COMMUNITY_INFECTION_PROB[individuals_json[i]['wardNo'] - 1]) ? 1 : 0
@@ -1590,9 +1589,11 @@ function initialize_simulation() {
 }
 
 SIMULATION_STOP = false;
-function stop_sim(){
+
+function stop_sim() {
     SIMULATION_STOP = true;
 }
+
 function run_simulation() {
     document.getElementById("run_button").style.display = "none";
     document.getElementById("sim_stop").style.display = "inline";
@@ -1621,7 +1622,7 @@ function run_simulation() {
         // }, [0, 1])
 
         if (time_step >= NUM_TIMESTEPS || SIMULATION_STOP) {
-            console.log("time_step = ", time_step);
+            //console.log("time_step = ", time_step);
             clearInterval(interval);
             //Get Run working again
             document.getElementById("run_button").style.display = "inline";
@@ -1763,9 +1764,16 @@ function plotly_extend(div_id, x_value, y_value) {
     }, [0]);
 }
 
+const plot_minRanges = {
+    'num_affected_plot_2' : 100,
+    'num_infected_plot_2': 50,
+    'num_hospitalised_plot_2': 20,
+    'num_critical_plot_2': 10,
+    'num_fatalities_plot_2': 5
+};
 
 function plot_plotly(data, plot_position, title_text, legends) {
-    var trace = [];
+    const trace = [];
 
     for (var count = 0; count < data.length; count++) {
         var trace1 = {
@@ -1774,22 +1782,25 @@ function plot_plotly(data, plot_position, title_text, legends) {
             mode: 'lines',
             name: legends[count],
             line: {
-                //color: 'rgb(219, 64, 82)',
+                // color: 'rgb(219, 64, 82)',
                 width: 3
             }
         };
         for (var count2 = 0; count2 < data[count].length; count2++) {
-            trace1.x.push(data[count][count2][0]);
-            trace1.y.push(data[count][count2][1]);
-
+            if ( Array.isArray(data[count][count2]) ) {
+                trace1.x.push(data[count][count2][0]);
+                trace1.y.push(data[count][count2][1]);
+            }
         }
         trace.push(trace1)
     }
 
+    const data_plot = trace;
 
-    var data_plot = trace;
+    //Ppatil
+    const yMax = Math.max(...data_plot[0].y);
 
-    var layout = {
+    const layout = {
 
         xaxis: {
             title: {
@@ -1810,12 +1821,21 @@ function plot_plotly(data, plot_position, title_text, legends) {
                     color: '#7f7f7f'
                 }
             }
+            //tickmode: 'auto',
+            //nticks: 5
         }
     };
 
+    if (yMax*1.3 <= plot_minRanges[plot_position] ) {
+        layout.yaxis.range = [0, plot_minRanges[plot_position]];
+    }
+    else {
+        layout.yaxis.autorange = true;
+        //layout.yaxis.range = [0, Math.max(plot_minRanges[plot_position], yMax*2.0)];
+    }
+
     Plotly.newPlot(plot_position, data_plot, layout);
 }
-
 
 //Main function
 function runSimulations() {

@@ -1,11 +1,21 @@
 #include "models.h"
 #include <cmath>
+#include <random>
 
 #ifdef MERSENNE_TWISTER
-std::mt19937_64 GENERATOR(1234);
+std::mt19937_64 GENERATOR;
 #else
 std::default_random_engine GENERATOR;
 #endif
+
+
+void SEED_RNG(){
+#ifdef MERSENNE_TWISTER
+  //TODO: Use better seeding.  This just seeds with a 32 bit integer.
+  std::random_device rd;
+  GENERATOR.seed(rd());
+#endif
+}
 
 global_params GLOBAL;
 

@@ -9,6 +9,7 @@
 
 
 int main(int argc, char** argv){
+  SEED_RNG();
 
   cxxopts::Options options(argv[0],
 						  "Simulate the mean field agent model");

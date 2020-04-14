@@ -36,6 +36,7 @@ extern std::mt19937_64 GENERATOR;
 #else
 extern std::default_random_engine GENERATOR;
 #endif
+void SEED_RNG();
 
 inline double gamma(double shape, double scale){
   return std::gamma_distribution<double>(shape, scale)(GENERATOR);

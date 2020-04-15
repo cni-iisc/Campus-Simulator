@@ -15,7 +15,7 @@ import pandas as pd
 
 NUM_DAYS=120
 INIT_FRAC_INFECTED=0.001
-INCUBATION_PERIOD=2.25
+INCUBATION_PERIOD=2.3
 MEAN_ASYMPTOMATIC_PERIOD=0.5
 MEAN_SYMPTOMATIC_PERIOD=5
 SYMPTOMATIC_FRACTION=0.67
@@ -24,16 +24,16 @@ MEAN_HOSPITAL_CRITICAL_PERIOD=8
 COMPLIANCE_PROBABILITY=0.9
 F_KERNEL_A= 10.751
 F_KERNEL_B= 5.384
-BETA_H=1.2410293733942703
-BETA_W=0.9289438506612563
-BETA_C=0.23195981755789088
-BETA_S=1.8387669724845188
+BETA_H=0.935
+BETA_W=0.509
+BETA_C=0.198
+BETA_S=1.018
 BETA_TRAVEL=0
 HD_AREA_FACTOR=2.0
 HD_AREA_EXPONENT=0
 INTERVENTION=0
 output_directory_base="/home/nidhin/temp/CovidSim_Temp/CPP_Calib"
-input_directory="/home/nidhin/Covid19_Sim/markov_simuls/simulator/input_files"
+input_directory="/home/nidhin/temp/CovidSim_Temp/all-3-cities-instantiation/bangalore-1M"
 CALIBRATION_DELAY=0
 DAYS_BEFORE_LOCKDOWN=0
 # Set this to "--SEED_HD_AREA_POPULATION" to seed hd area population
@@ -47,8 +47,8 @@ SEED_ONLY_NON_COMMUTER=" "
 # Set this to "--SEED_FIXED_NUMBER" to seed only a fixed number of
 # people. In this case, the value of INIT_FRAC_INFECTED will be
 # ignored in favour of the value of INIT_FIXED_NUMBER_INFECTED
-#SEED_FIXED_NUMBER="--SEED_FIXED_NUMBER"
-SEED_FIXED_NUMBER=" "
+SEED_FIXED_NUMBER="--SEED_FIXED_NUMBER"
+#SEED_FIXED_NUMBER=" "
 INIT_FIXED_NUMBER_INFECTED=100
 INTERVENTION=0
 EXEC_DIR = "/home/nidhin/CPP_Simulator/markov_simuls/cpp-simulator"
@@ -90,7 +90,7 @@ def calculate_means_lambda_CPP(output_directory_base, num_sims,results_dir):
 ###########################
 continue_run = True
 resolution = 4
-num_sims = 10
+num_sims = 4
 count = 0
 while (continue_run):
     
@@ -149,5 +149,5 @@ while (continue_run):
         BETA_S = BETA_W * 2
         BETA_C = max(BETA_C + step_beta_c,0)*BETA_SCALE_FACTOR
         #INIT_FRAC_SCALE_FACTOR = INIT_FRAC_SCALE_FACTOR*init_frac_mult_factor
-        print ("count:", count, '. BETA_H: ', BETA_H, '. BETA_W: ',BETA_W, '. BETA_S: ', BETA_S, '. BETA_C: ', BETA_C )
+        print ("count:", count, '. BETA_H: ', BETA_H, '. BETA_W: ',BETA_W, '. BETA_S: ', BETA_S, '. BETA_C: ', BETA_C,'. Delay: ',delay )
     #continue_run = False

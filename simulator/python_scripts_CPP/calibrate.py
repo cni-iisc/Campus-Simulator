@@ -22,11 +22,11 @@ def find_slope_from_regression(data):
 def calibrate(resolution,count):
     #calibrate the model to match the deceased curve
     
-    threshold = 10 # lower threshold on dead_data
+    threshold = 20 # lower threshold on dead_data
     error_tolerence = 1 # tolerence on shift
     slope_tolerence = 0.01 # tolerence on slope
-    lower_threshold = 10  # lower threshold for simulated dead_mean
-    upper_threshold = 50  # upper threshold for simulated dead_mean
+    lower_threshold = 20  # lower threshold for simulated dead_mean
+    upper_threshold = 100  # upper threshold for simulated dead_mean
     
     # set the target lambdas
     lambda_h_target = 0.333333

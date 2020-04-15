@@ -30,6 +30,10 @@ struct defaults{
   std::string SEED_FIXED_NUMBER = "false";
   std::string CALIBRATION_DELAY = "0";
   std::string DAYS_BEFORE_LOCKDOWN = "0";
+  std::string FIRST_PERIOD = "21";
+  std::string SECOND_PERIOD = "21";
+  std::string THIRD_PERIOD = "42";
+  std::string OE_SECOND_PERIOD = "30";
 } DEFAULTS;
 
 #endif

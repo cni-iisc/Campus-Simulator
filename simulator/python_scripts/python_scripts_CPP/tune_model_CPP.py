@@ -34,6 +34,10 @@ HD_AREA_EXPONENT=0
 INTERVENTION=0
 output_directory_base="/home/nidhin/temp/CovidSim_Temp/CPP_Calib"
 input_directory="/home/nidhin/Covid19_Sim/markov_simuls/simulator/input_files"
+FIRST_PERIOD=21
+SECOND_PERIOD=21
+THIRD_PERIOD=42
+OE_SECOND_PERIOD=30
 CALIBRATION_DELAY=0
 DAYS_BEFORE_LOCKDOWN=0
 # Set this to "--SEED_HD_AREA_POPULATION" to seed hd area population
@@ -129,6 +133,10 @@ while (continue_run):
         command+=" --input_directory " + str(input_directory)
         command+=" --CALIBRATION_DELAY " + str(CALIBRATION_DELAY)
         command+=" --DAYS_BEFORE_LOCKDOWN " + str(DAYS_BEFORE_LOCKDOWN)
+        command+=" --FIRST_PERIOD " + str(FIRST_PERIOD)
+        command+=" --SECOND_PERIOD " + str(SECOND_PERIOD)
+        command+=" --THIRD_PERIOD " + str(THIRD_PERIOD)
+        command+=" --OE_SECOND_PERIOD " + str(OE_SECOND_PERIOD)
 
 
         print(command)

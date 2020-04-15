@@ -19,19 +19,19 @@ void get_kappa_CI_HQ(std::vector<agent>& nodes, std::vector<house>& homes, const
 
 void get_kappa_CI_HQ_65P(std::vector<agent>& nodes, std::vector<house>& homes, const std::vector<workplace>& workplaces, const std::vector<community>& communities, int cur_time);
 
-void get_kappa_LOCKDOWN_21_CI_HQ_SD_65_PLUS_21_CI(std::vector<agent>& nodes, std::vector<house>& homes, const std::vector<workplace>& workplaces, const std::vector<community>& communities, int cur_time);
+void get_kappa_LOCKDOWN_fper_CI_HQ_SD_65_PLUS_sper_CI(std::vector<agent>& nodes, std::vector<house>& homes, const std::vector<workplace>& workplaces, const std::vector<community>& communities, int cur_time, double FIRST_PERIOD, double SECOND_PERIOD);
 
-void get_kappa_LOCKDOWN_21(std::vector<agent>& nodes, std::vector<house>& homes, const std::vector<workplace>& workplaces, const std::vector<community>& communities, int cur_time);
+void get_kappa_LOCKDOWN_fper(std::vector<agent>& nodes, std::vector<house>& homes, const std::vector<workplace>& workplaces, const std::vector<community>& communities, int cur_time, double FIRST_PERIOD);
 
 void get_kappa_CI_HQ_65P_SC(std::vector<agent>& nodes, std::vector<house>& homes, const std::vector<workplace>& workplaces, const std::vector<community>& communities, int cur_time);
 
 void get_kappa_CI_HQ_65P_SC_OE(std::vector<agent>& nodes, std::vector<house>& homes, const std::vector<workplace>& workplaces, const std::vector<community>& communities, int cur_time);
 
-void get_kappa_LD_21_CI_HQ_SD65_SC_21_SC_42(std::vector<agent>& nodes, std::vector<house>& homes, const std::vector<workplace>& workplaces, const std::vector<community>& communities, int cur_time);
+void get_kappa_LD_fper_CI_HQ_SD65_SC_sper_SC_tper(std::vector<agent>& nodes, std::vector<house>& homes, const std::vector<workplace>& workplaces, const std::vector<community>& communities, int cur_time, double FIRST_PERIOD, double SECOND_PERIOD, double THIRD_PERIOD);
 
-void get_kappa_LD_21_CI_HQ_SD65_SC_21(std::vector<agent>& nodes, std::vector<house>& homes, const std::vector<workplace>& workplaces, const std::vector<community>& communities, int cur_time);
+void get_kappa_LD_fper_CI_HQ_SD65_SC_sper(std::vector<agent>& nodes, std::vector<house>& homes, const std::vector<workplace>& workplaces, const std::vector<community>& communities, int cur_time, double FIRST_PERIOD, double SECOND_PERIOD);
 
-void get_kappa_LD_21_CI_HQ_SD65_SC_OE_30(std::vector<agent>& nodes, std::vector<house>& homes, const std::vector<workplace>& workplaces, const std::vector<community>& communities, int cur_time);
+void get_kappa_LD_fper_CI_HQ_SD65_SC_OE_sper(std::vector<agent>& nodes, std::vector<house>& homes, const std::vector<workplace>& workplaces, const std::vector<community>& communities, int cur_time, double FIRST_PERIOD, double OE_SECOND_PERIOD);
 
 
 #endif

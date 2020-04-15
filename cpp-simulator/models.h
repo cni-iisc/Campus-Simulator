@@ -13,11 +13,11 @@ enum class Intervention {
    lockdown = 3,
    case_isolation_and_home_quarantine = 4,
    case_isolation_and_home_quarantine_sd_65_plus = 5,
-   lockdown_21_ci_hq_sd_65_plus_21_ci = 6,
-   lockdown_21 = 7,
-   ld_21_ci_hq_sd65_sc_21_sc_42 = 8,
-   ld_21_ci_hq_sd65_sc_21 = 9,
-   ld_21_ci_hq_sd65_sc_oe_30 = 10
+   lockdown_fper_ci_hq_sd_65_plus_sper_ci = 6,
+   lockdown_fper = 7,
+   ld_fper_ci_hq_sd65_sc_sper_sc_tper = 8,
+   ld_fper_ci_hq_sd65_sc_sper = 9,
+   ld_fper_ci_hq_sd65_sc_oe_sper = 10
 };
 
 
@@ -146,6 +146,12 @@ struct global_params{
   double HD_AREA_FACTOR = 2.0;
 
   double HD_AREA_EXPONENT = 0.3;
+
+  //Lockdown periods
+  double FIRST_PERIOD = 21;
+  double SECOND_PERIOD = 21;
+  double THIRD_PERIOD = 42;
+  double OE_SECOND_PERIOD = 30;
   
   //Switches
   //If this is false, the file quarantinedPopulation.json is needed

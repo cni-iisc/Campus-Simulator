@@ -21,6 +21,10 @@ output_directory_base="outputs/test_output_timing"
 input_directory="../simulator/input_files"
 CALIBRATION_DELAY=0
 DAYS_BEFORE_LOCKDOWN=0
+FIRST_PERIOD=21
+SECOND_PERIOD=21
+THIRD_PERIOD=42
+OE_SECOND_PERIOD=30
 # Set this to "--SEED_HD_AREA_POPULATION" to seed hd area population
 # as well.
 # SEED_HD_AREA_POPULATION="--SEED_HD_AREA_POPULATION"
@@ -98,9 +102,13 @@ do
 	 --HD_AREA_EXPONENT $HD_AREA_EXPONENT \
 	 --INTERVENTION $INTERVENTION \
 	 --output_directory $output_directory \
-	 --input_directory $input_directory\
-	 --CALIBRATION_DELAY $CALIBRATION_DELAY\
-	 --DAYS_BEFORE_LOCKDOWN $DAYS_BEFORE_LOCKDOWN"
+	 --input_directory $input_directory \
+	 --CALIBRATION_DELAY $CALIBRATION_DELAY \
+	 --DAYS_BEFORE_LOCKDOWN $DAYS_BEFORE_LOCKDOWN \
+     --FIRST_PERIOD $FIRST_PERIOD \
+     --SECOND_PERIOD $SECOND_PERIOD \
+     --THIRD_PERIOD $THIRD_PERIOD \
+     --OE_SECOND_PERIOD $OE_SECOND_PERIOD"
 
 	echo $command;
 	if eval $command; then

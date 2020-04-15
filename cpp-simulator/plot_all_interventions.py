@@ -12,11 +12,11 @@ interventions = {
     3: "lockdown",
     4: "case_isolation_and_home_quarantine",
     5: "case_isolation_and_home_quarantine_sd_70_plus",
-    6: "lockdown_21_ci_hq_sd_70_plus_21_ci",
-    7: "lockdown_21",
-    8: "ld_21_ci_hq_sd65_sc_21_sc_42",
-    9: "ld_21_ci_hq_sd65_sc_21",
-    10: "ld_21_ci_hq_sd65_sc_oe_30"
+    6: "lockdown_fper_ci_hq_sd_70_plus_sper_ci",
+    7: "lockdown_fper",
+    8: "ld_fper_ci_hq_sd65_sc_sper_sc_tper",
+    9: "ld_fper_ci_hq_sd65_sc_sper",
+    10: "ld_fper_ci_hq_sd65_sc_oe_sper"
 }
 
 INTERVENTION_NOS = 7

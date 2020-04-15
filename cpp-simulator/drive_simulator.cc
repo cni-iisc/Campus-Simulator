@@ -70,6 +70,14 @@ int main(int argc, char** argv){
 	 cxxopts::value<double>()->default_value(DEFAULTS.CALIBRATION_DELAY))
 	("DAYS_BEFORE_LOCKDOWN", "no intervention period prior to interventions",
 	 cxxopts::value<double>()->default_value(DEFAULTS.DAYS_BEFORE_LOCKDOWN))
+    ("FIRST_PERIOD", "length in days of the first intervention period",
+     cxxopts::value<double>()->default_value(DEFAULTS.FIRST_PERIOD))
+    ("SECOND_PERIOD", "length in days of the second intervention period",
+     cxxopts::value<double>()->default_value(DEFAULTS.SECOND_PERIOD))
+    ("THIRD_PERIOD", "length in days of the third intervention period",
+     cxxopts::value<double>()->default_value(DEFAULTS.THIRD_PERIOD))
+    ("OE_SECOND_PERIOD", "length in days of the second odd-even intervention period",
+     cxxopts::value<double>()->default_value(DEFAULTS.OE_SECOND_PERIOD))
 	("PROVIDE_INITIAL_SEED",
 	 "provide an initial seed to the simulator. If this is not provided, the simulator uses "
 	 "std::random_device to get the random seed.",
@@ -114,6 +122,11 @@ int main(int argc, char** argv){
   GLOBAL.CALIBRATION_DELAY = optvals["CALIBRATION_DELAY"].as<double>();
   GLOBAL.DAYS_BEFORE_LOCKDOWN = optvals["DAYS_BEFORE_LOCKDOWN"].as<double>();
   GLOBAL.NUM_DAYS_BEFORE_INTERVENTIONS = GLOBAL.CALIBRATION_DELAY + GLOBAL.DAYS_BEFORE_LOCKDOWN;
+
+  GLOBAL.FIRST_PERIOD = optvals["FIRST_PERIOD"].as<double>();
+  GLOBAL.SECOND_PERIOD = optvals["SECOND_PERIOD"].as<double>();
+  GLOBAL.THIRD_PERIOD = optvals["THIRD_PERIOD"].as<double>();
+  GLOBAL.OE_SECOND_PERIOD = optvals["OE_SECOND_PERIOD"].as<double>();
 
   std::string output_dir(optvals["output_directory"].as<std::string>());
 

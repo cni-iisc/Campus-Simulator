@@ -146,48 +146,52 @@ node_update_status update_infection(agent& node, int cur_time){
 }
 
 void update_all_kappa(vector<agent>& nodes, vector<house>& homes, vector<workplace>& workplaces, vector<community>& communities, int cur_time){
-	if(cur_time < GLOBAL.NUM_DAYS_BEFORE_INTERVENTIONS*GLOBAL.SIM_STEPS_PER_DAY){
-		get_kappa_no_intervention(nodes, homes, workplaces, communities,cur_time);
-	}
-	else{
-		switch(GLOBAL.INTERVENTION){
-		case Intervention::no_intervention:
-			get_kappa_no_intervention(nodes, homes, workplaces, communities, cur_time);
-			break;
-		case Intervention::case_isolation:
-			get_kappa_case_isolation(nodes, homes, workplaces, communities, cur_time);
-			break;
-		case Intervention::home_quarantine:
-			get_kappa_home_quarantine(nodes, homes, workplaces, communities, cur_time);
-			break;
-		case Intervention::lockdown:
-			get_kappa_lockdown(nodes, homes, workplaces, communities, cur_time);
-			break;
-		case Intervention::case_isolation_and_home_quarantine:
-			get_kappa_CI_HQ(nodes, homes, workplaces, communities, cur_time);
-			break;
-		case Intervention::case_isolation_and_home_quarantine_sd_65_plus:
-			get_kappa_CI_HQ_65P(nodes, homes, workplaces, communities, cur_time);
-			break;
-		case Intervention::lockdown_21_ci_hq_sd_65_plus_21_ci:
-			get_kappa_LOCKDOWN_21_CI_HQ_SD_65_PLUS_21_CI(nodes, homes, workplaces, communities, cur_time);
-			break;
-		case Intervention::lockdown_21:
-			get_kappa_LOCKDOWN_21(nodes, homes, workplaces, communities,cur_time);
-			break;
-		case Intervention::ld_21_ci_hq_sd65_sc_21_sc_42:
-			get_kappa_LD_21_CI_HQ_SD65_SC_21_SC_42(nodes, homes, workplaces, communities,cur_time);
-			break;
-		case Intervention::ld_21_ci_hq_sd65_sc_21:
-			get_kappa_LD_21_CI_HQ_SD65_SC_21(nodes, homes, workplaces, communities,cur_time);
-			break;
-		case Intervention::ld_21_ci_hq_sd65_sc_oe_30:
-			get_kappa_LD_21_CI_HQ_SD65_SC_OE_30(nodes, homes, workplaces, communities,cur_time);
-			break;
-		default:
-			break;
-		}
-	}
+  if(cur_time < GLOBAL.NUM_DAYS_BEFORE_INTERVENTIONS*GLOBAL.SIM_STEPS_PER_DAY){
+    get_kappa_no_intervention(nodes, homes, workplaces, communities,cur_time);
+  }
+  else{
+    switch(GLOBAL.INTERVENTION){
+    case Intervention::no_intervention:
+      get_kappa_no_intervention(nodes, homes, workplaces, communities, cur_time);
+      break;
+    case Intervention::case_isolation:
+      get_kappa_case_isolation(nodes, homes, workplaces, communities, cur_time);
+      break;
+    case Intervention::home_quarantine:
+      get_kappa_home_quarantine(nodes, homes, workplaces, communities, cur_time);
+      break;
+    case Intervention::lockdown:
+      get_kappa_lockdown(nodes, homes, workplaces, communities, cur_time);
+      break;
+    case Intervention::case_isolation_and_home_quarantine:
+      get_kappa_CI_HQ(nodes, homes, workplaces, communities, cur_time);
+      break;
+    case Intervention::case_isolation_and_home_quarantine_sd_65_plus:
+      get_kappa_CI_HQ_65P(nodes, homes, workplaces, communities, cur_time);
+      break;
+    case Intervention::lockdown_fper_ci_hq_sd_65_plus_sper_ci:
+      get_kappa_LOCKDOWN_fper_CI_HQ_SD_65_PLUS_sper_CI(nodes, homes, workplaces, communities, cur_time,
+                                                       GLOBAL.FIRST_PERIOD, GLOBAL.SECOND_PERIOD);
+      break;
+    case Intervention::lockdown_fper:
+      get_kappa_LOCKDOWN_fper(nodes, homes, workplaces, communities, cur_time, GLOBAL.FIRST_PERIOD);
+      break;
+    case Intervention::ld_fper_ci_hq_sd65_sc_sper_sc_tper:
+      get_kappa_LD_fper_CI_HQ_SD65_SC_sper_SC_tper(nodes, homes, workplaces, communities, cur_time,
+                                                   GLOBAL.FIRST_PERIOD, GLOBAL.SECOND_PERIOD, GLOBAL.THIRD_PERIOD);
+      break;
+    case Intervention::ld_fper_ci_hq_sd65_sc_sper:
+      get_kappa_LD_fper_CI_HQ_SD65_SC_sper(nodes, homes, workplaces, communities, cur_time,
+                                           GLOBAL.FIRST_PERIOD, GLOBAL.SECOND_PERIOD);
+      break;
+    case Intervention::ld_fper_ci_hq_sd65_sc_oe_sper:
+      get_kappa_LD_fper_CI_HQ_SD65_SC_OE_sper(nodes, homes, workplaces, communities, cur_time,
+                                              GLOBAL.FIRST_PERIOD, GLOBAL.OE_SECOND_PERIOD);
+      break;
+    default:
+      break;
+    }
+  }
 }
 
 double updated_lambda_w_age_independent(const vector<agent>& nodes, const workplace& workplace){

@@ -166,23 +166,23 @@ void update_all_kappa(vector<agent>& nodes, vector<house>& homes, vector<workpla
 		case Intervention::case_isolation_and_home_quarantine:
 			get_kappa_CI_HQ(nodes, homes, workplaces, communities, cur_time);
 			break;
-		case Intervention::case_isolation_and_home_quarantine_sd_70_plus:
-			get_kappa_CI_HQ_70P(nodes, homes, workplaces, communities, cur_time);
+		case Intervention::case_isolation_and_home_quarantine_sd_65_plus:
+			get_kappa_CI_HQ_65P(nodes, homes, workplaces, communities, cur_time);
 			break;
-		case Intervention::lockdown_21_ci_hq_sd_70_plus_21_ci:
-			get_kappa_LOCKDOWN_21_CI_HQ_SD_70_PLUS_21_CI(nodes, homes, workplaces, communities, cur_time);
+		case Intervention::lockdown_21_ci_hq_sd_65_plus_21_ci:
+			get_kappa_LOCKDOWN_21_CI_HQ_SD_65_PLUS_21_CI(nodes, homes, workplaces, communities, cur_time);
 			break;
 		case Intervention::lockdown_21:
 			get_kappa_LOCKDOWN_21(nodes, homes, workplaces, communities,cur_time);
 			break;
-		case Intervention::ld_21_ci_hq_sd70_sc_21_sc_42:
-			get_kappa_LD_21_CI_HQ_SD70_SC_21_SC_42(nodes, homes, workplaces, communities,cur_time);
+		case Intervention::ld_21_ci_hq_sd65_sc_21_sc_42:
+			get_kappa_LD_21_CI_HQ_SD65_SC_21_SC_42(nodes, homes, workplaces, communities,cur_time);
 			break;
-		case Intervention::ld_21_ci_hq_sd70_sc_21:
-			get_kappa_LD_21_CI_HQ_SD70_SC_21(nodes, homes, workplaces, communities,cur_time);
+		case Intervention::ld_21_ci_hq_sd65_sc_21:
+			get_kappa_LD_21_CI_HQ_SD65_SC_21(nodes, homes, workplaces, communities,cur_time);
 			break;
-		case Intervention::ld_21_ci_hq_sd70_sc_oe_30:
-			get_kappa_LD_21_CI_HQ_SD70_SC_OE_30(nodes, homes, workplaces, communities,cur_time);
+		case Intervention::ld_21_ci_hq_sd65_sc_oe_30:
+			get_kappa_LD_21_CI_HQ_SD65_SC_OE_30(nodes, homes, workplaces, communities,cur_time);
 			break;
 		default:
 			break;

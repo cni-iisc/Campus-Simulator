@@ -37,22 +37,22 @@ string intervention_rep(Intervention i){
   case Intervention::case_isolation_and_home_quarantine:
 	return "case_isolation_and_home_quarantine";
 	break;
-  case Intervention::case_isolation_and_home_quarantine_sd_70_plus:
-	return "case_isolation_and_home_quarantine_sd_70_plus";
+  case Intervention::case_isolation_and_home_quarantine_sd_65_plus:
+	return "case_isolation_and_home_quarantine_sd_65_plus";
 	break;
-  case Intervention::lockdown_21_ci_hq_sd_70_plus_21_ci:
-	return "lockdown_21_ci_hq_sd_70_plus_21_ci";
+  case Intervention::lockdown_21_ci_hq_sd_65_plus_21_ci:
+	return "lockdown_21_ci_hq_sd_65_plus_21_ci";
 	break;
   case Intervention::lockdown_21:
 	return "lockdown_21";
-  case Intervention::ld_21_ci_hq_sd70_sc_21_sc_42:
-	return "ld_21_ci_hq_sd70_sc_21_sc_42";
+  case Intervention::ld_21_ci_hq_sd65_sc_21_sc_42:
+	return "ld_21_ci_hq_sd65_sc_21_sc_42";
 	break;
-  case Intervention::ld_21_ci_hq_sd70_sc_21:
-	return "ld_21_ci_hq_sd70_sc_21";
+  case Intervention::ld_21_ci_hq_sd65_sc_21:
+	return "ld_21_ci_hq_sd65_sc_21";
 	break;
-  case Intervention::ld_21_ci_hq_sd70_sc_oe_30:
-	return "ld_21_ci_hq_sd70_sc_oe_30";
+  case Intervention::ld_21_ci_hq_sd65_sc_oe_30:
+	return "ld_21_ci_hq_sd65_sc_oe_30";
 	break;
   default:
 	assert(false);

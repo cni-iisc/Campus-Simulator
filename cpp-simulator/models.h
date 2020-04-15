@@ -12,12 +12,12 @@ enum class Intervention {
    home_quarantine = 2,
    lockdown = 3,
    case_isolation_and_home_quarantine = 4,
-   case_isolation_and_home_quarantine_sd_70_plus = 5,
-   lockdown_21_ci_hq_sd_70_plus_21_ci = 6,
+   case_isolation_and_home_quarantine_sd_65_plus = 5,
+   lockdown_21_ci_hq_sd_65_plus_21_ci = 6,
    lockdown_21 = 7,
-   ld_21_ci_hq_sd70_sc_21_sc_42 = 8,
-   ld_21_ci_hq_sd70_sc_21 = 9,
-   ld_21_ci_hq_sd70_sc_oe_30 = 10
+   ld_21_ci_hq_sd65_sc_21_sc_42 = 8,
+   ld_21_ci_hq_sd65_sc_21 = 9,
+   ld_21_ci_hq_sd65_sc_oe_30 = 10
 };
 
 

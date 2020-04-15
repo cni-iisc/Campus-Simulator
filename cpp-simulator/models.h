@@ -89,7 +89,7 @@ struct global_params{
   count_type num_people = 100000;
 
   count_type NUM_DAYS = 120; //Number of days. Simulation duration
-  count_type SIM_STEPS_PER_DAY = 4; //Number of simulation steps per day.
+  const count_type SIM_STEPS_PER_DAY = 4; //Number of simulation steps per day.
   count_type NUM_TIMESTEPS = NUM_DAYS*SIM_STEPS_PER_DAY; //
   double INIT_FRAC_INFECTED = 0.0001; // Initial number of people infected
 
@@ -107,7 +107,7 @@ struct global_params{
   double F_KERNEL_B = 5.384;
 	
   
-  double INCUBATION_PERIOD_SHAPE = 2;
+  const double INCUBATION_PERIOD_SHAPE = 2.3;
   double INCUBATION_PERIOD_SCALE = INCUBATION_PERIOD*SIM_STEPS_PER_DAY;// 2.29 days
 
   //POSSIBLE BUG: Both of these should be one according to the paper,

@@ -126,7 +126,7 @@ void output_global_params(const string& output_dir){
   fout << "MEAN_HOSPITAL_CRITICAL_PERIOD: " << GLOBAL.MEAN_HOSPITAL_CRITICAL_PERIOD << ";" << endl; 
   
   fout << "INCUBATION_PERIOD_SHAPE: " << GLOBAL.INCUBATION_PERIOD_SHAPE << ";" << endl; 
-  fout << "INCUBATION_PERIOD_SCALE: " << GLOBAL.INCUBATION_PERIOD_SCALE << ";" << endl; // 2.29 days
+  fout << "INCUBATION_PERIOD_SCALE: " << GLOBAL.INCUBATION_PERIOD_SCALE << ";" << endl;
   
   fout << "INFECTIOUSNESS_SHAPE: " << GLOBAL.INFECTIOUSNESS_SHAPE << ";" << endl; 
   fout << "INFECTIOUSNESS_SCALE: " << GLOBAL.INFECTIOUSNESS_SCALE << ";" << endl; 
@@ -158,12 +158,19 @@ void output_global_params(const string& output_dir){
   //Multiplicative fatcor for infection rates in high density areas
   fout << "HD_AREA_FACTOR: " << GLOBAL.HD_AREA_FACTOR << ";" << endl;
   fout << "HD_AREA_EXPONENT: " << GLOBAL.HD_AREA_EXPONENT << ";" << endl;
+
+  //Details on interventions
+  fout << "CALIBRATION_DELAY: " << GLOBAL.CALIBRATION_DELAY << ";" << endl;;
+  fout << "DAYS_BEFORE_LOCKDOWN: " << GLOBAL.DAYS_BEFORE_LOCKDOWN << ";" << endl;;
+  fout << "FIRST_PERIOD: " << GLOBAL.FIRST_PERIOD << ";" << endl;;
+  fout << "SECOND_PERIOD: " << GLOBAL.SECOND_PERIOD << ";" << endl;;
+  fout << "THIRD_PERIOD: " << GLOBAL.THIRD_PERIOD << ";" << endl;;
+  fout << "OE_SECOND_PERIOD: " << GLOBAL.OE_SECOND_PERIOD << ";" << endl;;
   
   fout << "USE_SAME_INFECTION_PROB_FOR_ALL_WARDS: " << GLOBAL.USE_SAME_INFECTION_PROB_FOR_ALL_WARDS << ";" << endl;
   fout << "SEED_HD_AREA_POPULATION: " << GLOBAL.SEED_HD_AREA_POPULATION << ";" << endl;
   fout << "SEED_ONLY_NON_COMMUTER: " << GLOBAL.SEED_ONLY_NON_COMMUTER << ";" << endl;
   
-
   fout.close();
 }
 

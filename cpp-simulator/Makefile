@@ -15,17 +15,18 @@ obj = initializers.o models.o interventions.o updates.o simulator.o outputs.o dr
 
 DEPFLAGS = -MMD -MP -MF $*.d
 
-CPPFLAGS = --std=c++14 -O3 $(DEPFLAGS) $(include_paths) $(parallel) $(timing) $(debug) $(random)
+CXX = g++
+CPPFLAGS = -Wall --std=c++14 -O3 $(DEPFLAGS) $(include_paths) $(parallel) $(timing) $(debug) $(random)
 
 
 
 all: drive_simulator
 
 drive_simulator: $(obj)
-	g++ $(CPPFLAGS) $^ -o $@
+	$(CXX) $(CPPFLAGS) $^ -o $@
 
 %.o : $.cc %.d
-	g++ $(CPPFLAGS) -c $<
+	$(CXX) $(CPPFLAGS) -c $<
 
 $(DEPDIR):
 	mkdir -p $@

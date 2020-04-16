@@ -1814,7 +1814,7 @@ function plot_plotly(data, plot_position, title_text, legends) {
                     size: 18,
                     color: '#7f7f7f'
                 }
-            },
+            }
         },
         yaxis: {
             title: {
@@ -1825,8 +1825,6 @@ function plot_plotly(data, plot_position, title_text, legends) {
                     color: '#7f7f7f'
                 }
             }
-            //tickmode: 'auto',
-            //nticks: 5
         }
     };
 
@@ -1879,7 +1877,7 @@ function runSimulations() {
     //Ppatil
     //INTERVENTION = parseInt(document.getElementById("interventions").value);
     //INTERVENTION = parseInt(document.getElementById("interventions2").value);
-    INTERVENTION = document.querySelector('input[name="interventions2"]:checked').value;
+    INTERVENTION = parseInt(document.querySelector('input[name="interventions2"]:checked').value);
 
     console.log(NUM_DAYS, INIT_FRAC_INFECTED, INTERVENTION);
     console.log("INTERVENTION = ", INTERVENTION);
@@ -1921,7 +1919,7 @@ function set_default_values_html() {
     document.getElementById("betaCommunity").value = BETA_C;
     document.getElementById("betaSchools").value = BETA_S;
     document.getElementById("betaPT").value = BETA_PT;
-    document.getElementById("interventions").value = "0";
+    //document.getElementById("interventions").value = "0";
 }
 
 function clear_variables() {

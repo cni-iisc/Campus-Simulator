@@ -1691,7 +1691,9 @@ function plot_lambda_evolution(data, plot_position, title_text, legends) {
     var data_plot = trace;
 
     var layout = {
-
+        autosize: true,
+        width: 400,
+        height: 400,
         barmode: 'stack',
         title: {
             text: title_text,
@@ -1801,7 +1803,9 @@ function plot_plotly(data, plot_position, title_text, legends) {
     const yMax = Math.max(...data_plot[0].y);
 
     const layout = {
-
+        autosize: true,
+        width: 400,
+        height:400,
         xaxis: {
             title: {
                 text: 'Days',

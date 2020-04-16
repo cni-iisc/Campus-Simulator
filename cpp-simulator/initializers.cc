@@ -93,7 +93,7 @@ vector<community> init_community() {
   vector<community> communities(size);
 
   count_type index = 0;
-  // schools come first followed by workspaces, as in the JSON version
+  
   for (auto &elem: comJSON.GetArray()){
 	communities[index].set(elem["lat"].GetDouble(),
 						   elem["lon"].GetDouble(),
@@ -173,8 +173,7 @@ void set_node_initial_infection(agent& node,
 	}
   }
   // node.infective = (node.infection_status == Progression::infective);
-  // POSSIBLE BUG: In the JS code, and here, infection_status is
-  // never set to infective, so the above line would be superfluous!
+  
 }
 
 vector<agent> init_nodes(){
@@ -235,7 +234,7 @@ vector<agent> init_nodes(){
 	assert(elem["wardNo"].IsInt());
 #endif
 	count_type community = elem["wardNo"].GetInt() - 1;
-	//minus 1 for 0-based indexing.  POSSIBLE BUG: Might need to use
+	//minus 1 for 0-based indexing. PB: Might need to use
 	//"wardIndex" instead, because that is the one actually sent by
 	//the generator scripts.
 

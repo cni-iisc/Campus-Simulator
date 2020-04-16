@@ -110,8 +110,7 @@ struct global_params{
   const double INCUBATION_PERIOD_SHAPE = 2.3;
   double INCUBATION_PERIOD_SCALE = INCUBATION_PERIOD*SIM_STEPS_PER_DAY;// 2.29 days
 
-  //POSSIBLE BUG: Both of these should be one according to the paper,
-  //but these are the values used in the JS simulator
+  //Gamma with mean 1 and shape 0.25, as per Imperial College 16 March Report
   double INFECTIOUSNESS_SHAPE = 0.25;
   double INFECTIOUSNESS_SCALE = 4;  
 
@@ -238,7 +237,7 @@ const int WORKPLACE_HOME = -1;
 struct agent{
   location loc;
   int age;
-  int age_group;
+  int age_group; //For age dependent mixing
   int age_index; //For the STATE_TRAN matrix
   double zeta_a = 1;
   double infectiousness;

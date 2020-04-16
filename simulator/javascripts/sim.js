@@ -1876,7 +1876,10 @@ function runSimulations() {
     BETA_S = document.getElementById("betaSchools").value;
     BETA_PT = document.getElementById("betaPT").value;
 
-    INTERVENTION = parseInt(document.getElementById("interventions").value);
+    //Ppatil
+    //INTERVENTION = parseInt(document.getElementById("interventions").value);
+    //INTERVENTION = parseInt(document.getElementById("interventions2").value);
+    INTERVENTION = document.querySelector('input[name="interventions2"]:checked').value;
 
     console.log(NUM_DAYS, INIT_FRAC_INFECTED, INTERVENTION);
     console.log("INTERVENTION = ", INTERVENTION);

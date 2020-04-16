@@ -10,6 +10,7 @@ SPDX-License-Identifier: Apache-2.0-->
         <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
         <title>Epidemic Simulator (City-Scale)</title>
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+        <link rel="stylesheet" href="simulator/css/font-awesome.min.css">
 
         <style>
             body {
@@ -54,8 +55,9 @@ SPDX-License-Identifier: Apache-2.0-->
                 padding: 15px;
             }
           .jumbotron {
-          padding-top: 5px;
-          padding-bottom: 5px;
+          display:flex;
+          align-items:center;
+          background-color:#776633;
           }
           .fakeimg {
             height: 100px;
@@ -67,6 +69,22 @@ SPDX-License-Identifier: Apache-2.0-->
             padding: 2px
             display: inline-block;
             margin-left: 6px;
+        }
+
+        .radio-inline {
+          display: block;
+          padding: 5px 5px; /* optional */
+        }
+
+        .fieldset
+        {
+          background-color:#CCC;
+        }
+        .legend
+        {
+          margin-bottom:0px;
+          margin-left:16px;
+          font-size:medium;  
         }
         </style>
 
@@ -97,20 +115,23 @@ SPDX-License-Identifier: Apache-2.0-->
         -->
     </head>
     <body>
-      <div class="jumbotron text-center" style="margin-bottom:0" height>
-            <div class="container">
-              <div class="row">
-                <div class="col-md-6">
-                  <h3>Epidemic Simulator (City-Scale)</h3>
-                  <h4><a href="https://cni.iisc.ac.in">Centre for Network Intelligence, RBCCPS</a></h4>
-                  <h4><a href="https://www.iisc.ac.in">Indian Institute of Science, Bangalore</a></h4>
-                </div>
-                <div class="col-md-3">
-                  <div class="fakeimg">Logo Image</div>
+      <section id="header">
+      <div class="d-flex bg-dark justify-content-between align-items-center">
+            <div class="d-flex p-2 text-white">
+              <div class="d-flex flex-column">
+                <div class="d-flex"><h5><a href="https://cni.iisc.ac.in" style="color:white">Centre for Network Intelligence,</a></h5></div>
+                <div class="d-flex"><h5><a href="https://cps.iisc.ac.in" style="color:white">Robert Bosch Centre for CPS</a></h5></div>
               </div>
-        </div>
+            </div>
+            <div class="d-flex p-2 text-white justify-content-center">
+              <h3>Epidemic Simulator (City-Scale)</h3>
+            </div>
+            <div class="d-flex px-4 justify-content-end">
+              <a href="https://www.iisc.ac.in"><img src="simulator/images/iisc_1.png" alt="IISc logo" width="70px"></a>
+            </div>
       </div>
-      </div>
+      </section>
+      <!--
       <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
         <a class="navbar-brand" href="#">Navbar</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
@@ -130,6 +151,7 @@ SPDX-License-Identifier: Apache-2.0-->
           </ul>
         </div>  
       </nav>
+      -->
 
       <div class="container-fluid">
         <div class="row">
@@ -238,6 +260,7 @@ SPDX-License-Identifier: Apache-2.0-->
                 <div class="col"><input type="number"  min="0" max="1" value="0.001"  id="initFrac"></div>
                 </div>
                 
+                  <!--
                 <div class="row">
                   <b>Interventions</b>
                   <UL>
@@ -255,7 +278,11 @@ SPDX-License-Identifier: Apache-2.0-->
                 <div class="row">
                 <label for="intervention">Intervention Method</label>
                 
-                <select id="interventions" name="interventions" style="width: 300px">
+                <div class="input-group mb-3">
+                  <div class="input-group-prepend">
+                    <label class="input-group-text" for="interventions">Intervention Method</label>
+                  </div>
+                  <select class="custom-select" id="interventions" name="interventions" style="width: 300px">
                     <option value="0">No Intervention</option>
                     <option value="1">Case Isolation</option>
                     <option value="2">Home Quarantine</option>
@@ -264,10 +291,54 @@ SPDX-License-Identifier: Apache-2.0-->
                     <option value="5">Case Isolation, Home Quarantine and Social Distancing of those above 70 years of age</option>   
                     <option value="6">20 days of lockdown followed by 21 days of F, followed by 21 days of Case Isolation</option>
                     <option value="7">21 days of Lockdown</option>
+                    <option value="9">The simulation starts on March 1, with an initial infected population of size 10 in a total population of 100000. Lockdown is introduced on the 25th day for a duration of 21 days, followed by home quarantine of infected households and school and college closures for 21 days, followed by school and college closures for another 42 days</option>
+                    <option value="10">The simulation starts on March 1, with an initial infected population of size 10 in a total population of 100000. Lockdown is introduced on the 25th day for a duration of 21 days, followed by home quarantine of infected households and school and college closures for 21 days</option>
+                    <option value="11">The simulation starts on March 1, with an initial infected population of size 10 in a total population of 100000. Lockdown is introduced on the 25th day for a duration of 21 days, followed by home quarantine of infected households, school and college closures, and offices working at half strength for 30 days</option>   
+                    <!--
                     <option value="9">LD_21_CI_HQ_SD70_SC_21_SC_42</option>
                     <option value="9">LD_21_CI_HQ_SD70_SC_21</option>
                     <option value="10">LD_21_CI_HQ_SD70_SC_OE_30</option>   
-                </select>
+                  </select></div>
+                </div>
+                -->
+
+                <div class="row px-3">
+                    <fieldset class="border p-2" style="border:2px">
+                        <legend class="w-auto" style="font-size: large; font-weight:bold;">Intervention Method</legend>
+                        <label class="radio-inline">
+                            <input type="radio" name="interventions2" value="0" checked="checked">No Intervention
+                        </label>
+                        <label class="radio-inline">
+                            <input type="radio" name="interventions2" value="1">Case Isolation
+                        </label>
+                        <label class="radio-inline">
+                            <input type="radio" name="interventions2" value="2">Home Quarantine
+                        </label>
+                        <label class="radio-inline">
+                            <input type="radio" name="interventions2" value="3">Lockdown
+                        </label>
+                        <label class="radio-inline">
+                            <input type="radio" name="interventions2" value="4">Case Isolation and Home Quarantine
+                        </label>
+                        <label class="radio-inline">
+                            <input type="radio" name="interventions2" value="5">Case Isolation, Home Quarantine and Social Distancing of those above 70 years of age</input>   
+                        </label>
+                        <label class="radio-inline">
+                            <input type="radio" name="interventions2" value="6">20 days of lockdown followed by 21 days of F, followed by 21 days of Case Isolation</input>
+                        </label>
+                        <label class="radio-inline">
+                            <input type="radio" name="interventions2" value="7">21 days of Lockdown</input>
+                        </label>
+                        <label class="radio-inline">
+                            <input type="radio" name="interventions2" value="9">The simulation starts on March 1, with an initial infected population of size 10 in a total population of 100000. Lockdown is introduced on the 25th day for a duration of 21 days, followed by home quarantine of infected households and school and college closures for 21 days, followed by school and college closures for another 42 days</input>
+                        </label>
+                        <label class="radio-inline">
+                            <input type="radio" name="interventions2" value="10">The simulation starts on March 1, with an initial infected population of size 10 in a total population of 100000. Lockdown is introduced on the 25th day for a duration of 21 days, followed by home quarantine of infected households and school and college closures for 21 days</input>
+                        </label>
+                        <label class="radio-inline">
+                            <input type="radio" name="interventions2" value="11">The simulation starts on March 1, with an initial infected population of size 10 in a total population of 100000. Lockdown is introduced on the 25th day for a duration of 21 days, followed by home quarantine of infected households, school and college closures, and offices working at half strength for 30 days</input>   
+                        </label>
+                    </fieldset>
                 </div>
 
                 <div class="row py-3">
@@ -327,8 +398,11 @@ SPDX-License-Identifier: Apache-2.0-->
       </div>
                   <div id="num_exposed_plot_2"></div>
                   <div id="num_recovered_plot_2"></div>
-      <div class="jumbotron text-center" style="margin-bottom:0;background-color:#AAAA99";>
-        <p>Copyright [2020] [Indian Institute of Science, Bangalore]</p>
+                  <!-- <div class="jumbotron text-center" style="margin-bottom:0;background-color:#AAAA99";> -->
+                  <!-- <div class="jumbotron text-center" style="display:flex;align-items:center;background-color:#776633;";> -->
+      <div class="d-flex bg-dark p-1 text-white justify-content-between">
+        <div class="d-flex px-3"><b><a href="mailto:epiSim@iisc.sc.in" style="color:white"><i class="fa fa-envelope" aria-hidden="true"></i> Contact us</a></b></div>
+        <div class="d-flex px-3">This works is licensed under Apache 2.0 license.<br>Copyright [2020] [Indian Institute of Science, Bangalore]</div>
       </div>
 
         <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>

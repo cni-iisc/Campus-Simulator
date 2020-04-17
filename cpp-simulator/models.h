@@ -237,7 +237,7 @@ const int WORKPLACE_HOME = -1;
 struct agent{
   location loc;
   int age;
-  int age_group; //For age dependent mixing
+  int age_group; //For later feature update: for age dependent mixing
   int age_index; //For the STATE_TRAN matrix
   double zeta_a = 1;
   double infectiousness;
@@ -249,7 +249,8 @@ struct agent{
 
   int community;
   double time_of_infection = 0;
-  //Why do we take time of infection to be 0 by default?
+  // time_of_infection is initialized to zero before seeding
+
   Progression infection_status = Progression::susceptible;
 
   bool infective = false;

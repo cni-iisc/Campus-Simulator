@@ -117,7 +117,7 @@ void get_kappa_home_quarantine(vector<agent>& nodes, vector<house>& homes, const
 	if((nodes[count].compliant) &&
 	   (time_since_symptoms > NUM_DAYS_TO_RECOG_SYMPTOMS*GLOBAL.SIM_STEPS_PER_DAY) &&
 	   (time_since_symptoms
-		<= (NUM_DAYS_TO_RECOG_SYMPTOMS+HOME_QUARANTINE_DAYS)*GLOBAL.SIM_STEPS_PER_DAY)){	  
+		<= (NUM_DAYS_TO_RECOG_SYMPTOMS+HOME_QUARANTINE_DAYS)*GLOBAL.SIM_STEPS_PER_DAY)){
 	  homes[nodes[count].home].quarantined = true;
 	}
   }
@@ -195,7 +195,7 @@ void get_kappa_CI_HQ(vector<agent>& nodes, vector<house>& homes, const vector<wo
 		 + nodes[count].asymptomatic_period);
 	if((nodes[count].compliant) &&
 	   (time_since_symptoms > NUM_DAYS_TO_RECOG_SYMPTOMS*GLOBAL.SIM_STEPS_PER_DAY)
-	   && (time_since_symptoms <= (NUM_DAYS_TO_RECOG_SYMPTOMS + HOME_QUARANTINE_DAYS) *GLOBAL.SIM_STEPS_PER_DAY)){	  
+	   && (time_since_symptoms <= (NUM_DAYS_TO_RECOG_SYMPTOMS + HOME_QUARANTINE_DAYS) *GLOBAL.SIM_STEPS_PER_DAY)){
 	  homes[nodes[count].home].quarantined = true;
 	}
   }
@@ -329,8 +329,8 @@ void get_kappa_CI_HQ_65P_SC(vector<agent>& nodes, vector<house>& homes, const ve
 	  nodes[count].kappa_C_incoming = 0.25;
 	}
 	if(nodes[count].workplace_type==WorkplaceType::school){
-		nodes[count].kappa_W = 0;		
-		nodes[count].kappa_W_incoming = 0;		
+		nodes[count].kappa_W = 0;
+		nodes[count].kappa_W_incoming = 0;
 	}
   }
 }
@@ -380,11 +380,11 @@ void get_kappa_CI_HQ_65P_SC_OE(vector<agent>& nodes, vector<house>& homes, const
 	if(nodes[count].workplace_type==WorkplaceType::office){
 		//odd-even rule for workplaces. 50% interactions for workplaces.
 		nodes[count].kappa_W = 0.25;
-		nodes[count].kappa_W_incoming = 0.25;		
+		nodes[count].kappa_W_incoming = 0.25;
 	} else {
 		//school and colleges are closed
-		nodes[count].kappa_W = 0;		
-		nodes[count].kappa_W_incoming = 0;		
+		nodes[count].kappa_W = 0;
+		nodes[count].kappa_W_incoming = 0;
 	}
   }
 }

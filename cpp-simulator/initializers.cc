@@ -125,7 +125,6 @@ vector<double> compute_prob_infection_given_community(double infection_probabili
 		infection_probability
 		* quar_array[index]["fracQuarantined"].GetDouble()
 		/ frac_array[index]["fracPopulation"].GetDouble();
-	  ++index;
 	}
 	return prob_infec_given_community;
   }

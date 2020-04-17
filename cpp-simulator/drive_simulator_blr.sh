@@ -68,7 +68,7 @@ done;
 echo "Input directory is: ${input_directory}"
 echo "Output directory is: ${output_directory_base}"
 
-for INTERVENTION in  0 3 7 8 9 10; #`seq 3 3`;
+for INTERVENTION in  0 3 7 8 9 10;
 do
 	echo "Running with INTERVENTION=${INTERVENTION}..."
 	output_directory="${output_directory_base}/intervention_${INTERVENTION}"

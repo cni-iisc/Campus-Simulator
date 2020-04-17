@@ -36,8 +36,8 @@ SEED_ONLY_NON_COMMUTER=
 # Set this to "--SEED_FIXED_NUMBER" to seed only a fixed number of
 # people. In this case, the value of INIT_FRAC_INFECTED will be
 # ignored in favour of the value of INIT_FIXED_NUMBER_INFECTED
-#SEED_FIXED_NUMBER="--SEED_FIXED_NUMBER"
-SEED_FIXED_NUMBER=
+SEED_FIXED_NUMBER="--SEED_FIXED_NUMBER"
+#SEED_FIXED_NUMBER=
 INIT_FIXED_NUMBER_INFECTED=100
 
 
@@ -68,8 +68,7 @@ done;
 echo "Input directory is: ${input_directory}"
 echo "Output directory is: ${output_directory_base}"
 
-
-for INTERVENTION in `seq 0 7`;
+for INTERVENTION in  0 3 7 8 9 10;
 do
 	echo "Running with INTERVENTION=${INTERVENTION}..."
 	output_directory="${output_directory_base}/intervention_${INTERVENTION}"

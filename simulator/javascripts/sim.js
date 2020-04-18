@@ -1849,7 +1849,8 @@ function runSimulations() {
     NUM_DAYS = document.getElementById("numDays").value; // == 0 ? NUM_DAYS : document.getElementById("numDays").value;
     NUM_TIMESTEPS = NUM_DAYS * SIM_STEPS_PER_DAY;
 
-    INIT_FRAC_INFECTED = document.getElementById("initFrac").value;
+    // initFrac is actually number Exposed, now input as percentage instead of fraction
+    INIT_FRAC_INFECTED = parseFloat(document.getElementById("initFrac").value) / 100.0;
 //	COMPLIANCE_PROBABILITY = document.getElementById("compliance").value;
 
     INCUBATION_PERIOD = parseFloat(document.getElementById("Incubation").value) / 2;
@@ -1905,7 +1906,7 @@ function clear_plots() {
 
 function set_default_values_html() {
     document.getElementById("numDays").value = NUM_DAYS;
-    document.getElementById("initFrac").value = INIT_FRAC_INFECTED;
+    document.getElementById("initFrac").value = 100 * INIT_FRAC_INFECTED;
     document.getElementById("Incubation").value = 2 * INCUBATION_PERIOD;
     document.getElementById("asymptomaticMean").value = MEAN_ASYMPTOMATIC_PERIOD;
     document.getElementById("symptomaticMean").value = MEAN_SYMPTOMATIC_PERIOD;

@@ -259,7 +259,7 @@ SPDX-License-Identifier: Apache-2.0-->
 		          <b>Initialisation</b>
                 <div class="row">
                 <div class="col"><label  for="initFrac">Fraction Infected</label></div>
-                <div class="col"><input type="number"  min="0" max="1" value="0.001"  id="initFrac"></div>
+                <div class="col"><input type="number"  min="0" max="1" value="0.001" step="0.0001"  id="initFrac"></div>
                 </div>
                 
                   <!--
@@ -307,6 +307,7 @@ SPDX-License-Identifier: Apache-2.0-->
                 <div class="row px-3">
                     <fieldset class="border p-2" style="border:2px">
                         <legend class="w-auto" style="font-size: large; font-weight:bold;">Intervention Method</legend>
+                        <p>Simulations under all scenarios are assumed to begin on March 1, 2020. Interventions begin on 25th day of simulation and continue indefinitely unless an intervention duration is mentioned.</p>
                         <label class="radio-inline">
                             <input type="radio" name="interventions2" value="0" checked="checked">No Intervention
                         </label>
@@ -314,31 +315,31 @@ SPDX-License-Identifier: Apache-2.0-->
                             <input type="radio" name="interventions2" value="1">Case Isolation
                         </label>
                         <label class="radio-inline">
-                            <input type="radio" name="interventions2" value="2">Home Quarantine
+                            <input type="radio" name="interventions2" value="2">Home Quarantine of infected households
                         </label>
                         <label class="radio-inline">
                             <input type="radio" name="interventions2" value="3">Lockdown
                         </label>
                         <label class="radio-inline">
-                            <input type="radio" name="interventions2" value="4">Case Isolation and Home Quarantine
+                            <input type="radio" name="interventions2" value="4">[Case Isolation + Home Quarantine of infected households]
                         </label>
                         <label class="radio-inline">
-                            <input type="radio" name="interventions2" value="5">Case Isolation, Home Quarantine and Social Distancing of those above 70 years of age</input>   
+                            <input type="radio" name="interventions2" value="5">[Case Isolation + Home Quarantine of infected households + Social Distancing of those above 70 years of age]</input>   
                         </label>
                         <label class="radio-inline">
-                            <input type="radio" name="interventions2" value="6">20 days of Lockdown followed by 21 days of Case Isolation+Home Quarantine+Social Distancing of those above 70 years, followed by 21 days of Case Isolation</input>
+                            <input type="radio" name="interventions2" value="6">21 days of Lockdown followed by 21 days of [Case Isolation + Home Quarantine + Social Distancing of those above 70 years], followed by 21 days of Case Isolation</input>
                         </label>
                         <label class="radio-inline">
                             <input type="radio" name="interventions2" value="7">21 days of Lockdown</input>
                         </label>
                         <label class="radio-inline">
-                            <input type="radio" name="interventions2" value="8">The simulation starts on March 1, with an initial infected population of size 10 in a total population of 100000. Lockdown is introduced on the 25th day for a duration of 21 days, followed by home quarantine of infected households and school and college closures for 21 days, followed by school and college closures for another 42 days</input>
+                            <input type="radio" name="interventions2" value="8">21 days of Lockdown followed by 21 days of [home quarantine of infected households + school and college closures], followed by 42 days of school and college closure</input>
                         </label>
                         <label class="radio-inline">
-                            <input type="radio" name="interventions2" value="9">The simulation starts on March 1, with an initial infected population of size 10 in a total population of 100000. Lockdown is introduced on the 25th day for a duration of 21 days, followed by home quarantine of infected households and school and college closures for 21 days</input>
+                            <input type="radio" name="interventions2" value="9">21 days of Lockdown followed by 21 days of [home quarantine of infected households + school and college closures]</input>
                         </label>
                         <label class="radio-inline">
-                            <input type="radio" name="interventions2" value="10">The simulation starts on March 1, with an initial infected population of size 10 in a total population of 100000. Lockdown is introduced on the 25th day for a duration of 21 days, followed by home quarantine of infected households, school and college closures, and offices working at half strength for 30 days</input>   
+                            <input type="radio" name="interventions2" value="10">21 days of Lockdown followed by 30 days of [home quarantine of infected households + school and college closures + offices working at half strength]</input>
                         </label>
                     </fieldset>
                 </div>

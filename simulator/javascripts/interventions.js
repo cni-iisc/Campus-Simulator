@@ -1,4 +1,4 @@
-
+const UPPER_AGE = 65;
 
 function get_kappa_no_intervention(nodes, homes, workplaces, communities,cur_time){
 	for (var count = 0; count < nodes.length;count ++){
@@ -246,7 +246,7 @@ function get_kappa_CI_HQ_70P(nodes, homes, workplaces, communities,cur_time){
 			nodes[count]['kappa_C_incoming'] = 0.25;
 			nodes[count]['kappa_PT_incoming'] = 0.25;
 		}
-		if(nodes[count]['age']>= 70 && nodes[count]['compliant']){
+		if(nodes[count]['age']>= UPPER_AGE && nodes[count]['compliant']){
 			nodes[count]['kappa_W_incoming'] = 0.25;
 			nodes[count]['kappa_C_incoming'] = 0.25;
 			nodes[count]['kappa_PT_incoming'] = 0.25;
@@ -292,7 +292,7 @@ function get_kappa_CI_HQ_70P_SC(nodes, homes, workplaces, communities,cur_time){
 			nodes[count]['kappa_C_incoming'] = 0.25;
 			nodes[count]['kappa_PT_incoming'] = 0.25;
 		}
-		if(nodes[count]['age']>= 70 && nodes[count]['compliant']){
+		if(nodes[count]['age']>= UPPER_AGE && nodes[count]['compliant']){
 			nodes[count]['kappa_W_incoming'] = 0.25;
 			nodes[count]['kappa_C_incoming'] = 0.25;
 			nodes[count]['kappa_PT_incoming'] = 0.25;
@@ -344,7 +344,7 @@ function get_kappa_CI_HQ_70P_SC_OE(nodes, homes, workplaces, communities,cur_tim
 			nodes[count]['kappa_C_incoming'] = 0.25;
 			nodes[count]['kappa_PT_incoming'] = 0.25;
 		}
-		if(nodes[count]['age']>= 70 && nodes[count]['compliant']){
+		if(nodes[count]['age']>= UPPER_AGE && nodes[count]['compliant']){
 			nodes[count]['kappa_W_incoming'] = 0.25;
 			nodes[count]['kappa_C_incoming'] = 0.25;
 			nodes[count]['kappa_PT_incoming'] = 0.25;
@@ -384,7 +384,7 @@ function get_kappa_LOCKDOWN_21(nodes, homes, workplaces, communities,cur_time){
 	if(cur_time < ( NUM_DAYS_BEFORE_INTERVENTIONS + FIRST_PERIOD )*SIM_STEPS_PER_DAY){
 		get_kappa_lockdown(nodes, homes, workplaces, communities,cur_time);
 	}else{
-		get_kappa_no_intervention(nodes, homes, workplaces, communities,cur_time);
+		get_kappa_case_isolation(nodes, homes, workplaces, communities,cur_time);
 	}
 }
 
@@ -399,7 +399,7 @@ function get_kappa_LD_21_CI_HQ_SD70_SC_21_SC_42(nodes, homes, workplaces, commun
 	} else if(cur_time < (NUM_DAYS_BEFORE_INTERVENTIONS + FIRST_PERIOD+SECOND_PERIOD+THIRD_PERIOD)*SIM_STEPS_PER_DAY){
 		get_kappa_SC(nodes, homes, workplaces, communities,cur_time);
 	} else{
-		get_kappa_no_intervention(nodes, homes, workplaces, communities,cur_time);
+		get_kappa_case_isolation(nodes, homes, workplaces, communities,cur_time);
 	}
 }
 
@@ -412,7 +412,7 @@ function get_kappa_LD_21_CI_HQ_SD70_SC_21(nodes, homes, workplaces, communities,
 	} else if(cur_time < (NUM_DAYS_BEFORE_INTERVENTIONS + FIRST_PERIOD +SECOND_PERIOD)*SIM_STEPS_PER_DAY){
 		get_kappa_CI_HQ_70P_SC(nodes, homes, workplaces, communities,cur_time);
 	} else{
-		get_kappa_no_intervention(nodes, homes, workplaces, communities,cur_time);
+		get_kappa_case_isolation(nodes, homes, workplaces, communities,cur_time);
 	}
 }
 function get_kappa_LD_21_CI_HQ_SD70_SC_OE_30(nodes, homes, workplaces, communities,cur_time){
@@ -424,7 +424,7 @@ function get_kappa_LD_21_CI_HQ_SD70_SC_OE_30(nodes, homes, workplaces, communiti
 	} else if(cur_time < (NUM_DAYS_BEFORE_INTERVENTIONS + FIRST_PERIOD +SECOND_PERIOD)*SIM_STEPS_PER_DAY){
 		get_kappa_CI_HQ_70P_SC_OE(nodes, homes, workplaces, communities,cur_time);
 	} else{
-		get_kappa_no_intervention(nodes, homes, workplaces, communities,cur_time);
+		get_kappa_case_isolation(nodes, homes, workplaces, communities,cur_time);
 	}
 }
 

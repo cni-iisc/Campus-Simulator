@@ -19,10 +19,29 @@ SPDX-License-Identifier: Apache-2.0-->
                 font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
                 -webkit-font-smoothing: antialiased;
                 text-rendering: optimizeLegibility;
-                line-height: 1.6;
+                line-height: 1.5;
             }
             #status{
                 text-align: center;
+            }
+            #header {
+              font-family: serif;
+              top: 0px;
+              padding-bottom: 1px;
+              border-bottom: 1px solid #eceefb;
+              box-shadow: 5px 10px 13px #ddd;
+              position: sticky;
+              position: -webkit-sticky;
+              z-index: 100;
+            }
+            #footer {
+              font-family: serif;
+              bottom: 2px;
+              border-top: 1px solid #eceefb;
+              box-shadow: 5px 10px 10px #ddd;
+              position: sticky;
+              position: -webkit-sticky;
+              z-index: 100;
             }
             .content {
                 max-width: 35em;
@@ -56,15 +75,7 @@ SPDX-License-Identifier: Apache-2.0-->
                 width: 40%;
                 padding: 15px;
             }
-          .jumbotron {
-          display:flex;
-          align-items:center;
-          background-color:#776633;
-          }
-          .fakeimg {
-            height: 100px;
-            background: #aaa;
-          }
+
           input[type="number"] {
             width: 70px;
             height: 25px;
@@ -73,87 +84,72 @@ SPDX-License-Identifier: Apache-2.0-->
             margin-left: 6px;
         }
 
-        .radio-inline {
-          display: block;
-          padding: 5px 5px; /* optional */
+        .radio-toolbar input[type="radio"] {
+          opacity: 0;
+          position: fixed;
+          width: 0;
         }
 
-        .fieldset
-        {
-          background-color:#CCC;
+        .radio-toolbar label {
+            display: inline-block;
+            background-color: #eee;
+            padding: 5px 5px;
+            font-family: sans-serif, Arial;
+              font-size:0.9em;
+            border: 1px solid #444;
+            border-radius: 3px;
         }
-        .legend
-        {
+
+        .radio-toolbar input[type="radio"]:checked + label {
+            background-color:#bfb;
+            border-color: #4c4;
+              font-weight: bold;
+        }
+        
+        .radio-toolbar input[type="radio"]:focus + label {
+            border: 2px dashed #444;
+        }
+
+        fieldset {
+          background-color:#DDC;
+          border-radius: 5px;
+          border: 1px solid #000;
+          font-family: sans-serif, Arial;
+        }
+        legend {
           margin-bottom:0px;
           margin-left:16px;
+          margin-right:10px;
+          padding: 5px 5px;
           font-size:medium;  
+          border: 1px solid #888;
+            border-radius: 5px;
+            background-color: #BB9;
         }
         </style>
 
-        <!--
-        <style>
-
-            @media screen and (max-width: 800px) {
-                .column {
-                    float: left;
-                    width: 90%;
-                    padding: 15px;
-                    margin: 0px 10px 0px 10px;
-                }
-            }
-            /* Clear floats after the columns */
-            .row:after {
-                content: "";
-                display: table;
-                clear: both;
-            }
-
-            input[type="number"] {  
-                width: 30%;
-                margin-left:20px;
-	}
-
-        </style>
-        -->
     </head>
+
     <body>
       <section id="header">
       <div class="d-flex bg-dark justify-content-between align-items-center">
             <div class="d-flex p-2 text-white">
+              <div class="d-flex flex-column px-3">
+              <a href="https://www.iisc.ac.in"><img src="simulator/images/iisc_1.png" alt="IISc logo" width="60px"></a>
+              </div>
               <div class="d-flex flex-column">
-                <div class="d-flex"><h5><a href="https://cni.iisc.ac.in" style="color:white">Centre for Network Intelligence,</a></h5></div>
-                <div class="d-flex"><h5><a href="https://cps.iisc.ac.in" style="color:white">Robert Bosch Centre for CPS</a></h5></div>
+                <div class="d-flex"><a href="https://cni.iisc.ac.in" style="color:white">Centre for Network Intelligence,</a></div>
+                <div class="d-flex"><a href="https://cps.iisc.ac.in" style="color:white">Robert Bosch Centre for CPS</a></div>
               </div>
             </div>
-            <div class="d-flex p-2 text-white justify-content-center">
-              <h3>Epidemic Simulator (City-Scale)</h3>
+            <div class="d-flex p-2 text-white justify-content-end">
+              <h4>Epidemic Simulator (City-Scale)</h4>
             </div>
+            <--
             <div class="d-flex px-4 justify-content-end">
-              <a href="https://www.iisc.ac.in"><img src="simulator/images/iisc_1.png" alt="IISc logo" width="70px"></a>
-            </div>
+            </div> -->
       </div>
       </section>
-      <!--
-      <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
-        <a class="navbar-brand" href="#">Navbar</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="collapsibleNavbar">
-          <ul class="navbar-nav">
-            <li class="nav-item">
-              <a class="nav-link" href="#">Link</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#">Link</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#">Link</a>
-            </li>    
-          </ul>
-        </div>  
-      </nav>
-      -->
 
       <div class="container-fluid">
         <div class="row">
@@ -180,8 +176,8 @@ SPDX-License-Identifier: Apache-2.0-->
         <div class="row">
             <div class="col-6 col-md-4 px-3" id="controls">
               <div class="row py-3 pl-2" >
-                <div class="col"><b>You can adjust the following parameters before 
-                    launching the simulator</b>
+                <div class="col justify-content-left px-1"><b>Adjustable simulation parameters: 
+                    </b>
                 </div>
                 <div class="col justify-content-left">
                   <button type="button" class="btn btn-primary" id="run_button" onclick="clear_plots();">Run</button>
@@ -261,86 +257,79 @@ SPDX-License-Identifier: Apache-2.0-->
                 <div class="col"><label  for="initFrac">Fraction Infected</label></div>
                 <div class="col"><input type="number"  min="0" max="1" value="0.001" step="0.0001"  id="initFrac"></div>
                 </div>
-                
-                  <!--
-                <div class="row">
-                  <b>Interventions</b>
-                  <UL>
-                  (a) case isolation,<br>
-                  (b) home quarantine,<br>
-                  (c) lockdown,<br>
-                  (d) case isolation and home quarantine,<br> 
-                  (e) these two along with social distancing of
-                  those above 70 years of age,<br> 
-                  (f) 21 days of lockdown, followed by 21 days of (e), 
-                  followed by case isolation.<br>
-                  </UL>
-                </div>
-
-                <div class="row">
-                <label for="intervention">Intervention Method</label>
-                
-                <div class="input-group mb-3">
-                  <div class="input-group-prepend">
-                    <label class="input-group-text" for="interventions">Intervention Method</label>
-                  </div>
-                  <select class="custom-select" id="interventions" name="interventions" style="width: 300px">
-                    <option value="0">No Intervention</option>
-                    <option value="1">Case Isolation</option>
-                    <option value="2">Home Quarantine</option>
-                    <option value="3">Lockdown</option>
-                    <option value="4">Case Isolation and Home Quarantine</option>
-                    <option value="5">Case Isolation, Home Quarantine and Social Distancing of those above 70 years of age</option>   
-                    <option value="6">20 days of lockdown followed by 21 days of F, followed by 21 days of Case Isolation</option>
-                    <option value="7">21 days of Lockdown</option>
-                    <option value="9">The simulation starts on March 1, with an initial infected population of size 10 in a total population of 100000. Lockdown is introduced on the 25th day for a duration of 21 days, followed by home quarantine of infected households and school and college closures for 21 days, followed by school and college closures for another 42 days</option>
-                    <option value="10">The simulation starts on March 1, with an initial infected population of size 10 in a total population of 100000. Lockdown is introduced on the 25th day for a duration of 21 days, followed by home quarantine of infected households and school and college closures for 21 days</option>
-                    <option value="11">The simulation starts on March 1, with an initial infected population of size 10 in a total population of 100000. Lockdown is introduced on the 25th day for a duration of 21 days, followed by home quarantine of infected households, school and college closures, and offices working at half strength for 30 days</option>   
-                    <!--
-                    <option value="9">LD_21_CI_HQ_SD70_SC_21_SC_42</option>
-                    <option value="9">LD_21_CI_HQ_SD70_SC_21</option>
-                    <option value="10">LD_21_CI_HQ_SD70_SC_OE_30</option>   
-                  </select></div>
-                </div>
-                -->
 
                 <div class="row px-3">
-                    <fieldset class="border p-2" style="border:2px">
-                        <legend class="w-auto" style="font-size: large; font-weight:bold;">Intervention Method</legend>
+                    <fieldset class="border p-1" style="border:2px">
+                        <legend class="w-auto">Intervention Method</legend>
                         <p>Simulations under all scenarios are assumed to begin on March 1, 2020. Interventions begin on 25th day of simulation and continue indefinitely unless an intervention duration is mentioned.</p>
-                        <label class="radio-inline">
-                            <input type="radio" name="interventions2" value="0" checked="checked">No Intervention
-                        </label>
-                        <label class="radio-inline">
-                            <input type="radio" name="interventions2" value="1">Case Isolation
-                        </label>
-                        <label class="radio-inline">
-                            <input type="radio" name="interventions2" value="2">Home Quarantine of infected households
-                        </label>
-                        <label class="radio-inline">
-                            <input type="radio" name="interventions2" value="3">Lockdown
-                        </label>
-                        <label class="radio-inline">
-                            <input type="radio" name="interventions2" value="4">[Case Isolation + Home Quarantine of infected households]
-                        </label>
-                        <label class="radio-inline">
-                            <input type="radio" name="interventions2" value="5">[Case Isolation + Home Quarantine of infected households + Social Distancing of those above 70 years of age]</input>   
-                        </label>
-                        <label class="radio-inline">
-                            <input type="radio" name="interventions2" value="6">21 days of Lockdown followed by 21 days of [Case Isolation + Home Quarantine + Social Distancing of those above 70 years], followed by 21 days of Case Isolation</input>
-                        </label>
-                        <label class="radio-inline">
-                            <input type="radio" name="interventions2" value="7">21 days of Lockdown</input>
-                        </label>
-                        <label class="radio-inline">
-                            <input type="radio" name="interventions2" value="8">21 days of Lockdown followed by 21 days of [home quarantine of infected households + school and college closures], followed by 42 days of school and college closure</input>
-                        </label>
-                        <label class="radio-inline">
-                            <input type="radio" name="interventions2" value="9">21 days of Lockdown followed by 21 days of [home quarantine of infected households + school and college closures]</input>
-                        </label>
-                        <label class="radio-inline">
-                            <input type="radio" name="interventions2" value="10">21 days of Lockdown followed by 30 days of [home quarantine of infected households + school and college closures + offices working at half strength]</input>
-                        </label>
+                        <p style="font-size:0.9em">School-college closure is also accompanied by Case Isolation</p>
+
+                        <div class="radio-toolbar">
+                          <div class="row px-3">
+                          <input type="radio" name="interventions2" id="0" value="0" checked="checked">
+                          <label for="0"> No Intervention </label>
+                          </div>
+
+                          <div class="row px-3">
+                            <input type="radio" name="interventions2" id="1" value="1">
+                            <label for="1"> Case Isolation </label>
+                          </div>
+
+                          <div class="row px-3">
+                            <input type="radio" name="interventions2" id="2" value="2">
+                            <label for="2"> Home Quarantine of infected households </label>
+                          </div>
+
+                          <div class="row px-3">
+                            <input type="radio" name="interventions2" id="3" value="3">
+                            <label for="3"> Lockdown </label>
+                          </div>
+
+                          <div class="row px-3">
+                            <input type="radio" name="interventions2" id="4" value="4">
+                            <label for="4"> [Case Isolation and Home Quarantine of infected households] </label>
+                          </div>
+
+                          <div class="row px-3">
+                            <input type="radio" name="interventions2" id="5" value="5">
+                            <label for="5">
+                            [Case Isolation, Home Quarantine of infected households, and Social Distancing of those above 65 years of age]</input>   
+                            </label>
+                          </div>
+
+                          <div class="row px-3">
+                            <input type="radio" name="interventions2" id="6" value="6">
+                            <label for="6">
+                            21 days of Lockdown followed by 21 days of [Case Isolation, Home Quarantine, and Social Distancing of those above 65 years], Case Isolation thereafter
+                            </label>
+                          </div>
+
+                          <div class="row px-3">
+                            <input type="radio" name="interventions2" id="7" value="7">
+                            <label for="7"> 21 days of Lockdown, Case Isolation thereafter</label>
+                          </div>
+
+                          <div class="row px-3">
+                            <input type="radio" name="interventions2" id="8" value="8">
+                            <label for="8">
+                            21 days of Lockdown followed by 21 days of [home quarantine of infected households and school-college closures], followed by 42 days of school and college closure, Case Isolation thereafter
+                            </label>
+                          </div>
+
+                          <div class="row px-3">
+                            <input type="radio" name="interventions2" id="9" value="9">
+                            <label for="9">
+                            21 days of Lockdown followed by 21 days of [home quarantine of infected households and school-college closures], Case Isolation thereafter
+                            </label>
+                          </div>
+
+                          <div class="row px-3">
+                            <input type="radio" name="interventions2" id="10" value="10">
+                            <label for="10">
+                            21 days of Lockdown followed by 30 days of [home quarantine of infected households, school-college closures, and offices working at half strength], Case Isolation thereafter
+                            </label>
+                          </div>
+                        </div>
                     </fieldset>
                 </div>
 
@@ -348,26 +337,12 @@ SPDX-License-Identifier: Apache-2.0-->
                 <div class="col"><label  for="compliance">Compliance Probability</label></div>
                 <div class="col"><input  type="number" min="0" max="1" value="0.9"  id="compliance" ></div>
                 </div>
-
-
             </div>
-            <!-- <div class="column">
-                
-                <div id="status"></div>
 
-                <div id="num_affected_plot"></div>
-                <div id="num_infected_plot"></div>
-                <div id="num_exposed_plot"></div>
-                <div id="num_hospitalised_plot"></div>
-                <div id="num_critical_plot"></div>
-                <div id="num_fatalities_plot"></div>
-                <div id="num_recovered_plot"></div>
-                
-            </div> -->
             <div class="col-12 col-md-7">
               <div class="row justify-content-center">
                 <div id="sim_progress"></div>
-                <div class="d-flex p-2 bg-success text-white" id="status"></div>
+                <div class="d-flex p-2 bg-success text-white" style="visibility:hidden" id="status"></div>
               </div>
               <div class="row">
                 <div class="col">
@@ -401,12 +376,13 @@ SPDX-License-Identifier: Apache-2.0-->
       </div>
                   <div id="num_exposed_plot_2"></div>
                   <div id="num_recovered_plot_2"></div>
-                  <!-- <div class="jumbotron text-center" style="margin-bottom:0;background-color:#AAAA99";> -->
-                  <!-- <div class="jumbotron text-center" style="display:flex;align-items:center;background-color:#776633;";> -->
-      <div class="d-flex bg-dark p-1 text-white justify-content-between">
-        <div class="d-flex px-3"><b><a href="mailto:epiSim@iisc.sc.in" style="color:white"><i class="fa fa-envelope" aria-hidden="true"></i> Contact us</a></b></div>
-        <div class="d-flex px-3">This work is licensed under Apache 2.0 license.<br>Copyright [2020] [Indian Institute of Science, Bangalore]</div>
-      </div>
+
+      <section id="footer">
+        <div class="d-flex bg-dark p-1 text-white justify-content-between">
+          <div class="d-flex px-3"><b><a href="mailto:epiSim@iisc.sc.in" style="color:white"><i class="fa fa-envelope" aria-hidden="true"></i> Contact us</a></b></div>
+          <div class="d-flex px-3">This work is licensed under Apache 2.0 license. Copyright [2020] [Indian Institute of Science, Bangalore]</div>
+        </div>
+      </section>
 
         <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
         <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>

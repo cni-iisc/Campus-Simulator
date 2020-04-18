@@ -1522,6 +1522,8 @@ function run_simday(time_step, homes, workplaces, communities, public_transports
     }
     if (time_step % SIM_STEPS_PER_DAY == 0 && time_step > 0) {
         document.getElementById("status").innerHTML = "Simulation Complete for " + time_step / SIM_STEPS_PER_DAY + " Days";
+        var statusDiv = document.getElementById("status");
+        statusDiv.style.visibility="visible";
         return time_step;
         // return [time_step, days_num_infected, days_num_exposed, days_num_hospitalised, days_num_critical, days_num_fatalities, days_num_recovered, days_num_affected, lambda_evolution];
     } else {
@@ -1799,7 +1801,6 @@ function plot_plotly(data, plot_position, title_text, legends) {
 
     const data_plot = trace;
 
-    //Ppatil
     const yMax = Math.max(...data_plot[0].y);
 
     const layout = {
@@ -1874,9 +1875,7 @@ function runSimulations() {
     BETA_S = document.getElementById("betaSchools").value;
     BETA_PT = document.getElementById("betaPT").value;
 
-    //Ppatil
     //INTERVENTION = parseInt(document.getElementById("interventions").value);
-    //INTERVENTION = parseInt(document.getElementById("interventions2").value);
     INTERVENTION = parseInt(document.querySelector('input[name="interventions2"]:checked').value);
 
     console.log(NUM_DAYS, INIT_FRAC_INFECTED, INTERVENTION);

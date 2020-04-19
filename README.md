@@ -54,5 +54,8 @@ The simulator injests the city-wide instatiation files generated using the scrip
  * `wardCentreDistance.json` - Information about the inter-ward distances.
  * `fractionPopulation.json` - Information about fraction of the population residing in each ward.
 
+### simulator/python_scripts_CPP/ and  simulator/python_scripts_CPP/plotting_scripts
+This subfolder in simulator contains:  1) the main calibration script (tune_model_CPP.py) that can be used to tune (calibrate) the cpp-simulator beta values to a given fatalities time series, and 2) plotting scripts that can be used to generate plots from the cpp-simulator outputs.
+
 ## `cpp-simulator/` - CPP simulator
 This folder contains the cpp-version of the simulator. The CPP simulator evolved from the JS simulator. Please read the README.md inside the folder for more details.

@@ -22,8 +22,8 @@ import sys
 # In[2]:
 
 
-interactive = 1
-default_miniPop = 100000 #12800000
+interactive = 0
+default_miniPop = 10000 #12800000
 default_ibasepath = 'data/base/mumbai/'
 default_obasepath = 'data/mumbai-100K/' #'data/mumbai-1-12.8M/'
 
@@ -31,6 +31,7 @@ default_obasepath = 'data/mumbai-100K/' #'data/mumbai-1-12.8M/'
 a_workplacesize = 3.26
 c_workplacesize = 0.97
 m_max_workplacesize = 2870
+avgSchoolsize = 300
 
 #Wuhan
 # a_commuter_distance = 4 #parameter in distribution for commuter distance - Thailand paper
@@ -687,7 +688,7 @@ from modules.assignWorkplaces import *
 
 age_values, age_distribution = compute_age_distribution(cityprofiledata['age']['weights'])
 household_sizes, household_distribution = compute_household_size_distribution(cityprofiledata['householdSize']['bins'], cityprofiledata['householdSize']['weights'])
-schoolsize_values, schoolsize_distribution = extrapolate_school_size_distribution(cityprofiledata['schoolsSize']['weights'])
+schoolsize_values, schoolsize_distribution = extrapolate_school_size_distribution(cityprofiledata['schoolsSize']['weights'],avgSchoolsize)
 workplacesize_distribution = workplaces_size_distribution()
 
 

@@ -1,3 +1,5 @@
+//Copyright [2020] [Indian Institute of Science, Bangalore & Tata Institute of Fundamental Research, Mumbai]
+//SPDX-License-Identifier: Apache-2.0
 #ifndef INITIALIZERS_H_
 #define INITIALIZERS_H_
 #include "models.h"

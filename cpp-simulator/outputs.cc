@@ -1,3 +1,5 @@
+//Copyright [2020] [Indian Institute of Science, Bangalore & Tata Institute of Fundamental Research, Mumbai]
+//SPDX-License-Identifier: Apache-2.0
 #include "models.h"
 #include "outputs.h"
 #include <fstream>

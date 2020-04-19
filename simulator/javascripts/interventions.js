@@ -1,3 +1,6 @@
+//Copyright [2020] [Indian Institute of Science, Bangalore & Tata Institute of Fundamental Research, Mumbai]
+//SPDX-License-Identifier: Apache-2.0
+
 const UPPER_AGE = 65;
 
 function get_kappa_no_intervention(nodes, homes, workplaces, communities,cur_time){

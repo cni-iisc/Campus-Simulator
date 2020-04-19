@@ -1,5 +1,11 @@
-#!/usr/bin/env python
-# coding: utf-8
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+#"""
+#Copyright [2020] [Indian Institute of Science, Bangalore & Tata Institute of Fundamental Research, Mumbai]
+#SPDX-License-Identifier: Apache-2.0
+#"""
+__name__ = "Script for generating city files - instantiation of a synthetic city"
+
 import os
 import sys
 import math

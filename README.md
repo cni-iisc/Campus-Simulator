@@ -22,41 +22,18 @@ The source code is maintained on BitBucket, but the process for working with the
 
 
 ## `StaticInst/` - Generates static files to instantiate a city based on Demographics data
-The first stage of the simulator workflow is to generate static information required to instantiate a city. This done by using the demographic data, information on the distribution and the number of households and the information of workplace distribution, school distribution and the employment statistics for a city. We look for the demographic data which contains data on the total population, number of children, the number of people who are employed, on a fine-grained geographic scope of ward or block of the city. 
-The README inside `staticInst/` provides more information about the data sources, directory structure which the script to generate static instantiation for a city. The scope of this README is to share with you the steps to get the script started for instantiating a city.
-The script to instantiate a city is written in Python and the following are the steps to setup a running instance of the script.
+The first stage of the simulator workflow is to generate static information required to instantiate a city.  To instantiate a Bangalore city with the mentioned configurations run the command
 
-#### Setting up the virtualenv
-The first step will be to setup the virtualenv inside which we install the required python packages. Let us create a virtualenv named `edaDev`, you could replace it with a different name too,
+```python parse_and_instantiate.py -c city_name -n target_population -i inputPath -o outputPath```
 
-`python3 -m venv edaDev` 
+The above script instantiates a synthetic city with the specified population where each individual being assigned to a house, school, workplace and community centre based on their age, and commute distance. The instantiated outputs are in the form of JSON files and will be available in the specified output directory.
 
-The above statement would create a new directory under `markov_simuls` with the path `markov_simuls/edaDev`. This directory will contain the python packages you install and also helps to create an isolated python environment without affecting your other packages. 
-If you are comfortable with Anaconda, there are lot of guides to help you [setup a virtualenv](https://uoa-eresearch.github.io/eresearch-cookbook/recipe/2014/11/20/conda/). The next step will be to activate the virtual environment `edaDev` and install the required packages there, which is done with the following commands:
+A detailed description of the input files, the script and instructions to run are available at [staticInst/README.md](https://bitbucket.org/iiscdsCov/markov_simuls/src/master/staticInst/README.md)
 
-```
-source edaDev/bin/activate
-```
-```
-pip install numpy scipy pandas geopandas shapely matplotlib
-```
 
-#### `staticInst/` - running the script to instantiate the city
-After setting up the environment, we are ready to run the script to instantiate a city. We will be creating a instantiate for Bangalore city for a population of 10,000 people with additional input parameters:
 
-- average number of students per school: 300
-- average number of people per workplace: 2
 
-To instantiate a Bangalore city with the mentioned configurations run the command
 
-```
-python parse_and_instantiate.py bangalore 10000 300 2
-```
-
-This instantiates bangalore where the population of 10,000 people are randomly distributed acroos the 198 wards of the city with each individual being assigned to a house, school, workplace and community centre based on their age, and commute distance.
-The instantiated outputs are in the form of JSON files and will be available under `staticInst/data/bangalore`. 
-
-In case, you are working with instantiating a new city, please create the data files similar to the ones found at `staticInst/data/base/bangalore/` directory 
 
 ## `simulator/` - running the simulation of CoVID-19 spread
 The instantiated static files for Bangalore are now used to simulate the spread of the CoVID-19 infection spread based on a Markovian model. The design document contains detailed specifications about the mode,=l.

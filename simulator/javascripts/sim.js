@@ -77,7 +77,7 @@ const NUM_DAYS_TO_RECOG_SYMPTOMS = 1;
 const INCUBATION_PERIOD_SHAPE = 2;
 
 
-INCUBATION_PERIOD_SCALE = INCUBATION_PERIOD * SIM_STEPS_PER_DAY; // 2.29 days
+INCUBATION_PERIOD_SCALE = INCUBATION_PERIOD * SIM_STEPS_PER_DAY; // 2.3 days
 ASYMPTOMATIC_PERIOD = MEAN_ASYMPTOMATIC_PERIOD * SIM_STEPS_PER_DAY; // half a day
 SYMPTOMATIC_PERIOD = MEAN_SYMPTOMATIC_PERIOD * SIM_STEPS_PER_DAY; // 5 days
 HOSPITAL_REGULAR_PERIOD = MEAN_HOSPITAL_REGULAR_PERIOD * SIM_STEPS_PER_DAY;
@@ -310,9 +310,7 @@ function init_nodes() {
         if (SEEDING_MODE == SEED_FROM_INDIVIDUALS_JSON) {
             node['infection_status'] = individuals_json[i]['infection_status'];
             node['time_of_infection'] = node['infection_status'] == EXPOSED ? (individuals_json[i]['time_of_infection'] * SIM_STEPS_PER_DAY - node['incubation_period']) : 0;
-            /*if(node['infection_status']==EXPOSED){
-                //console.log(node['time_of_infection']);
-            }*/
+            
         } else if (SEEDING_MODE == RANDOM_SEEDING_WARDWISE) {
             node['infection_status'] = (Math.random() < COMMUNITY_INFECTION_PROB[individuals_json[i]['wardNo'] - 1]) ? 1 : 0
         }
@@ -329,8 +327,6 @@ function load_infection_seed_json(seed_scaling_factor) {
     var num_seed_days = infection_seeds_json_array.length;
     for (var count = 0; count < num_seed_days * SIM_STEPS_PER_DAY; count++) {
         var mean = (infection_seeds_json_array[Math.floor(count / SIM_STEPS_PER_DAY)] / SIM_STEPS_PER_DAY) * seed_scaling_factor;
-        //var random = d3.randomPoisson(mean);
-        //console.log(mean);
         seed_array.push(d3.randomPoisson(mean)());
     }
     return seed_array;
@@ -343,7 +339,7 @@ function infection_seeding(nodes, seed_count, curr_time) {
         let individual_index = d3.randomInt(0, NUM_PEOPLE)();
         if (nodes[individual_index]['infection_status'] == SUSCEPTIBLE) {
             nodes[individual_index]['infection_status'] = EXPOSED;
-            nodes[individual_index]['time_of_infection'] = curr_time; //*Math.random(); //TODO. Need to revisit.
+            nodes[individual_index]['time_of_infection'] = curr_time; 
             num_seeded++;
         }
     }
@@ -362,7 +358,7 @@ function infection_seeding_exp_rate(nodes, curr_time) {
             let individual_index = d3.randomInt(0, NUM_PEOPLE)();
             if (nodes[individual_index]['infection_status'] == SUSCEPTIBLE) {
                 nodes[individual_index]['infection_status'] = EXPOSED;
-                nodes[individual_index]['time_of_infection'] = curr_time; //*Math.random(); //TODO. Need to revisit.
+                nodes[individual_index]['time_of_infection'] = curr_time; 
                 num_seeded++;
             }
         }
@@ -389,115 +385,6 @@ function kappa_T(node, cur_time) {
     return val;
 }
 
-/*
-// When interventions are applied, the multiplification factors may change based on the mixing space.
-// Adjustment function for intervention in community mixing space.
-function kappa_C(node, cur_time){
-
-	var val = 1;
-	var time_since_infection = cur_time - node["time_of_infection"];
-	switch(INTERVENTION){
-		case NO_INTERVENTION:
-			val = 1;
-			break;
-		case CASE_ISOLATION:
-			val = 1;
-			if(node['compliant']){
-
-				if(time_since_infection > NUM_DAYS_TO_RECOG_SYMPTOMS*SIM_STEPS_PER_DAY){ // The magin number 1 = time to recognise symptoms
-
-					val = 0.25;
-				}
-			}
-			break;
-		case HOME_QUARANTINE:
-			val = 1;
-			if(node['compliant']){
-				if(time_since_infection > NUM_DAYS_TO_RECOG_SYMPTOMS*SIM_STEPS_PER_DAY){
-					val = 0.25;
-				}
-			}
-			break;
-		case LOCKDOWN:
-			val = 1;
-			if(node['compliant']){
-					val = 0.1;
-			}
-			break;
-		default:
-			val = 1;
-	}
-	return val;
-}
-
-// Adjustment function to handle interventions in workspaces
-function kappa_W(node, cur_time){
-
-	var val = 1;
-	var time_since_infection = cur_time - node["time_of_infection"];
-	switch(INTERVENTION){
-		case NO_INTERVENTION:
-			val = 1;
-			break;
-		case CASE_ISOLATION:
-			val = 1;
-			if(node['compliant']){
-				if(time_since_infection > NUM_DAYS_TO_RECOG_SYMPTOMS*SIM_STEPS_PER_DAY){ //The magic number 1 = time to recognise symptoms.
-					val = 0.25;
-				}
-			}
-			break;
-		case HOME_QUARANTINE:
-			val = 1;
-			if(node['compliant']){
-				if(time_since_infection > NUM_DAYS_TO_RECOG_SYMPTOMS*SIM_STEPS_PER_DAY){
-					val = 0.25;
-				}
-			}
-			break;
-		case LOCKDOWN:
-			val = 0;
-			if(node['workplace_type']==WTYPE_OFFICE){
-				////workplace
-				val = 0.1;
-			}
-			break;
-		default:
-			val = 1;
-	}
-	return val;
-}
-
-// Adjustment function to handle interventions at home
-function kappa_H(node, cur_time){
-
-	var val = 1;
-	///var time_since_infection = cur_time - node["time_of_infection"];
-	switch(INTERVENTION){
-		case NO_INTERVENTION:
-			val = 1;
-			break;
-		case CASE_ISOLATION:
-			val = 1;
-			break;
-		case HOME_QUARANTINE:
-			val = 1;
-			if(node['compliant']){
-				val=2;
-			}
-			break;
-		case LOCKDOWN:
-			val = 1.25; //Social distancing increases household interactions by 25%
-			if(node['compliant']){
-				val=2;
-			}
-			break;
-		default:
-			val = 1;
-	}
-	return val;
-}
-*/
 
 // Absenteeism parameter. This may depend on the workplace type.
 function psi_T(node, cur_time) {
@@ -652,7 +539,6 @@ function compute_scale_public_transport(nodes, public_transports) {
 function init_homes() {
 
     var houses_json = JSON.parse(loadJSON_001('input_files/houses.json'));
-    // console.log("In init homes:",houses_json.length,houses_json[0]);
     NUM_HOMES = houses_json.length;
 
     var homes = [];
@@ -666,9 +552,7 @@ function init_homes() {
             'compliant': compliance(),
             'quarantined': false,
             'age_dependent_mixing': math.zeros([NUM_AGE_GROUPS])
-        };
-        //home['scale'] = BETA_H*home['Q_h']/(Math.pow(home['individuals'].length, ALPHA));
-
+        };        
         homes.push(home)
 
     }
@@ -682,7 +566,6 @@ function init_homes() {
 function init_workplaces() {
     var workplaces_json = JSON.parse(loadJSON_001('input_files/workplaces.json'));
     var schools_json = JSON.parse(loadJSON_001('input_files/schools.json'));
-    // console.log("In init workplaces:",workplaces_json.length,workplaces_json[0]);
     NUM_WORKPLACES = workplaces_json.length;
     NUM_SCHOOLS = schools_json.length;
 
@@ -702,7 +585,6 @@ function init_workplaces() {
             'quarantined': false,
             'age_dependent_mixing': math.zeros([NUM_AGE_GROUPS])
         };
-        //workplace['scale'] = BETA_W*workplace['Q_w']/workplace['individuals'].length;
         workplaces.push(workplace)
     }
 
@@ -717,7 +599,6 @@ function init_workplaces() {
             'quarantined': false,
             'age_dependent_mixing': math.zeros([NUM_AGE_GROUPS])
         };
-        //workplace['scale'] = BETA_W*workplace['Q_w']/workplace['individuals'].length;
         workplaces.push(workplace)
     }
     if (USE_AGE_DEPENDENT_MIXING) {
@@ -745,9 +626,7 @@ function compare_wards(a, b) {
 function init_community() {
 
     var communities_json = JSON.parse(loadJSON_001('input_files/commonArea.json'));
-    // console.log("In init community",communities_json.length,communities_json);
     communities_json.sort(compare_wards);
-    // console.log("In init community",communities_json.length,communities_json[0]['location']);
     NUM_COMMUNITIES = communities_json.length;
 
     var communities = [];
@@ -807,11 +686,6 @@ function euclidean(loc1, loc2) {
         }
         dist = Math.sqrt(2 * dist);
         dist = dist * RADIUS_EARTH;
-        //dist = Math.acos(dist);
-        ///dist = dist * 180/Math.PI;
-        //dist = dist * 60 * 1.1515;
-        //if (unit=="K") { dist = dist * 1.609344 }
-        //if (unit=="N") { dist = dist * 0.8684 }
         return dist;
     }
 }
@@ -835,7 +709,7 @@ function compute_community_distances(communities) {
 
     for (var c1 = 0; c1 < inter_ward_distances_json.length; c1++) {
         for (var c2 = c1 + 1; c2 < inter_ward_distances_json.length; c2++) {
-            /// console.log(communities[c1]['loc'],communities[c2]['loc'])
+            
             community_dist_matrix[c1][c2] = inter_ward_distances_json[c1][(c2 + 1).toString()];
             community_dist_matrix[c2][c1] = community_dist_matrix[c1][c2];
 
@@ -849,14 +723,8 @@ function compute_community_distances(communities) {
 function compute_individual_community_distance(nodes, communities) {
     //Assign individuals to homes, workplace, community
     for (var i = 0; i < nodes.length; i++) {
-        /*
-        if(i < 100){
-            console.log("Current value: ", nodes[i]['funct_d_ck'], ". Computed Value = ",(euclidean(nodes[i]['loc'],communities[nodes[i]['community']]['loc'])));
-        }
-        */
         nodes[i]['funct_d_ck'] = f_kernel(euclidean(nodes[i]['loc'], communities[nodes[i]['community']]['loc']));
     }
-
 }
 
 
@@ -884,8 +752,6 @@ function assign_individual_public_transports(nodes, public_transports, workplace
         if (nodes[i]['public_transport'] != null && (nodes[i]['workplace_type'] == WTYPE_OFFICE || nodes[i]['workplace_type'] == WTYPE_SCHOOL)) {
             public_transports[nodes[i]['public_transport']]['individuals'].push(i); //No checking for null as all individuals have a home
             nodes[i]['dist_hw'] = euclidean(nodes[i]['loc'], workplaces[nodes[i]['workplace']]['loc']);
-            //console.log("Node: ",i, ". Workplace : ", nodes[i]['workplace'], ". dist_hw: ",nodes[i]['dist_hw'])
-
         }
     }
 }
@@ -900,12 +766,12 @@ function update_individual_lambda_w(node) {
 
 function update_individual_lambda_c(node) {
     return node['infective'] * node['kappa_T'] * node['infectiousness'] * node['funct_d_ck'] * (1 + node['severity']) * node['kappa_C'];
-    // optimised version: return node['lambda_h] * node['funct_d_ck'];
+    
 }
 
 function update_individual_lambda_pt(node) {
     return node['infective'] * node['kappa_T'] * node['infectiousness'] * node['dist_hw'] * (1 + node['severity'] * (2 * node['psi_T'] - 1)) * node['kappa_PT'];
-    // optimised version: return node['lambda_h] * node['funct_d_ck'];
+    
 }
 
 function get_init_stats(nodes, homes, workplaces, communities) {
@@ -949,8 +815,7 @@ function update_infection(node, cur_time) {
         age_index = 8;
     }
 
-    //console.log(1-Math.exp(-node['lambda']/SIM_STEPS_PER_DAY))
-    ///TODO: Parametrise transition times
+
     if (node['infection_status'] == SUSCEPTIBLE && Math.random() < (1 - Math.exp(-node['lambda'] / SIM_STEPS_PER_DAY))) {
         node['infection_status'] = EXPOSED; //move to exposed state
         node['time_of_infection'] = cur_time;
@@ -1001,15 +866,7 @@ function update_infection(node, cur_time) {
     node['lambda_pt'] = update_individual_lambda_pt(node);
 }
 
-/*
-function update_kappa(node, cur_time){
-	node['kappa_T'] = kappa_T(node, cur_time);
-	node['kappa_H'] = kappa_H(node, cur_time);
-	node['kappa_W'] = kappa_W(node, cur_time);
-	node['kappa_C'] = kappa_C(node, cur_time);
-	//console.log(node['kappa_T'])
-}
-*/
+
 function update_psi(node, cur_time) {
     node['psi_T'] = psi_T(node, cur_time);
     //console.log(node['psi_T'])
@@ -1020,13 +877,9 @@ function update_lambda_h_old(nodes, home) {
     var sum_value = 0
 
     for (var i = 0; i < home['individuals'].length; i++) {
-        //	var temp = nodes.filter( function(node) {
-        //		return node['index']==home['individuals'][i];
-        //	});
         sum_value += nodes[home['individuals'][i]]['lambda_h'];
     }
     return home['scale'] * sum_value;
-    // Populate it afterwards...
 }
 
 
@@ -1060,15 +913,14 @@ function update_lambda_h(nodes, home) {
     var lambda_age_group = math.zeros([NUM_AGE_GROUPS]);
 
     if (!USE_AGE_DEPENDENT_MIXING) {
-        //////////////////////////
-        //Sanity test --- use old lambdas
+        
         var lambda_old = update_lambda_h_old(nodes, home)
 
 
         for (var count = 0; count < NUM_AGE_GROUPS; count++) {
             lambda_age_group[count] = lambda_old;
         }
-        ////////////////////////////
+        
 
     } else {
 
@@ -1106,9 +958,7 @@ function update_lambda_w_old(nodes, workplace) {
     var sum_value = 0
 
     for (var i = 0; i < workplace['individuals'].length; i++) {
-        //	var temp = nodes.filter( function(node) {
-        ///		return node['index']==workplace['individuals'][i];
-        //	});
+        
         sum_value += nodes[workplace['individuals'][i]]['lambda_w'];
     }
 
@@ -1166,15 +1016,14 @@ function update_lambda_w(nodes, workplace) {
     var lambda_age_group = math.zeros([NUM_AGE_GROUPS]);
 
     if (!USE_AGE_DEPENDENT_MIXING) {
-        //////////////////////////
-        //Sanity test --- use old lambdas
+        
         var lambda_old = update_lambda_w_old(nodes, workplace)
 
 
         for (var count = 0; count < NUM_AGE_GROUPS; count++) {
             lambda_age_group[count] = lambda_old;
         }
-        ////////////////////////////
+       
 
     } else {
 
@@ -1217,26 +1066,22 @@ function update_lambda_w(nodes, workplace) {
 function update_lambda_public_transport(nodes, public_transport) {
     var sum_value = 0
     for (var i = 0; i < public_transport['individuals'].length; i++) {
-        //	var temp = nodes.filter( function(node) {
-        //		return node['index']==community['individuals'][i];
-        //	});
+        
         sum_value += nodes[public_transport['individuals'][i]]['lambda_pt'];
     }
     return public_transport['scale'] * sum_value;
-    // Populate it afterwards...
+    
 }
 
 
 function update_lambda_c_local(nodes, community) {
     var sum_value = 0
     for (var i = 0; i < community['individuals'].length; i++) {
-        //	var temp = nodes.filter( function(node) {
-        //		return node['index']==community['individuals'][i];
-        //	});
+        
         sum_value += nodes[community['individuals'][i]]['lambda_c'];
     }
     return community['scale'] * sum_value;
-    // Populate it afterwards...
+    
 }
 
 function update_lambda_c_global(communities, community_distance_matrix) {
@@ -1265,9 +1110,7 @@ function get_infected_community(nodes, community) {
     var exposed_stat = 0
 
     for (var i = 0; i < community['individuals'].length; i++) {
-        //	var temp = nodes.filter( function(node) {
-        //		return node['index']==community['individuals'][i];
-        //	});
+        
 
         if (nodes[community['individuals'][i]]['infection_status'] == EXPOSED) {
             exposed_stat += 1
@@ -1296,26 +1139,11 @@ function get_infected_community(nodes, community) {
     affected_stat = exposed_stat + infected_stat + recovered_stat + dead_stat;
 
     return [infected_stat, affected_stat, hospitalised_stat, critical_stat, dead_stat];
-    // Populate it afterwards...
+    
 }
 
 function update_lambdas(node, homes, workplaces, communities, public_transports, nodes, cur_time) {
 
-    /*
-    ///////TODO: See if this can be made as a function
-    var node_home_quarantined = false;
-    if(INTERVENTION == HOME_QUARANTINE && node['compliant']){
-        var house_members = homes[node['home']]['individuals'];
-        for (var l = 0; l < house_members.length; l++){
-            var time_since_symptoms = cur_time - nodes[house_members[l]]['time_since_infection'] - nodes[house_members[l]]['incubation_period'] - nodes[house_members[l]]['asymptomatic_period'];
-            node_home_quarantined = node_home_quarantined ||
-            (	(nodes[house_members[l]]['infection_status']!=SUSCEPTIBLE) &&
-                (nodes[house_members[l]]['infection_status']!=EXPOSED) &&
-                (time_since_symptoms > NUM_DAYS_TO_RECOG_SYMPTOMS*SIM_STEPS_PER_DAY) &&
-                (time_since_symptoms <= (NUM_DAYS_TO_RECOG_SYMPTOMS+HOME_QUARANTINE_DAYS)*SIM_STEPS_PER_DAY)	);
-        }
-    }
-    */
     node['lambda_incoming'] = [0, 0, 0, 0];
     if (node['home'] != null && node['home'] != undefined) {
         var age_group = node['age_group'];
@@ -1332,7 +1160,6 @@ function update_lambdas(node, homes, workplaces, communities, public_transports,
     }
     if (node['public_transport'] != null && node['public_transport'] != undefined) {
         //for all public transport
-        //add the community lambda with a distance related scaling factor
         //console.log("In lambda incoming.")
         node['lambda_incoming'][3] = node['kappa_PT_incoming'] * node['dist_hw'] * public_transports[node['public_transport']]['lambda_PT'];
     }
@@ -1340,17 +1167,6 @@ function update_lambdas(node, homes, workplaces, communities, public_transports,
     node['lambda'] = node['lambda_incoming'][0] + node['lambda_incoming'][1] + node['lambda_incoming'][2] + node['lambda_incoming'][3];
 
 }
-
-/*
-function get_lambda_stats(time,node,lambda_stats_variable){
-	var temp = [time,node,0,0,0,0];
-	if(node['home']!=null) {temp[2]=homes[node['home']]['lambda_home'];}
-	if(node['workplace']!=null ) {temp[3] = workplaces[node['workplace']]['lambda_workplace'];}
-	if(node['community']!=null) {temp[4] = node['zeta_a']*node['funct_d_ck']*communities[node['community']]['lambda_community'];}
-	temp[5] = temp[2]+temp[3]+temp[4]
-	lambda_stats_variable.push(temp)
-}
-*/
 
 function update_lambda_stats(node) {
     var sum_inv = 1 / math.sum(node['lambda_incoming']);
@@ -1371,7 +1187,7 @@ function update_all_kappa(nodes, homes, workplaces, communities, cur_time) {
     if (current_time < NUM_DAYS_BEFORE_INTERVENTIONS * SIM_STEPS_PER_DAY) {
         get_kappa_no_intervention(nodes, homes, workplaces, communities, current_time);
     } else {
-        //current_time = current_time - NUM_DAYS_BEFORE_INTERVENTIONS*SIM_STEPS_PER_DAY;
+        
         switch (INTERVENTION) {
             case CALIBRATION:
                 get_kappa_CALIBRATION(nodes, homes, workplaces, communities, current_time);
@@ -1430,7 +1246,6 @@ function run_simday(time_step, homes, workplaces, communities, public_transports
 
     for (var j = 0; j < NUM_PEOPLE; j++) {
         update_infection(nodes[j], time_step);
-        //update_kappa(nodes[j], time_step);
         update_psi(nodes[j], time_step);
     }
     update_all_kappa(nodes, homes, workplaces, communities, time_step);
@@ -1443,10 +1258,9 @@ function run_simday(time_step, homes, workplaces, communities, public_transports
 
     for (var c = 0; c < NUM_COMMUNITIES; c++) {
         communities[c]['lambda_community'] = update_lambda_c_local(nodes, communities[c]);
-        ///console.log("lambda_community:",c,communities[c]['lambda_community'])
         var temp_stats = get_infected_community(nodes, communities[c]);
 
-        //infection_status_community.push([]);
+        
         let row = [time_step / SIM_STEPS_PER_DAY, c, temp_stats[0], temp_stats[1], temp_stats[2], temp_stats[3], temp_stats[4]].join(",");
         csvContent += row + "\r\n";
     }
@@ -1461,7 +1275,7 @@ function run_simday(time_step, homes, workplaces, communities, public_transports
     for (var j = 0; j < NUM_PEOPLE; j++) {
         var lambda_current_stats = [];
         update_lambdas(nodes[j], homes, workplaces, communities, public_transports, nodes, time_step);
-        //get_lambda_stats(i,j,lambda_current_stats);
+        
     }
 
     //lambda_current_stats_avg = math.mean(math.mean(lambda_current_stats, 0));
@@ -1557,7 +1371,7 @@ function initialize_simulation() {
     }
 
 
-    //console.log(community_distance_matrix)
+    
     console.log(NUM_PEOPLE, NUM_HOMES, NUM_WORKPLACES, NUM_SCHOOLS, NUM_COMMUNITIES)
 
     assign_individual_home_community(nodes, homes, workplaces, communities);

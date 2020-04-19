@@ -43,14 +43,13 @@ SPDX-License-Identifier: Apache-2.0-->
               position: -webkit-sticky;
               z-index: 100;
             }
-            #hfa {
-              font-color:white;
-            }
+            <!--
             .content {
                 max-width: 35em;
                 margin: 0 auto;
                 padding: 0 10px;
-            }
+            } 
+            -->
             .nav {
                 text-align: center;
                 margin-top: 10px;
@@ -118,6 +117,7 @@ SPDX-License-Identifier: Apache-2.0-->
           border-radius: 5px;
           border: 1px solid #000;
           font-family: sans-serif, Arial;
+            font-size: 0.9em;
         }
         legend {
           margin-bottom:0px;
@@ -129,6 +129,11 @@ SPDX-License-Identifier: Apache-2.0-->
             border-radius: 5px;
             background-color: #BB9;
         }
+        #disclaimer {
+          text-align:justify;
+            text-justify: inter-word;
+
+        }
         </style>
 
     </head>
@@ -137,20 +142,27 @@ SPDX-License-Identifier: Apache-2.0-->
       <section id="header">
       <div class="d-flex bg-dark justify-content-between align-items-center">
             <div class="d-flex p-2 text-white">
-              <div class="d-flex flex-column px-3">
-              <a target="_blank" href="https://www.iisc.ac.in"><img src="simulator/images/iisc_1.png" alt="IISc logo" width="60px"></a>
+              <div class="d-flex flex-column px-3 py-1">
+              <a target="_blank" href="https://www.iisc.ac.in"><img src="simulator/images/iisc_1.png" alt="IISc logo" width="70px"></a>
               </div>
-              <div class="d-flex flex-column">
+              <div class="flex-shrink-1 flex-column">
                 <div class="d-flex"><a target="_blank" href="https://cni.iisc.ac.in" style="color:#ffff99">Centre for Network Intelligence,</a></div>
                 <div class="d-flex"><a target="blank" href="https://cps.iisc.ac.in" style="color:#ffff99">Robert Bosch Centre for CPS</a></div>
+                <div class="d-flex"><a target="blank" href="https://iisc.ac.in" style="color:#ffff99">Indian Institute of Science, Bangalore</a></div>
               </div>
             </div>
-            <div class="d-flex p-2 text-white justify-content-end">
+            <div class="d-flex p-2 text-white">
               <h4>City-Scale Epidemic Simulator</h4>
             </div>
-            <--
-            <div class="d-flex px-4 justify-content-end">
-            </div> -->
+            <div class="d-flex p-2 text-white">
+              <div class="flex-shrink-1 flex-column">
+                <div class="d-flex justify-content-end"><a target="_blank" href="https://www.tcs.tifr.res.in" style="color:#ffff99">School of Technology and Computer Science</a></div>
+                <div class="d-flex justify-content-end"><a target="blank" href="https://www.tifr.res.in" style="color:#ffff99">Tata Institute of Fundamental Research, Mumbai</a></div>
+              </div>
+            <div class="d-flex px-3 py-1">
+              <a target="_blank" href="https://www.tifr.res.in"><img src="simulator/images/Covid-TIFR-Logo.png" alt="TIFR logo" width="80px"></a>
+            </div>
+            </div>
       </div>
       </section>
 
@@ -176,16 +188,16 @@ SPDX-License-Identifier: Apache-2.0-->
             Choose one of the implemented interventions and see how the epidemic evolves.
             <br>
             <br>
-            A disclaimer: This tool is to help you understand the effectiveness of social distancing interventions related to COVID-19.
+            <em>A disclaimer: This tool is to help you understand the effectiveness of social distancing interventions related to COVID-19.
             The simulator's outputs should not be used for medical diagnostic, prognostic or treatment purposes or
-            for guidance on personal travel plans.
+            for guidance on personal travel plans.</em>
           </div>
           <div class="col align-self-end my-3">
-                  <img src="simulator/images/bangalore-wards.png" alt="city map" width="35%">
+                  <img src="simulator/images/bangalore-wards_v2.png" alt="city map" width="35%">
           </div>
         </div>
-        <div class="row">
-            <div class="col-6 col-md-4 px-3" id="controls">
+        <div class="row justify-content-between">
+            <div class="col-xl-4 px-3" id="controls">
               <div class="row py-3 pl-2" >
                 <div class="col justify-content-left px-1"><b>Adjustable simulation parameters: 
                     </b>
@@ -272,7 +284,7 @@ SPDX-License-Identifier: Apache-2.0-->
                 <div class="row px-3">
                     <fieldset class="border p-1" style="border:2px">
                         <legend class="w-auto">Intervention Method (click to select)</legend>
-                        <p>Simulations under all scenarios are assumed to begin on March 1, 2020. Interventions begin on 25 March 2020, aligned with the national lockdown start date. 
+                        <p >Simulations under all scenarios are assumed to begin on March 1, 2020. Interventions begin on 25 March 2020, aligned with the national lockdown start date. 
                           They continue for the indicated duration (or indefinitely if not specified).</p>
                         
                         <div class="radio-toolbar">
@@ -345,12 +357,12 @@ SPDX-License-Identifier: Apache-2.0-->
                 </div>
 
                 <div class="row py-3">
-                <div class="col"><label  for="compliance">Compliance Probability</label></div>
-                <div class="col"><input  type="number" min="0" max="1" value="0.9"  id="compliance" ></div>
+                  <div class="col"><label  for="compliance">Compliance Probability</label></div>
+                  <div class="col"><input  type="number" min="0" max="1" value="0.9"  id="compliance" ></div>
                 </div>
             </div>
 
-            <div class="col-12 col-md-7">
+            <div class="col-xl-8">
               <div class="row justify-content-center">
                 <div id="sim_progress"></div>
                 <div class="d-flex p-2 bg-success text-white" style="visibility:hidden" id="status"></div>
@@ -392,8 +404,8 @@ SPDX-License-Identifier: Apache-2.0-->
         <div class="d-flex bg-dark p-1 text-white justify-content-between">
           <div class="d-flex px-3"><b><a href="mailto:epiSim@iisc.ac.in" style="color:#ffff99"><i class="fa fa-envelope" aria-hidden="true"></i> Contact us</a></b></div>
 
-          <div class="d-flex px-3"><a style="color:#ffff99" target="_blank" href="https://cni.iisc.ac.in">https://cni.iisc.ac.in</a></div>
-          <div class="d-flex px-3">This work is licensed under Apache 2.0 license. Copyright [2020] [Indian Institute of Science, Bangalore]</div>
+          <div class="d-flex px-3"><a style="color:#ffff99" target="_blank" href="https://cni.iisc.ac.in/simulator">https://cni.iisc.ac.in/simulator</a></div>
+          <div class="d-flex px-3">Licensed under Apache 2.0 license. Copyright [2020] [IISc, Bangalore and TIFR, Mumbai]</div>
         </div>
       </section>
 

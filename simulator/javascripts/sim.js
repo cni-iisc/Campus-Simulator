@@ -1508,7 +1508,7 @@ function plot_lambda_evolution(data, plot_position, title_text, legends) {
 
     var layout = {
         autosize: true,
-        width: 400,
+        width: 350,
         height: 300,
         barmode: 'stack',
         margin: {l:50, r:50, t:50, b:50},
@@ -1620,7 +1620,7 @@ function plot_plotly(data, plot_position, title_text, legends) {
 
     const layout = {
         autosize: true,
-        width: 400,
+        width: 350,
         height:300,
         margin: {l:50, r:50, t:50, b:50},
         xaxis: {

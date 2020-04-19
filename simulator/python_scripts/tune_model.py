@@ -23,20 +23,19 @@ def set_text_field(driver, id_name, value):
     element.send_keys(str(value))
     return (True)
 
-def set_drop_field(driver, id_name, value):
-    select = Select(driver.find_element_by_id(id_name))
-    #element.clear()
-    select.select_by_value(str(value))
+def select_radio_button(driver, id_name):
+    intervention = driver.find_element_by_id(str(id_name))
+    intervention.click()
     return (True)
 
 def click_on_button(driver, id_name):
-    element = driver.find_element_by_id(id_name)
+    element = driver.find_element_by_id(str(id_name))
     element.click()
     return (True)    
 
 def run_sim(driverLocation, options, simNum, params): 
     driver = webdriver.Chrome(executable_path=driverLocation, options=options)
-    driver.get('http://localhost:9000')
+    driver.get('http://localhost:9000/index_2.html')
     set_text_field(driver, 'simNum', simNum)
     set_text_field(driver, 'numDays', params['numDays'])
     set_text_field(driver, 'Incubation', params['incubation'])
@@ -52,7 +51,7 @@ def run_sim(driverLocation, options, simNum, params):
     set_text_field(driver, 'betaPT', params['betaPT'])
     set_text_field(driver, 'initFrac', params['initFrac']*params['initFracScaleFactor'])
     set_text_field(driver, 'compliance', params['compliance'])
-    set_drop_field(driver, 'interventions', params['interventions'])
+    select_radio_button(driver, params['interventions'])
     click_on_button(driver, 'run_button')
     time.sleep(2) 
     driver.quit()
@@ -64,14 +63,20 @@ download_dir = ''
 chrome_binary_location = ''
 driverLocation = ''
 
-for i in range(len(folder_tree)-2):
+for i in range(len(folder_tree)):
     download_dir += (folder_tree[i] + '/')
     chrome_binary_location += (folder_tree[i] + '/')
     driverLocation +=  (folder_tree[i] + '/')   
 
 download_dir += 'sim_data/'
+
+if not os.path.isdir(download_dir):
+    os.mkdir(download_dir)
+
 chrome_binary_location += 'Chrome_standalone/ChromePortableGCPM/data/chrome'
 driverLocation += 'chromedriver'
+
+print (download_dir, chrome_binary_location, driverLocation)
 
 result_dir = './data/'
 

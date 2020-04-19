@@ -92,7 +92,7 @@ function get_kappa_home_quarantine(nodes, homes, workplaces, communities,cur_tim
 		var time_since_symptoms = cur_time - (nodes[count]['time_of_infection']+nodes[count]['incubation_period']+nodes[count]['asymptomatic_period'])
 		if((nodes[count]['compliant']) && 
 		 (time_since_symptoms > NUM_DAYS_TO_RECOG_SYMPTOMS*SIM_STEPS_PER_DAY) && 
-		 (time_since_symptoms <= (NUM_DAYS_TO_RECOG_SYMPTOMS+HOME_QUARANTINE_DAYS)*SIM_STEPS_PER_DAY)){ //The magic number 1 = time to recognise symptoms. 
+		 (time_since_symptoms <= (NUM_DAYS_TO_RECOG_SYMPTOMS+HOME_QUARANTINE_DAYS)*SIM_STEPS_PER_DAY)){ 
 			homes[nodes[count]['home']]['quarantined'] = true;
 		}
 	}
@@ -170,7 +170,6 @@ function get_kappa_lockdown(nodes, homes, workplaces, communities,cur_time){
 function get_kappa_CI_HQ(nodes, homes, workplaces, communities,cur_time){
 	for(var count = 0; count<homes.length;count++){
 		//reset all homes as non-quarantined. The status will be updated depending on the household individuals.
-		//Same as 
 		homes[count]['quarantined'] = false;
 	}
 
@@ -178,7 +177,7 @@ function get_kappa_CI_HQ(nodes, homes, workplaces, communities,cur_time){
 		var time_since_symptoms = cur_time - (nodes[count]['time_of_infection']+nodes[count]['incubation_period']+nodes[count]['asymptomatic_period'])
 		if((nodes[count]['compliant']) && 
 		 (time_since_symptoms > NUM_DAYS_TO_RECOG_SYMPTOMS*SIM_STEPS_PER_DAY) && 
-		 (time_since_symptoms <= (NUM_DAYS_TO_RECOG_SYMPTOMS+HOME_QUARANTINE_DAYS)*SIM_STEPS_PER_DAY)){ //The magic number 1 = time to recognise symptoms. 
+		 (time_since_symptoms <= (NUM_DAYS_TO_RECOG_SYMPTOMS+HOME_QUARANTINE_DAYS)*SIM_STEPS_PER_DAY)){ 
 			homes[nodes[count]['home']]['quarantined'] = true;
 		}
 	}
@@ -211,7 +210,6 @@ function get_kappa_CI_HQ(nodes, homes, workplaces, communities,cur_time){
 function get_kappa_CI_HQ_70P(nodes, homes, workplaces, communities,cur_time){
 	for(var count = 0; count<homes.length;count++){
 		//reset all homes as non-quarantined. The status will be updated depending on the household individuals.
-		//Same as 
 		homes[count]['quarantined'] = false;
 	}
 
@@ -257,7 +255,6 @@ function get_kappa_CI_HQ_70P(nodes, homes, workplaces, communities,cur_time){
 function get_kappa_CI_HQ_70P_SC(nodes, homes, workplaces, communities,cur_time){
 	for(var count = 0; count<homes.length;count++){
 		//reset all homes as non-quarantined. The status will be updated depending on the household individuals.
-		//Same as 
 		homes[count]['quarantined'] = false;
 	}
 
@@ -309,7 +306,6 @@ function get_kappa_CI_HQ_70P_SC(nodes, homes, workplaces, communities,cur_time){
 function get_kappa_CI_HQ_70P_SC_OE(nodes, homes, workplaces, communities,cur_time){
 	for(var count = 0; count<homes.length;count++){
 		//reset all homes as non-quarantined. The status will be updated depending on the household individuals.
-		//Same as 
 		homes[count]['quarantined'] = false;
 	}
 

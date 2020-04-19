@@ -47,7 +47,8 @@ The above script instantiates a synthetic Bangalore city where the population of
 
 If the input parameters are not specified, the following default parameters will be used
 
-```city_name = 'bangalore'
+```
+city_name = 'bangalore'
 target_population = 100000
 inputPath = './data/base/bangalore/'
 outputPath = './data/bangalore-100K/'

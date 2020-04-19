@@ -26,6 +26,7 @@ SPDX-License-Identifier: Apache-2.0-->
             }
             #header {
               font-family: serif;
+              font-size: max(0.9em, 12px);
               top: 0px;
               padding-bottom: 1px;
               border-bottom: 1px solid #eceefb;
@@ -36,6 +37,7 @@ SPDX-License-Identifier: Apache-2.0-->
             }
             #footer {
               font-family: serif;
+              font-size: max(0.9em, 12px);
               bottom: 2px;
               border-top: 1px solid #eceefb;
               box-shadow: 5px 10px 10px #ddd;
@@ -144,7 +146,7 @@ SPDX-License-Identifier: Apache-2.0-->
               <a target="_blank" href="https://www.iisc.ac.in"><img src="simulator/images/iisc_1.png" alt="IISc logo" width="70px"></a>
               </div>
               <div class="flex-shrink-1 flex-column">
-                <div class="d-flex"><a target="_blank" href="https://cni.iisc.ac.in" style="color:#ffff99">Centre for Network Intelligence,</a></div>
+                <div class="d-flex"><a target="_blank" href="https://cni.iisc.ac.in" style="color:#ffff99">Centre for Networked Intelligence</a></div>
                 <div class="d-flex"><a target="blank" href="https://cps.iisc.ac.in" style="color:#ffff99">Robert Bosch Centre for CPS</a></div>
                 <div class="d-flex"><a target="blank" href="https://iisc.ac.in" style="color:#ffff99">Indian Institute of Science, Bangalore</a></div>
               </div>
@@ -166,11 +168,11 @@ SPDX-License-Identifier: Apache-2.0-->
 
       <div class="container-fluid">
         <div class="row">
-          <div class="col my-3">
+          <div class="col-xl-8 col-sm-6 my-3">
             This is a city-scale agent-based simulator for the city of Bengaluru. 
             It has been built to study the spread of COVID-19 in an Indian city.
             Details of our implementation can be found 
-            <A HREF="http://TBA">
+            <A target="_blank" HREF="https://covid19.iisc.ac.in/modeling-of-epidemic-spread-in-indian-urban-conditions/">
                 here</A>.
             <br>
             <br>
@@ -190,12 +192,14 @@ SPDX-License-Identifier: Apache-2.0-->
             The simulator's outputs should not be used for medical diagnostic, prognostic or treatment purposes or
             for guidance on personal travel plans.</em>
           </div>
-          <div class="col align-self-end my-3">
-                  <img src="simulator/images/bangalore-wards_v2.png" alt="city map" width="35%">
+          <div class="col-xl-4 col-sm-3 align-self-center justify-content-center p-3">
+            <div class="h-75 d-inline-block">
+                  <img src="simulator/images/bangalore-wards_v2.png" alt="city map" width="80%">
+            </div>
           </div>
         </div>
         <div class="row justify-content-between">
-            <div class="col-xl-4 px-3" id="controls">
+            <div class="col-xl-4 col-md-4 px-3" id="controls">
               <div class="row py-3 pl-2" >
                 <div class="col justify-content-left px-1"><b>Adjustable simulation parameters: 
                     </b>
@@ -360,7 +364,7 @@ SPDX-License-Identifier: Apache-2.0-->
                 </div>
             </div>
 
-            <div class="col-xl-8">
+            <div class="col-xl-8 col-md-5">
               <div class="row justify-content-center">
                 <div id="sim_progress"></div>
                 <div class="d-flex p-2 bg-success text-white" style="visibility:hidden" id="status"></div>

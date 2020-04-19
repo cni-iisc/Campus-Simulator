@@ -1,6 +1,11 @@
 #Copyright [2020] [Indian Institute of Science, Bangalore]
 #SPDX-License-Identifier: Apache-2.0
 
+# This code is used to tune the parameters of the simulator so as to match the probability of getting an infection (i.e. lambda_home,
+# lambda_workplace and lambda_community) to certain target value (default target value is 1/3 each) as well as to match the number 
+# of fatalities curve to actual data.
+
+
 #from calculate_means_CPP import calculate_means
 from calculate_r0 import calculate_r0
 from calibrate import calibrate
@@ -48,7 +53,7 @@ SEED_FIXED_NUMBER="--SEED_FIXED_NUMBER"
 #SEED_FIXED_NUMBER=" "
 INIT_FIXED_NUMBER_INFECTED=100
 INTERVENTION=0
-EXEC_DIR = "/home/nihesh/Documents/covid_19_bangalore/markov_simuls/cpp-simulator"
+EXEC_DIR = "./../../cpp-simulator"
 
 ######################
 def calculate_means_fatalities_CPP(output_directory_base, num_sims,results_dir):
@@ -155,8 +160,8 @@ while (continue_run):
     print ('Execution time: ',time.time()-start_time, ' seconds') 
 
     ##############################################################
-    calculate_means_fatalities_CPP(output_directory_base, num_sims,"/home/nihesh/Documents/covid_19_bangalore/markov_simuls/simulator/python_scripts/python_scripts_CPP/data/")
-    calculate_means_lambda_CPP(output_directory_base, num_sims,"/home/nihesh/Documents/covid_19_bangalore/markov_simuls/simulator/python_scripts/python_scripts_CPP/data/") 
+    calculate_means_fatalities_CPP(output_directory_base, num_sims,"./data/")
+    calculate_means_lambda_CPP(output_directory_base, num_sims,"./data/") 
     
     [flag, BETA_SCALE_FACTOR, step_beta_h, step_beta_w, step_beta_c, delay] = calibrate(resolution,count)
     count+=1    

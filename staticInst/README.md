@@ -1,5 +1,19 @@
 # README #
-This directory contains the mined, cleaned data for each city that is used to create the instantiations for the Markov chain simulator. The instantiated parameters are passed as JSON objects to the simulator.
+This directory contains the mined, cleaned data for each city that is used to create the instantiations for the Markov chain simulator. 
+The instantiated parameters are passed as JSON objects to the simulator.
+
+### To instantiate a city, execute the following commad from the staticInst directory:
+python parse_and_instantiate.py -c city_name -n target_population -i inputPath -o outputPath
+
+The default parameters are:
+city_name = 'bangalore'
+target_population = 100000
+inputPath = './data/base/bangalore/'
+outputPath = './data/bangalore-100K/'
+
+The parse_and_instantiate.py script outputs the JSON files necessary for the simulator to run, and validation 
+plots that show the empirical distributions of age, household size, school size, workplace size and commuter distance 
+in the synthetic city.
 
 ### Sub-Directory Structure
 The sub-directory structure followed for storing and processing of static data source used for instantiations is outlined as follows. 
@@ -41,13 +55,4 @@ The following table lists the data needs for the instantiation script to run
 |Employment data for all wards of the city|ward no, total population employed, total population unemployed| CSV |
 |Common Areas (or) Points of Interest in the City| latitude, longitude of common areas like transport communities, markets, restaurants, places of worship) per ward (if possible) | CSV|
 
-### Status of Data Collection ###
-The following table gives a status of the data collection effort. The cells can be populated with the link of data sources used
-
-| City     | GeoJSON for city wards | Demographic Data of city wards | Age and Household-size Distributions for City |  Employment Data |Points of Interests (Common Spaces) | 
-|----------|------------------------|--------------------------------|-----------------------------------------------|-------------------------------------|--------------------------------|
-| Banglore | [Link to Raw GeoJSON](https://github.com/datameet/Municipal_Spatial_Data/raw/master/Bangalore/BBMP.GeoJSON) |[Link to 2011 Census Data](https://smartcities.data.gov.in/catalog/city-profile-bengaluru?filters%5Bfield_catalog_reference%5D=2916949&format=json&offset=0&limit=9&sort%5Bcreated%5D=desc) select `Demographic Profile: Bengaluru As On 01-03-2011`|                [Link to 2011 Census Data](https://smartcities.data.gov.in/catalog/city-profile-bengaluru?filters%5Bfield_catalog_reference%5D=2916949&format=json&offset=0&limit=9&sort%5Bcreated%5D=desc) select  `Household Profile Bengaluru As On 01-03-2011`| [Link to 2011 Census Data](https://smartcities.data.gov.in/catalog/city-profile-bengaluru?filters%5Bfield_catalog_reference%5D=2916949&format=json&offset=0&limit=9&sort%5Bcreated%5D=desc) select  `Unemployment Rate: Bengaluru As On 01-03-2011`           |                 |
-| New York  |                        |                                |                                               |                                     |             
-| Mumbai   |                        |                                |                                               |                                     |             
-| Bergamo  |                        |                                |                                               |                                     |             
-| Wuhan    |                        |                                |                                               
+The above data for Bangalore and Mumabi have been processesd and stored in './data/base/bangalore' and './data/base/mumbai' respectively.

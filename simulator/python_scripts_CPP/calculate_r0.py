@@ -1,8 +1,7 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Created on Thu Mar 26 08:08:41 2020
+#Copyright [2020] [Indian Institute of Science, Bangalore]
+#SPDX-License-Identifier: Apache-2.0
 
+"""
 Description: Calculates R0 value from the infected time series as well as 
 plots the model against the simulation. Returns R0 for no intervention strategy.
 
@@ -119,6 +118,3 @@ def calculate_r0(threshold,number_of_days,resolution):
     plt.close()
     
     return (res_nointervention.x[0]/mu)
-
-#sim_r0 = calculate_r0(10, 27, 4)
-#print ('Simulated R0: ', sim_r0)

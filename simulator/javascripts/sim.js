@@ -3,7 +3,9 @@
 
 const WEBPAGE_VERSION = true;
 //simulation inputs
-
+const INPUTPATHPREFIX = 'staticInst/data/web_input_files';
+var cityName = 'bengaluru';
+var inputPath = INPUTPATHPREFIX + '/' + cityName + '/';
 
 NUM_DAYS = 120; //Number of days. Simulation duration
 SIM_STEPS_PER_DAY = 4; //Number of simulation steps per day.
@@ -195,9 +197,9 @@ function compliance() {
 function compute_prob_infection_given_community(infection_probability, set_uniform) {
 
     var prob_infec_given_community = [];
-    var communities_population_json = JSON.parse(loadJSON_001('input_files/fractionPopulation.json'));
+    var communities_population_json = JSON.parse(loadJSON_001(inputPath + 'fractionPopulation.json'));
     if (!set_uniform) {
-        var communities_frac_quarantined_json = JSON.parse(loadJSON_001('input_files/quarantinedPopulation.json'));
+        var communities_frac_quarantined_json = JSON.parse(loadJSON_001(inputPath + 'quarantinedPopulation.json'));
     }
 
     var num_communities = communities_population_json.length;
@@ -231,8 +233,8 @@ function get_age_group(age) {
 // Initialise the nodes with various features.
 function init_nodes() {
 
-    var individuals_json = JSON.parse(loadJSON_001('input_files/individuals.json'));
-    var workplace_json = JSON.parse(loadJSON_001('input_files/workplaces.json'));
+    var individuals_json = JSON.parse(loadJSON_001(inputPath + 'individuals.json'));
+    var workplace_json = JSON.parse(loadJSON_001(inputPath + 'workplaces.json'));
     //console.log(individuals_json.length,individuals_json[0]);
     NUM_PEOPLE = individuals_json.length;
     NUM_WORKPLACES = workplace_json.length;
@@ -322,7 +324,7 @@ function init_nodes() {
 
 function load_infection_seed_json(seed_scaling_factor) {
     var seed_array = [];
-    var infection_seeds_json = JSON.parse(loadJSON_001('input_files/infection_seeds.json'));
+    var infection_seeds_json = JSON.parse(loadJSON_001(inputPath + 'infection_seeds.json'));
     var infection_seeds_json_array = Object.values(infection_seeds_json['seed_fit']);
     var num_seed_days = infection_seeds_json_array.length;
     for (var count = 0; count < num_seed_days * SIM_STEPS_PER_DAY; count++) {
@@ -538,7 +540,7 @@ function compute_scale_public_transport(nodes, public_transports) {
 
 function init_homes() {
 
-    var houses_json = JSON.parse(loadJSON_001('input_files/houses.json'));
+    var houses_json = JSON.parse(loadJSON_001(inputPath + 'houses.json'));
     NUM_HOMES = houses_json.length;
 
     var homes = [];
@@ -564,8 +566,8 @@ function init_homes() {
 
 // Both schools and offices are treated as workspaces with some differences
 function init_workplaces() {
-    var workplaces_json = JSON.parse(loadJSON_001('input_files/workplaces.json'));
-    var schools_json = JSON.parse(loadJSON_001('input_files/schools.json'));
+    var workplaces_json = JSON.parse(loadJSON_001(inputPath + 'workplaces.json'));
+    var schools_json = JSON.parse(loadJSON_001(inputPath + 'schools.json'));
     NUM_WORKPLACES = workplaces_json.length;
     NUM_SCHOOLS = schools_json.length;
 
@@ -625,7 +627,7 @@ function compare_wards(a, b) {
 
 function init_community() {
 
-    var communities_json = JSON.parse(loadJSON_001('input_files/commonArea.json'));
+    var communities_json = JSON.parse(loadJSON_001(inputPath + 'commonArea.json'));
     communities_json.sort(compare_wards);
     NUM_COMMUNITIES = communities_json.length;
 
@@ -692,7 +694,7 @@ function euclidean(loc1, loc2) {
 
 
 function compute_community_distances(communities) {
-    var inter_ward_distances_json = JSON.parse(loadJSON_001('input_files/wardCentreDistance.json'));
+    var inter_ward_distances_json = JSON.parse(loadJSON_001(inputPath + 'wardCentreDistance.json'));
 
     var community_dist_matrix = math.zeros([communities.length, communities.length]);
     /// console.log(community_dist_matrix)
@@ -885,9 +887,9 @@ function update_lambda_h_old(nodes, home) {
 
 function get_age_dependent_mixing_matrix_household() {
 
-    var sigma_json = JSON.parse(loadJSON_001('Sigma_household.json'));
-    var U_matrix_json = JSON.parse(loadJSON_001('U_household.json'));
-    var V_matrix_json = JSON.parse(loadJSON_001('Vtranspose_household.json'));
+    var sigma_json = JSON.parse(loadJSON_001(inputPath + 'Sigma_household.json'));
+    var U_matrix_json = JSON.parse(loadJSON_001(inputPath + 'U_household.json'));
+    var V_matrix_json = JSON.parse(loadJSON_001(inputPath + 'Vtranspose_household.json'));
 
     SIGMA_H = math.zeros([NUM_AGE_GROUPS]);
     U_MATRIX_H = math.zeros([NUM_AGE_GROUPS, NUM_AGE_GROUPS]);
@@ -968,9 +970,9 @@ function update_lambda_w_old(nodes, workplace) {
 }
 
 function get_age_dependent_mixing_matrix_workplace() {
-    var sigma_json = JSON.parse(loadJSON_001('input_files/Sigma_workplace.json'));
-    var U_matrix_json = JSON.parse(loadJSON_001('input_files/U_workplace.json'));
-    var V_matrix_json = JSON.parse(loadJSON_001('input_files/Vtranspose_workplace.json'));
+    var sigma_json = JSON.parse(loadJSON_001(inputPath + 'Sigma_workplace.json'));
+    var U_matrix_json = JSON.parse(loadJSON_001(inputPath + 'U_workplace.json'));
+    var V_matrix_json = JSON.parse(loadJSON_001(inputPath + 'Vtranspose_workplace.json'));
 
     SIGMA_OFFICE = math.zeros([NUM_AGE_GROUPS]);
     U_MATRIX_OFFICE = math.zeros([NUM_AGE_GROUPS, NUM_AGE_GROUPS]);
@@ -989,9 +991,9 @@ function get_age_dependent_mixing_matrix_workplace() {
 
     }
 
-    var sigma_json = JSON.parse(loadJSON_001('input_files/Sigma_school.json'));
-    var U_matrix_json = JSON.parse(loadJSON_001('input_files/U_school.json'));
-    var V_matrix_json = JSON.parse(loadJSON_001('input_files/Vtranspose_school.json'));
+    var sigma_json = JSON.parse(loadJSON_001(inputPath + 'Sigma_school.json'));
+    var U_matrix_json = JSON.parse(loadJSON_001(inputPath + 'U_school.json'));
+    var V_matrix_json = JSON.parse(loadJSON_001(inputPath + 'Vtranspose_school.json'));
 
     SIGMA_SCHOOL = math.zeros([NUM_AGE_GROUPS]);
     U_MATRIX_SCHOOL = math.zeros([NUM_AGE_GROUPS, NUM_AGE_GROUPS]);

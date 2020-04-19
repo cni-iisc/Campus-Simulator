@@ -102,6 +102,7 @@ def calibrate(resolution,count):
     print("slope_dead_simulator = ", slope_dead_simulator, ". slope_dead_data = ", slope_dead_data, ". slope_diff",slope_diff)
     print("lambda_h_diff = ",lambda_h_diff,". lambda_w_diff = ",lambda_w_diff,". lambda_c_diff = ",lambda_c_diff)
     # if slopes match, report delay
+    count_less_than_30 = 5
     if abs(lambda_h_diff)<0.01 and abs(lambda_w_diff)<0.01 and abs(lambda_c_diff)<0.01 and abs(slope_diff)<slope_tolerence: 
         flag = True
         return [flag, 1, 0, 0, 0, shift_in_data - 1 - indices_of_interest[0][0]/resolution]
@@ -111,8 +112,11 @@ def calibrate(resolution,count):
         step_beta_w = -1*lambda_w_diff/(3+count) 
         step_beta_c = -1*lambda_c_diff/(3+count) 
         beta_scale_factor = max(min(np.exp(slope_diff),1.5), 0.66)
-        if (count>=5):
-            beta_scale_factor = max(min(np.exp(slope_diff/(count-2)),1.5), 0.66)
+        if (count>=30):
+            beta_scale_factor = max(min(np.exp(slope_diff/(count-25)),1.5), 0.66)
+        elif (abs(lambda_h_diff)<0.02 and abs(lambda_w_diff)<0.02 and abs(lambda_c_diff)<0.02):
+            beta_scale_factor = max(min(np.exp(slope_diff/(count_less_than_30)),1.5), 0.66)
+            count_less_than_30 += 1
         return [flag, beta_scale_factor, step_beta_h, step_beta_w, step_beta_c,shift_in_data - 1- indices_of_interest[0][0]/resolution]
             
         

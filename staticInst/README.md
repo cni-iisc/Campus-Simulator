@@ -54,7 +54,7 @@ inputPath = './data/base/bangalore/'
 outputPath = './data/bangalore-100K/'
 ```
 
-#### Sub-Directory Structure|-
+#### Sub-Directory Structure
 The sub-directory structure followed for storing and processing of static data source used for instantiations is outlined as follows. 
 
 

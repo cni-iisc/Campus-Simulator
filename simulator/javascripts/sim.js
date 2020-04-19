@@ -1509,13 +1509,14 @@ function plot_lambda_evolution(data, plot_position, title_text, legends) {
     var layout = {
         autosize: true,
         width: 400,
-        height: 400,
+        height: 300,
         barmode: 'stack',
+        margin: {l:50, r:50, t:50, b:50},
         title: {
             text: title_text,
             font: {
                 family: 'Courier New, monospace',
-                size: 24
+                size: 16
             },
             xref: 'paper',
             x: 0.05,
@@ -1525,8 +1526,8 @@ function plot_lambda_evolution(data, plot_position, title_text, legends) {
                 text: 'Days',
                 font: {
                     family: 'Courier New, monospace',
-                    size: 18,
-                    color: '#7f7f7f'
+                    size: 16,
+                    color: '#555555'
                 }
             },
         },
@@ -1535,8 +1536,8 @@ function plot_lambda_evolution(data, plot_position, title_text, legends) {
                 text: title_text,
                 font: {
                     family: 'Courier New, monospace',
-                    size: 18,
-                    color: '#7f7f7f'
+                    size: 16,
+                    color: '#555555'
                 }
             },
             range: [0, 1]
@@ -1549,7 +1550,7 @@ function plot_lambda_evolution(data, plot_position, title_text, legends) {
         }
     };
 
-
+    const btnRemove = {modeBarButtonsToRemove: ['hoverClosestCartesian', 'hoverCompareCartesian'] };
     Plotly.newPlot(plot_position, data_plot, layout);
 }
 
@@ -1620,14 +1621,15 @@ function plot_plotly(data, plot_position, title_text, legends) {
     const layout = {
         autosize: true,
         width: 400,
-        height:400,
+        height:300,
+        margin: {l:50, r:50, t:50, b:50},
         xaxis: {
             title: {
                 text: 'Days',
                 font: {
                     family: 'Courier New, monospace',
-                    size: 18,
-                    color: '#7f7f7f'
+                    size: 16,
+                    color: '#555555'
                 }
             }
         },
@@ -1636,8 +1638,8 @@ function plot_plotly(data, plot_position, title_text, legends) {
                 text: title_text,
                 font: {
                     family: 'Courier New, monospace',
-                    size: 18,
-                    color: '#7f7f7f'
+                    size: 16,
+                    color: '#555555'
                 }
             }
         }
@@ -1651,7 +1653,8 @@ function plot_plotly(data, plot_position, title_text, legends) {
         //layout.yaxis.range = [0, Math.max(plot_minRanges[plot_position], yMax*2.0)];
     }
 
-    Plotly.newPlot(plot_position, data_plot, layout);
+    const btnRemove = {modeBarButtonsToRemove: ['hoverClosestCartesian', 'hoverCompareCartesian'] };
+    Plotly.newPlot(plot_position, data_plot, layout, btnRemove);
 }
 
 //Main function

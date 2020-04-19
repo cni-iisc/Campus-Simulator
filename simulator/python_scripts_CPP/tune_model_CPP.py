@@ -1,4 +1,4 @@
-#Copyright [2020] [Indian Institute of Science, Bangalore]
+#Copyright [2020] [Indian Institute of Science, Bangalore & Tata Institute of Fundamental Research, Mumbai]
 #SPDX-License-Identifier: Apache-2.0
 
 # This code is used to tune the parameters of the simulator so as to match the probability of getting an infection (i.e. lambda_home,

@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+#Copyright [2020] [Indian Institute of Science, Bangalore & Tata Institute of Fundamental Research, Mumbai]
+#SPDX-License-Identifier: Apache-2.0
 """
 Plot the simulator output and compare with India data
 """

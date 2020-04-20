@@ -6,23 +6,25 @@
 #"""
 __name__ = "Script for generating city files - instantiation of a synthetic city"
 
-import os
-import sys
-import math
-import argparse
-import csv
-import random
 import json
+import geopandas as gpd
+import pandas as pd
+import math
+from shapely.geometry import Point, MultiPolygon
 
 import warnings
 warnings.filterwarnings('ignore')
 
-import geopandas as gpd
-import pandas as pd
+import csv
 import numpy as np
+import random
 import matplotlib.pyplot as plt
 
-from shapely.geometry import Point, MultiPolygon
+
+import argparse
+import os
+import sys
+
 from computeDistributions import *
 
 # Default Gloabal Prameters
@@ -37,6 +39,11 @@ a_workplacesize = 3.26
 c_workplacesize = 0.97
 m_max_workplacesize = 2870
 avgSchoolsize = 300
+
+#fixing for now
+slum_schoolsize_factor = 1
+slum_householdsize_scalefactor = 1
+
 
 # Handling inputs and interactions
 if interactive:
@@ -55,131 +62,117 @@ else:
     miniPop = int(args.n)
     ibasepath = args.i
     obasepath = args.o
-if ibasepath[-1]!='/':
-    ibasepath = ibasepath+'/'
-if obasepath[-1]!='/':
-    obasepath = obasepath+'/'
 
 
 # Workplace commute parameters
 if city == 'bangalore':
     a_commuter_distance = 10.751
     b_commuter_distance = 5.384
-    m_max_commuter_distance = 35
 
-if city == 'mumbai':
+else:
     a_commuter_distance = 4 #parameter in distribution for commuter distance - Thailand paper
     b_commuter_distance = 3.8  #parameter in distribution for commuter distance - Thailand paper
-    m_max_commuter_distance = 60
 
 
+inputfiles = {
+    "citygeojson":"city.geojson",
+    "demographics":"demographics.csv",
+    "employment":"employment.csv",
+    "household":"households.csv",
+    "cityprofile":"cityProfile.json"
+             }
+outputfiles = {
+    "individuals":"individuals.json",
+    "houses":"houses.json",
+    "workplaces":"workplaces.json",
+    "schools":"schools.json",
+    "wardCentreDistance":"wardCentreDistance.json",
+    "commonArea":"commonArea.json",
+    "fractionPopulation":"fractionPopulation.json"
+              }
+
+#Check if the necessary files are present. 
+for f in inputfiles:
+    assert os.path.isfile(os.path.join(ibasepath, inputfiles[f])), "File {} doesn't exist!".format(inputfiles[f])
+
+inputfiles.update({
+    "slumfrac":"slumFraction.csv",
+    "slumcluster":"slumClusters.geojson",
+    "ODMatrix":"ODMatrix.csv"
+                   })
+
+for f in inputfiles:
+    inputfiles[f] = os.path.join(ibasepath,inputfiles[f])
+
+    
 # Create output directory if not present
 if not os.path.exists(obasepath):
     os.mkdir(obasepath)   
 
-# Prepare input file paths    
-citygeojsonfile  = ibasepath+"city.geojson"
-demographicsfile = ibasepath+"demographics.csv"
-employmentfile   = ibasepath+"employment.csv"
-householdfile    = ibasepath+"households.csv"
-cityprofilefile  = ibasepath+"cityProfile.json"
-slumfracfile     = ibasepath+"slumFraction.csv"
-slumclusterfile  = ibasepath+"slumClusters.geojson"
-ODMatrixfile     = ibasepath+"ODMatrix.csv"
-
-individualsjson        = obasepath+"individuals.json"
-housesjson             = obasepath+"houses.json"
-workplacesjson         = obasepath+"workplaces.json"
-schoolsjson            = obasepath+"schools.json"
-wardCentreDistancejson = obasepath+"wardCentreDistance.json"
-commonAreajson         = obasepath+"commonArea.json"
-fractionPopulationjson = obasepath+"fractionPopulation.json"
-
-#fixing for now
-slum_schoolsize_factor = 2
-slum_householdsize_scalefactor = 2
-
-
+for f in outputfiles:
+    outputfiles[f] = os.path.join(obasepath,outputfiles[f])
 print("Creating city with a population of approximately ",miniPop,flush=True)
 print("")
 
 print("Reading city.geojson to get ward polygons...",end='',flush=True)
-geoDF = gpd.read_file(citygeojsonfile)
+geoDF = gpd.read_file(inputfiles["citygeojson"])
 geoDF['wardNo'] = geoDF['wardNo'].astype(int)
 geoDF['wardIndex'] = geoDF['wardNo'] - 1
 geoDF = geoDF[['wardIndex','wardNo', 'wardName', 'geometry']]
 geoDF['wardBounds'] = geoDF.apply(lambda row: MultiPolygon(row['geometry']).bounds, axis=1)
+
+##!! Note that the geojson file has coordinates in (longitude, latitude) order!
 geoDF['wardCentre'] = geoDF.apply(lambda row: (MultiPolygon(row['geometry']).centroid.x, MultiPolygon(row['geometry']).centroid.y), axis=1)
-geoDF["neighbors"] = geoDF.apply(lambda row: ", ".join([str(ward) for ward in geoDF[~geoDF.geometry.disjoint(row['geometry'])]['wardNo'].tolist()]) , axis=1)
 print("done.",flush=True)
 
 
-if os.path.exists(slumfracfile):
-    print(slumfracfile,"exists... processing slum data",flush=True)
-    slum_flag = 1
-    slum_fractions = []
-    with open(slumfracfile, newline='') as csvfile:
-        reader = csv.reader(csvfile, delimiter=',')
-        for row in reader:
-            if row[0]=='wardIndex':
-                continue
-            slum_fractions.append(float(row[2]))
+# Read input data files
+demographics = pd.read_csv(inputfiles["demographics"])
+demographics['wardName'] = demographics['wardName'].values
+demographics['totalPopulation'] = demographics['totalPopulation'].astype(int)
+nwards = demographics['wardIndex'].count()
 
-    if os.path.exists(slumclusterfile):
-        slumcluster_flag=1
-        print("Slum clustter file found. Parsing slum clusters...",end='',flush=True)
-        geoDFslums = gpd.read_file(slumclusterfile)
-        wardslums = [[] for _ in range(len(geoDF))]
+households = pd.read_csv(inputfiles["household"])
+households['Households'] = households['Households'].astype(int)
 
-        for i in range(len(geoDFslums)):
-            for j in range(len(geoDF)):
-                if geoDFslums["geometry"][i].intersects(geoDF["geometry"][j]):
-                    wardslums[j].append(i)
-        print("done.",flush=True)
-    else:
-        slumcluster_flag=0
-        print("Slum clustter file not found.",end='',flush=True)
-else:
-    slum_flag=0
-    slumcluster_flag=0
-    print(slumfracfile,"does not exist... not processing slum data",flush=True)
+employments = pd.read_csv(inputfiles["employment"])
+employments['Employed'] = employments['Employed'].astype(int)
 
+## Parameters for slums
+slumflag = 0
+slumclustersflag = 0
+slumprecomputedflag = 0
 
-print("Reading demographics, employment and household data (csv)...",end='',flush=True)
+if os.path.exists(inputfiles['slumfrac']):
+    slumflag = 1
+    slumfracs = pd.read_csv(inputfiles["slumfrac"])
 
+if os.path.exists(inputfiles['slumcluster']):
+    slumclustersflag = 1
+    print("Slum clusters provided. Parsing...",end='',flush=True)
+    geoDFslums = gpd.read_file(inputfiles['slumcluster'])
+    wardslums = [[] for _ in range(len(geoDF))]
+    for i in range(len(geoDFslums)):
+        for j in range(len(geoDF)):
+            if geoDFslums["geometry"][i].intersects(geoDF["geometry"][j]):
+                wardslums[j].append(i)
+    print("done.",flush=True)
 
-wardname = []
-wardpop = []
-wardarea = []
-wardemployed = []
-wardunemployed = []
-wardworkforce = []
-wardhouseholds = []
+    if os.path.exists(os.path.join(ibasepath,'slumpoints')):
+        slumprecomputedflag = 1
+        print("Slum points precomputed.")
+        
 
-demographics = pd.read_csv(demographicsfile)
-wardname = demographics['wardName'].values
-wardpop = demographics['totalPopulation'].astype(int).values
-wardarea = demographics['area(sq km)'].astype(float).values
-
-households = pd.read_csv(householdfile)
-wardhouseholds = households['Households'].astype(int).values
-
-employment = pd.read_csv(employmentfile)
-wardemployed = employment['Employed'].astype(int).values
-wardunemployed = employment['Unemployment'].astype(int).values
-wardworkforce = employment['totalWorkForce'].astype(int).values
-
-print("done.",flush=True)
-
-
-
-
-with open(cityprofilefile, newline='') as file:
+with open(inputfiles["cityprofile"], newline='') as file:
     cityprofiledata = json.load(file)
+
+m_max_commuter_distance = cityprofiledata['maxWorkplaceDistance']
+
 
 hbins = cityprofiledata['householdSize']['bins']
 hweights = cityprofiledata['householdSize']['weights']
-hweights[0]=hweights[0] + 1- sum(hweights)
+hweights[0]=hweights[0] + 1- sum(hweights) #Just do a slight adjustment in case they don't sum to 1
+
 def sampleHouseholdSize():
     s = np.random.choice(hbins,1,p=hweights)[0]
     if '+' in s:
@@ -191,11 +184,9 @@ def sampleHouseholdSize():
         n = int(s)
     return n
 
-
-
 agebins = cityprofiledata['age']['bins']
 ageweights = cityprofiledata['age']['weights']
-ageweights[0] = ageweights[0] + 1 - sum(ageweights)
+ageweights[0] = ageweights[0] + 1 - sum(ageweights) #Just do a slight adjustment in case they don't sum to 1
 
 def sampleAge():
     s = np.random.choice(agebins,1,p=ageweights)[0]
@@ -206,10 +197,32 @@ def sampleAge():
         n = random.randint(int(a),int(b))
     return n
 
+schoolsizebinweights = [float(a) for a in cityprofiledata['schoolsSize']['weights']]
+schoolsizebinweights[0] = schoolsizebinweights[0] + 1 - sum(schoolsizebinweights)
+def sampleSchoolSize():
+    s = int(np.random.choice(list(range(len(cityprofiledata['schoolsSize']['bins']))),1,p=schoolsizebinweights)[0])
+    return (100*s + random.randint(0,99))
+
+
+totalPop = demographics['totalPopulation'].sum()
+scale = miniPop/totalPop
+
+demographics['employed_frac'] = employments["Employed"] / demographics['totalPopulation']
+demographics["totalPopulation"] = demographics["totalPopulation"]*scale
+if slumflag:
+    demographics['slumPopulation'] = demographics['totalPopulation']*slumfracs["slumFractionalPopulation"]
+else:
+    demographics['slumPopulation'] = 0
+demographics['nonslumPopulation'] = demographics['totalPopulation'] - demographics['slumPopulation']
+
+
+slumpoints = []
+if slumprecomputedflag:
+    for i in range(nwards):
+        slumpoints.append(pd.read_csv(os.path.join(ibasepath,"slumpoints",str(i)+".csv"),names=["lat","lon"]))
 
 
 def sampleRandomLatLong(wardIndex):
-    #I'm not sure why the order is longitude followed by latitude
     (lon1,lat1,lon2,lat2) = geoDF['wardBounds'][wardIndex]
     while True:
         lat = random.uniform(lat1,lat2)
@@ -218,150 +231,130 @@ def sampleRandomLatLong(wardIndex):
         if MultiPolygon(geoDF['geometry'][wardIndex]).contains(point):
             return (lat,lon)
 
+
 def sampleRandomLatLong_s(wardIndex,slumbit):
     #slumbit = 0 => get point in nonslum
     #slumbit = 1 => get point in slum
 
-    if slumcluster_flag==0:
+    if slumclustersflag==0:
         return sampleRandomLatLong(wardIndex)
 
     #I'm not sure why the order is longitude followed by latitude
     (lon1,lat1,lon2,lat2) = geoDF['wardBounds'][wardIndex]
 
-    if slumpoints_precomputed:
+    if slumprecomputedflag:
         if slumbit==1:
             if len(slumpoints[wardIndex])==0:
                 return sampleRandomLatLong(wardIndex)
-            i = random.randint(0,len(slumpoints[wardIndex])-1)
-            return slumpoints[wardIndex][i]
+            else:
+                i = random.randint(0,len(slumpoints[wardIndex])-1)
+                (lat,lon) = slumpoints[wardIndex].loc[i]
+                return (lat,lon)
         else:
             #Just going to return a random point in the ward
+            #Note: this may include a point in the slums. Not worrying about it for now.
             return sampleRandomLatLong(wardIndex)
-
-    #If not precomputed, do rejection sampling
-    attempts = 0
-    while attempts<30:
-        attempts+=1
-        lat = random.uniform(lat1,lat2)
-        lon = random.uniform(lon1,lon2)
-        point = Point(lon,lat)
-        if MultiPolygon(geoDF['geometry'][wardIndex]).contains(point):
-            for i in wardslums[wardIndex]:
-                if geoDFslums["geometry"][i].contains(point):
-                    if slumbit==1:
-                        return (lat,lon)
-                else:
-                    if slumbit==0:
-                        return(lat,lon)
-    #Just sample a random point in the ward if unsuccessful
-    #print("Gave up on sampleRandomLatLong_s with ",wardIndex,slumflag)
-    return sampleRandomLatLong(wardIndex)
-
+    else:
+        #If not precomputed, do rejection sampling
+        attempts = 0
+        while attempts<30:
+            attempts+=1
+            lat = random.uniform(lat1,lat2)
+            lon = random.uniform(lon1,lon2)
+            point = Point(lon,lat)
+            if MultiPolygon(geoDF['geometry'][wardIndex]).contains(point):
+                for i in wardslums[wardIndex]:
+                    if geoDFslums["geometry"][i].contains(point):
+                        if slumbit==1:
+                            return (lat,lon)
+                    else:
+                        if slumbit==0:
+                            return(lat,lon)
+        #Just sample a random point in the ward if unsuccessful
+        #print("Gave up on sampleRandomLatLong_s with ",wardIndex,slumflag)
+        return sampleRandomLatLong(wardIndex)
 
 def distance(lat1, lon1, lat2, lon2):
     radius = 6371 # km
 
     dlat = math.radians(lat2-lat1)
     dlon = math.radians(lon2-lon1)
-    a = math.sin(dlat/2) * math.sin(dlat/2) + math.cos(math.radians(lat1))         * math.cos(math.radians(lat2)) * math.sin(dlon/2) * math.sin(dlon/2)
+    a = math.sin(dlat/2) * math.sin(dlat/2) + math.cos(math.radians(lat1)) * math.cos(math.radians(lat2)) * math.sin(dlon/2) * math.sin(dlon/2)
     c = 2 * math.atan2(math.sqrt(a), math.sqrt(1-a))
     d = radius * c
 
     return d
 
-
-
 def getCommunityCenterDistance(lat,lon,wardIndex):
-    #I'm not sure why the order is longitude followed by latitude
     (lonc,latc) = geoDF['wardCentre'][wardIndex]
     return distance(lat,lon,latc,lonc)
 
 
+#Now the real city building begins
 
-# In[9]:
-
-
-totalPop = sum(wardpop)
-scale = miniPop/totalPop
-nwards = len(wardname)
-
-
-
-mwardpop = [int(a * scale) for a in wardpop]
-mwardemployed = [int(a * scale) for a in wardunemployed]
-mwardunemployed = [int(a * scale) for a in wardemployed]
-mwardworkforce = [int(a * scale) for a in wardworkforce]
-mwardhouseholds = [int(a * scale) for a in wardhouseholds]
-
-if slum_flag:
-    mslumwardpop = [int(mwardpop[i] * slum_fractions[i]) for i in range(nwards)]
-    mnonslumwardpop = [mwardpop[i] - mslumwardpop[i] for i in range(len(wardpop))]
-else:
-    mslumwardpop = [0]*nwards
-    mnonslumwardpop = mwardpop.copy()
-
-
+#Creating houses
 
 print("Creating households for each ward...",end='',flush=True)
-
-
 houses = []
 hid = 0
 for wardIndex in range(nwards):
-    wnonslumpop = mnonslumwardpop[wardIndex]
-    wslumpop = mslumwardpop[wardIndex]
+    nonslumpop = demographics["nonslumPopulation"][wardIndex]
+    slumpop = demographics["slumPopulation"][wardIndex]
     currnonslumwpop = 0
     currslumwpop = 0
-    while(currnonslumwpop < wnonslumpop):
+    
+    #creating nonslum-houses
+    while(currnonslumwpop < nonslumpop):
         h = {}
         h["id"]=hid
         h["wardIndex"]=wardIndex
-        if slum_flag:
+       
+        if slumflag:
             h["slum"]=0
 
         s = sampleHouseholdSize()
         h["size"]=s
         currnonslumwpop+=s
+
         (lat,lon) = sampleRandomLatLong_s(wardIndex,0)
         h["lat"] = lat
         h["lon"] = lon
+        
         houses.append(h)
         hid+=1
 
     #if slum_flag=0, then wslumpop = 0
-    while(currslumwpop < wslumpop):
+    while(currslumwpop < slumpop):
         h = {}
         h["id"]=hid
         h["wardIndex"]=wardIndex
-        if slum_flag:
-            h["slum"]=1
+        
+        h["slum"]=1
+        
         s = int(sampleHouseholdSize() * slum_householdsize_scalefactor)
         h["size"]=s
         currslumwpop+=s
+        
         (lat,lon) = sampleRandomLatLong_s(wardIndex,1)
         h["lat"] = lat
         h["lon"] = lon
+        
         houses.append(h)
         hid+=1
 print("done.",flush=True)
 
 
-
 homeworkmatrix = []
-if os.path.exists(ODMatrixfile):
-    with open(ODMatrixfile, newline='') as csvfile:
-        reader = csv.reader(csvfile, delimiter=',')
-        for row in reader:
-            if row[0]=='wardNo':
-                continue
-            homeworkmatrix.append(list(map(lambda x: float(x),row[1:])))
+if os.path.exists(inputfiles['ODMatrix']):
+    ODMatrix = pd.read_csv(inputfiles['ODMatrix'])
+    _ = ODMatrix.pop("wardNo")
+    ODMatrix = ODMatrix.values
 else:
-    print(ODMatrixfile, "not found. Using uniform ODmatrix.",flush=True)
-    homeworkmatrix = [[(1/nwards) for _ in range(nwards)] for _ in range(nwards)]
+    print("ODMatrix not found. Using uniform ODmatrix.",flush=True)
+    ODMatrix = [[(1/nwards) for _ in range(nwards)] for _ in range(nwards)]
 for i in range(nwards):
-    homeworkmatrix[i][0] = homeworkmatrix[i][0] + 1 - sum(homeworkmatrix[i])
-
-
+    ODMatrix[i][0] = ODMatrix[i][0] + 1 - sum(ODMatrix[i])
+    #Adjust in case the rows don't sum to 1
 
 print("Creating individuals to populate the households...",end='',flush=True)
 
@@ -372,6 +365,9 @@ workers = [[] for _ in range(nwards)]
 slum_schoolers = [[] for _ in range(nwards)]
 nonslum_schoolers = [[] for _ in range(nwards)]
 
+wardpop_actual = [0 for _ in range(nwards)]
+totalPop_actual = 0
+
 for h in houses:
     s = h["size"]
     for i in range(s):
@@ -381,7 +377,7 @@ for h in houses:
         wardIndex = h["wardIndex"]
         p["wardIndex"]=wardIndex
         p["wardNo"] = wardIndex+1
-        if slum_flag:
+        if slumflag:
             p["slum"] = h["slum"]
 
         p["lat"] = h["lat"]
@@ -404,22 +400,21 @@ for h in houses:
             p["workplaceType"]=2 #this is school
 
             #assuming they all go to school
-            #schoolers[wardIndex].append(pid)
-            if slum_flag ==1 and p["slum"]==1:
+            if slumflag ==1 and p["slum"]==1:
                 slum_schoolers[wardIndex].append(pid)
             else:
                 nonslum_schoolers[wardIndex].append(pid)
 
         elif age>=15 and age<65:
             #decide about employment
-            eprob = wardemployed[wardIndex]/wardpop[wardIndex]
+            eprob = demographics['employed_frac'][wardIndex]
             eprobadjusted = eprob/sum([ageweights[a] for a in range(3,13)])
             if(random.uniform(0,1)<eprobadjusted):
                 #person is employed
                 p["employed"]=1
 
                 p["workplace"]="TODO"
-                workplaceward = int(np.random.choice(list(range(nwards)),1,p=homeworkmatrix[wardIndex])[0])
+                workplaceward = int(np.random.choice(list(range(nwards)),1,p=ODMatrix[wardIndex])[0])
                 p["workplaceward"]=workplaceward
                 p["workplaceType"]=1
                 workers[workplaceward].append(pid)
@@ -428,10 +423,12 @@ for h in houses:
                 p["workplaceType"]=0
         else:
             #decide about seniors
-            test = 0
             p["employed"]=0
         individuals.append(p)
+        wardpop_actual[p["wardIndex"]]+=1
+        totalPop_actual+=1
         pid+=1
+        
 
 print("done.",flush=True)
 
@@ -490,61 +487,44 @@ print('done.',flush=True)
 
 
 
-schoolsizebins = ["0-100", "100-200", "200-300", "300-400", "400-500", "500-600", "600-700", "700-800", "800-900"]
-schoolsizebinweights = [0.0185, 0.1204, 0.2315, 0.2315, 0.1574, 0.0889, 0.063, 0.0481, 0.0408]
-schoolsizebinweights[0]=schoolsizebinweights[0] -sum(schoolsizebinweights)+1
-def sampleSchoolSize():
-    s = int(np.random.choice(list(range(len(schoolsizebinweights))),1,p=schoolsizebinweights)[0])
-    return (100*s + random.randint(0,99))
-
-
-
-print("Assigning schools to people...",end='',flush=True)
+print("Assigning schools...",end='',flush=True)
 
 #assigning school to people who want go to school
+schoolers = [nonslum_schoolers,slum_schoolers]
 schools = []
 sid = 0
-if slum_flag:
+
+for slumbit in [0,1]:
     for wardIndex in range(nwards):
-        wslum_schoolers = len(slum_schoolers[wardIndex])
-        while len(slum_schoolers[wardIndex])>0:
+        while len(schoolers[slumbit][wardIndex])>0: #some unassigned kids left in the ward
+
+            #Set up basic facts about school
             s = {"ID":sid} #capitalised in the previous code so keeping it so
             s["wardIndex"]=wardIndex
-            (lat,lon) = sampleRandomLatLong_s(wardIndex,1)
+            (lat,lon) = sampleRandomLatLong_s(wardIndex,slumbit)
             s["lat"] = lat
             s["lon"] = lon
-            s["slum"]=1
 
-            size = int(sampleSchoolSize()*slum_schoolsize_factor)
+            if slumflag==1:
+                s["slum"]=slumbit
+            
+            if slumbit==1:
+                size = int(sampleSchoolSize()*slum_schoolsize_factor)
+            else:
+                size = int(sampleSchoolSize())
 
+            #Fill up school with kids
             i = 0
-            while(i < size and len(slum_schoolers[wardIndex])>0):
-                pid = slum_schoolers[wardIndex].pop(random.randrange(len(slum_schoolers[wardIndex])))
+            while(i < size and len(schoolers[slumbit][wardIndex])>0):
+                pid = schoolers[slumbit][wardIndex].pop(random.randrange(len(schoolers[slumbit][wardIndex])))
                 individuals[pid]["school"]=sid
                 i+=1
             schools.append(s)
             sid+=1
-
-for wardIndex in range(nwards):
-    wnonslum_schoolers = len(nonslum_schoolers[wardIndex])
-    while len(nonslum_schoolers[wardIndex])>0:
-        s = {"ID":sid} 
-        s["wardIndex"]=wardIndex
-        (lat,lon) = sampleRandomLatLong_s(wardIndex,0)
-        s["lat"] = lat
-        s["lon"] = lon
-        if slum_flag:
-            s["slum"]=0
-
-        size = sampleSchoolSize()
-        i = 0
-        while(i < size and len(nonslum_schoolers[wardIndex])>0):
-            pid = nonslum_schoolers[wardIndex].pop(random.randrange(len(nonslum_schoolers[wardIndex])))
-            individuals[pid]["school"]=sid
-            i+=1
-        schools.append(s)
-        sid+=1
-       
+            #Note: This sort of creates a very skewed first-bracket for school size. 
+            #If the city size is small, then many schools will be "under-capacity". 
+            #Need to think about how to fix this corner case. 
+                
 print("done.",flush=True)
 
 # Stats of instantiated city
@@ -569,8 +549,8 @@ for i in range(nwards):
 fractionPopulations = []
 for i in range(nwards):
     w = {"wardNo":i+1}
-    w["totalPopulation"] = int(wardpop[i])
-    w["fracPopulation"] = wardpop[i]/totalPop
+    w["totalPopulation"] = int(wardpop_actual[i])
+    w["fracPopulation"] = wardpop_actual[i]/totalPop_actual
     fractionPopulations.append(w)
     
 wardCentreDistances = [ {"ID":i+1} for i in range(nwards)]
@@ -589,34 +569,34 @@ del individuals
 # Creating instantiated city files as JSONs
 print("Dumping to json files...",end='',flush=True)
 
-f = open(housesjson, "w+")
+f = open(outputfiles['houses'], "w+")
 f.write(json.dumps(houses))
 f.close
 print("houses.json, ",end='',flush=True)
 
-f = open(workplacesjson, "w+")
+f = open(outputfiles['workplaces'], "w+")
 f.write(json.dumps(workplaces))
 f.close
 print("workplaces.json, ",end='',flush=True)
 wp = pd.DataFrame(workplaces)
 
 
-f = open(schoolsjson, "w+")
+f = open(outputfiles['schools'], "w+")
 f.write(json.dumps(schools))
 f.close
 print("schools.json, ",end='',flush=True)
 
-f = open(commonAreajson, "w+")
+f = open(outputfiles['commonArea'], "w+")
 f.write(json.dumps(commonAreas))
 f.close
 print("commonArea.json, ",end='',flush=True)
 
-f = open(fractionPopulationjson, "w+")
+f = open(outputfiles['fractionPopulation'], "w+")
 f.write(json.dumps(fractionPopulations))
 f.close
 print("fractionPopulation.json, ",end='',flush=True)
 
-f = open(wardCentreDistancejson, "w+")
+f = open(outputfiles['wardCentreDistance'], "w+")
 f.write(json.dumps(wardCentreDistances))
 f.close
 print("wardCentreDistance.json, ",end='',flush=True)
@@ -624,7 +604,7 @@ print("wardCentreDistance.json, ",end='',flush=True)
 
 del wardCentreDistances, commonAreas, fractionPopulations, schools, houses, workplaces
 
-df1.to_json(individualsjson, orient='records')
+df1.to_json(outputfiles['individuals'], orient='records')
 print("individuals.json ... done.",flush=True)
 
 print('\nGenerating validation plots for the instantitaion...\n')
@@ -677,7 +657,7 @@ plt.ylabel('Density')
 plt.legend()
 plt.title('Distribution of school size')
 plt.grid(True)
-plt.savefig(obasepath+'/school_size')
+plt.savefig(obasepath+'/school_size.png')
 plt.close()
 print("done.",flush=True)
 
@@ -715,7 +695,7 @@ plt.legend()
 plot_xlabel =  [1, 10, 100, 1000, 2400]
 plot_xlabel1 = np.log10(workplace_sizes)[plot_xlabel]
 plt.xticks(plot_xlabel1, (workplace_sizes)[plot_xlabel])
-plt.savefig(obasepath+'/workplace_size')
+plt.savefig(obasepath+'/workplace_size.png')
 plt.close()
 print("done.",flush=True)
 
@@ -736,10 +716,6 @@ plot_xlabel1 = np.log10(d)[plot_xlabel]
 plt.xticks(plot_xlabel1,d[plot_xlabel])
 plt.grid(True)
 plt.legend()
-plt.savefig(obasepath+'/workplace_distance')
+plt.savefig(obasepath+'/workplace_distance.png')
 plt.close()
 print("done.",flush=True)
-
-
-
-

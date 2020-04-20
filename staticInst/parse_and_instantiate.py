@@ -27,7 +27,7 @@ import sys
 
 from computeDistributions import *
 
-# Default Gloabal Prameters
+# Default Global Prameters
 interactive = 0
 
 default_miniPop = 100000 
@@ -261,7 +261,7 @@ def sampleRandomLatLong_s(wardIndex,slumbit):
             attempts+=1
             lat = random.uniform(lat1,lat2)
             lon = random.uniform(lon1,lon2)
-            point = Point(lon,lat)
+            point = Point(lon,lat) #IMPORTANT: Point takes in order of longitude, latitude
             if MultiPolygon(geoDF['geometry'][wardIndex]).contains(point):
                 for i in wardslums[wardIndex]:
                     if geoDFslums["geometry"][i].contains(point):
@@ -360,7 +360,6 @@ print("Creating individuals to populate the households...",end='',flush=True)
 
 pid = 0
 individuals = []
-schoolers = [[] for _ in range(nwards)]
 workers = [[] for _ in range(nwards)]
 slum_schoolers = [[] for _ in range(nwards)]
 nonslum_schoolers = [[] for _ in range(nwards)]
@@ -624,7 +623,7 @@ plt.title('Distribution of age')
 plt.grid(True)
 plt.legend()
 plt.xticks(np.arange(0,81,10), np.concatenate((age_values[np.arange(0,71,10)], ['80+'])) )
-plt.savefig(obasepath+'/age.png')
+plt.savefig(os.path.join(obasepath, 'age.png'))
 plt.close()
 print("done.",flush=True)
 
@@ -640,7 +639,7 @@ plt.title('Distribution of household-size')
 plt.grid(True)
 plt.legend()
 plt.xticks(np.arange(0,len(household_sizes),1), np.concatenate((age_values[np.arange(1,household_sizes[-1],1)], [str(household_sizes[-1])+'+'])) )
-plt.savefig(obasepath+'/household_size.png')
+plt.savefig(os.path.join(obasepath,'household_size.png'))
 plt.close()
 print("done.",flush=True)
 
@@ -657,7 +656,7 @@ plt.ylabel('Density')
 plt.legend()
 plt.title('Distribution of school size')
 plt.grid(True)
-plt.savefig(obasepath+'/school_size.png')
+plt.savefig(os.path.join(obasepath, 'school_size.png'))
 plt.close()
 print("done.",flush=True)
 
@@ -695,7 +694,7 @@ plt.legend()
 plot_xlabel =  [1, 10, 100, 1000, 2400]
 plot_xlabel1 = np.log10(workplace_sizes)[plot_xlabel]
 plt.xticks(plot_xlabel1, (workplace_sizes)[plot_xlabel])
-plt.savefig(obasepath+'/workplace_size.png')
+plt.savefig(os.path.join(obasepath,'workplace_size.png'))
 plt.close()
 print("done.",flush=True)
 
@@ -716,6 +715,6 @@ plot_xlabel1 = np.log10(d)[plot_xlabel]
 plt.xticks(plot_xlabel1,d[plot_xlabel])
 plt.grid(True)
 plt.legend()
-plt.savefig(obasepath+'/workplace_distance.png')
+plt.savefig(os.path.join(obasepath,'workplace_distance.png'))
 plt.close()
 print("done.",flush=True)

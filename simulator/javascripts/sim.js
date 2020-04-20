@@ -1,4 +1,8 @@
-//Copyright [2020] [Indian Institute of Science, Bangalore & Tata Institute of Fundamental Research, Mumbai]
+
+
+
+
+//Copyright [2020] [Indian Institute of Science, Bangalore]
 //SPDX-License-Identifier: Apache-2.0
 
 const WEBPAGE_VERSION = true;
@@ -1416,7 +1420,7 @@ function run_simulation() {
     document.getElementById("run_button").style.display = "none";
     document.getElementById("sim_stop").style.display = "inline";
 
-
+    document.getElementById('plots-area').style.display = 'block';
     const [homes, workplaces, communities, public_transports, nodes, community_distance_matrix, seed_array,
         days_num_affected, days_num_critical, days_num_exposed, days_num_fatalities, days_num_hospitalised, days_num_infected, days_num_recovered, lambda_evolution] = initialize_simulation();
     document.getElementById("status").innerHTML = "Starting to run Simulation...";
@@ -1722,7 +1726,9 @@ function runSimulations() {
 
 function clear_plots() {
     //clear previous plots
+    document.getElementById("no-data").style.display = 'none';
     document.getElementById("status").innerHTML = "Simulation in Progress....";
+    document.getElementById("status").style.display = 'inline'
     document.getElementById("num_affected_plot_2").innerHTML = "";
     document.getElementById("num_infected_plot_2").innerHTML = "";
     document.getElementById("num_exposed_plot_2").innerHTML = "";

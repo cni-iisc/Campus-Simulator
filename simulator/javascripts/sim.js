@@ -4,6 +4,7 @@
 const WEBPAGE_VERSION = true;
 //simulation inputs
 const INPUTPATHPREFIX = 'staticInst/data/web_input_files';
+const IMAGEPREFIX = 'simulator/images';
 //var cityName = 'bengaluru';
 
 NUM_DAYS = 120; //Number of days. Simulation duration
@@ -1757,6 +1758,7 @@ function setCity (city) {
     cityName = city;
     console.log('City: ', cityName)
     inputPath = INPUTPATHPREFIX + '/' + cityName + '/';
+    mapImage.src = IMAGEPREFIX + '/' + cityName + '-wards_v2.png'
 }
 
 //jquery events for the webUI

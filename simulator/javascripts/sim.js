@@ -1462,7 +1462,19 @@ function run_simulation() {
             link.setAttribute("href", encodedUri);
             link.setAttribute("download", "my_data_all_together.csv");
             document.body.appendChild(link); // Required for FF
-            document.getElementById("status").innerHTML = "Numbers plotted are per " + String(NUM_PEOPLE) + ".";
+            // NUM_PEOPLE is not always exact size you intended to instantiate, due to stochasticity
+            // Below code adjusts the displayed number within +/- 100 for 100K model
+            let numKs = NUM_PEOPLE;
+            let precBand = 100;
+            let residue = NUM_PEOPLE%(precBand*10)
+            if (residue <= precBand) { 
+                numKs = NUM_PEOPLE - residue; 
+            }
+            else if (residue >= precBand*9) {
+                numKs = NUM_PEOPLE + ((precBand*10)-residue);
+            }
+
+            document.getElementById("status").innerHTML = "Numbers plotted are per " + String(numKs) + ".";
             if (!WEBPAGE_VERSION) {
                 link.click();	//TODO: Instead of click link, add link for download on page.
             }

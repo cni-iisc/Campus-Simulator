@@ -210,21 +210,23 @@ SPDX-License-Identifier: Apache-2.0-->
         </div>
         <div class="row justify-content-between align-self-center">
             <div class="col-xl-4 col-md-4 px-3" id="controls">
-              <div class="row">
-                <div class="col"><label for="cityname"><b>Select a city</b></label></div>
-                <div class="col">
-                  <select class="selectpicker" id="cityname" name="cityname">
-                    <option value="bengaluru" selected="selected">Bengaluru</option>
-                    <option value="mumbai">Mumbai</option>
-                  </select>
-                </div>
-              </div>
+
               <div class="row py-3 pl-2 justify-content-between">
                 <div class="col justify-content-start px-1"><b>Adjustable simulation parameters: </b>
                 </div>
                 <div class="col">
                   <button type="button" class="btn btn-primary" id="run_button" onclick="clear_plots();">Run</button>
                 <button type="button" class="btn btn-danger" id="sim_stop" style="display: none" onclick="stop_sim();">Stop Simulation</button>
+                </div>
+              </div>
+
+              <div class="row py-2">
+                <div class="col"><label for="cityname"><b>Select a city</b></label></div>
+                <div class="col">
+                  <select class="selectpicker" id="cityname" name="cityname">
+                    <option value="bengaluru" selected="selected">Bengaluru</option>
+                    <option value="mumbai">Mumbai</option>
+                  </select>
                 </div>
               </div>
 

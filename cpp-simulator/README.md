@@ -132,11 +132,10 @@ The main simulator executable is still `drive_simulator`.
 
 #### Viewing the output
 
-The output can now be seen by using your favorite browser to open the
-`plots.html` files in the output directories.
+The binary `drive_simulator` generates output as a set of csv files with information during each timestep. It also generates a `gnuplot` script file called `gnuplot_script.gnuplot`. If you have `gnuplot` installed, you may go to the folder and run `gnuplot gnuplot_script.gnuplot` and it will generate some prepecified plots that you can also view on using your favorite browser to open the `plots.html` files in the output directories.
 
 - There will be one output directory per intervention (inside the directory you specified), containing the plots just for that intervention.
-- In addition, in the top level directory (the one you specified)q with plots which plot the observable variables for all the interventions on the same plot.
+- In addition, in the top level directory (the one you specified) with plots which plot the observable variables for all the interventions on the same plot.
 
 The per intervention directories also have the raw CSV files from
 which the plots are generated.

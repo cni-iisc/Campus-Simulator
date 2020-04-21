@@ -406,6 +406,12 @@ struct community {
 };
 
 
+struct office_attendance{
+  count_type number_of_entries;
+  matrix<double> probabilities;
+};
+
+extern office_attendance ATTENDANCE;
 
 // Absenteeism parameter. This may depend on the workplace type.
 double psi_T(const agent& node, double cur_time);

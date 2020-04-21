@@ -395,3 +395,35 @@ void compute_scale_communities(const vector<agent>& nodes, vector<community>& co
 }
 
 
+//Initialize the office attendance
+void initialize_office_attendance(){
+  constexpr count_type NUMBER_OF_OFFICE_TYPES = 6;
+  auto attendanceJSON = readJSONFile(GLOBAL.input_base + "attendance.json");
+  ATTENDANCE.number_of_entries = attendanceJSON.GetArray().Size();
+  ATTENDANCE.probabilities.reserve(ATTENDANCE.number_of_entries);
+  count_type index = 0;
+  for(auto& elem: attendanceJSON.GetArray()){
+    ATTENDANCE.probabilities.push_back(vector<double>(NUMBER_OF_OFFICE_TYPES));
+    count_type val;
+    val = static_cast<count_type>(OfficeType::other);
+    ATTENDANCE.probabilities[index].at(val) = elem[val].GetDouble();
+    
+    val = static_cast<count_type>(OfficeType::sez);
+    ATTENDANCE.probabilities[index].at(val) = elem[val].GetDouble();
+    
+    val = static_cast<count_type>(OfficeType::government);
+    ATTENDANCE.probabilities[index].at(val) = elem[val].GetDouble();
+    
+    val = static_cast<count_type>(OfficeType::it);
+    ATTENDANCE.probabilities[index].at(val) = elem[val].GetDouble();
+    
+    val = static_cast<count_type>(OfficeType::construction);
+    ATTENDANCE.probabilities[index].at(val) = elem[val].GetDouble();
+    
+    val = static_cast<count_type>(OfficeType::hospital);
+    ATTENDANCE.probabilities[index].at(val) = elem[val].GetDouble();
+      
+    ++index;
+  }
+  assert(index == ATTENDANCE.number_of_entries);
+}

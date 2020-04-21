@@ -3,6 +3,7 @@
 #include "simulator.h"
 #include "outputs.h"
 #include "defaults.h"
+#include "initializers.h"
 #include <cassert>
 #include <iostream>
 #include <fstream>
@@ -157,6 +158,9 @@ int main(int argc, char** argv){
 	//Make sure the path of the input_base
 	//directory is terminated by a "/"
   }
+
+  //Initialize the attendance probability
+  initialize_office_attendance();
 
   //Initialize output folders
   gnuplot gnuplot(output_dir);

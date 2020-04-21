@@ -1810,3 +1810,13 @@ $('.selectpicker').change(function () {
 
 set_default_values_html();
 
+
+$('#toggleInfo').on('click',function() {
+    let att = $(this).attr('data-field');
+    if(($(this).next()).hasClass('tool-dec')) {
+        $(this).next().remove();
+    }
+    else {
+        $(this).after('<div class="tool-dec"><img width="100%" src="'+ IMAGEPREFIX +'/InfectionProgression-v2.png" /></div>');
+    }
+})

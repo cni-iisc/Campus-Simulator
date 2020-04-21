@@ -181,21 +181,22 @@
        }
  
        .abt-parent .abt-toggle {
-         width: 100%;
-     text-align: left;
-     padding: 0;
-     display: block;
-     text-decoration: none;
-     color: #333;
-     font-size: 16px;
+        width: 100%;
+        text-align: left;
+        padding: 0;
+        display: block;
+        text-decoration: none;
+        color: #333;
+        font-size: 20px;
        }
  
        .abt-parent .abt-dec {
-         border-top: 1px solid #333;
-         padding-top: 10px;
+        border-top: 1px solid #999;
+        padding-top: 10px;
+        font-size: 16px;
      
        }
- 
+       
        .footer {
          background-color: #e6e6e6;
          padding: 0 3rem;

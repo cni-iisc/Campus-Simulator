@@ -233,6 +233,15 @@ enum class WorkplaceType{
    school = 2
 };
 
+enum class OfficeType{
+   other = 0,
+   sez = 1,
+   government = 2,
+   it = 3,
+   construction = 4,
+   hospital = 5
+};
+
 //Default workplace value for homebound individuals.
 const int WORKPLACE_HOME = -1;
 
@@ -271,6 +280,8 @@ struct agent{
 
   WorkplaceType workplace_type;
   //one of school, office, or home
+  OfficeType office_type = OfficeType::other;
+  
   std::vector<double> lambda_incoming;
   //infectiousness from home, workplace, community, travel as seen by
   //individual
@@ -346,6 +357,7 @@ struct workplace {
   double Q_w = 1;
   double scale = 0;
   WorkplaceType workplace_type;
+  OfficeType office_type = OfficeType::other;
   bool quarantined = false;
   double age_independent_mixing = 0;
   //age_dependent_mixing not added yet, since it is unused
@@ -386,5 +398,7 @@ struct community {
 double psi_T(const agent& node, double cur_time);
 
 
+//attendance probability at given time
+double get_attendance_probability(OfficeType office_type, count_type time);
 
 #endif

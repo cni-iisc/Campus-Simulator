@@ -120,3 +120,9 @@ double earth_distance(location a, location b){
 					 * pow(sin(delta_lon/2), 2))));
   return angle*EARTH_RADIUS;
 }
+
+
+//attendance probability at given time
+double get_attendance_probability(OfficeType office_type, count_type time){
+  return 0.5; //Dummy, change later based on input file format
+}

@@ -80,7 +80,10 @@ vector<workplace> init_workplaces() {
 	wps[index].set(elem["lat"].GetDouble(),
 				   elem["lon"].GetDouble(),
 				   WorkplaceType::office);
-	++index;
+
+    wps[index].office_type = static_cast<OfficeType>(elem["officeType"].GetInt());
+
+    ++index;
   }
   assert(index == GLOBAL.num_schools + GLOBAL.num_workplaces);
   return wps;
@@ -329,6 +332,9 @@ void assign_individual_home_community(vector<agent>& nodes, vector<house>& homes
 	//All members of the household are set the same compliance value
 	
 	int workplace = nodes[i].workplace;
+    if(nodes[i].workplace_type == WorkplaceType::office){
+      nodes[i].office_type = workplaces[workplace].office_type;
+    }
 	if(workplace != WORKPLACE_HOME){
 	  workplaces[workplace].individuals.push_back(i);
 

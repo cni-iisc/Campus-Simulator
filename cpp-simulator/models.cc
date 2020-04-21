@@ -123,6 +123,10 @@ double earth_distance(location a, location b){
 
 
 //attendance probability at given time
-double get_attendance_probability(OfficeType office_type, count_type time){
-  return 0.5; //Dummy, change later based on input file format
+double get_attendance_probability(WorkplaceType workplace_type, OfficeType office_type, count_type time){
+  if (workplace_type != WorkplaceType::office){
+    return 0;
+  } else {
+    return 0.5; //Dummy, change later based on input file format
+  }
 }

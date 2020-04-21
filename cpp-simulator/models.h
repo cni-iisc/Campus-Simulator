@@ -316,6 +316,9 @@ struct agent{
   double hd_area_exponent = 0;
   //only used if in the input file, some individuals are assigned to
   //slums or other high population density areas
+
+  //Currently attending office or not
+  bool attending = true;
   
   agent(){}
   // Is the agent curently traveling?
@@ -399,6 +402,6 @@ double psi_T(const agent& node, double cur_time);
 
 
 //attendance probability at given time
-double get_attendance_probability(OfficeType office_type, count_type time);
+double get_attendance_probability(WorkplaceType workplace_type, OfficeType office_type, count_type time);
 
 #endif

@@ -138,7 +138,13 @@ plot_data_struct run_simulation(){
 			  mean_lambda_fraction_data.end(), 0);
 
 	count_type num_new_infections = 0;
-	
+
+    if (time_step % GLOBAL.SIM_STEPS_PER_DAY == 0){
+      for(count_type j = 0; j < GLOBAL.num_people; ++j){
+        nodes[j].attending = bernoulli(get_attendance_probability(nodes[j].workplace_type, nodes[j].office_type, time_step));
+      }
+    }
+    
 	//#pragma omp parallel for
 	//
 	// Since update_infection uses a random number generator with

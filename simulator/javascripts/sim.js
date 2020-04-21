@@ -1,8 +1,4 @@
-
-
-
-
-//Copyright [2020] [Indian Institute of Science, Bangalore]
+//Copyright [2020] [Indian Institute of Science, Bangalore & Tata Institute of Fundamental Research, Mumbai]
 //SPDX-License-Identifier: Apache-2.0
 
 const WEBPAGE_VERSION = true;
@@ -1430,7 +1426,8 @@ function run_simulation() {
 
     let plot_tuple = [days_num_infected, days_num_exposed, days_num_hospitalised, days_num_critical, days_num_fatalities, days_num_recovered, days_num_affected, lambda_evolution];
     call_plotly(plot_tuple);
-
+    document.getElementById("in-progress").style.display = 'none';
+    document.getElementById('plots-area').style.display = 'block';
 
     const interval = setInterval(function () {
         console.log("inside the interval stuff. time_step = ", time_step);
@@ -1727,18 +1724,21 @@ function runSimulations() {
 function clear_plots() {
     //clear previous plots
     document.getElementById("no-data").style.display = 'none';
+    document.getElementById('plots-area').style.display = 'none';
+    document.getElementById("in-progress").style.display = 'block';
     document.getElementById("status").innerHTML = "Simulation in Progress....";
     document.getElementById("status").style.display = 'inline'
     document.getElementById("num_affected_plot_2").innerHTML = "";
     document.getElementById("num_infected_plot_2").innerHTML = "";
-    document.getElementById("num_exposed_plot_2").innerHTML = "";
+    // document.getElementById("num_exposed_plot_2").innerHTML = "";
     document.getElementById("num_hospitalised_plot_2").innerHTML = "";
     document.getElementById("num_critical_plot_2").innerHTML = "";
     document.getElementById("num_fatalities_plot_2").innerHTML = "";
-    document.getElementById("num_recovered_plot_2").innerHTML = "";
+    // document.getElementById("num_recovered_plot_2").innerHTML = "";
     document.getElementById("lambda_evolution").innerHTML = "";
-
+    setTimeout(function() {
     runSimulations();
+},1)
 }
 
 function set_default_values_html() {

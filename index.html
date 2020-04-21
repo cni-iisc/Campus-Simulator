@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!--Copyright [2020] [Indian Institute of Science, Bangalore & Tata Institute of Fundamental Research, Mumbai]
+<!--Copyright [2020] [Indian Institute of Science, Bangalore]
 SPDX-License-Identifier: Apache-2.0-->
 <html lang="en">
 
@@ -25,72 +25,89 @@ SPDX-License-Identifier: Apache-2.0-->
   <div class="container-fluid">
     <div class="row">
       <nav class="navbar custom-header">
-        <div class="navbar-header container-margin">
-          <a class="navbar-brand" href="#">
-            Epidemic Simulator (City-Scale)</a>
+        <div class="navbar-header col-sm-12">
+          <div class="col-sm-4">
+            <div class="logos">
+              <a target="_blank" href="https://www.sap.com/index.html"><img src=" https://unpkg.com/fiori-fundamentals@1.7.5/dist/images/sap-logo.png" alt="IISc logo" width="60px"></a>
+              </div>
+           
+            <div class="logos">
+            <a target="_blank" href="https://www.iisc.ac.in"><img src="simulator/images/iisc_1.png" alt="IISc logo" width="60px"></a>
+            </div>
+            <div>
+              <div class="logos"><a target="_blank" href="https://cni.iisc.ac.in">Centre for Networked Intelligence</a></div>
+              <div class="logos"><a target="blank" href="https://cps.iisc.ac.in" >Robert Bosch Centre for CPS</a></div>
+              <div class="logos"><a target="blank" href="https://iisc.ac.in" >Indian Institute of Science, Bangalore</a></div>
+            </div>
+          </div>
+          <div class="col-sm-4 main-title">
+            <h4>City-Scale Epidemic Simulator</h4>
+          </div>
+          <div class="col-sm-4">
+            <div>
+              <div><a target="_blank" href="https://www.tcs.tifr.res.in">School of Technology and Computer Science</a></div>
+              <div><a target="blank" href="https://www.tifr.res.in" >Tata Institute of Fundamental Research, Mumbai</a></div>
+            </div>
+          <div>
+            <a target="_blank" href="https://www.tifr.res.in"><img src="simulator/images/Covid-TIFR-Logo.png" alt="TIFR logo" width="70px"></a>
+          </div>
+          </div>
         </div>
       </nav>
     </div>
-    <!-- <div class="row">
-          <div class="col my-3">
-            This is a city-scale agent-based simulator for the city of Bengaluru, built based on the descriptions given in this 
-            <A HREF="https://www.imperial.ac.uk/mrc-global-infectious-disease-analysis/covid-19/report-9-impact-of-npis-on-covid-19/">
-                study</A> of non-pharmaceutical interventions (from the Imperial College, London), this
-            <A HREF="https://www.nature.com/articles/nature04017">paper</A> on pandemics in SE Asia, and its associated 
-            <A HREF="https://static-content.springer.com/esm/art%3A10.1038%2Fnature04017/MediaObjects/41586_2005_BFnature04017_MOESM1_ESM.pdf">supplementary material</A>. <br><br>
-
-            The simulator instantiates a smaller scale Bengaluru with population 100,000 across its 
-            198 wards. The population distribution, employed fraction, age distribution, and 
-            household size distribution are based on 2011 census data (with scaling for population growth).
-            Commute distances, workplace sizes, and school sizes are based on Thailand data given in the aforementioned 
-            <A HREF="https://static-content.springer.com/esm/art%3A10.1038%2Fnature04017/MediaObjects/41586_2005_BFnature04017_MOESM1_ESM.pdf">supplementary material</A>. 
-            <br>
-            The simulator creates a smaller scale city with 100,000 agents distributed across its 
-            municipal wards. The reduced size is so that it can run on your browser. 
-            The population distribution, 
-            employed fraction, age distribution, and household size distribution are based on 
-            the 2011 census data. Agents are assigned to households, schools or workplaces, and 
-            community spaces. The epidemic then spreads in a stochastic fashion based on meetings
-            that happen in the interaction spaces in our synthetic city.
-            <br>
-            <br>
-            Choose one of the implemented interventions and see how the epidemic evolves.
-            <br>
-            <br>
-            <em>A disclaimer: This tool is to help you understand the effectiveness of social distancing interventions related to COVID-19.
-            The simulator's outputs should not be used for medical diagnostic, prognostic or treatment purposes or
-            for guidance on personal travel plans.</em>
-            <br><br>
-            Note: best viewed on a desktop/laptop/tablet screen.
-          </div>
-          <div class="col-xl-4 col-sm-3 align-self-center justify-content-center p-3">
-            <div class="h-75 d-inline-block">
-                  <img src="simulator/images/bengaluru-wards_v2.png" id="mapImage" alt="city map" width="80%">
-            </div>
-          </div>
-        </div> -->
     <div class="row splitter-container" id="MySplitter">
       <div class="col-sm-6 left-pane">
         <!-- <div class="row py-3 pl-2" >
                 <div class="col"><b>You can adjust the following parameters before 
                     launching the simulator</b>
                 </div>
-                <div class="col">
+                <div class="col justify-content-left">
                   <button type="button" class="btn btn-primary" id="run_button" onclick="clear_plots();">Run</button>
                 <button type="button" class="btn btn-danger" id="sim_stop" style="display: none" onclick="stop_sim();">Stop Simulation</button>
                 </div>
               </div> -->
+              
               <form class="scroll">
+                <div class="col-sm-12 abt-parent">
+                <a class="abt-toggle" data-toggle="collapse" href="#about" aria-expanded="false" aria-controls="collapseExample">
+                  About
+                </a>
+                <div class="collapse abt-dec" id="about">
+                    This is a city-scale agent-based simulator, built to study the spread of COVID-19 in an Indian city.
+                    The simulator is released as <a target="_blank" HREF="https://github.com/cni-iisc/epidemic-simulator">open-source software here.</a>
+                    Details of our implementation can be found 
+                    <A target="_blank" HREF="https://covid19.iisc.ac.in/modeling-of-epidemic-spread-in-indian-urban-conditions/">
+                        here</A>.
+                      <!-- <span class="badge badge-primary badge-pill float-left mt-1">new</span> -->
+                    <br>
+                    <br>
+                    The simulator creates a smaller scale city with 100,000 agents distributed across its 
+                    municipal wards. The reduced size is so that it can run on your browser. 
+                    The population distribution, 
+                    employed fraction, age distribution, and household size distribution are based on 
+                    the 2011 census data. Agents are assigned to households, schools or workplaces, and 
+                    community spaces. The epidemic then spreads in a stochastic fashion based on meetings
+                    that happen in the interaction spaces in our synthetic city.
+                    <br>
+                    <br>
+                    Choose one of the implemented interventions and see how the epidemic evolves.
+                    <br>
+                    <br>
+                    <em>A disclaimer: This tool is to help you understand the effectiveness of social distancing interventions related to COVID-19.
+                    The simulator's outputs should not be used for medical diagnostic, prognostic or treatment purposes or
+                    for guidance on personal travel plans.</em>
+                  </div>
+                </div>
                 <p class="section-title">City Details</p>
                 <hr class="line-separator"/>
                 
                 <div class="form-group row">
-                  <label for="City" class="col-sm-8 form-label">City</label>
+                  <label for="cityname" class="col-sm-8 form-label">City</label>
                   <div class="col-sm-4">
-                  <select name="cars" class="form-control" onchange="citySelectionChange(this);">
-                      <option value="Bengaluru" selected>Bengaluru</option>
-                      <option value="Mumbai">Mumbai</option>
-                  </select>
+                    <select class="selectpicker form-control" id="cityname" name="cityname">
+                      <option value="bengaluru" selected="selected">Bengaluru</option>
+                      <option value="mumbai">Mumbai</option>
+                    </select>
                 </div>
                     <!--<input class="form-control" type="number" min="1" max="600" value="120" step="1"
                       id="City"></div>-->
@@ -102,18 +119,18 @@ SPDX-License-Identifier: Apache-2.0-->
                     <input class="form-control" type="number" 
                       id="Population" value="100000" readonly></div>
                 </div>
-                <div class="form-group row">
+                <!-- <div class="form-group row">
                   <label class="col-sm-8 form-label" for="Wards">Number of divisions (wards)</label>
                   <div class="col-sm-4">
                     <input class="form-control" type="number" 
                       id="Wards" value="198" readonly></div>
-                </div>
+                </div> -->
                 <div class="form-group row">
                   <label class="col-sm-8 form-label">Map</label>
                   <div class="col-sm-4"></div>
                 </div>
                 <div class="col align-self-end my-3">
-                  <img src="simulator/images/bangalore-wards.png" alt="city map" width="35%">
+                  <img src="simulator/images/bengaluru-wards_v2.png" id="mapImage" alt="city map" width="35%">
                 </div>
                 <p class="section-title">Simulation Duration</p>
                 <hr class="line-separator"/>
@@ -345,31 +362,12 @@ SPDX-License-Identifier: Apache-2.0-->
                   <div class="col-sm-4"><input class="form-control" type="number" min="0" max="1" value="0.9" id="compliance">
                   </div>
                 </div>
-            <p class="section-title">Resources and Reference</p>
-            <hr class="line-separator"/>
-            <div class="form-group row">
-              <div class="col-sm-12">
-                This is a city-scale agent-based simulator for the city of Bengaluru, built based on the descriptions given in this 
-                <A HREF="https://www.imperial.ac.uk/mrc-global-infectious-disease-analysis/covid-19/report-9-impact-of-npis-on-covid-19/">
-                    study</A> of non-pharmaceutical interventions (from the Imperial College, London), this
-                <A HREF="https://www.nature.com/articles/nature04017">paper</A> on pandemics in SE Asia, and its associated 
-                <A HREF="https://static-content.springer.com/esm/art%3A10.1038%2Fnature04017/MediaObjects/41586_2005_BFnature04017_MOESM1_ESM.pdf">supplementary material</A>. <br><br>
-      
-                The simulator instantiates a smaller scale Bengaluru with population 100,000 across its 
-                198 wards. The population distribution, employed fraction, age distribution, and 
-                household size distribution are based on 2011 census data (with scaling for population growth).
-                Commute distances, workplace sizes, and school sizes are based on Thailand data given in the aforementioned 
-                <A HREF="https://static-content.springer.com/esm/art%3A10.1038%2Fnature04017/MediaObjects/41586_2005_BFnature04017_MOESM1_ESM.pdf">supplementary material</A>. 
-                <br>
-                <br>
-                A description of the simulator and its implementation is under preparation.
-              </div>
-            </div>
+          
       
               </form>
         <div class="col-sm-12 run-btn-cnt">
           <button type="button" class="btn btn-success pull-right" id="run_button" onclick="clear_plots();">Run</button>
-          <button type="button" class="btn btn-stop pull-right" id="sim_stop" style="display: none" onclick="stop_sim();">Stop
+          <button type="button" class="btn btn-danger pull-right" id="sim_stop" style="display: none" onclick="stop_sim();">Stop
             Simulation</button>
         </div>
       </div>
@@ -436,18 +434,18 @@ SPDX-License-Identifier: Apache-2.0-->
       
       </div>
     </div>
+    <div class="row footer">
+     <div class="col-sm-4">
+      <a href="mailto:contact.cni@iisc.ac.in" style="color:#333"><i class="fa fa-envelope" aria-hidden="true"></i> contact.cni@iisc.ac.in</a>
+     </div>
+     <div class="col-sm-8" style="text-align: right;">
+       <span>Licensed under Apache 2.0 license. Copyright [2020] [IISc, Bangalore and TIFR, Mumbai]</span>
+     </div>
+     </div>
   </div>
-  <div id="num_exposed_plot_2"></div>
-  <div id="num_recovered_plot_2"></div>
-  <!-- <div class="jumbotron text-center" style="margin-bottom:0;background-color:#AAAA99";> -->
-  <!-- <div class="jumbotron text-center" style="display:flex;align-items:center;background-color:#776633;";> -->
-  <!-- <div class="d-flex bg-dark p-1 text-white justify-content-between">
-    <div class="d-flex px-3"><b><a href="mailto:epiSim@iisc.sc.in" style="color:white"><i class="fa fa-envelope"
-            aria-hidden="true"></i> Contact us</a></b></div>
-    <div class="d-flex px-3">This work is licensed under Apache 2.0 license.<br>Copyright [2020] [Indian Institute of
-      Science, Bangalore]</div>
-  </div> -->
-
+  <!-- <div id="num_exposed_plot_2"></div>
+  <div id="num_recovered_plot_2"></div> -->
+  
   <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
     integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
     crossorigin="anonymous"></script>
@@ -461,13 +459,10 @@ SPDX-License-Identifier: Apache-2.0-->
   <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/jstat@latest/dist/jstat.min.js"></script>
   
   <script type="text/javascript" src="https://d3js.org/d3-random.v2.min.js"></script>
-  <script data-main="simulator/javascripts/init" src="simulator/libs/require.js"></script>
   <script type="text/javascript" src="simulator/javascripts/random-0.26.js"></script>
-  <script type="text/javascript" src="simulator/javascripts/interventions.js"></script>
-  <script type="text/javascript" src="simulator/javascripts/initialise_network.js"></script>
-  <script type="text/javascript" src="simulator/javascripts/controller/viewController.js"></script>
-  <script type="text/javascript" src="simulator/javascripts/initSimulation.js"></script>
-  <script type="text/javascript" src="simulator/javascripts/compute.js"></script>
+        <script type="text/javascript" src="simulator/javascripts/interventions.js"></script>
+        <script type="text/javascript" src="simulator/javascripts/initialise_network.js"></script>
+        <script type="text/javascript" src="simulator/javascripts/sim.js"></script>        
   <script type="text/javascript" src="simulator/javascripts/splitter.js"></script>
 </body>
 

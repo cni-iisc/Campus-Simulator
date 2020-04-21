@@ -141,7 +141,9 @@ plot_data_struct run_simulation(){
 
     if (time_step % GLOBAL.SIM_STEPS_PER_DAY == 0){
       for(count_type j = 0; j < GLOBAL.num_people; ++j){
-        nodes[j].attending = bernoulli(get_attendance_probability(nodes[j].workplace_type, nodes[j].office_type, time_step));
+        nodes[j].attending =
+          bernoulli(communities[nodes[j].community].w_c
+                    * get_attendance_probability(nodes[j].workplace_type, nodes[j].office_type, time_step));
       }
     }
     
@@ -193,8 +195,6 @@ plot_data_struct run_simulation(){
 	}
 
 	for (count_type c = 0; c < GLOBAL.num_communities; ++c){
-	  communities[c].lambda_community = updated_lambda_c_local(nodes, communities[c]);
-
 	  auto temp_stats = get_infected_community(nodes, communities[c]);
 	  //let row = [time_step/SIM_STEPS_PER_DAY,c,temp_stats[0],temp_stats[1],temp_stats[2],temp_stats[3],temp_stats[4]].join(",");
 	  plot_data.nums["csvContent"].push_back({time_step, {
@@ -206,6 +206,14 @@ plot_data_struct run_simulation(){
 		  temp_stats.dead,
 		  temp_stats.hd_area_affected
 		  }});
+
+      //Update w_c value for this community, followed by update of lambdas
+      communities[c].w_c = interpolate(1.0, GLOBAL.LOCKED_COMMUNITY_LEAKAGE,
+                                       double(temp_stats.hospitalised)/double(communities[c].individuals.size()),
+                                       GLOBAL.COMMUNITY_LOCK_THRESHOLD);
+
+      communities[c].lambda_community = updated_lambda_c_local(nodes, communities[c]);
+
 	}
 
 	update_lambda_c_global(communities, community_dist_matrix);

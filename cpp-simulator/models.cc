@@ -130,3 +130,13 @@ double get_attendance_probability(WorkplaceType workplace_type, OfficeType offic
     return 0.5; //Dummy, change later based on input file format
   }
 }
+
+//interpolation with a threshold
+double interpolate(double start, double end, double current, double threshold){
+  if (current >= threshold){
+    return end;
+  }
+  else {
+    return start + (end - start)*current/threshold;
+  }
+}

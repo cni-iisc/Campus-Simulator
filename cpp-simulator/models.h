@@ -153,6 +153,13 @@ struct global_params{
   double SECOND_PERIOD = 21;
   double THIRD_PERIOD = 42;
   double OE_SECOND_PERIOD = 30;
+
+  //Community lockdown threshold.
+  //
+  // Community is fully locked down if the number of hospitalized individuals
+  //crosses this fraction
+  double COMMUNITY_LOCK_THRESHOLD = 5E-3; //0.5%
+  double LOCKED_COMMUNITY_LEAKAGE = 0.25;
   
   //Switches
   //If this is false, the file quarantinedPopulation.json is needed
@@ -385,6 +392,9 @@ struct community {
   double scale = 0;
   bool quarantined = false;
 
+  //parameter for measuring how locked down the community is
+  double w_c = 1;
+
   int wardNo;
   community(){}
   community(double latitude, double longitude, int wardNo):
@@ -403,5 +413,9 @@ double psi_T(const agent& node, double cur_time);
 
 //attendance probability at given time
 double get_attendance_probability(WorkplaceType workplace_type, OfficeType office_type, count_type time);
+
+
+//interpolation with a threshold
+double interpolate(double start, double end, double current, double threshold);
 
 #endif

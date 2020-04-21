@@ -285,7 +285,7 @@ double updated_lambda_c_local(const vector<agent>& nodes, const community& commu
 	sum_value += nodes[community.individuals[i]].lambda_c;
   }
 
-  return community.scale*sum_value;
+  return community.scale*sum_value*community.w_c;
 }
 
 void update_lambda_c_global(vector<community>& communities, const matrix<double>& community_distance_matrix){
@@ -297,7 +297,7 @@ void update_lambda_c_global(vector<community>& communities, const matrix<double>
 		* communities[c2].lambda_community;
 	  denom += f_kernel(community_distance_matrix[c1][c2]);
 	}
-	communities[c1].lambda_community_global = num/denom;
+	communities[c1].lambda_community_global = communities[c1].w_c*num/denom;
   }
 }
 

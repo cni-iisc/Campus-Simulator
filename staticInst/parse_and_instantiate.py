@@ -30,7 +30,7 @@ from computeDistributions import *
 # Default Global Prameters
 interactive = 0
 
-default_miniPop = 100000 
+default_miniPop = 100000
 default_city="bangalore"
 default_ibasepath = 'data/base/bangalore/'
 default_obasepath = 'data/bangalore-100K/'
@@ -91,7 +91,7 @@ outputfiles = {
     "fractionPopulation":"fractionPopulation.json"
               }
 
-#Check if the necessary files are present. 
+#Check if the necessary files are present.
 for f in inputfiles:
     assert os.path.isfile(os.path.join(ibasepath, inputfiles[f])), "File {} doesn't exist!".format(inputfiles[f])
 
@@ -104,10 +104,10 @@ inputfiles.update({
 for f in inputfiles:
     inputfiles[f] = os.path.join(ibasepath,inputfiles[f])
 
-    
+
 # Create output directory if not present
 if not os.path.exists(obasepath):
-    os.mkdir(obasepath)   
+    os.mkdir(obasepath)
 
 for f in outputfiles:
     outputfiles[f] = os.path.join(obasepath,outputfiles[f])
@@ -161,7 +161,7 @@ if os.path.exists(inputfiles['slumcluster']):
     if os.path.exists(os.path.join(ibasepath,'slumpoints')):
         slumprecomputedflag = 1
         print("Slum points precomputed.")
-        
+
 
 with open(inputfiles["cityprofile"], newline='') as file:
     cityprofiledata = json.load(file)
@@ -302,13 +302,13 @@ for wardIndex in range(nwards):
     slumpop = demographics["slumPopulation"][wardIndex]
     currnonslumwpop = 0
     currslumwpop = 0
-    
+
     #creating nonslum-houses
     while(currnonslumwpop < nonslumpop):
         h = {}
         h["id"]=hid
         h["wardIndex"]=wardIndex
-       
+
         if slumflag:
             h["slum"]=0
 
@@ -319,7 +319,7 @@ for wardIndex in range(nwards):
         (lat,lon) = sampleRandomLatLong_s(wardIndex,0)
         h["lat"] = lat
         h["lon"] = lon
-        
+
         houses.append(h)
         hid+=1
 
@@ -328,17 +328,17 @@ for wardIndex in range(nwards):
         h = {}
         h["id"]=hid
         h["wardIndex"]=wardIndex
-        
+
         h["slum"]=1
-        
+
         s = int(sampleHouseholdSize() * slum_householdsize_scalefactor)
         h["size"]=s
         currslumwpop+=s
-        
+
         (lat,lon) = sampleRandomLatLong_s(wardIndex,1)
         h["lat"] = lat
         h["lon"] = lon
-        
+
         houses.append(h)
         hid+=1
 print("done.",flush=True)
@@ -427,7 +427,7 @@ for h in houses:
         wardpop_actual[p["wardIndex"]]+=1
         totalPop_actual+=1
         pid+=1
-        
+
 
 print("done.",flush=True)
 
@@ -456,7 +456,11 @@ def sampleWorkplaceSize():
     m_max = len(wsdist)
     return int(np.random.choice(np.arange(m_max),1,p=wsdist)[0])
 
+officeType = {"Other":0,"SEZ":1,"Government":2,"IT":3,"Construction":4,"Medical":5}
 
+def sampleOfficeType(size):
+    #For now completely ignoring the size and just returning officetype at random
+    return officeType[random.choice(list(officeType.keys()))]
 
 print("Assigning workplaces to people...",end='',flush=True)
 
@@ -473,6 +477,9 @@ for wardIndex in range(nwards):
 
         w["wardIndex"]=wardIndex
         s = sampleWorkplaceSize()
+        oType = sampleOfficeType(s)
+        w["officeType"]=oType
+        
         i = 0
         while(i < s and len(workers[wardIndex])>0):
             pid = workers[wardIndex].pop(random.randrange(len(workers[wardIndex])))
@@ -506,7 +513,7 @@ for slumbit in [0,1]:
 
             if slumflag==1:
                 s["slum"]=slumbit
-            
+
             if slumbit==1:
                 size = int(sampleSchoolSize()*slum_schoolsize_factor)
             else:
@@ -520,10 +527,10 @@ for slumbit in [0,1]:
                 i+=1
             schools.append(s)
             sid+=1
-            #Note: This sort of creates a very skewed first-bracket for school size. 
-            #If the city size is small, then many schools will be "under-capacity". 
-            #Need to think about how to fix this corner case. 
-                
+            #Note: This sort of creates a very skewed first-bracket for school size.
+            #If the city size is small, then many schools will be "under-capacity".
+            #Need to think about how to fix this corner case.
+
 print("done.",flush=True)
 
 # Stats of instantiated city
@@ -551,11 +558,11 @@ for i in range(nwards):
     w["totalPopulation"] = int(wardpop_actual[i])
     w["fracPopulation"] = wardpop_actual[i]/totalPop_actual
     fractionPopulations.append(w)
-    
+
 wardCentreDistances = [ {"ID":i+1} for i in range(nwards)]
 for i in range(nwards):
     for j in range(nwards):
-        d = distance(commonAreas[i]["lat"],commonAreas[i]["lon"],commonAreas[j]["lat"],commonAreas[j]["lon"]) 
+        d = distance(commonAreas[i]["lat"],commonAreas[i]["lon"],commonAreas[j]["lat"],commonAreas[j]["lon"])
         wardCentreDistances[i][str(j+1)]=d
 
 
@@ -608,7 +615,7 @@ print("individuals.json ... done.",flush=True)
 
 print('\nGenerating validation plots for the instantitaion...\n')
 
-# Get distributions to match 
+# Get distributions to match
 age_values, age_distribution = compute_age_distribution(cityprofiledata['age']['weights'])
 household_sizes, household_distribution = compute_household_size_distribution(cityprofiledata['householdSize']['bins'], cityprofiledata['householdSize']['weights'])
 schoolsize_values, schoolsize_distribution = extrapolate_school_size_distribution(cityprofiledata['schoolsSize']['weights'],avgSchoolsize)
@@ -664,7 +671,7 @@ print("done.",flush=True)
 # generate workplace size distribution
 a=a_workplacesize
 c=c_workplacesize
-m_max=m_max_workplacesize    
+m_max=m_max_workplacesize
 workplace_sizes = np.arange(m_max)
 p_nplus = np.arange(float(m_max))
 for m in range(m_max):
@@ -675,14 +682,14 @@ p_n = np.arange(float(m_max))
 prev=0.0
 for m in range(1, m_max):
     p_n[m] = p_nminus[m] - prev
-    prev = p_nminus[m] 
+    prev = p_nminus[m]
 
 
 # workplace size
 print("Validating workplace-size in instantiation...",end='',flush=True)
 
 full_frame = np.array([len(np.where(df1['workplace'] == i)[0]) for i in np.unique(df1['workplace'].values)[~np.isnan(np.unique(df1['workplace'].values))]])
-workplacesize_output = [len(np.where(full_frame == j)[0]) for j in workplace_sizes] / np.sum([len(np.where(full_frame == j)[0]) for j in workplace_sizes])    
+workplacesize_output = [len(np.where(full_frame == j)[0]) for j in workplace_sizes] / np.sum([len(np.where(full_frame == j)[0]) for j in workplace_sizes])
 workplace_distribution = p_n
 plt.plot(np.log10(workplace_sizes),np.log10(workplacesize_output),'r',label='Instantiation')
 plt.plot(np.log10(workplace_sizes), np.log10(workplace_distribution),label='Model')
@@ -700,7 +707,7 @@ print("done.",flush=True)
 
 
 print("Validating workplace commute distance in instantiation...",end='',flush=True)
-full_frame = np.array([distance(df1.loc[i,'lat'],df1.loc[i,'lon'],wp.loc[wp.index==int(df1.loc[i,'workplace']),'lat'],wp.loc[wp.index==int(df1.loc[i,'workplace']),'lon']) for i in np.where(df1['workplaceType']==1)[0]])        
+full_frame = np.array([distance(df1.loc[i,'lat'],df1.loc[i,'lon'],wp.loc[wp.index==int(df1.loc[i,'workplace']),'lat'],wp.loc[wp.index==int(df1.loc[i,'workplace']),'lon']) for i in np.where(df1['workplaceType']==1)[0]])
 commuter_distance_output = [len(np.where(np.array(np.floor(full_frame),dtype=int) ==i)[0]) for i in np.arange(0,m_max_commuter_distance)]/np.sum([len(np.where(np.array(np.floor(full_frame),dtype=int) ==i)[0]) for i in np.arange(0,m_max_commuter_distance)])
 actual_dist=[]
 actual_dist = travel_distance_distribution(0,m_max_commuter_distance,a_commuter_distance,b_commuter_distance)

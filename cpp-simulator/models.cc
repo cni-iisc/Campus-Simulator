@@ -126,7 +126,7 @@ office_attendance ATTENDANCE;
 
 //attendance probability at given time
 double get_attendance_probability(WorkplaceType workplace_type, OfficeType office_type, count_type time){
-  if (workplace_type != WorkplaceType::office){
+  if (workplace_type != WorkplaceType::office || GLOBAL.IGNORE_ATTENDANCE_FILE){
     return 1;
     //Let the other features handle these workplaces
   } else {

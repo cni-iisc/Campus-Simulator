@@ -178,7 +178,9 @@ struct global_params{
   //seeded
   bool SEED_FIXED_NUMBER = false;
   count_type INIT_FIXED_NUMBER_INFECTED = 0;
-  
+
+  //Whether to ignore the attendance file
+  bool IGNORE_ATTENDANCE_FILE = false;
 
   //Input and output
   std::string input_base;

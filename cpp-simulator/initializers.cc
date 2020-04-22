@@ -397,6 +397,10 @@ void compute_scale_communities(const vector<agent>& nodes, vector<community>& co
 
 //Initialize the office attendance
 void initialize_office_attendance(){
+  //No need to read the attendance file if we are specifically asked to ignore
+  //it
+  if(GLOBAL.IGNORE_ATTENDANCE_FILE) return;
+
   constexpr count_type NUMBER_OF_OFFICE_TYPES = 6;
   auto attendanceJSON = readJSONFile(GLOBAL.input_base + GLOBAL.attendance_filename);
   ATTENDANCE.number_of_entries = attendanceJSON.GetArray().Size();

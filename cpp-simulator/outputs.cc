@@ -173,6 +173,8 @@ void output_global_params(const string& output_dir){
   fout << "SEED_HD_AREA_POPULATION: " << GLOBAL.SEED_HD_AREA_POPULATION << ";" << endl;
   fout << "SEED_ONLY_NON_COMMUTER: " << GLOBAL.SEED_ONLY_NON_COMMUTER << ";" << endl;
   fout << "LOCKED_COMMUNITY_LEAKAGE: " << GLOBAL.LOCKED_COMMUNITY_LEAKAGE << ";" << endl;
+
+  fout << "IGNORE_ATTENDANCE_FILE: " << GLOBAL.IGNORE_ATTENDANCE_FILE << ";" << endl;
   
   fout.close();
 }

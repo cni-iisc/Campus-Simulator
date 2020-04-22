@@ -25,6 +25,8 @@ int main(int argc, char** argv){
 	 cxxopts::value<bool>()->default_value(DEFAULTS.SEED_ONLY_NON_COMMUTER))
 	("SEED_FIXED_NUMBER", "seed a fixed number of initial infections.  If this option is provided, INIT_FRAC_INFECTED is ignored in favour of INIT_FIXED_NUMBER_INFECTED",
 	 cxxopts::value<bool>()->default_value(DEFAULTS.SEED_FIXED_NUMBER))
+    ("IGNORE_ATTENDANCE_FILE", "whether to ignore the attendance file",
+     cxxopts::value<bool>()->default_value(DEFAULTS.IGNORE_ATTENDANCE_FILE))
 	("NUM_DAYS", "number of days in the simulation",
 	 cxxopts::value<count_type>()->default_value(DEFAULTS.NUM_DAYS))
 	("INIT_FRAC_INFECTED", "initial probability of a person being infected.  If --SEED_FIXED_NUMBER is provided, this is ignored in favour of INIT_FIXED_NUMBER_INFECTED",
@@ -139,6 +141,7 @@ int main(int argc, char** argv){
 
   GLOBAL.input_base = optvals["input_directory"].as<std::string>();
   GLOBAL.attendance_filename = optvals["attendance_filename"].as<std::string>();
+  GLOBAL.IGNORE_ATTENDANCE_FILE = optvals["IGNORE_ATTENDANCE_FILE"].count();
 
   if(optvals["PROVIDE_INITIAL_SEED"].count()){
 	//Initial seed was provided

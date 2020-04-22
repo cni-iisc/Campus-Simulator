@@ -110,7 +110,7 @@ struct global_params{
   double F_KERNEL_B = 5.384;
 	
   
-  const double INCUBATION_PERIOD_SHAPE = 2.3;
+  const double INCUBATION_PERIOD_SHAPE = 2.0; //Fixing this back to 2.0. To change incubation period, change incubation scale.
   double INCUBATION_PERIOD_SCALE = INCUBATION_PERIOD*SIM_STEPS_PER_DAY;// 2.29 days
 
   //Gamma with mean 1 and shape 0.25, as per Imperial College 16 March Report
@@ -160,7 +160,7 @@ struct global_params{
   // Community is fully locked down if the number of hospitalized individuals
   //crosses this fraction
   double COMMUNITY_LOCK_THRESHOLD = 5E-3; //0.5%
-  double LOCKED_COMMUNITY_LEAKAGE = 0.25;
+  double LOCKED_COMMUNITY_LEAKAGE = 1.0;
   
   //Switches
   //If this is false, the file quarantinedPopulation.json is needed

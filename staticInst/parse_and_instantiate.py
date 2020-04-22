@@ -44,6 +44,16 @@ avgSchoolsize = 300
 slum_schoolsize_factor = 1
 slum_householdsize_scalefactor = 1
 
+#ppl working at sez and gov (Bangalore data)
+max_sez=230000 /10
+max_gov= (2295000*(12.327/66.84)*0.5) /10
+max_ites = 1500000 /10
+max_ites_not_sez=max_ites-max_sez
+
+#counters
+num_sez = 0
+num_gov = 0
+num_ites = 0
 
 # Handling inputs and interactions
 if interactive:
@@ -458,42 +468,43 @@ def sampleWorkplaceSize():
 
 officeType = {"Other":0,"SEZ":1,"Government":2,"IT":3,"Construction":4,"Medical":5}
 
-def sampleOfficeType(size):
+#Old code = for roll-back
+#def sampleOfficeType(size):
     #For now completely ignoring the size and just returning officetype at random
-    return officeType[random.choice(list(officeType.keys()))]
+    #return officeType[random.choice(list(officeType.keys()))]
 
-print("Assigning workplaces to people...",end='',flush=True)
+def sampleOfficeType(size):
+    global num_gov, num_ites, num_sez
+    #Large workplace at SEZs, officeType=1
+    if num_sez < max_sez and size >= 200 and size < 300 and np.random.binomial(1,0.7):
+        num_sez += size
+        return  officeType['SEZ']
+    elif num_sez < max_sez and size >= 300 and size < 400 and np.random.binomial(1,0.8):
+        num_sez += size
+        return  officeType['SEZ']
+    elif num_sez < max_sez and size >= 400 and size < 500 and np.random.binomial(1,0.9):
+        num_sez += size
+        return  officeType['SEZ']
+    elif num_sez < max_sez and size >= 500:
+        num_sez += size
+        return  officeType['SEZ']
 
-#assigning workplaces to people who want work
-workplaces = []
-wid = 0
-for wardIndex in range(nwards):
-    wworkers = len(workers[wardIndex])
-    while len(workers[wardIndex])>0:
-        w = {"id":wid}
-        (lat,lon) = sampleRandomLatLong(wardIndex)
-        w["lat"] = lat
-        w["lon"] = lon
+    #Government offices
+    elif size >= 20 and num_gov < max_gov:
+        num_gov += size
+        return  officeType['Government']
 
-        w["wardIndex"]=wardIndex
-        s = sampleWorkplaceSize()
-        oType = sampleOfficeType(s)
-        w["officeType"]=oType
-        
-        i = 0
-        while(i < s and len(workers[wardIndex])>0):
-            pid = workers[wardIndex].pop(random.randrange(len(workers[wardIndex])))
-            individuals[pid]["workplace"]=wid
-            del individuals[pid]["workplaceward"]
-            i+=1
-        workplaces.append(w)
-        wid+=1
-
-print('done.',flush=True)
+    #IT/ITES
+    elif size >= 10 and num_ites <= max_ites_not_sez:
+        num_ites += size
+        return  officeType['IT']
+    
+    else:
+        return  officeType['Other']
 
 
 
-print("Assigning schools...",end='',flush=True)
+print("Assigning schools...",end='', flush=True)
 
 #assigning school to people who want go to school
 schoolers = [nonslum_schoolers,slum_schoolers]
@@ -532,6 +543,38 @@ for slumbit in [0,1]:
             #Need to think about how to fix this corner case.
 
 print("done.",flush=True)
+
+
+print("Assigning workplaces to people...",end='',flush=True)
+
+#assigning workplaces to people who want work
+workplaces = []
+wid = sid
+for wardIndex in range(nwards):
+    wworkers = len(workers[wardIndex])
+    while len(workers[wardIndex])>0:
+        w = {"id":wid}
+        (lat,lon) = sampleRandomLatLong(wardIndex)
+        w["lat"] = lat
+        w["lon"] = lon
+
+        w["wardIndex"]=wardIndex
+        s = sampleWorkplaceSize()
+        oType = sampleOfficeType(s)
+        w["officeType"]=oType
+        
+        i = 0
+        while(i < s and len(workers[wardIndex])>0):
+            pid = workers[wardIndex].pop(random.randrange(len(workers[wardIndex])))
+            individuals[pid]["workplace"]=wid
+            del individuals[pid]["workplaceward"]
+            i+=1
+        workplaces.append(w)
+        wid+=1
+
+print('done.',flush=True)
+
+
 
 # Stats of instantiated city
 print("")

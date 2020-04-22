@@ -38,7 +38,7 @@ struct defaults{
   std::string SECOND_PERIOD = "21";
   std::string THIRD_PERIOD = "42";
   std::string OE_SECOND_PERIOD = "30";
-  std::string LOCKED_COMMUNITY_LEAKAGE = "0.25";
+  std::string LOCKED_COMMUNITY_LEAKAGE = "1.0";
 } DEFAULTS;
 
 #endif

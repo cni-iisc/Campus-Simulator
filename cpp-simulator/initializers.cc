@@ -405,23 +405,31 @@ void initialize_office_attendance(){
   for(auto& elem: attendanceJSON.GetArray()){
     ATTENDANCE.probabilities.push_back(vector<double>(NUMBER_OF_OFFICE_TYPES));
     count_type val;
+    std::string val_s;
+
     val = static_cast<count_type>(OfficeType::other);
-    ATTENDANCE.probabilities[index].at(val) = elem["0"].GetDouble();
+    val_s = std::to_string(val);
+    ATTENDANCE.probabilities[index].at(val) = elem[val_s.c_str()].GetDouble();
     
     val = static_cast<count_type>(OfficeType::sez);
-    ATTENDANCE.probabilities[index].at(val) = elem["1"].GetDouble();
+    val_s = std::to_string(val);
+    ATTENDANCE.probabilities[index].at(val) = elem[val_s.c_str()].GetDouble();
     
     val = static_cast<count_type>(OfficeType::government);
-    ATTENDANCE.probabilities[index].at(val) = elem["2"].GetDouble();
+    val_s = std::to_string(val);
+    ATTENDANCE.probabilities[index].at(val) = elem[val_s.c_str()].GetDouble();
     
     val = static_cast<count_type>(OfficeType::it);
-    ATTENDANCE.probabilities[index].at(val) = elem["3"].GetDouble();
+    val_s = std::to_string(val);
+    ATTENDANCE.probabilities[index].at(val) = elem[val_s.c_str()].GetDouble();
     
     val = static_cast<count_type>(OfficeType::construction);
-    ATTENDANCE.probabilities[index].at(val) = elem["4"].GetDouble();
+    val_s = std::to_string(val);
+    ATTENDANCE.probabilities[index].at(val) = elem[val_s.c_str()].GetDouble();
     
     val = static_cast<count_type>(OfficeType::hospital);
-    ATTENDANCE.probabilities[index].at(val) = elem["5"].GetDouble();
+    val_s = std::to_string(val);
+    ATTENDANCE.probabilities[index].at(val) = elem[val_s.c_str()].GetDouble();
       
     ++index;
   }

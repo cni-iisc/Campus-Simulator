@@ -27,6 +27,7 @@ struct defaults{
   std::string INTERVENTION = "0";
   std::string output_dir = "outputs/test_output_timing";
   std::string input_base = "../simulator/input_files";
+  std::string attendance_filename = "attendance.json";
   std::string SEED_HD_AREA_POPULATION = "false";
   std::string SEED_ONLY_NON_COMMUTER = "false";
   std::string SEED_FIXED_NUMBER = "false";

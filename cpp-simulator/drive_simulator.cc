@@ -69,6 +69,8 @@ int main(int argc, char** argv){
 	 cxxopts::value<std::string>()->default_value(DEFAULTS.output_dir))
 	("input_directory", "input directory",
 	 cxxopts::value<std::string>()->default_value(DEFAULTS.input_base))
+  	("attendance_filename", "attendance json filename",
+	 cxxopts::value<std::string>()->default_value(DEFAULTS.attendance_filename))
 	("CALIBRATION_DELAY", "delay observed in calibration",
 	 cxxopts::value<double>()->default_value(DEFAULTS.CALIBRATION_DELAY))
 	("DAYS_BEFORE_LOCKDOWN", "no intervention period prior to interventions",
@@ -136,6 +138,7 @@ int main(int argc, char** argv){
   std::string output_dir(optvals["output_directory"].as<std::string>());
 
   GLOBAL.input_base = optvals["input_directory"].as<std::string>();
+  GLOBAL.attendance_filename = optvals["attendance_filename"].as<std::string>();
 
   if(optvals["PROVIDE_INITIAL_SEED"].count()){
 	//Initial seed was provided

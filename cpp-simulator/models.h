@@ -182,6 +182,7 @@ struct global_params{
 
   //Input and output
   std::string input_base;
+  std::string attendance_filename;
 
   //Status
   count_type INIT_ACTUALLY_INFECTED = 0;

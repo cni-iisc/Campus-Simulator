@@ -55,6 +55,8 @@ string intervention_rep(Intervention i){
 	break;
   case Intervention::ld_fper_ci_hq_sd65_sc_oe_sper:
 	return "ld_fper_ci_hq_sd65_sc_oe_sper";
+  case Intervention::intv_fper_intv_sper_intv_tper:
+	return "intv_fper_intv_sper_intv_tper";
 	break;
   default:
 	assert(false);

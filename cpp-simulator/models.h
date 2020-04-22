@@ -19,7 +19,8 @@ enum class Intervention {
    lockdown_fper = 7,
    ld_fper_ci_hq_sd65_sc_sper_sc_tper = 8,
    ld_fper_ci_hq_sd65_sc_sper = 9,
-   ld_fper_ci_hq_sd65_sc_oe_sper = 10
+   ld_fper_ci_hq_sd65_sc_oe_sper = 10,
+   intv_fper_intv_sper_intv_tper = 11
 };
 
 

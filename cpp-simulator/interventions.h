@@ -35,6 +35,8 @@ void get_kappa_LD_fper_CI_HQ_SD65_SC_sper(std::vector<agent>& nodes, std::vector
 
 void get_kappa_LD_fper_CI_HQ_SD65_SC_OE_sper(std::vector<agent>& nodes, std::vector<house>& homes, const std::vector<workplace>& workplaces, const std::vector<community>& communities, int cur_time, double FIRST_PERIOD, double OE_SECOND_PERIOD);
 
+void get_kappa_intv_fper_intv_sper_intv_tper(std::vector<agent>& nodes, std::vector<house>& homes, const std::vector<workplace>& workplaces, const std::vector<community>& communities, int cur_time, double FIRST_PERIOD, double SECOND_PERIOD, double THIRD_PERIOD);
+
 
 #endif
 

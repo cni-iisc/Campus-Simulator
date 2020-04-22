@@ -431,3 +431,14 @@ void get_kappa_LD_fper_CI_HQ_SD65_SC_OE_sper(vector<agent>& nodes, vector<house>
 	}
 }
 
+void get_kappa_intv_fper_intv_sper_intv_tper(vector<agent>& nodes, vector<house>& homes, const vector<workplace>& workplaces, const vector<community>& communities, int cur_time, double FIRST_PERIOD, double SECOND_PERIOD, double THIRD_PERIOD){
+	if(cur_time < (GLOBAL.NUM_DAYS_BEFORE_INTERVENTIONS+FIRST_PERIOD)*GLOBAL.SIM_STEPS_PER_DAY){
+	  get_kappa_lockdown(nodes, homes, workplaces, communities, cur_time);
+	} else if(cur_time < (GLOBAL.NUM_DAYS_BEFORE_INTERVENTIONS+FIRST_PERIOD+SECOND_PERIOD)*GLOBAL.SIM_STEPS_PER_DAY){
+	  get_kappa_CI_HQ_65P_SC(nodes, homes, workplaces, communities, cur_time);
+	} else if(cur_time < (GLOBAL.NUM_DAYS_BEFORE_INTERVENTIONS+FIRST_PERIOD+SECOND_PERIOD+THIRD_PERIOD)*GLOBAL.SIM_STEPS_PER_DAY){
+	  get_kappa_CI_HQ(nodes, homes, workplaces, communities, cur_time);
+	}else{
+	  get_kappa_case_isolation(nodes, homes, workplaces, communities, cur_time);
+	}
+}

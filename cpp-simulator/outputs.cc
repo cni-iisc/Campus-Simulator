@@ -172,6 +172,7 @@ void output_global_params(const string& output_dir){
   fout << "USE_SAME_INFECTION_PROB_FOR_ALL_WARDS: " << GLOBAL.USE_SAME_INFECTION_PROB_FOR_ALL_WARDS << ";" << endl;
   fout << "SEED_HD_AREA_POPULATION: " << GLOBAL.SEED_HD_AREA_POPULATION << ";" << endl;
   fout << "SEED_ONLY_NON_COMMUTER: " << GLOBAL.SEED_ONLY_NON_COMMUTER << ";" << endl;
+  fout << "LOCKED_COMMUNITY_LEAKAGE: " << GLOBAL.LOCKED_COMMUNITY_LEAKAGE << ";" << endl;
   
   fout.close();
 }

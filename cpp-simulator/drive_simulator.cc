@@ -84,7 +84,9 @@ int main(int argc, char** argv){
 	("PROVIDE_INITIAL_SEED",
 	 "provide an initial seed to the simulator. If this is not provided, the simulator uses "
 	 "std::random_device to get the random seed.",
-	 cxxopts::value<count_type>());
+	 cxxopts::value<count_type>())
+   ("LOCKED_COMMUNITY_LEAKAGE", "minimum community infection leakage under containment",
+	 cxxopts::value<double>()->default_value(DEFAULTS.LOCKED_COMMUNITY_LEAKAGE));
 
   auto optvals = options.parse(argc, argv);
   
@@ -143,6 +145,8 @@ int main(int argc, char** argv){
   }
   //Done saving options
   
+  DEFAULTS.LOCKED_COMMUNITY_LEAKAGE = optvals["LOCKED_COMMUNITY_LEAKAGE"].as<double>();
+
   //Compute parametrs based on options
   GLOBAL.NUM_TIMESTEPS = GLOBAL.NUM_DAYS*GLOBAL.SIM_STEPS_PER_DAY;
   GLOBAL.INCUBATION_PERIOD_SCALE = GLOBAL.INCUBATION_PERIOD*GLOBAL.SIM_STEPS_PER_DAY;

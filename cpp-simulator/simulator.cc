@@ -204,7 +204,11 @@ plot_data_struct run_simulation(){
 		  temp_stats.hospitalised,
 		  temp_stats.critical,
 		  temp_stats.dead,
-		  temp_stats.hd_area_affected
+          temp_stats.hd_area_infected,
+		  temp_stats.hd_area_affected,
+          temp_stats.hd_area_hospitalised,
+          temp_stats.hd_area_critical,
+          temp_stats.hd_area_dead
 		  }});
 
       //Update w_c value for this community, followed by update of lambdas

@@ -227,7 +227,11 @@ void output_csv_files(const std::string& output_directory,
 						"hospitalised",
 						"critical",
 						"dead",
-						"hd_area_affected"},
+                        "hd_area_infected",
+						"hd_area_affected",
+                        "hd_area_hospitalized",
+                        "hd_area_critical",
+                        "hd_area_dead"},
 		csvfile_path, elem.second);
 	} else {
 	  output_timed_csv({elem.first},

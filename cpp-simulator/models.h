@@ -19,7 +19,8 @@ enum class Intervention {
    lockdown_fper = 7,
    ld_fper_ci_hq_sd65_sc_sper_sc_tper = 8,
    ld_fper_ci_hq_sd65_sc_sper = 9,
-   ld_fper_ci_hq_sd65_sc_oe_sper = 10
+   ld_fper_ci_hq_sd65_sc_oe_sper = 10,
+   intv_fper_intv_sper_intv_tper = 11
 };
 
 
@@ -109,7 +110,7 @@ struct global_params{
   double F_KERNEL_B = 5.384;
 	
   
-  const double INCUBATION_PERIOD_SHAPE = 2.3;
+  const double INCUBATION_PERIOD_SHAPE = 2.0; //Fixing this back to 2.0. To change incubation period, change incubation scale.
   double INCUBATION_PERIOD_SCALE = INCUBATION_PERIOD*SIM_STEPS_PER_DAY;// 2.29 days
 
   //Gamma with mean 1 and shape 0.25, as per Imperial College 16 March Report
@@ -153,6 +154,13 @@ struct global_params{
   double SECOND_PERIOD = 21;
   double THIRD_PERIOD = 42;
   double OE_SECOND_PERIOD = 30;
+
+  //Community lockdown threshold.
+  //
+  // Community is fully locked down if the number of hospitalized individuals
+  //crosses this fraction
+  double COMMUNITY_LOCK_THRESHOLD = 5E-3; //0.5%
+  double LOCKED_COMMUNITY_LEAKAGE = 1.0;
   
   //Switches
   //If this is false, the file quarantinedPopulation.json is needed
@@ -171,10 +179,13 @@ struct global_params{
   //seeded
   bool SEED_FIXED_NUMBER = false;
   count_type INIT_FIXED_NUMBER_INFECTED = 0;
-  
+
+  //Whether to ignore the attendance file
+  bool IGNORE_ATTENDANCE_FILE = false;
 
   //Input and output
   std::string input_base;
+  std::string attendance_filename;
 
   //Status
   count_type INIT_ACTUALLY_INFECTED = 0;
@@ -233,6 +244,15 @@ enum class WorkplaceType{
    school = 2
 };
 
+enum class OfficeType{
+   other = 0,
+   sez = 1,
+   government = 2,
+   it = 3,
+   construction = 4,
+   hospital = 5
+};
+
 //Default workplace value for homebound individuals.
 const int WORKPLACE_HOME = -1;
 
@@ -271,6 +291,8 @@ struct agent{
 
   WorkplaceType workplace_type;
   //one of school, office, or home
+  OfficeType office_type = OfficeType::other;
+  
   std::vector<double> lambda_incoming;
   //infectiousness from home, workplace, community, travel as seen by
   //individual
@@ -305,6 +327,9 @@ struct agent{
   double hd_area_exponent = 0;
   //only used if in the input file, some individuals are assigned to
   //slums or other high population density areas
+
+  //Currently attending office or not
+  bool attending = true;
   
   agent(){}
   // Is the agent curently traveling?
@@ -346,6 +371,7 @@ struct workplace {
   double Q_w = 1;
   double scale = 0;
   WorkplaceType workplace_type;
+  OfficeType office_type = OfficeType::other;
   bool quarantined = false;
   double age_independent_mixing = 0;
   //age_dependent_mixing not added yet, since it is unused
@@ -370,6 +396,9 @@ struct community {
   double scale = 0;
   bool quarantined = false;
 
+  //parameter for measuring how locked down the community is
+  double w_c = 1;
+
   int wardNo;
   community(){}
   community(double latitude, double longitude, int wardNo):
@@ -381,10 +410,22 @@ struct community {
 };
 
 
+struct office_attendance{
+  count_type number_of_entries;
+  matrix<double> probabilities;
+};
+
+extern office_attendance ATTENDANCE;
 
 // Absenteeism parameter. This may depend on the workplace type.
 double psi_T(const agent& node, double cur_time);
 
 
+//attendance probability at given time
+double get_attendance_probability(WorkplaceType workplace_type, OfficeType office_type, count_type time);
+
+
+//interpolation with a threshold
+double interpolate(double start, double end, double current, double threshold);
 
 #endif

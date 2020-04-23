@@ -22,6 +22,7 @@ double update_individual_lambda_h(const agent& node){
 
 double update_individual_lambda_w(const agent& node){
   return (node.infective?1.0:0.0)
+    * (node.attending?1.0:0.0)
 	* node.kappa_T
 	* node.infectiousness
 	* (1 + node.severity*(2*node.psi_T-1))
@@ -246,7 +247,7 @@ void update_lambdas(agent&node, const vector<house>& homes, const vector<workpla
   
   //FEATURE_PROPOSAL: make the mixing dependent on node.age_group;
   if(node.workplace != WORKPLACE_HOME) {
-	node.lambda_incoming[1] = node.kappa_W_incoming
+	node.lambda_incoming[1] = (node.attending?1.0:0.0)*node.kappa_W_incoming
 	  * workplaces[node.workplace].age_independent_mixing;
 	//FEATURE_PROPOSAL: make the mixing dependent on node.age_group;
   }
@@ -284,7 +285,7 @@ double updated_lambda_c_local(const vector<agent>& nodes, const community& commu
 	sum_value += nodes[community.individuals[i]].lambda_c;
   }
 
-  return community.scale*sum_value;
+  return community.scale*sum_value*community.w_c;
 }
 
 void update_lambda_c_global(vector<community>& communities, const matrix<double>& community_distance_matrix){
@@ -296,7 +297,7 @@ void update_lambda_c_global(vector<community>& communities, const matrix<double>
 		* communities[c2].lambda_community;
 	  denom += f_kernel(community_distance_matrix[c1][c2]);
 	}
-	communities[c1].lambda_community_global = num/denom;
+	communities[c1].lambda_community_global = communities[c1].w_c*num/denom;
   }
 }
 
@@ -308,21 +309,36 @@ casualty_stats get_infected_community(const vector<agent>& nodes, const communit
 	bool hd_area_resident = nodes[community.individuals[i]].hd_area_resident;
 	if (nodes[community.individuals[i]].infection_status==Progression::exposed) {
 	  stat.exposed +=1;
-	  if(hd_area_resident) stat.hd_area_affected += 1;
+	  if(hd_area_resident){
+        stat.hd_area_affected += 1;
+        stat.hd_area_exposed += 1;
+      }
 	}
 	if (nodes[community.individuals[i]].infection_status==Progression::recovered) {
 	  stat.recovered += 1;
-	  if(hd_area_resident) stat.hd_area_affected += 1;
+	  if(hd_area_resident){
+        stat.hd_area_affected += 1;
+        stat.hd_area_recovered += 1;
+      }
 	}
 	if (nodes[community.individuals[i]].infection_status==Progression::hospitalised) {
 	  stat.hospitalised += 1;
+      if(hd_area_resident){
+        stat.hd_area_hospitalised += 1;
+      }
 	}
 	if (nodes[community.individuals[i]].infection_status==Progression::critical) {
 	  stat.critical += 1;
+      if(hd_area_resident){
+        stat.hd_area_critical += 1;
+      }
 	}
 	if (nodes[community.individuals[i]].infection_status==Progression::dead) {
 	  stat.dead += 1;
-	  if(hd_area_resident) stat.hd_area_affected += 1;
+	  if(hd_area_resident){
+        stat.hd_area_affected += 1;
+        stat.hd_area_dead += 1;
+      }
 	}
 	
 
@@ -331,7 +347,10 @@ casualty_stats get_infected_community(const vector<agent>& nodes, const communit
 		nodes[community.individuals[i]].infection_status==Progression::hospitalised ||
 		nodes[community.individuals[i]].infection_status==Progression::critical) {
 	  stat.infected += 1;
-	  if(hd_area_resident) stat.hd_area_affected += 1;
+	  if(hd_area_resident){
+        stat.hd_area_affected += 1;
+        stat.hd_area_infected += 1;
+      }
 	}
   }
   stat.affected = stat.exposed + stat.infected + stat.recovered + stat.dead;

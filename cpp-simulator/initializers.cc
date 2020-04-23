@@ -80,7 +80,10 @@ vector<workplace> init_workplaces() {
 	wps[index].set(elem["lat"].GetDouble(),
 				   elem["lon"].GetDouble(),
 				   WorkplaceType::office);
-	++index;
+
+    wps[index].office_type = static_cast<OfficeType>(elem["officeType"].GetInt());
+
+    ++index;
   }
   assert(index == GLOBAL.num_schools + GLOBAL.num_workplaces);
   return wps;
@@ -329,6 +332,9 @@ void assign_individual_home_community(vector<agent>& nodes, vector<house>& homes
 	//All members of the household are set the same compliance value
 	
 	int workplace = nodes[i].workplace;
+    if(nodes[i].workplace_type == WorkplaceType::office){
+      nodes[i].office_type = workplaces[workplace].office_type;
+    }
 	if(workplace != WORKPLACE_HOME){
 	  workplaces[workplace].individuals.push_back(i);
 
@@ -389,3 +395,47 @@ void compute_scale_communities(const vector<agent>& nodes, vector<community>& co
 }
 
 
+//Initialize the office attendance
+void initialize_office_attendance(){
+  //No need to read the attendance file if we are specifically asked to ignore
+  //it
+  if(GLOBAL.IGNORE_ATTENDANCE_FILE) return;
+
+  constexpr count_type NUMBER_OF_OFFICE_TYPES = 6;
+  auto attendanceJSON = readJSONFile(GLOBAL.input_base + GLOBAL.attendance_filename);
+  ATTENDANCE.number_of_entries = attendanceJSON.GetArray().Size();
+  ATTENDANCE.probabilities.reserve(ATTENDANCE.number_of_entries);
+  count_type index = 0;
+  for(auto& elem: attendanceJSON.GetArray()){
+    ATTENDANCE.probabilities.push_back(vector<double>(NUMBER_OF_OFFICE_TYPES));
+    count_type val;
+    std::string val_s;
+
+    val = static_cast<count_type>(OfficeType::other);
+    val_s = std::to_string(val);
+    ATTENDANCE.probabilities[index].at(val) = elem[val_s.c_str()].GetDouble();
+    
+    val = static_cast<count_type>(OfficeType::sez);
+    val_s = std::to_string(val);
+    ATTENDANCE.probabilities[index].at(val) = elem[val_s.c_str()].GetDouble();
+    
+    val = static_cast<count_type>(OfficeType::government);
+    val_s = std::to_string(val);
+    ATTENDANCE.probabilities[index].at(val) = elem[val_s.c_str()].GetDouble();
+    
+    val = static_cast<count_type>(OfficeType::it);
+    val_s = std::to_string(val);
+    ATTENDANCE.probabilities[index].at(val) = elem[val_s.c_str()].GetDouble();
+    
+    val = static_cast<count_type>(OfficeType::construction);
+    val_s = std::to_string(val);
+    ATTENDANCE.probabilities[index].at(val) = elem[val_s.c_str()].GetDouble();
+    
+    val = static_cast<count_type>(OfficeType::hospital);
+    val_s = std::to_string(val);
+    ATTENDANCE.probabilities[index].at(val) = elem[val_s.c_str()].GetDouble();
+      
+    ++index;
+  }
+  assert(index == ATTENDANCE.number_of_entries);
+}

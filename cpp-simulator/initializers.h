@@ -5,6 +5,8 @@
 #include "models.h"
 #include <vector>
 
+//Initialize the office attendance
+void initialize_office_attendance();
 
 std::vector<house> init_homes();
 std::vector<workplace> init_workplaces();

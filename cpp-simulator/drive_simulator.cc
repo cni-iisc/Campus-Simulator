@@ -3,6 +3,7 @@
 #include "simulator.h"
 #include "outputs.h"
 #include "defaults.h"
+#include "initializers.h"
 #include <cassert>
 #include <iostream>
 #include <fstream>
@@ -24,6 +25,8 @@ int main(int argc, char** argv){
 	 cxxopts::value<bool>()->default_value(DEFAULTS.SEED_ONLY_NON_COMMUTER))
 	("SEED_FIXED_NUMBER", "seed a fixed number of initial infections.  If this option is provided, INIT_FRAC_INFECTED is ignored in favour of INIT_FIXED_NUMBER_INFECTED",
 	 cxxopts::value<bool>()->default_value(DEFAULTS.SEED_FIXED_NUMBER))
+    ("IGNORE_ATTENDANCE_FILE", "whether to ignore the attendance file",
+     cxxopts::value<bool>()->default_value(DEFAULTS.IGNORE_ATTENDANCE_FILE))
 	("NUM_DAYS", "number of days in the simulation",
 	 cxxopts::value<count_type>()->default_value(DEFAULTS.NUM_DAYS))
 	("INIT_FRAC_INFECTED", "initial probability of a person being infected.  If --SEED_FIXED_NUMBER is provided, this is ignored in favour of INIT_FIXED_NUMBER_INFECTED",
@@ -68,6 +71,8 @@ int main(int argc, char** argv){
 	 cxxopts::value<std::string>()->default_value(DEFAULTS.output_dir))
 	("input_directory", "input directory",
 	 cxxopts::value<std::string>()->default_value(DEFAULTS.input_base))
+  	("attendance_filename", "attendance json filename",
+	 cxxopts::value<std::string>()->default_value(DEFAULTS.attendance_filename))
 	("CALIBRATION_DELAY", "delay observed in calibration",
 	 cxxopts::value<double>()->default_value(DEFAULTS.CALIBRATION_DELAY))
 	("DAYS_BEFORE_LOCKDOWN", "no intervention period prior to interventions",
@@ -83,7 +88,9 @@ int main(int argc, char** argv){
 	("PROVIDE_INITIAL_SEED",
 	 "provide an initial seed to the simulator. If this is not provided, the simulator uses "
 	 "std::random_device to get the random seed.",
-	 cxxopts::value<count_type>());
+	 cxxopts::value<count_type>())
+   ("LOCKED_COMMUNITY_LEAKAGE", "minimum community infection leakage under containment",
+	 cxxopts::value<double>()->default_value(DEFAULTS.LOCKED_COMMUNITY_LEAKAGE));
 
   auto optvals = options.parse(argc, argv);
   
@@ -133,6 +140,8 @@ int main(int argc, char** argv){
   std::string output_dir(optvals["output_directory"].as<std::string>());
 
   GLOBAL.input_base = optvals["input_directory"].as<std::string>();
+  GLOBAL.attendance_filename = optvals["attendance_filename"].as<std::string>();
+  GLOBAL.IGNORE_ATTENDANCE_FILE = optvals["IGNORE_ATTENDANCE_FILE"].count();
 
   if(optvals["PROVIDE_INITIAL_SEED"].count()){
 	//Initial seed was provided
@@ -142,6 +151,8 @@ int main(int argc, char** argv){
   }
   //Done saving options
   
+  GLOBAL.LOCKED_COMMUNITY_LEAKAGE = optvals["LOCKED_COMMUNITY_LEAKAGE"].as<double>();
+
   //Compute parametrs based on options
   GLOBAL.NUM_TIMESTEPS = GLOBAL.NUM_DAYS*GLOBAL.SIM_STEPS_PER_DAY;
   GLOBAL.INCUBATION_PERIOD_SCALE = GLOBAL.INCUBATION_PERIOD*GLOBAL.SIM_STEPS_PER_DAY;
@@ -157,6 +168,9 @@ int main(int argc, char** argv){
 	//Make sure the path of the input_base
 	//directory is terminated by a "/"
   }
+
+  //Initialize the attendance probability
+  initialize_office_attendance();
 
   //Initialize output folders
   gnuplot gnuplot(output_dir);

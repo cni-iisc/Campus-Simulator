@@ -55,6 +55,8 @@ string intervention_rep(Intervention i){
 	break;
   case Intervention::ld_fper_ci_hq_sd65_sc_oe_sper:
 	return "ld_fper_ci_hq_sd65_sc_oe_sper";
+  case Intervention::intv_fper_intv_sper_intv_tper:
+	return "intv_fper_intv_sper_intv_tper";
 	break;
   default:
 	assert(false);
@@ -172,6 +174,9 @@ void output_global_params(const string& output_dir){
   fout << "USE_SAME_INFECTION_PROB_FOR_ALL_WARDS: " << GLOBAL.USE_SAME_INFECTION_PROB_FOR_ALL_WARDS << ";" << endl;
   fout << "SEED_HD_AREA_POPULATION: " << GLOBAL.SEED_HD_AREA_POPULATION << ";" << endl;
   fout << "SEED_ONLY_NON_COMMUTER: " << GLOBAL.SEED_ONLY_NON_COMMUTER << ";" << endl;
+  fout << "LOCKED_COMMUNITY_LEAKAGE: " << GLOBAL.LOCKED_COMMUNITY_LEAKAGE << ";" << endl;
+
+  fout << "IGNORE_ATTENDANCE_FILE: " << GLOBAL.IGNORE_ATTENDANCE_FILE << ";" << endl;
   
   fout.close();
 }
@@ -226,7 +231,11 @@ void output_csv_files(const std::string& output_directory,
 						"hospitalised",
 						"critical",
 						"dead",
-						"hd_area_affected"},
+                        "hd_area_infected",
+						"hd_area_affected",
+                        "hd_area_hospitalized",
+                        "hd_area_critical",
+                        "hd_area_dead"},
 		csvfile_path, elem.second);
 	} else {
 	  output_timed_csv({elem.first},

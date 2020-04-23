@@ -27,15 +27,18 @@ struct defaults{
   std::string INTERVENTION = "0";
   std::string output_dir = "outputs/test_output_timing";
   std::string input_base = "../simulator/input_files";
+  std::string attendance_filename = "attendance.json";
   std::string SEED_HD_AREA_POPULATION = "false";
   std::string SEED_ONLY_NON_COMMUTER = "false";
   std::string SEED_FIXED_NUMBER = "false";
+  std::string IGNORE_ATTENDANCE_FILE = "false";
   std::string CALIBRATION_DELAY = "0";
   std::string DAYS_BEFORE_LOCKDOWN = "0";
   std::string FIRST_PERIOD = "21";
   std::string SECOND_PERIOD = "21";
   std::string THIRD_PERIOD = "42";
   std::string OE_SECOND_PERIOD = "30";
+  std::string LOCKED_COMMUNITY_LEAKAGE = "1.0";
 } DEFAULTS;
 
 #endif

@@ -120,3 +120,31 @@ double earth_distance(location a, location b){
 					 * pow(sin(delta_lon/2), 2))));
   return angle*EARTH_RADIUS;
 }
+
+
+office_attendance ATTENDANCE;
+
+//attendance probability at given time
+double get_attendance_probability(WorkplaceType workplace_type, OfficeType office_type, count_type time){
+  if (workplace_type != WorkplaceType::office || GLOBAL.IGNORE_ATTENDANCE_FILE){
+    return 1;
+    //Let the other features handle these workplaces
+  } else {
+    auto entry = time/GLOBAL.SIM_STEPS_PER_DAY;
+    if (entry >= ATTENDANCE.number_of_entries){
+      entry = ATTENDANCE.number_of_entries - 1;
+      //Just use the last entry
+    }
+    return ATTENDANCE.probabilities[entry][static_cast<count_type>(office_type)];
+  }
+}
+
+//interpolation with a threshold
+double interpolate(double start, double end, double current, double threshold){
+  if (current >= threshold){
+    return end;
+  }
+  else {
+    return start + (end - start)*current/threshold;
+  }
+}

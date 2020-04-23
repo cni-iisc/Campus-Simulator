@@ -46,11 +46,11 @@ const HOME_QUARANTINE = 2
 const LOCKDOWN = 3
 const CASE_ISOLATION_AND_HOME_QUARANTINE = 4
 const CASE_ISOLATION_AND_HOME_QUARANTINE_SD_70_PLUS = 5
-const LOCKDOWN_21_CI_HQ_SD_70_PLUS_21_CI = 6
-const LOCKDOWN_21 = 7
-const LD_21_CI_HQ_SD70_SC_21_SC_42 = 8
-const LD_21_CI_HQ_SD70_SC_21 = 9
-const LD_21_CI_HQ_SD70_SC_OE_30 = 10
+const LOCKDOWN_40_CI_HQ_SD_70_PLUS_21_CI = 6
+const LOCKDOWN_40 = 7
+const LD_40_CI_HQ_SD70_SC_21_SC_42 = 8
+const LD_40_CI_HQ_SD70_SC_21 = 9
+const LD_40_CI_HQ_SD70_SC_OE_30 = 10
 
 const HOME_QUARANTINE_DAYS = 14
 const SELF_ISOLATION_DAYS = 7
@@ -166,19 +166,19 @@ function set_compliance() {
         case CASE_ISOLATION_AND_HOME_QUARANTINE_SD_70_PLUS:
             val = 0.7;
             break;
-        case LOCKDOWN_21_CI_HQ_SD_70_PLUS_21_CI:
+        case LOCKDOWN_40_CI_HQ_SD_70_PLUS_21_CI:
             val = 0.9;
             break;
-        case LOCKDOWN_21:
+        case LOCKDOWN_40:
             val = 0.9;
             break;
-        case LD_21_CI_HQ_SD70_SC_21_SC_42:
+        case LD_40_CI_HQ_SD70_SC_21_SC_42:
             val = 0.9;
             break;
-        case LD_21_CI_HQ_SD70_SC_21:
+        case LD_40_CI_HQ_SD70_SC_21:
             val = 0.9;
             break;
-        case LD_21_CI_HQ_SD70_SC_OE_30:
+        case LD_40_CI_HQ_SD70_SC_OE_30:
             val = 0.9;
             break;
         default:
@@ -1212,20 +1212,20 @@ function update_all_kappa(nodes, homes, workplaces, communities, cur_time) {
             case CASE_ISOLATION_AND_HOME_QUARANTINE_SD_70_PLUS:
                 get_kappa_CI_HQ_70P(nodes, homes, workplaces, communities, current_time);
                 break;
-            case LOCKDOWN_21_CI_HQ_SD_70_PLUS_21_CI:
-                get_kappa_LOCKDOWN_21_CI_HQ_SD_70_PLUS_21_CI(nodes, homes, workplaces, communities, current_time);
+            case LOCKDOWN_40_CI_HQ_SD_70_PLUS_21_CI:
+                get_kappa_LOCKDOWN_40_CI_HQ_SD_70_PLUS_21_CI(nodes, homes, workplaces, communities, current_time);
                 break;
-            case LOCKDOWN_21:
-                get_kappa_LOCKDOWN_21(nodes, homes, workplaces, communities, current_time);
+            case LOCKDOWN_40:
+                get_kappa_LOCKDOWN_40(nodes, homes, workplaces, communities, current_time);
                 break;
-            case LD_21_CI_HQ_SD70_SC_21_SC_42:
-                get_kappa_LD_21_CI_HQ_SD70_SC_21_SC_42(nodes, homes, workplaces, communities, current_time);
+            case LD_40_CI_HQ_SD70_SC_21_SC_42:
+                get_kappa_LD_40_CI_HQ_SD70_SC_21_SC_42(nodes, homes, workplaces, communities, current_time);
                 break;
-            case LD_21_CI_HQ_SD70_SC_21:
-                get_kappa_LD_21_CI_HQ_SD70_SC_21(nodes, homes, workplaces, communities, current_time);
+            case LD_40_CI_HQ_SD70_SC_21:
+                get_kappa_LD_40_CI_HQ_SD70_SC_21(nodes, homes, workplaces, communities, current_time);
                 break;
-            case LD_21_CI_HQ_SD70_SC_OE_30:
-                get_kappa_LD_21_CI_HQ_SD70_SC_OE_30(nodes, homes, workplaces, communities, current_time);
+            case LD_40_CI_HQ_SD70_SC_OE_30:
+                get_kappa_LD_40_CI_HQ_SD70_SC_OE_30(nodes, homes, workplaces, communities, current_time);
                 break;
             default:
                 break;

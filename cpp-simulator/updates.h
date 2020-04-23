@@ -37,13 +37,19 @@ void update_lambda_c_global(std::vector<community>& communities, const matrix<do
 
 struct casualty_stats{
   count_type infected = 0;
+  count_type hd_area_infected = 0;
   count_type affected = 0;
-  count_type hospitalised = 0;
-  count_type critical = 0;
-  count_type dead = 0;
-  count_type exposed = 0;
-  count_type recovered = 0;
   count_type hd_area_affected = 0;
+  count_type hospitalised = 0;
+  count_type hd_area_hospitalised = 0;
+  count_type critical = 0;
+  count_type hd_area_critical = 0;
+  count_type dead = 0;
+  count_type hd_area_dead = 0;
+  count_type exposed = 0;
+  count_type hd_area_exposed = 0;
+  count_type recovered = 0;
+  count_type hd_area_recovered = 0;
 };
 
 casualty_stats get_infected_community(const std::vector<agent>& nodes, const community& community);

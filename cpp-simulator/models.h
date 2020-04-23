@@ -182,6 +182,8 @@ struct global_params{
 
   //Whether to ignore the attendance file
   bool IGNORE_ATTENDANCE_FILE = false;
+  count_type NUMBER_OF_OFFICE_TYPES = 6; //Number of office types.
+  double ATTENDANCE_LEAKAGE = 0.25; // Assume leakage in attendance.
 
   //Input and output
   std::string input_base;

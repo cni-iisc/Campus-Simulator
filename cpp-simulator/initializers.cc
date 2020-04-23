@@ -401,13 +401,13 @@ void initialize_office_attendance(){
   //it
   if(GLOBAL.IGNORE_ATTENDANCE_FILE) return;
 
-  constexpr count_type NUMBER_OF_OFFICE_TYPES = 6;
+  //constexpr count_type NUMBER_OF_OFFICE_TYPES = 6;
   auto attendanceJSON = readJSONFile(GLOBAL.input_base + GLOBAL.attendance_filename);
   ATTENDANCE.number_of_entries = attendanceJSON.GetArray().Size();
   ATTENDANCE.probabilities.reserve(ATTENDANCE.number_of_entries);
   count_type index = 0;
   for(auto& elem: attendanceJSON.GetArray()){
-    ATTENDANCE.probabilities.push_back(vector<double>(NUMBER_OF_OFFICE_TYPES));
+    ATTENDANCE.probabilities.push_back(vector<double>(GLOBAL.NUMBER_OF_OFFICE_TYPES));
     count_type val;
     std::string val_s;
 

@@ -22,7 +22,7 @@ double update_individual_lambda_h(const agent& node){
 
 double update_individual_lambda_w(const agent& node){
   return (node.infective?1.0:0.0)
-    * (node.attending?1.0:0.0)
+    * (node.attending?1.0:GLOBAL.ATTENDANCE_LEAKAGE)
 	* node.kappa_T
 	* node.infectiousness
 	* (1 + node.severity*(2*node.psi_T-1))
@@ -247,7 +247,7 @@ void update_lambdas(agent&node, const vector<house>& homes, const vector<workpla
   
   //FEATURE_PROPOSAL: make the mixing dependent on node.age_group;
   if(node.workplace != WORKPLACE_HOME) {
-	node.lambda_incoming[1] = (node.attending?1.0:0.0)*node.kappa_W_incoming
+	node.lambda_incoming[1] = (node.attending?1.0:GLOBAL.ATTENDANCE_LEAKAGE)*node.kappa_W_incoming
 	  * workplaces[node.workplace].age_independent_mixing;
 	//FEATURE_PROPOSAL: make the mixing dependent on node.age_group;
   }

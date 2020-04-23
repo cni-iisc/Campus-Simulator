@@ -1416,7 +1416,7 @@ function run_simulation() {
     document.getElementById("run_button").style.display = "none";
     document.getElementById("sim_stop").style.display = "inline";
 
-
+    document.getElementById('plots-area').style.display = 'block';
     const [homes, workplaces, communities, public_transports, nodes, community_distance_matrix, seed_array,
         days_num_affected, days_num_critical, days_num_exposed, days_num_fatalities, days_num_hospitalised, days_num_infected, days_num_recovered, lambda_evolution] = initialize_simulation();
     document.getElementById("status").innerHTML = "Starting to run Simulation...";
@@ -1426,7 +1426,8 @@ function run_simulation() {
 
     let plot_tuple = [days_num_infected, days_num_exposed, days_num_hospitalised, days_num_critical, days_num_fatalities, days_num_recovered, days_num_affected, lambda_evolution];
     call_plotly(plot_tuple);
-
+    document.getElementById("in-progress").style.display = 'none';
+    document.getElementById('plots-area').style.display = 'block';
 
     const interval = setInterval(function () {
         console.log("inside the interval stuff. time_step = ", time_step);
@@ -1522,7 +1523,7 @@ function plot_lambda_evolution(data, plot_position, title_text, legends) {
 
     var layout = {
         autosize: true,
-        width: 350,
+        width: 300,
         height: 300,
         barmode: 'stack',
         margin: {l:50, r:50, t:50, b:50},
@@ -1634,7 +1635,7 @@ function plot_plotly(data, plot_position, title_text, legends) {
 
     const layout = {
         autosize: true,
-        width: 350,
+        width: 300,
         height:300,
         margin: {l:50, r:50, t:50, b:50},
         xaxis: {
@@ -1722,17 +1723,25 @@ function runSimulations() {
 
 function clear_plots() {
     //clear previous plots
+    document.getElementById("no-data").style.display = 'none';
+    document.getElementById('plots-area').style.display = 'none';
+    document.getElementById("in-progress").style.display = 'block';
     document.getElementById("status").innerHTML = "Simulation in Progress....";
+    document.getElementById("status").style.display = 'inline'
     document.getElementById("num_affected_plot_2").innerHTML = "";
     document.getElementById("num_infected_plot_2").innerHTML = "";
-    document.getElementById("num_exposed_plot_2").innerHTML = "";
+    // document.getElementById("num_exposed_plot_2").innerHTML = "";
     document.getElementById("num_hospitalised_plot_2").innerHTML = "";
     document.getElementById("num_critical_plot_2").innerHTML = "";
     document.getElementById("num_fatalities_plot_2").innerHTML = "";
-    document.getElementById("num_recovered_plot_2").innerHTML = "";
+    // document.getElementById("num_recovered_plot_2").innerHTML = "";
     document.getElementById("lambda_evolution").innerHTML = "";
-
+    if($('body').hasClass('mobile')) {
+    $('.tabs li#right-btn').trigger('click');
+    }
+    setTimeout(function() {
     runSimulations();
+},1)
 }
 
 function set_default_values_html() {
@@ -1769,6 +1778,39 @@ function setCity (city) {
 //jquery events for the webUI
 //
 $(document).ready(function () {
+    if (window.matchMedia("(max-width: 767px)").matches)  {
+    fetch("simulator/html/body_mobile.html")
+  .then(response => {
+    return response.text()
+  })
+  .then(data => {
+    $("body").html(data).addClass('mobile');
+  }).then(()=>{
+    let h = $(window).outerHeight() - ($('.custom-header').outerHeight() + $('.sticky-footer').outerHeight());
+    $('.content-mobile, .left-pane, .right-pane').css('height',h - 25 );
+    set_default_values_html();
+    initListner();
+  });
+}
+
+else {
+    fetch("simulator/html/body_desktop.html")
+  .then(response => {
+    return response.text()
+  })
+  .then(data => {
+    $("body").html(data);
+  }).then(()=>{
+    let w = $(window).width() / 3
+    $("#MySplitter").splitter({resizeToWidth: true, sizeLeft:w});
+    set_default_values_html();
+    initListner();
+  });
+}
+});
+
+function initListner() {
+    
     $('#numDays').tooltip({'trigger':'focus', 'title': 'Number of days to run the simulation'});
     $('#Incubation').tooltip({'trigger':'focus', 'title': 'Once exposed to the virus, the mean duration before the exposed individual starts transmitting the virus.'});
 
@@ -1795,12 +1837,63 @@ $(document).ready(function () {
     $('#initFrac').tooltip({'trigger':'focus', 'title': 'What percentage of population is exposed to the virus? The residual incubation period is random.'});
 
     $('#compliance').tooltip({'trigger':'focus', 'title': 'What fraction of households are likely to follow the restrictions specified in the chosen intervention?'});
-});
 
-$('.selectpicker').change(function () {
-    var selectedItem = $('.selectpicker').val();
-    setCity(selectedItem);
-   });
+    $('.selectpicker').on('change', function () {
+        var selectedItem = $('.selectpicker').val();
+        setCity(selectedItem);
+       });
 
-set_default_values_html();
+       $('#toggleInfo').on('click',function() {
+        let att = $(this).attr('data-field');
+        if(($(this).next()).hasClass('tool-dec')) {
+            $(this).next().remove();
+        }
+        else {
+            $(this).after('<div class="tool-dec"><img width="100%" src="'+ IMAGEPREFIX +'/InfectionProgression-v2.png" /></div>');
+        }
+    })
+
+    $('#about').on('shown.bs.collapse', function () {
+        $('.abt-toggle .down').hide();
+        $('.abt-toggle .up').show();
+      })
+      $('#about').on('hidden.bs.collapse', function () {
+        $('.abt-toggle .up').hide();
+        $('.abt-toggle .down').show();
+      })
+
+      $('.tabs li').on('click',function() {
+          let attr = $(this).attr('data-tab');
+          $('.tabs .active').removeClass('active');
+          $(this).addClass('active');
+          if(attr === 'left') {
+            $('#right').hide();
+              $('#left').show();
+          }
+          else {
+            $('#left').hide();
+            $('#right').show();
+          }
+          
+      })
+    
+}
+
+
+
+
+
+
+$(window).resize(function() {
+    if($('body').hasClass('mobile')) {
+    let h = $(window).outerHeight() - ($('.custom-header').outerHeight() + $('.footer').outerHeight());
+    $('.splitter-container').css('height',h);
+
+    let h1 = $('.splitter-container').outerHeight() - $('.run-btn-cnt').outerHeight();
+    $('.scroll').css('height',h1);
+
+    let h2 = $('.splitter-container').outerHeight() - $('.right-top').outerHeight();
+    $('.sim-lane').css('height',h2);
+    }
+})
 

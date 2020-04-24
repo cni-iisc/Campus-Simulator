@@ -1,6 +1,6 @@
-NUM_DAYS=120
+NUM_DAYS=150
 INIT_FRAC_INFECTED=0.001
-INCUBATION_PERIOD=2.25
+INCUBATION_PERIOD=2.3
 MEAN_ASYMPTOMATIC_PERIOD=0.5
 MEAN_SYMPTOMATIC_PERIOD=5
 SYMPTOMATIC_FRACTION=0.67
@@ -9,20 +9,20 @@ MEAN_HOSPITAL_CRITICAL_PERIOD=8
 COMPLIANCE_PROBABILITY=0.9
 F_KERNEL_A=10.751
 F_KERNEL_B=5.384
-BETA_H=1.2410293733942703
-BETA_W=0.9289438506612563
-BETA_C=0.23195981755789088
-BETA_S=1.8387669724845188
+BETA_H=1.0925
+BETA_W=0.524166
+BETA_C=0.206177
+BETA_S=1.04833
 BETA_TRAVEL=0
-HD_AREA_FACTOR=2.0
+HD_AREA_FACTOR=1.0
 HD_AREA_EXPONENT=0
 INTERVENTION=0
 output_directory_base="outputs/test_output_timing"
 input_directory="../simulator/input_files"
-CALIBRATION_DELAY=0
-DAYS_BEFORE_LOCKDOWN=0
-FIRST_PERIOD=21
-SECOND_PERIOD=21
+CALIBRATION_DELAY=6
+DAYS_BEFORE_LOCKDOWN=13
+FIRST_PERIOD=37
+SECOND_PERIOD=42
 THIRD_PERIOD=42
 OE_SECOND_PERIOD=30
 # Set this to "--SEED_HD_AREA_POPULATION" to seed hd area population
@@ -39,8 +39,8 @@ SEED_ONLY_NON_COMMUTER=
 SEED_FIXED_NUMBER="--SEED_FIXED_NUMBER"
 #SEED_FIXED_NUMBER=
 INIT_FIXED_NUMBER_INFECTED=100
-LOCKED_COMMUNITY_LEAKAGE=0.25
-
+LOCKED_COMMUNITY_LEAKAGE=1 #0.25
+attendance_filename="attendance_count_7.json"
 
 usage(){
 	echo "Usage: [ -i base_of_input_directory ] [ -o base_of_output_directory ]"
@@ -68,7 +68,7 @@ done;
 echo "Input directory is: ${input_directory}"
 echo "Output directory is: ${output_directory_base}"
 
-for INTERVENTION in  0 3 7 8 9 10;
+for INTERVENTION in 11; # 0 3 7 8 9 10;
 do
 	echo "Running with INTERVENTION=${INTERVENTION}..."
 	output_directory="${output_directory_base}/intervention_${INTERVENTION}"
@@ -103,13 +103,15 @@ do
 	 --INTERVENTION $INTERVENTION \
 	 --output_directory $output_directory \
 	 --input_directory $input_directory \
+	 --attendance_filename $attendance_filename \
 	 --CALIBRATION_DELAY $CALIBRATION_DELAY \
 	 --DAYS_BEFORE_LOCKDOWN $DAYS_BEFORE_LOCKDOWN \
      --FIRST_PERIOD $FIRST_PERIOD \
      --SECOND_PERIOD $SECOND_PERIOD \
      --THIRD_PERIOD $THIRD_PERIOD \
      --OE_SECOND_PERIOD $OE_SECOND_PERIOD \
-	 --LOCKED_COMMUNITY_LEAKAGE $LOCKED_COMMUNITY_LEAKAGE"
+	 --LOCKED_COMMUNITY_LEAKAGE $LOCKED_COMMUNITY_LEAKAGE \
+	 --IGNORE_ATTENDANCE_FILE"
 
 	echo $command;
 	if eval $command; then
@@ -132,6 +134,6 @@ do
 	echo "*****************"
 done;
 
-echo "Now plotting consolidated plots for all interventions"
-python plot_all_interventions.py "${output_directory_base}"
+#echo "Now plotting consolidated plots for all interventions"
+#python plot_all_interventions.py "${output_directory_base}"
 

@@ -16,8 +16,21 @@
  
      .custom-header a {
        color: #fff;
-       padding-left: 10px;
      }
+
+     .iise, .tif, .sap {
+      display: flex;
+  }
+
+  .logos.second {
+    width: 45%;
+}
+
+.logos.first {
+  width: 35%;
+}
+
+
  
      .navbar-header > div {
        display: flex;
@@ -128,9 +141,9 @@
      }
  
      .custom-loader {
-         width: 45%;
+      width: 45%;
      text-align: center;
-     margin: 30vh auto;
+     margin: 25vh auto;
      font-size: 16px;
      color: #666;
      }
@@ -258,4 +271,8 @@
 
 .mobile .right-top {
   padding: 5px;
+}
+
+.mobile .custom-header a {
+  padding-right: 5px;
 }

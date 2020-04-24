@@ -69,7 +69,7 @@ const DEAD = 7
 
 let csvContent = "data:text/csv;charset=utf-8,"; //for file dump
 
-INCUBATION_PERIOD = 2.3
+INCUBATION_PERIOD = 2.29
 MEAN_ASYMPTOMATIC_PERIOD = 0.5
 MEAN_SYMPTOMATIC_PERIOD = 5
 MEAN_HOSPITAL_REGULAR_PERIOD = 8
@@ -1849,7 +1849,7 @@ function initListner() {
             $(this).next().remove();
         }
         else {
-            $(this).after('<div class="tool-dec"><img width="100%" src="'+ IMAGEPREFIX +'/InfectionProgression-v2.png" /></div>');
+            $(this).after('<div class="tool-dec"><img width="100%" src="'+ IMAGEPREFIX +'/InfectionProgression.png" /></div>');
         }
     })
 

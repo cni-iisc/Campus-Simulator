@@ -16,6 +16,8 @@
  
      .custom-header a {
        color: #fff;
+       font-size: 11px;
+       display: block;
      }
 
      .iise, .tif, .sap {
@@ -23,11 +25,13 @@
   }
 
   .logos.second {
-    width: 45%;
+    width: 44%;
+    padding-right: 3%;
 }
 
 .logos.first {
-  width: 35%;
+  width: 38%;
+    padding-right: 2%;
 }
 
 
@@ -275,4 +279,5 @@
 
 .mobile .custom-header a {
   padding-right: 5px;
+  display: initial !important;
 }

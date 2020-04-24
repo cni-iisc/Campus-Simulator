@@ -279,4 +279,5 @@
 
 .mobile .custom-header a {
   padding-right: 5px;
+  display: initial !important;
 }

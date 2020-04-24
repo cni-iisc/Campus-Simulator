@@ -1876,16 +1876,14 @@ function initListner() {
           }
           
       })
-    
+      if(!$('body').hasClass('mobile')) {
+      $(window).resize();
+      }
 }
 
 
-
-
-
-
 $(window).resize(function() {
-    if($('body').hasClass('mobile')) {
+    if(!$('body').hasClass('mobile')) {
     let h = $(window).outerHeight() - ($('.custom-header').outerHeight() + $('.footer').outerHeight());
     $('.splitter-container').css('height',h);
 

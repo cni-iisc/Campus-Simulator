@@ -159,7 +159,7 @@ struct global_params{
   //
   // Community is fully locked down if the number of hospitalized individuals
   //crosses this fraction
-  double COMMUNITY_LOCK_THRESHOLD = 5E-3; //0.5%
+  double COMMUNITY_LOCK_THRESHOLD = 1E-3; //0.1%
   double LOCKED_COMMUNITY_LEAKAGE = 1.0;
   
   //Switches

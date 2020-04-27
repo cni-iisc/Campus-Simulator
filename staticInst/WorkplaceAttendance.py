@@ -44,14 +44,14 @@ for x in lastperiodoptions:
                 w[officeTypes['IT']] = 1
                 w[officeTypes['Construction']] = 1
                 w[officeTypes['Medical']] = 1
-            elif i <= DAYS_TILL_NO_ATTENDANCE_RESTRICTION+ FIRST_PERIOD_ATTENDANCE:#until May 31
+            elif i <= DAYS_TILL_NO_ATTENDANCE_RESTRICTION + FIRST_PERIOD_ATTENDANCE:#until May 31
                 w[officeTypes['Other']] = a
                 w[officeTypes['SEZ']] = b
                 w[officeTypes['Government']] = c
                 w[officeTypes['IT']] = d
                 w[officeTypes['Construction']] = e
                 w[officeTypes['Medical']] = f
-            elif i <= DAYS_TILL_NO_ATTENDANCE_RESTRICTION+ FIRST_PERIOD+SECOND_PERIOD_ATTENDANCE: #until July 12
+            elif i <= DAYS_TILL_NO_ATTENDANCE_RESTRICTION + FIRST_PERIOD_ATTENDANCE + SECOND_PERIOD_ATTENDANCE: #until July 12
                 w[officeTypes['SEZ']] = 1
                 w[officeTypes['Government']] = 1
                 w[officeTypes['IT']] = 0.5

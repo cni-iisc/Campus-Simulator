@@ -498,7 +498,7 @@ def sampleOfficeType(size):
     elif size >= 10 and num_ites <= max_ites_not_sez:
         num_ites += size
         return  officeType['IT']
-    
+
     else:
         return  officeType['Other']
 
@@ -562,7 +562,7 @@ for wardIndex in range(nwards):
         s = sampleWorkplaceSize()
         oType = sampleOfficeType(s)
         w["officeType"]=oType
-        
+
         i = 0
         while(i < s and len(workers[wardIndex])>0):
             pid = workers[wardIndex].pop(random.randrange(len(workers[wardIndex])))
@@ -750,7 +750,7 @@ print("done.",flush=True)
 
 
 print("Validating workplace commute distance in instantiation...",end='',flush=True)
-full_frame = np.array([distance(df1.loc[i,'lat'],df1.loc[i,'lon'],wp.loc[wp.index==int(df1.loc[i,'workplace']),'lat'].values[0],wp.loc[wp.index==int(df1.loc[i,'workplace']),'lon'].values[0]) for i in np.where(df1['workplaceType']==1)[0]])
+full_frame = np.array([distance(df1.loc[i,'lat'],df1.loc[i,'lon'],wp.loc[(wp.index+sid)==int(df1.loc[i,'workplace']),'lat'].values[0],wp.loc[(wp.index+sid)==int(df1.loc[i,'workplace']),'lon'].values[0]) for i in np.where(df1['workplaceType']==1)[0]])
 commuter_distance_output = [len(np.where(np.array(np.floor(full_frame),dtype=int) ==i)[0]) for i in np.arange(0,m_max_commuter_distance)]/np.sum([len(np.where(np.array(np.floor(full_frame),dtype=int) ==i)[0]) for i in np.arange(0,m_max_commuter_distance)])
 actual_dist=[]
 actual_dist = travel_distance_distribution(0,m_max_commuter_distance,a_commuter_distance,b_commuter_distance)

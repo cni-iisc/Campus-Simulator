@@ -20,7 +20,8 @@ enum class Intervention {
    ld_fper_ci_hq_sd65_sc_sper_sc_tper = 8,
    ld_fper_ci_hq_sd65_sc_sper = 9,
    ld_fper_ci_hq_sd65_sc_oe_sper = 10,
-   intv_fper_intv_sper_intv_tper = 11
+   intv_fper_intv_sper_intv_tper = 11,
+   intv_NYC=12
 };
 
 

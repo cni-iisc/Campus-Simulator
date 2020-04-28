@@ -190,9 +190,12 @@ void update_all_kappa(vector<agent>& nodes, vector<house>& homes, vector<workpla
     case Intervention::ld_fper_ci_hq_sd65_sc_oe_sper:
       get_kappa_LD_fper_CI_HQ_SD65_SC_OE_sper(nodes, homes, workplaces, communities, cur_time,
                                               GLOBAL.FIRST_PERIOD, GLOBAL.OE_SECOND_PERIOD);
-	case Intervention::intv_fper_intv_sper_intv_tper:
+    case Intervention::intv_fper_intv_sper_intv_tper:
       get_kappa_intv_fper_intv_sper_intv_tper(nodes, homes, workplaces, communities, cur_time,
                                                    GLOBAL.FIRST_PERIOD, GLOBAL.SECOND_PERIOD, GLOBAL.THIRD_PERIOD);
+      break;
+    case Intervention::intv_NYC:
+      get_kappa_NYC(nodes, homes, workplaces, communities, cur_time);
       break;
     default:
 	  get_kappa_no_intervention(nodes, homes, workplaces, communities, cur_time);
@@ -301,7 +304,12 @@ void update_lambda_c_global(vector<community>& communities, const matrix<double>
 		* communities[c2].lambda_community;
 	  denom += f_kernel(community_distance_matrix[c1][c2]);
 	}
-	communities[c1].lambda_community_global = communities[c1].w_c*num/denom;
+	if(denom==0){		
+		communities[c1].lambda_community_global = 0;
+	} else{		
+		communities[c1].lambda_community_global = communities[c1].w_c*num/denom;
+	}
+	
   }
 }
 

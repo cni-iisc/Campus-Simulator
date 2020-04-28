@@ -43,12 +43,14 @@ vector<house> init_homes(){
   auto size = houseJSON.GetArray().Size();
   vector<house> homes(size);
   GLOBAL.num_homes = size;
-
+  double temp_non_compliance_metric = 0;
   count_type index = 0;
   for (auto &elem: houseJSON.GetArray()){
+	temp_non_compliance_metric = get_non_compliance_metric();
 	homes[index].set(elem["lat"].GetDouble(),
 					 elem["lon"].GetDouble(),
-					 compliance());
+					 (temp_non_compliance_metric<=GLOBAL.COMPLIANCE_PROBABILITY)?1.0:0,
+					 temp_non_compliance_metric);
 	++index;
   }
   return homes;

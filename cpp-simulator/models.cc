@@ -148,3 +148,13 @@ double interpolate(double start, double end, double current, double threshold){
     return start + (end - start)*current/threshold;
   }
 }
+
+void set_compliance(std::vector<agent> & nodes, std::vector<house> & homes,  double compliance_probability){
+  //set the compliant flag for a household and it's individuals based on compliance_probability
+  for(count_type count = 0; count < homes.size(); ++count){
+    homes[count].compliant=(homes[count].non_compliance_metric <= compliance_probability);
+    for(count_type individual_count = 0; individual_count<homes[count].individuals.size();++individual_count){
+      nodes[homes[count].individuals[individual_count]].compliant = homes[count].compliant;
+    }
+  }
+}

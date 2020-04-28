@@ -205,6 +205,10 @@ inline bool compliance(){
   return bernoulli(GLOBAL.COMPLIANCE_PROBABILITY);
 }
 
+inline double get_non_compliance_metric(){
+  return uniform_real(0,1);
+}
+
 //Age groups (5-years)
 
 const int NUM_AGE_GROUPS = 16;
@@ -353,6 +357,7 @@ struct house{
   double Q_h = 1;
   double scale = 0;
   bool compliant;
+  double non_compliance_metric = 0; //0 - compliant, 1 - non-compliant
   bool quarantined = false;
   double age_independent_mixing = 0;
   //age_dependent_mixing not added yet, since it is unused
@@ -360,9 +365,10 @@ struct house{
   house(double latitude, double longitude, bool compliance):
 	loc{latitude, longitude}, compliant(compliance) {}
 
-  void set(double latitude, double longitude, bool compliance){
-	this->loc = {latitude, longitude};
-	this->compliant = compliance;
+  void set(double latitude, double longitude, bool compliance, double non_compl_metric){
+    this->loc = {latitude, longitude};
+    this->compliant = compliance;
+    this->non_compliance_metric = non_compl_metric;
   }
 };
 
@@ -431,4 +437,6 @@ double get_attendance_probability(WorkplaceType workplace_type, OfficeType offic
 //interpolation with a threshold
 double interpolate(double start, double end, double current, double threshold);
 
+//reset household and individual compliance flags based on compliance probability.
+void set_compliance(std::vector<agent> & nodes, std::vector<house> & homes,  double compliance_probability);
 #endif

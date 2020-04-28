@@ -212,9 +212,14 @@ plot_data_struct run_simulation(){
 		  }});
 
       //Update w_c value for this community, followed by update of lambdas
-      communities[c].w_c = interpolate(1.0, GLOBAL.LOCKED_COMMUNITY_LEAKAGE,
+      if(communities[c].individuals.size()>0){
+		  communities[c].w_c = interpolate(1.0, GLOBAL.LOCKED_COMMUNITY_LEAKAGE,
                                        double(temp_stats.hospitalised)/double(communities[c].individuals.size()),
                                        GLOBAL.COMMUNITY_LOCK_THRESHOLD);
+	  }else{
+		  communities[c].w_c = 1;
+	  }
+	  
 
       communities[c].lambda_community = updated_lambda_c_local(nodes, communities[c]);
 

@@ -389,8 +389,8 @@ void get_kappa_CI_HQ_65P_SC_OE(vector<agent>& nodes, vector<house>& homes, const
 	}
 	if(nodes[count].workplace_type==WorkplaceType::office){
 		//odd-even rule for workplaces. 50% interactions for workplaces.
-		nodes[count].kappa_W = 0.25;
-		nodes[count].kappa_W_incoming = 0.25;
+		nodes[count].kappa_W = 0.5;
+		nodes[count].kappa_W_incoming = 0.5;
 	} else {
 		//school and colleges are closed
 		nodes[count].kappa_W = 0;

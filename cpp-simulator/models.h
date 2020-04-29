@@ -341,7 +341,7 @@ struct agent{
   agent(){}
   // Is the agent curently traveling?
   inline bool travels() const {
-  return has_to_travel
+  return has_to_travel && attending
 	&& !((quarantined && compliant)
 		 || infection_status == Progression::hospitalised
 		 || infection_status == Progression::critical

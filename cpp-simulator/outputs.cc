@@ -60,6 +60,8 @@ string intervention_rep(Intervention i){
 	break;
   case Intervention::intv_NYC:
 	return "intv_NYC";
+  case Intervention::intv_Mum:
+	return "intv_Mum";
 	break;
   default:
 	assert(false);
@@ -180,6 +182,9 @@ void output_global_params(const string& output_dir){
   fout << "LOCKED_COMMUNITY_LEAKAGE: " << GLOBAL.LOCKED_COMMUNITY_LEAKAGE << ";" << endl;
 
   fout << "IGNORE_ATTENDANCE_FILE: " << GLOBAL.IGNORE_ATTENDANCE_FILE << ";" << endl;
+  fout << "MASK_ACTIVE: " << GLOBAL.MASK_ACTIVE << ";" << endl;
+  fout << "MASK_FACTOR: " << GLOBAL.MASK_FACTOR << ";" << endl;
+  fout << "MASK_START_DATE: " << GLOBAL.MASK_START_DATE << ";" << endl;
   
   fout.close();
 }

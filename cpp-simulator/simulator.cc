@@ -228,7 +228,7 @@ plot_data_struct run_simulation(){
 	update_lambda_c_global(communities, community_dist_matrix);
 
 
-	travel_fraction = updated_travel_fraction(nodes);
+	travel_fraction = updated_travel_fraction(nodes,time_step);
 
 	double susceptible_lambda = 0,
 	  susceptible_lambda_H = 0,

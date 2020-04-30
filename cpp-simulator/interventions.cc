@@ -573,3 +573,15 @@ void get_kappa_NYC(vector<agent>& nodes, vector<house>& homes, const vector<work
 	  get_kappa_lockdown(nodes, homes, workplaces, communities, cur_time);
 	}
 }
+
+void get_kappa_Mumbai(vector<agent>& nodes, vector<house>& homes, const vector<workplace>& workplaces, const vector<community>& communities, int cur_time, double FIRST_PERIOD, double SECOND_PERIOD){
+	
+	if(cur_time < (GLOBAL.NUM_DAYS_BEFORE_INTERVENTIONS+FIRST_PERIOD)*GLOBAL.SIM_STEPS_PER_DAY){
+	  get_kappa_lockdown(nodes, homes, workplaces, communities, cur_time);
+	} else if(cur_time < (GLOBAL.NUM_DAYS_BEFORE_INTERVENTIONS+FIRST_PERIOD+SECOND_PERIOD)*GLOBAL.SIM_STEPS_PER_DAY){
+	  set_compliance(nodes,homes,0.8); //compliance hard coded to 0.8 post lockdown.
+	  get_kappa_lockdown(nodes, homes, workplaces, communities, cur_time);
+	} else{
+	  get_kappa_custom(nodes, homes, workplaces, communities, cur_time, true, true, false, true, true, false, 0, 0.75);
+	}
+}

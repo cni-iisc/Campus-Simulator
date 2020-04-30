@@ -19,6 +19,8 @@ int main(int argc, char** argv){
 
   options.add_options()
 	("h,help", "display description of program options")
+  ("MASK_ACTIVE", "whether masks factor needs to be incorporated",
+	 cxxopts::value<bool>()->default_value(DEFAULTS.MASK_ACTIVE))
 	("SEED_HD_AREA_POPULATION", "seed those living in high-density areas as well",
 	 cxxopts::value<bool>()->default_value(DEFAULTS.SEED_HD_AREA_POPULATION))
 	("SEED_ONLY_NON_COMMUTER", "seed only those who do not take public transit",
@@ -161,7 +163,9 @@ int main(int argc, char** argv){
   GLOBAL.SYMPTOMATIC_PERIOD = GLOBAL.MEAN_SYMPTOMATIC_PERIOD*GLOBAL.SIM_STEPS_PER_DAY;
   GLOBAL.HOSPITAL_REGULAR_PERIOD = GLOBAL.MEAN_HOSPITAL_REGULAR_PERIOD*GLOBAL.SIM_STEPS_PER_DAY;
   GLOBAL.HOSPITAL_CRITICAL_PERIOD = GLOBAL.MEAN_HOSPITAL_CRITICAL_PERIOD*GLOBAL.SIM_STEPS_PER_DAY;
-
+  
+  GLOBAL.MASK_ACTIVE = optvals["MASK_ACTIVE"].count();
+  GLOBAL.MASK_START_DATE = GLOBAL.CALIBRATION_DELAY + 40; //masks starts from April 9
   if(GLOBAL.input_base != ""
 	 && GLOBAL.input_base[GLOBAL.input_base.size() - 1] != '/'){ 
 	GLOBAL.input_base += '/';

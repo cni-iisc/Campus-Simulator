@@ -41,5 +41,7 @@ void get_kappa_NYC(std::vector<agent>& nodes, std::vector<house>& homes, const s
 
 void get_kappa_custom(std::vector<agent>& nodes, std::vector<house>& homes, const std::vector<workplace>& workplaces, const std::vector<community>& communities, int cur_time, bool case_isolation, bool home_quarantine, bool lockdown, bool social_dist_elderly, bool school_closed, bool workplace_odd_even);
 
+void get_kappa_Mumbai(std::vector<agent>& nodes, std::vector<house>& homes, const std::vector<workplace>& workplaces, const std::vector<community>& communities, int cur_time, double FIRST_PERIOD, double SECOND_PERIOD);
+
 #endif
 

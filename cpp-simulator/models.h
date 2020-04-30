@@ -21,7 +21,8 @@ enum class Intervention {
    ld_fper_ci_hq_sd65_sc_sper = 9,
    ld_fper_ci_hq_sd65_sc_oe_sper = 10,
    intv_fper_intv_sper_intv_tper = 11,
-   intv_NYC=12
+   intv_NYC=12,
+   intv_Mum=13
 };
 
 
@@ -197,6 +198,10 @@ struct global_params{
   double CALIBRATION_DELAY = 22; //Assuming Simulator starts on March 1
   double DAYS_BEFORE_LOCKDOWN = 24; //March 1 - March 24
   double NUM_DAYS_BEFORE_INTERVENTIONS = CALIBRATION_DELAY + DAYS_BEFORE_LOCKDOWN;
+
+  bool MASK_ACTIVE = false;
+  double MASK_FACTOR = 0.8;
+  double MASK_START_DATE = 0;//40+
 };
 extern global_params GLOBAL;
 

@@ -6,11 +6,11 @@
 #include "models.h"
 #include <vector>
 
-double update_individual_lambda_h(const agent& node);
+double update_individual_lambda_h(const agent& node, int cur_time);
 
-double update_individual_lambda_w(const agent& node);
+double update_individual_lambda_w(const agent& node, int cur_time);
 
-double update_individual_lambda_c(const agent& node);
+double update_individual_lambda_c(const agent& node, int cur_time);
 
 struct node_update_status{
   bool new_infection = false;
@@ -27,7 +27,7 @@ double updated_lambda_w_age_independent(const std::vector<agent>& nodes, const w
 
 double updated_lambda_h_age_independent(const std::vector<agent>& nodes, const house& home);
 
-double updated_travel_fraction(const std::vector<agent>& nodes);
+double updated_travel_fraction(const std::vector<agent>& nodes, int cur_time);
 
 void update_lambdas(agent&node, const std::vector<house>& homes, const std::vector<workplace>& workplaces, const std::vector<community>& communities, double travel_fraction, int cur_time);
 

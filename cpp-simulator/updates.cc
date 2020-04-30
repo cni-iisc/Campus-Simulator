@@ -12,7 +12,13 @@ using std::cerr;
 
 using std::vector;
 
-double update_individual_lambda_h(const agent& node){
+bool mask_active(int cur_time){
+	int mask_start_date = GLOBAL.MASK_START_DATE;
+	int MASK_ON_TIME = mask_start_date * GLOBAL.SIM_STEPS_PER_DAY;
+	return (cur_time >= MASK_ON_TIME && GLOBAL.MASK_ACTIVE);
+}
+
+double update_individual_lambda_h(const agent& node,int cur_time){
   return (node.infective?1.0:0.0)
 	* node.kappa_T
 	* node.infectiousness
@@ -20,22 +26,32 @@ double update_individual_lambda_h(const agent& node){
 	* node.kappa_H;
 }
 
-double update_individual_lambda_w(const agent& node){
+double update_individual_lambda_w(const agent& node, int cur_time){
+  double mask_factor = 1.0;
+  if(mask_active(cur_time) && node.compliant){
+	  mask_factor = GLOBAL.MASK_FACTOR;
+  }
   return (node.infective?1.0:0.0)
     * (node.attending?1.0:GLOBAL.ATTENDANCE_LEAKAGE)
 	* node.kappa_T
 	* node.infectiousness
 	* (1 + node.severity*(2*node.psi_T-1))
-	* node.kappa_W;
+	* node.kappa_W
+	* mask_factor;
 }
 
-double update_individual_lambda_c(const agent& node){
+double update_individual_lambda_c(const agent& node, int cur_time){
+  double mask_factor = 1.0;
+  if(mask_active(cur_time) && node.compliant){
+	  mask_factor = GLOBAL.MASK_FACTOR;
+  }
   return (node.infective?1.0:0.0)
 	* node.kappa_T
 	* node.infectiousness
 	* node.funct_d_ck
 	* (1 + node.severity)
-	* node.kappa_C;
+	* node.kappa_C
+	* mask_factor;
 	// optimised version: return node.lambda_h * node.funct_d_ck;
 }
 
@@ -141,9 +157,9 @@ node_update_status update_infection(agent& node, int cur_time){
 	  node.infective = false;
 	}
   }
-  node.lambda_h = update_individual_lambda_h(node);
-  node.lambda_w = update_individual_lambda_w(node);
-  node.lambda_c = update_individual_lambda_c(node);
+  node.lambda_h = update_individual_lambda_h(node,cur_time);
+  node.lambda_w = update_individual_lambda_w(node,cur_time);
+  node.lambda_c = update_individual_lambda_c(node,cur_time);
 
   return update_status;
 }
@@ -197,6 +213,10 @@ void update_all_kappa(vector<agent>& nodes, vector<house>& homes, vector<workpla
     case Intervention::intv_NYC:
       get_kappa_NYC(nodes, homes, workplaces, communities, cur_time);
       break;
+	case Intervention::intv_Mum:
+      get_kappa_Mumbai(nodes, homes, workplaces, communities, cur_time,
+                                                   GLOBAL.FIRST_PERIOD, GLOBAL.SECOND_PERIOD);
+      break;
     default:
 	  get_kappa_no_intervention(nodes, homes, workplaces, communities, cur_time);
       break;
@@ -222,7 +242,7 @@ double updated_lambda_h_age_independent(const vector<agent>& nodes, const house&
   // Populate it afterwards...
 }
 
-double updated_travel_fraction(const vector<agent>& nodes){
+double updated_travel_fraction(const vector<agent>& nodes, int cur_time){
   double infected_distance = 0, total_distance = 0;
   count_type actual_travellers = 0, usual_travellers = 0;
   for(const auto& node: nodes){
@@ -230,15 +250,24 @@ double updated_travel_fraction(const vector<agent>& nodes){
 	  ++usual_travellers;
 	}
 	if(node.travels()){
+		double mask_factor = 1.0;
+		if(mask_active(cur_time) && node.compliant){
+			mask_factor = GLOBAL.MASK_FACTOR;
+		}
 	  ++actual_travellers ;
 	  total_distance += node.commute_distance;
 	  if(node.infective){
-		infected_distance += node.commute_distance;
+		infected_distance += node.commute_distance * mask_factor;
 	  }
 	}
   }
-  return (infected_distance/total_distance)
+  if(total_distance == 0 || usual_travellers == 0){
+	  return 0;
+  } else{
+	  return (infected_distance/total_distance)
 	* double(actual_travellers)/double(usual_travellers);
+  }
+  
 }
 
 
@@ -258,6 +287,8 @@ void update_lambdas(agent&node, const vector<house>& homes, const vector<workpla
 	  * workplaces[node.workplace].age_independent_mixing;
 	//FEATURE_PROPOSAL: make the mixing dependent on node.age_group;
   }
+
+   
   // No null check for community as every node has a community.
   //
   // For all communities add the community lambda with a distance
@@ -278,6 +309,11 @@ void update_lambdas(agent&node, const vector<house>& homes, const vector<workpla
 	  * travel_fraction;
   }
 	 
+  if(mask_active(cur_time) && node.compliant){
+	   node.lambda_incoming[1] = node.lambda_incoming[1]*GLOBAL.MASK_FACTOR;
+	   node.lambda_incoming[2] = node.lambda_incoming[2]*GLOBAL.MASK_FACTOR;
+	   node.lambda_incoming[3] = node.lambda_incoming[3]*GLOBAL.MASK_FACTOR;
+   }
 
   node.lambda = node.lambda_incoming[0]
 	+ node.lambda_incoming[1]

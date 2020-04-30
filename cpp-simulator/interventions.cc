@@ -582,6 +582,7 @@ void get_kappa_Mumbai(vector<agent>& nodes, vector<house>& homes, const vector<w
 	  set_compliance(nodes,homes,0.8); //compliance hard coded to 0.8 post lockdown.
 	  get_kappa_lockdown(nodes, homes, workplaces, communities, cur_time);
 	} else{
+	  set_compliance(nodes,homes,0.8); //compliance hard coded to 0.8 post lockdown.
 	  get_kappa_custom(nodes, homes, workplaces, communities, cur_time, true, true, false, true, true, false, 0, 0.75);
 	}
 }

@@ -399,24 +399,47 @@ void get_kappa_CI_HQ_65P_SC_OE(vector<agent>& nodes, vector<house>& homes, const
   }
 }
 
-void get_kappa_custom(vector<agent>& nodes, vector<house>& homes, const vector<workplace>& workplaces, const vector<community>& communities, int cur_time, bool case_isolation = false, bool home_quarantine = false, bool lockdown = false, bool social_dist_elderly = false, bool school_closed = false, bool workplace_odd_even = false, double SC_factor = 0, double community_factor = 1){
+void get_kappa_custom(vector<agent>& nodes, vector<house>& homes, const vector<workplace>& workplaces, const vector<community>& communities, int cur_time, bool case_isolation = false, bool home_quarantine = false, bool lockdown = false, bool social_dist_elderly = false, bool school_closed = false, bool workplace_odd_even = false, double SC_factor = 0, double community_factor = 1,bool neighbourhood_containment = false){
   
   double time_since_symptoms = 0;
+  double time_since_hospitalised = 0;
 
-  if(home_quarantine){
-	for(count_type count = 0; count<homes.size(); ++count){
+  if(home_quarantine || neighbourhood_containment){
+	  for(count_type count = 0; count<homes.size(); ++count){
 		//reset all homes as non-quarantined. The status will be updated depending on the household individuals.
 		homes[count].quarantined = false;
   	}
+  }
+  
+  if(home_quarantine){
+	
 	for (count_type count = 0; count < nodes.size(); ++count){
 		time_since_symptoms = cur_time
 		- (nodes[count].time_of_infection
 			+ nodes[count].incubation_period
 			+ nodes[count].asymptomatic_period);
-		if((nodes[count].compliant) &&
+		if((nodes[count].compliant) && (nodes[count].entered_symptomatic_state) &&
 		(time_since_symptoms > NUM_DAYS_TO_RECOG_SYMPTOMS*GLOBAL.SIM_STEPS_PER_DAY) &&
 		(time_since_symptoms <= (NUM_DAYS_TO_RECOG_SYMPTOMS+HOME_QUARANTINE_DAYS)*GLOBAL.SIM_STEPS_PER_DAY)){
-		homes[nodes[count].home].quarantined = true;
+			homes[nodes[count].home].quarantined = true;
+		}
+	}
+  }
+
+  if(neighbourhood_containment){	
+	for (count_type count = 0; count < nodes.size(); ++count){
+		time_since_hospitalised = cur_time
+		- (nodes[count].time_of_infection
+			+ nodes[count].incubation_period
+			+ nodes[count].asymptomatic_period
+			+ nodes[count].symptomatic_period);
+		if((nodes[count].entered_hospitalised_state) &&
+		(time_since_hospitalised <= (HOME_QUARANTINE_DAYS)*GLOBAL.SIM_STEPS_PER_DAY)){
+			homes[nodes[count].home].quarantined = true;		
+			for(count_type nbr_count = 0; nbr_count < homes[nodes[count].home].neighbours.size(); ++nbr_count){
+				count_type neighbour = homes[nodes[count].home].neighbours[nbr_count];
+				homes[neighbour].quarantined = true;
+			}		
 		}
 	}
   }
@@ -497,7 +520,7 @@ void get_kappa_custom(vector<agent>& nodes, vector<house>& homes, const vector<w
 	  nodes[count].kappa_C_incoming = 0.1;	//community value set in the beginning overwritten
 	}
 
-	if(homes[nodes[count].home].quarantined && home_quarantine){
+	if(homes[nodes[count].home].quarantined && (home_quarantine || neighbourhood_containment)){
 	  nodes[count].quarantined = true;
       nodes[count].kappa_H = 0.75;
 	  nodes[count].kappa_W = 0;
@@ -585,4 +608,12 @@ void get_kappa_Mumbai(vector<agent>& nodes, vector<house>& homes, const vector<w
 	  set_compliance(nodes,homes,0.8); //compliance hard coded to 0.8 post lockdown.
 	  get_kappa_custom(nodes, homes, workplaces, communities, cur_time, true, true, false, true, true, false, 0, 0.75);
 	}
+}
+
+void get_kappa_nbr_containment(vector<agent>& nodes, vector<house>& homes, const vector<workplace>& workplaces, const vector<community>& communities, int cur_time, double FIRST_PERIOD){
+	if(cur_time < (GLOBAL.NUM_DAYS_BEFORE_INTERVENTIONS+FIRST_PERIOD)*GLOBAL.SIM_STEPS_PER_DAY){
+		get_kappa_custom(nodes, homes, workplaces, communities, cur_time, false, false, true, false, false, false, 0, 1,false);
+	} else{
+		get_kappa_custom(nodes, homes, workplaces, communities, cur_time, false, false, false, false, false, false, 0, 1,true);
+	}	
 }

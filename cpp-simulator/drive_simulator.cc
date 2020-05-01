@@ -93,6 +93,8 @@ int main(int argc, char** argv){
 	 cxxopts::value<count_type>())
     ("LOCKED_COMMUNITY_LEAKAGE", "minimum community infection leakage under containment",
 	 cxxopts::value<double>()->default_value(DEFAULTS.LOCKED_COMMUNITY_LEAKAGE))
+   ("COMMUNITY_LOCK_THRESHOLD", "hospitalisation fraciton in a ward beyond which the ward will be cordoned off.",
+	 cxxopts::value<double>()->default_value(DEFAULTS.COMMUNITY_LOCK_THRESHOLD))
     ("USE_AGE_DEPENDENT_MIXING", "Boolean for using age dependent interactions",
      cxxopts::value<bool>()->default_value(DEFAULTS.USE_AGE_DEPENDENT_MIXING))
     ("SIGNIFICANT_EIGEN_VALUES", "Number of principal components to use",
@@ -164,7 +166,7 @@ int main(int argc, char** argv){
   //Done saving options
   
   GLOBAL.LOCKED_COMMUNITY_LEAKAGE = optvals["LOCKED_COMMUNITY_LEAKAGE"].as<double>();
-
+  GLOBAL.COMMUNITY_LOCK_THRESHOLD = optvals["COMMUNITY_LOCK_THRESHOLD"].as<double>();
   //Compute parametrs based on options
   GLOBAL.NUM_TIMESTEPS = GLOBAL.NUM_DAYS*GLOBAL.SIM_STEPS_PER_DAY;
   GLOBAL.INCUBATION_PERIOD_SCALE = GLOBAL.INCUBATION_PERIOD*GLOBAL.SIM_STEPS_PER_DAY;

@@ -141,7 +141,7 @@ double get_attendance_probability(WorkplaceType workplace_type, OfficeType offic
 
 //interpolation with a threshold
 double interpolate(double start, double end, double current, double threshold){
-  if (current >= threshold){
+  if (current > threshold){
     return end;
   }
   else {

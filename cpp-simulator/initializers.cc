@@ -51,6 +51,7 @@ vector<house> init_homes(){
 					 elem["lon"].GetDouble(),
 					 (temp_non_compliance_metric<=GLOBAL.COMPLIANCE_PROBABILITY)?1.0:0,
 					 temp_non_compliance_metric);
+	homes[index].neighbours.push_back(index); //add self to set of neighbours. TODO: Add actual list of neighbours based on neighour list json.
 	++index;
   }
   return homes;

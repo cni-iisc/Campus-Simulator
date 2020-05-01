@@ -93,6 +93,7 @@ node_update_status update_infection(agent& node, int cur_time){
 	  node.infection_status = Progression::symptomatic; //move to symptomatic
 	  node.infective = true;
 	  update_status.new_symptomatic = true;
+	  node.entered_symptomatic_state = true;
 	}
 	else {
 	  node.infection_status = Progression::recovered; //move to recovered
@@ -112,6 +113,7 @@ node_update_status update_infection(agent& node, int cur_time){
 	  node.infection_status = Progression::hospitalised; //move to hospitalisation
 	  node.infective = false;
 	  update_status.new_hospitalization = true;
+	  node.entered_hospitalised_state = true;
 	}
 	else {
 	  node.infection_status = Progression::recovered; //move to recovered
@@ -213,9 +215,12 @@ void update_all_kappa(vector<agent>& nodes, vector<house>& homes, vector<workpla
     case Intervention::intv_NYC:
       get_kappa_NYC(nodes, homes, workplaces, communities, cur_time);
       break;
-	case Intervention::intv_Mum:
+	  case Intervention::intv_Mum:
       get_kappa_Mumbai(nodes, homes, workplaces, communities, cur_time,
                                                    GLOBAL.FIRST_PERIOD, GLOBAL.SECOND_PERIOD);
+      break;
+    case Intervention::intv_nbr_containment:
+      get_kappa_nbr_containment(nodes, homes, workplaces, communities, cur_time, GLOBAL.FIRST_PERIOD);
       break;
     default:
 	  get_kappa_no_intervention(nodes, homes, workplaces, communities, cur_time);

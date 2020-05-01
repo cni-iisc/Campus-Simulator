@@ -62,6 +62,8 @@ string intervention_rep(Intervention i){
 	return "intv_NYC";
   case Intervention::intv_Mum:
 	return "intv_Mum";
+  case Intervention::intv_nbr_containment:
+	return "intv_nbr_containment";
 	break;
   default:
 	assert(false);

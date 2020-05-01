@@ -225,12 +225,16 @@ vector<agent> init_nodes(){
 		if(elem["workplace"].IsNumber()){
 		  nodes[i].workplace_type = WorkplaceType::office;
 		  nodes[i].workplace = int(elem["workplace"].GetDouble());
+		  //Travel
+		  nodes[i].has_to_travel = bernoulli(GLOBAL.P_TRAIN);
 		}
 		break;
 	  case 2:
 		if(elem["school"].IsNumber()){
 		  nodes[i].workplace_type = WorkplaceType::school;
 		  nodes[i].workplace = int(elem["school"].GetDouble());
+		  //Travel
+		  nodes[i].has_to_travel = bernoulli(GLOBAL.P_TRAIN);
 		}
 	  default:
 		break;
@@ -275,9 +279,6 @@ vector<agent> init_nodes(){
 	
 	nodes[i].hospital_regular_period = GLOBAL.HOSPITAL_REGULAR_PERIOD;
 	nodes[i].hospital_critical_period = GLOBAL.HOSPITAL_CRITICAL_PERIOD;
-
-	//Travel
-	nodes[i].has_to_travel = bernoulli(GLOBAL.P_TRAIN);
 
 	//Now procees node to check if it could be an initial seed given
 	//all its other data

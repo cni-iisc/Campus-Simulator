@@ -362,6 +362,12 @@ casualty_stats get_infected_community(const vector<agent>& nodes, const communit
         stat.hd_area_exposed += 1;
       }
 	}
+	if (nodes[community.individuals[i]].infection_status==Progression::symptomatic) {
+	  stat.symptomatic += 1;
+      if(hd_area_resident){
+        stat.hd_area_symptomatic += 1;
+      }
+	}
 	if (nodes[community.individuals[i]].infection_status==Progression::recovered) {
 	  stat.recovered += 1;
 	  if(hd_area_resident){

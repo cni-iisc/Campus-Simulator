@@ -40,6 +40,8 @@ struct casualty_stats{
   count_type hd_area_infected = 0;
   count_type affected = 0;
   count_type hd_area_affected = 0;
+  count_type symptomatic = 0;
+  count_type hd_area_symptomatic = 0;
   count_type hospitalised = 0;
   count_type hd_area_hospitalised = 0;
   count_type critical = 0;

@@ -203,11 +203,13 @@ plot_data_struct run_simulation(){
 		  c,
 		  temp_stats.infected,
 		  temp_stats.affected,
+		  temp_stats.symptomatic,
 		  temp_stats.hospitalised,
 		  temp_stats.critical,
 		  temp_stats.dead,
           temp_stats.hd_area_infected,
 		  temp_stats.hd_area_affected,
+		  temp_stats.hd_area_symptomatic,
           temp_stats.hd_area_hospitalised,
           temp_stats.hd_area_critical,
           temp_stats.hd_area_dead

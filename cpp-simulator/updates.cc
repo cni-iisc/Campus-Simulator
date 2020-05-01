@@ -242,6 +242,101 @@ double updated_lambda_h_age_independent(const vector<agent>& nodes, const house&
   // Populate it afterwards...
 }
 
+double updated_lambda_h_age_dependent(const vector<agent>& nodes, const house& home, const matrix<double>& home_tx_u, const vector<double>& home_tx_sigma, const matrix<double>& home_tx_vT){
+  auto size = home_tx_u.size();
+
+  vector<double> age_component(GLOBAL.NUM_AGE_GROUPS);
+  double lambda_age_group=0;
+  vector<double> V_tx(GLOBAL.SIGNIFICANT_EIGEN_VALUES);
+
+  for (count_type i=0; i<home.individuals.size(); ++i){
+      int ind_age_group = (int) nodes[home.individuals[i]].age / 10;
+      age_component[ind_age_group] += nodes[home.individuals[i]].lambda_h;
+  }
+
+  for (count_type eigen_count=0; eigen_count<GLOBAL.SIGNIFICANT_EIGEN_VALUES; ++eigen_count){
+    for(count_type count=0; count<size; ++count){
+      V_tx[eigen_count] += home_tx_vT[eigen_count][count]
+                           * age_component[count];
+    }
+  }
+
+  for (count_type count=0; count<GLOBAL.NUM_AGE_GROUPS; ++count){
+    for (count_type eigen_count=0; eigen_count<GLOBAL.SIGNIFICANT_EIGEN_VALUES; ++eigen_count){
+      lambda_age_group += home.scale
+                          * home_tx_u[count][eigen_count]
+                          * home_tx_sigma[eigen_count]
+                          * V_tx[eigen_count];
+    }
+  }
+
+ return lambda_age_group;
+
+}
+
+double updated_lambda_w_age_dependent(const vector<agent>& nodes, const workplace& workplace, const matrix<double>& workplace_tx_u, const vector<double>& workplace_tx_sigma, const matrix<double>& workplace_tx_vT){
+
+    auto size = workplace_tx_u.size();
+
+    vector<double> age_component(GLOBAL.NUM_AGE_GROUPS);
+    double lambda_age_group=0;
+    vector<double> V_tx(GLOBAL.SIGNIFICANT_EIGEN_VALUES);
+    for (count_type i=0; i<workplace.individuals.size(); ++i){
+        int ind_age_group = (int) nodes[workplace.individuals[i]].age / 10;
+        age_component[ind_age_group] += nodes[workplace.individuals[i]].lambda_h;
+    }
+
+    for (count_type eigen_count=0; eigen_count<GLOBAL.SIGNIFICANT_EIGEN_VALUES; ++eigen_count){
+      for(count_type count=0; count<size; ++count){
+        V_tx[eigen_count] += workplace_tx_vT[eigen_count][count]
+                             * age_component[count];
+      }
+    }
+
+    for (count_type count=0; count<GLOBAL.NUM_AGE_GROUPS; ++count){
+      for (count_type eigen_count=0; eigen_count<GLOBAL.SIGNIFICANT_EIGEN_VALUES; ++eigen_count){
+        lambda_age_group += workplace.scale
+                            * workplace_tx_u[count][eigen_count]
+                            * workplace_tx_sigma[eigen_count]
+                            * V_tx[eigen_count];
+      }
+    }
+    return lambda_age_group;
+}
+
+double updated_lambda_c_local_age_dependent(const vector<agent>& nodes, const community& community, const matrix<double>& community_tx_u, const vector<double>& community_tx_sigma, const matrix<double>& community_tx_vT){
+
+  auto size = community_tx_u.size();
+
+  vector<double> age_component(GLOBAL.NUM_AGE_GROUPS);
+  double lambda_age_group=0;
+  vector<double> V_tx(GLOBAL.SIGNIFICANT_EIGEN_VALUES);
+
+  for (count_type i=0; i<community.individuals.size(); ++i){
+      int ind_age_group = (int) nodes[community.individuals[i]].age / 10;
+      age_component[ind_age_group] += nodes[community.individuals[i]].lambda_h;
+  }
+
+  for (count_type eigen_count=0; eigen_count<GLOBAL.SIGNIFICANT_EIGEN_VALUES; ++eigen_count){
+    for(count_type count=0; count<size; ++count){
+      V_tx[eigen_count] += community_tx_vT[eigen_count][count]
+                           * age_component[count];
+    }
+  }
+
+  for (count_type count=0; count<GLOBAL.NUM_AGE_GROUPS; ++count){
+    for (count_type eigen_count=0; eigen_count<GLOBAL.SIGNIFICANT_EIGEN_VALUES; ++eigen_count){
+      lambda_age_group += community.scale
+                          * community_tx_u[count][eigen_count]
+                          * community_tx_sigma[eigen_count]
+                          * V_tx[eigen_count];
+    }
+  }
+
+ return lambda_age_group;
+
+}
+
 double updated_travel_fraction(const vector<agent>& nodes, int cur_time){
   double infected_distance = 0, total_distance = 0;
   count_type actual_travellers = 0, usual_travellers = 0;

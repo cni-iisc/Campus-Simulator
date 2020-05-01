@@ -309,6 +309,32 @@ vector<agent> init_nodes(){
   return nodes;
 }
 
+vector<double> read_JSON_convert_array(const string& file_name){
+  auto file_JSON = readJSONFile(GLOBAL.input_base + file_name);   
+  auto size = file_JSON.GetArray().Size();
+  vector<double> return_object(size);
+  int i = 0;
+  for (auto &elem: file_JSON.GetArray()){
+    return_object[i] = elem[to_string(i).c_str()].GetDouble();
+    i += 1;
+  }
+  return return_object;  
+}
+
+matrix<double> read_JSON_convert_matrix(const string& file_name){ 
+  auto file_JSON = readJSONFile(GLOBAL.input_base + file_name);   
+  auto size = file_JSON.GetArray().Size();
+  matrix<double> return_object(size, vector<double>(size));
+  int i =0;
+  for (auto &elem: file_JSON.GetArray()){
+    for (count_type j = 0; j < size; ++j){
+       return_object[i][j] = elem[to_string(j).c_str()].GetDouble();
+    }
+    i += 1;
+  }
+  return return_object; 
+}
+
 matrix<double> compute_community_distances(const vector<community>& communities){
   auto wardDistJSON = readJSONFile(GLOBAL.input_base + "wardCentreDistance.json");
   const rapidjson::Value& mat = wardDistJSON.GetArray();

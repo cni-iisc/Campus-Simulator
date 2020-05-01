@@ -40,39 +40,39 @@ plot_data_struct run_simulation(){
   auto nodes = init_nodes();
 
   auto community_dist_matrix = compute_community_distances(communities);
-
-  string u_file = "age_tx/home/U_home.json";
-  string sigma_file = "age_tx/home/Sigma_home.json";
-  string vT_file = "age_tx/home/Vtranspose_home.json";
+  
+  string u_file = "home/U_home.json";
+  string sigma_file = "home/Sigma_home.json";
+  string vT_file = "home/Vtranspose_home.json";
   
   auto home_tx_u = read_JSON_convert_matrix(u_file);
   auto home_tx_sigma = read_JSON_convert_array(sigma_file);
   auto home_tx_vT = read_JSON_convert_matrix(vT_file);
   
-  u_file = "age_tx/school/U_school.json";
-  sigma_file = "age_tx/school/Sigma_school.json";
-  vT_file = "age_tx/school/Vtranspose_school.json";
+  u_file = "school/U_school.json";
+  sigma_file = "school/Sigma_school.json";
+  vT_file = "school/Vtranspose_school.json";
   
   auto school_tx_u = read_JSON_convert_matrix(u_file);
   auto school_tx_sigma = read_JSON_convert_array(sigma_file);
   auto school_tx_vT = read_JSON_convert_matrix(vT_file);
   
-  u_file = "age_tx/workplace/U_workplace.json";
-  sigma_file = "age_tx/workplace/Sigma_workplace.json";
-  vT_file = "age_tx/workplace/Vtranspose_workplace.json";
+  u_file = "workplace/U_workplace.json";
+  sigma_file = "workplace/Sigma_workplace.json";
+  vT_file = "workplace/Vtranspose_workplace.json";
   
   auto workplace_tx_u = read_JSON_convert_matrix(u_file);
   auto workplace_tx_sigma = read_JSON_convert_array(sigma_file);
   auto workplace_tx_vT = read_JSON_convert_matrix(vT_file);
   
-  u_file = "age_tx/other/U_other.json";
-  sigma_file = "age_tx/other/Sigma_other.json";
-  vT_file = "age_tx/other/Vtranspose_other.json";
+  u_file = "other/U_other.json";
+  sigma_file = "other/Sigma_other.json";
+  vT_file = "other/Vtranspose_other.json";
   
   auto community_tx_u = read_JSON_convert_matrix(u_file);
   auto community_tx_sigma = read_JSON_convert_array(sigma_file);
   auto community_tx_vT = read_JSON_convert_matrix(vT_file);
-
+ 
 #ifdef TIMING
     auto end_time = std::chrono::high_resolution_clock::now();
 	cerr << "simulator: time for JSON reads (ms): " << duration(start_time, end_time) << "\n";

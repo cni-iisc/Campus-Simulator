@@ -311,7 +311,7 @@ vector<agent> init_nodes(){
 }
 
 vector<double> read_JSON_convert_array(const string& file_name){
-  auto file_JSON = readJSONFile(GLOBAL.input_base + file_name);   
+  auto file_JSON = readJSONFile("../simulator/input_files/age_tx/" + file_name);   
   auto size = file_JSON.GetArray().Size();
   vector<double> return_object(size);
   int i = 0;
@@ -323,7 +323,7 @@ vector<double> read_JSON_convert_array(const string& file_name){
 }
 
 matrix<double> read_JSON_convert_matrix(const string& file_name){ 
-  auto file_JSON = readJSONFile(GLOBAL.input_base + file_name);   
+  auto file_JSON = readJSONFile("../simulator/input_files/age_tx/" + file_name);   
   auto size = file_JSON.GetArray().Size();
   matrix<double> return_object(size, vector<double>(size));
   int i =0;

@@ -62,6 +62,7 @@ plot_data_struct run_simulation(){
 	 {"num_infected", {}},
 	 {"num_exposed", {}},
 	 {"num_hospitalised", {}},
+	 {"num_symptomatic", {}},
 	 {"num_critical", {}},
 	 {"num_fatalities", {}},
 	 {"num_recovered", {}},
@@ -253,12 +254,13 @@ plot_data_struct run_simulation(){
 	count_type n_infected = 0,
 	  n_exposed = 0,
 	  n_hospitalised = 0,
+	  n_symptomatic = 0,
 	  n_critical = 0,
 	  n_fatalities = 0,
 	  n_recovered = 0,
 	  n_affected = 0;
 	
-#pragma omp parallel for reduction (+:n_infected,n_exposed,n_hospitalised,n_critical,n_fatalities,n_recovered,n_affected)
+#pragma omp parallel for reduction (+:n_infected,n_exposed,n_hospitalised,n_symptomatic,n_critical,n_fatalities,n_recovered,n_affected)
 	for(count_type j = 0; j < GLOBAL.num_people; ++j){
 	  auto infection_status = nodes[j].infection_status;
 	  if(infection_status == Progression::infective
@@ -272,6 +274,9 @@ plot_data_struct run_simulation(){
 	  }
 	  if(infection_status == Progression::hospitalised){
 		n_hospitalised += 1;
+	  }
+	  if(infection_status == Progression::symptomatic){
+		n_symptomatic += 1;
 	  }
 	  if(infection_status == Progression::critical){
 		n_critical += 1;
@@ -289,6 +294,7 @@ plot_data_struct run_simulation(){
 	plot_data.nums["num_infected"].push_back({time_step, {n_infected}});
 	plot_data.nums["num_exposed"].push_back({time_step, {n_exposed}});
 	plot_data.nums["num_hospitalised"].push_back({time_step, {n_hospitalised}});
+	plot_data.nums["num_symptomatic"].push_back({time_step, {n_symptomatic}});
 	plot_data.nums["num_critical"].push_back({time_step, {n_critical}});
 	plot_data.nums["num_fatalities"].push_back({time_step, {n_fatalities}});
 	plot_data.nums["num_recovered"].push_back({time_step, {n_recovered}});

@@ -202,6 +202,12 @@ struct global_params{
   bool MASK_ACTIVE = false;
   double MASK_FACTOR = 0.8;
   double MASK_START_DATE = 0;//40+
+  
+  //Age stratification
+  double NUM_AGE_GROUPS = 16;
+  double SIGNIFICANT_EIGEN_VALUES = 3;
+  bool USE_AGE_DEPENDENT_MIXING = false;
+
 };
 extern global_params GLOBAL;
 

@@ -91,8 +91,14 @@ int main(int argc, char** argv){
 	 "provide an initial seed to the simulator. If this is not provided, the simulator uses "
 	 "std::random_device to get the random seed.",
 	 cxxopts::value<count_type>())
-   ("LOCKED_COMMUNITY_LEAKAGE", "minimum community infection leakage under containment",
-	 cxxopts::value<double>()->default_value(DEFAULTS.LOCKED_COMMUNITY_LEAKAGE));
+    ("LOCKED_COMMUNITY_LEAKAGE", "minimum community infection leakage under containment",
+	 cxxopts::value<double>()->default_value(DEFAULTS.LOCKED_COMMUNITY_LEAKAGE))
+    ("USE_AGE_DEPENDENT_MIXING", "Boolean for using age dependent interactions",
+     cxxopts::value<bool>()->default_value(DEFAULTS.USE_AGE_DEPENDENT_MIXING))
+    ("SIGNIFICANT_EIGEN_VALUES", "Number of principal components to use",
+     cxxopts::value<double>()->default_value(DEFAULTS.SIGNIFICANT_EIGEN_VALUES))
+    ("NUM_AGE_GROUPS", "Number of age groups in the age",
+     cxxopts::value<double>()->default_value(DEFAULTS.NUM_AGE_GROUPS));
 
   auto optvals = options.parse(argc, argv);
   
@@ -145,6 +151,10 @@ int main(int argc, char** argv){
   GLOBAL.attendance_filename = optvals["attendance_filename"].as<std::string>();
   GLOBAL.IGNORE_ATTENDANCE_FILE = optvals["IGNORE_ATTENDANCE_FILE"].count();
 
+  GLOBAL.USE_AGE_DEPENDENT_MIXING = optvals["USE_AGE_DEPENDENT_MIXING"].count();
+  GLOBAL.SIGNIFICANT_EIGEN_VALUES = optvals["SIGNIFICANT_EIGEN_VALUES"].as<double>();
+  GLOBAL.NUM_AGE_GROUPS = optvals["NUM_AGE_GROUPS"].as<double>();
+  
   if(optvals["PROVIDE_INITIAL_SEED"].count()){
 	//Initial seed was provided
 	SEED_RNG_PROVIDED_SEED(optvals["PROVIDE_INITIAL_SEED"].as<count_type>()); 

@@ -41,6 +41,38 @@ plot_data_struct run_simulation(){
 
   auto community_dist_matrix = compute_community_distances(communities);
 
+  string u_file = "age_tx/home/U_home.json";
+  string sigma_file = "age_tx/home/Sigma_home.json";
+  string vT_file = "age_tx/home/Vtranspose_home.json";
+  
+  auto home_tx_u = read_JSON_convert_matrix(u_file);
+  auto home_tx_sigma = read_JSON_convert_array(sigma_file);
+  auto home_tx_vT = read_JSON_convert_matrix(vT_file);
+  
+  u_file = "age_tx/school/U_school.json";
+  sigma_file = "age_tx/school/Sigma_school.json";
+  vT_file = "age_tx/school/Vtranspose_school.json";
+  
+  auto school_tx_u = read_JSON_convert_matrix(u_file);
+  auto school_tx_sigma = read_JSON_convert_array(sigma_file);
+  auto school_tx_vT = read_JSON_convert_matrix(vT_file);
+  
+  u_file = "age_tx/workplace/U_workplace.json";
+  sigma_file = "age_tx/workplace/Sigma_workplace.json";
+  vT_file = "age_tx/workplace/Vtranspose_workplace.json";
+  
+  auto workplace_tx_u = read_JSON_convert_matrix(u_file);
+  auto workplace_tx_sigma = read_JSON_convert_array(sigma_file);
+  auto workplace_tx_vT = read_JSON_convert_matrix(vT_file);
+  
+  u_file = "age_tx/other/U_other.json";
+  sigma_file = "age_tx/other/Sigma_other.json";
+  vT_file = "age_tx/other/Vtranspose_other.json";
+  
+  auto community_tx_u = read_JSON_convert_matrix(u_file);
+  auto community_tx_sigma = read_JSON_convert_array(sigma_file);
+  auto community_tx_vT = read_JSON_convert_matrix(vT_file);
+
 #ifdef TIMING
     auto end_time = std::chrono::high_resolution_clock::now();
 	cerr << "simulator: time for JSON reads (ms): " << duration(start_time, end_time) << "\n";
@@ -185,6 +217,51 @@ plot_data_struct run_simulation(){
 
 	update_all_kappa(nodes, homes, workplaces, communities, time_step);
 
+    if(GLOBAL.USE_AGE_DEPENDENT_MIXING){
+        for (count_type h = 0; h < GLOBAL.num_homes; ++h){
+          homes[h].age_independent_mixing = updated_lambda_h_age_dependent(nodes, homes[h], home_tx_u, home_tx_sigma, home_tx_vT);
+        }
+
+        for (count_type w = 0; w < GLOBAL.num_schools + GLOBAL.num_workplaces; ++w){
+          if(nodes[workplaces[w].individuals[0]].workplace_type == WorkplaceType::school){
+            workplaces[w].age_independent_mixing = updated_lambda_w_age_dependent(nodes, workplaces[w], school_tx_u, school_tx_sigma, school_tx_vT);
+          }
+          else{
+            workplaces[w].age_independent_mixing = updated_lambda_w_age_dependent(nodes, workplaces[w], workplace_tx_u, workplace_tx_sigma, workplace_tx_vT);
+          }
+        }
+
+        for (count_type c = 0; c < GLOBAL.num_communities; ++c){
+
+          auto temp_stats = get_infected_community(nodes, communities[c]);
+          //let row = [time_step/SIM_STEPS_PER_DAY,c,temp_stats[0],temp_stats[1],temp_stats[2],temp_stats[3],temp_stats[4]].join(",");
+          plot_data.nums["csvContent"].push_back({time_step, {
+                  c,
+                  temp_stats.infected,
+                  temp_stats.affected,
+                  temp_stats.hospitalised,
+                  temp_stats.critical,
+                  temp_stats.dead,
+                  temp_stats.hd_area_infected,
+                  temp_stats.hd_area_affected,
+                  temp_stats.hd_area_hospitalised,
+                  temp_stats.hd_area_critical,
+                  temp_stats.hd_area_dead
+                  }});
+
+      //Update w_c value for this community, followed by update of lambdas
+          if(communities[c].individuals.size()>0){
+            communities[c].w_c = interpolate(1.0, GLOBAL.LOCKED_COMMUNITY_LEAKAGE,
+                                       double(temp_stats.hospitalised)/double(communities[c].individuals.size()),
+                                       GLOBAL.COMMUNITY_LOCK_THRESHOLD);
+          }else{
+                  communities[c].w_c = 1;
+          }
+
+        communities[c].lambda_community = updated_lambda_c_local_age_dependent(nodes, communities[c], community_tx_u, community_tx_sigma, community_tx_vT);
+        }
+    }
+    else{
 	for (count_type h = 0; h < GLOBAL.num_homes; ++h){
 	  homes[h].age_independent_mixing = updated_lambda_h_age_independent(nodes, homes[h]);
 	  //FEATURE_PROPOSAL: make the mixing dependent on node.age_group;
@@ -221,10 +298,9 @@ plot_data_struct run_simulation(){
 		  communities[c].w_c = 1;
 	  }
 	  
-
       communities[c].lambda_community = updated_lambda_c_local(nodes, communities[c]);
-
 	}
+    }
 
 	update_lambda_c_global(communities, community_dist_matrix);
 

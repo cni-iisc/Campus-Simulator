@@ -33,6 +33,13 @@ void update_lambdas(agent&node, const std::vector<house>& homes, const std::vect
 
 double updated_lambda_c_local(const std::vector<agent>& nodes, const community& community);
 
+// Age stratification update functions.
+double updated_lambda_w_age_dependent(const std::vector<agent>& nodes, const workplace& workplace, const matrix<double>& workplace_tx_u, const std::vector<double>& workplace_tx_sigma, const matrix<double>& workplace_tx_vT);
+
+double updated_lambda_h_age_dependent(const std::vector<agent>& nodes, const house& home, const matrix<double>& home_tx_u, const std::vector<double>& home_tx_sigma, const matrix<double>& home_tx_vT);
+
+double updated_lambda_c_local_age_dependent(const std::vector<agent>& nodes, const community& community, const matrix<double>& community_tx_u, const std::vector<double>& community_tx_sigma, const matrix<double>& community_tx_vT);
+
 void update_lambda_c_global(std::vector<community>& communities, const matrix<double>& community_distance_matrix);
 
 struct casualty_stats{

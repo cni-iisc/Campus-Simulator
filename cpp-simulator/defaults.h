@@ -40,6 +40,9 @@ struct defaults{
   std::string OE_SECOND_PERIOD = "30";
   std::string LOCKED_COMMUNITY_LEAKAGE = "1.0";
   std::string MASK_ACTIVE = "false";
+  std::string USE_AGE_DEPENDENT_MIXING = "false";
+  std::string SIGNIFICANT_EIGEN_VALUES = "3.0";
+  std::string NUM_AGE_GROUPS = "16.0";
 } DEFAULTS;
 
 #endif

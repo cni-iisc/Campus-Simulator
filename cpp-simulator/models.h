@@ -214,7 +214,7 @@ struct global_params{
 
   //City limits in lat,lon
   location city_SW, city_NE;
-  double grid_size = 1; //in km
+  double NBR_CELL_SIZE = 1; //in km
   bool IGNORE_CONTAINMENT = true;
 };
 extern global_params GLOBAL;

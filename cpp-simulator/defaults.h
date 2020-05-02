@@ -43,7 +43,13 @@ struct defaults{
   std::string MASK_ACTIVE = "false";
   std::string USE_AGE_DEPENDENT_MIXING = "false";
   std::string SIGNIFICANT_EIGEN_VALUES = "3.0";
-  std::string NUM_AGE_GROUPS = "16.0";  
+  std::string NUM_AGE_GROUPS = "16.0";
+  std::string CITY_SW_LAT = "12.8340125";
+  std::string CITY_SW_LON = "77.46010253";
+  std::string CITY_NE_LAT = "13.14366615";
+  std::string CITY_NE_LON = "77.78405146";
+  std::string NBR_CELL_SIZE = "0.178"; // in km
+  std::string IGNORE_CONTAINMENT = "true";  
 } DEFAULTS;
 
 #endif

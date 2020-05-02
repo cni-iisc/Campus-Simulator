@@ -168,9 +168,9 @@ void get_nbr_cell(house &home){
 
   loc_temp.lon = home.loc.lon;
   loc_temp.lat = GLOBAL.city_SW.lat;  
-  home.neighbourhood.cell_x = int(earth_distance(loc_temp,GLOBAL.city_SW)/GLOBAL.grid_size);
+  home.neighbourhood.cell_x = int(earth_distance(loc_temp,GLOBAL.city_SW)/GLOBAL.NBR_CELL_SIZE);
 
   loc_temp.lat = home.loc.lat;
   loc_temp.lon = GLOBAL.city_SW.lon;
-  home.neighbourhood.cell_y = int(earth_distance(loc_temp,GLOBAL.city_SW)/GLOBAL.grid_size);
+  home.neighbourhood.cell_y = int(earth_distance(loc_temp,GLOBAL.city_SW)/GLOBAL.NBR_CELL_SIZE);
 }

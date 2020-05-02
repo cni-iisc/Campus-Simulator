@@ -433,8 +433,8 @@ void get_kappa_custom(vector<agent>& nodes, vector<house>& homes, const vector<w
 			+ nodes[count].incubation_period
 			+ nodes[count].asymptomatic_period
 			+ nodes[count].symptomatic_period);
-		if((nodes[count].entered_hospitalised_state) &&
-		(time_since_hospitalised <= (HOME_QUARANTINE_DAYS)*GLOBAL.SIM_STEPS_PER_DAY)){
+		if(((nodes[count].entered_hospitalised_state) &&
+		(time_since_hospitalised <= (HOME_QUARANTINE_DAYS)*GLOBAL.SIM_STEPS_PER_DAY)) ){
 			homes[nodes[count].home].quarantined = true;		
 			//TODO: Need to check if the nbr_cell's quarantined flag needs to be set.
 			grid_cell my_nbr_grid_cell = homes[nodes[count].home].neighbourhood;

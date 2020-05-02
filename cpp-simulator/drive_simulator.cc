@@ -100,7 +100,20 @@ int main(int argc, char** argv){
     ("SIGNIFICANT_EIGEN_VALUES", "Number of principal components to use",
      cxxopts::value<double>()->default_value(DEFAULTS.SIGNIFICANT_EIGEN_VALUES))
     ("NUM_AGE_GROUPS", "Number of age groups in the age",
-     cxxopts::value<double>()->default_value(DEFAULTS.NUM_AGE_GROUPS));
+     cxxopts::value<double>()->default_value(DEFAULTS.NUM_AGE_GROUPS))
+    ("CITY_SW_LAT", "South West latitude boundary of the City",
+     cxxopts::value<double>()->default_value(DEFAULTS.CITY_SW_LAT))
+    ("CITY_SW_LON", "South West longitude boundary of the City",
+     cxxopts::value<double>()->default_value(DEFAULTS.CITY_SW_LON))
+    ("CITY_NE_LAT", "North East latitude boundary of the City",
+     cxxopts::value<double>()->default_value(DEFAULTS.CITY_NE_LAT))
+     ("CITY_NE_LON", "North East longitude boundary of the City",
+     cxxopts::value<double>()->default_value(DEFAULTS.CITY_NE_LON))
+     ("NBR_CELL_SIZE", "Neighbourhood cell size (length of side)",
+     cxxopts::value<double>()->default_value(DEFAULTS.NBR_CELL_SIZE))
+     ("IGNORE_CONTAINMENT", "Enable containment",
+     cxxopts::value<bool>()->default_value(DEFAULTS.IGNORE_CONTAINMENT))
+     ;
 
   auto optvals = options.parse(argc, argv);
   
@@ -178,6 +191,17 @@ int main(int argc, char** argv){
   
   GLOBAL.MASK_ACTIVE = optvals["MASK_ACTIVE"].count();
   GLOBAL.MASK_START_DATE = GLOBAL.CALIBRATION_DELAY + 40; //masks starts from April 9
+
+  //initialise city bounding box co-ordinates with Bangalore values. Will read from file later.
+  GLOBAL.city_SW.lat = optvals["CITY_SW_LAT"].as<double>();
+  GLOBAL.city_SW.lon = optvals["CITY_SW_LON"].as<double>();
+  GLOBAL.city_NE.lat = optvals["CITY_NE_LAT"].as<double>();
+  GLOBAL.city_NE.lon = optvals["CITY_NE_LON"].as<double>();
+  GLOBAL.NBR_CELL_SIZE = optvals["NBR_CELL_SIZE"].as<double>();
+  GLOBAL.IGNORE_CONTAINMENT = optvals["IGNORE_CONTAINMENT"].count();
+
+
+
   if(GLOBAL.input_base != ""
 	 && GLOBAL.input_base[GLOBAL.input_base.size() - 1] != '/'){ 
 	GLOBAL.input_base += '/';

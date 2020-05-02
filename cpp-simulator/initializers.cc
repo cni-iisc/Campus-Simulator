@@ -51,7 +51,10 @@ vector<house> init_homes(){
 					 elem["lon"].GetDouble(),
 					 (temp_non_compliance_metric<=GLOBAL.COMPLIANCE_PROBABILITY)?1.0:0,
 					 temp_non_compliance_metric);
-	homes[index].neighbours.push_back(index); //add self to set of neighbours. TODO: Add actual list of neighbours based on neighour list json.
+    
+    homes[index].age_independent_mixing.resize(NUM_AGE_GROUPS, 0);
+    homes[index].age_dependent_mixing.resize(NUM_AGE_GROUPS, 0);
+    homes[index].neighbours.push_back(index); //add self to set of neighbours. TODO: Add actual list of neighbours based on neighour list json.
 	++index;
   }
   return homes;
@@ -76,7 +79,10 @@ vector<workplace> init_workplaces() {
 	wps[index].set(elem["lat"].GetDouble(),
 				   elem["lon"].GetDouble(),
 				   WorkplaceType::school);
-	++index;
+    
+    wps[index].age_independent_mixing.resize(NUM_AGE_GROUPS, 0);
+    wps[index].age_dependent_mixing.resize(NUM_AGE_GROUPS, 0);
+    ++index;
   }
   assert(index == GLOBAL.num_schools);
   for (auto &elem: wpJSON.GetArray()){
@@ -85,6 +91,8 @@ vector<workplace> init_workplaces() {
 				   WorkplaceType::office);
 
     wps[index].office_type = static_cast<OfficeType>(elem["officeType"].GetInt());
+    wps[index].age_independent_mixing.resize(NUM_AGE_GROUPS, 0);
+    wps[index].age_dependent_mixing.resize(NUM_AGE_GROUPS, 0);
 
     ++index;
   }

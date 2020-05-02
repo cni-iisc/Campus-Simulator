@@ -38,6 +38,7 @@ plot_data_struct run_simulation(){
   auto workplaces = init_workplaces();
   auto communities = init_community();
   auto nodes = init_nodes();
+  auto nbr_cells = init_nbr_cells();
 
   auto community_dist_matrix = compute_community_distances(communities);
 
@@ -80,6 +81,7 @@ plot_data_struct run_simulation(){
 #endif
 
   assign_individual_home_community(nodes, homes, workplaces, communities);
+  assign_homes_nbr_cell(homes,nbr_cells);
 
   compute_scale_homes(homes);
   compute_scale_workplaces(workplaces);
@@ -214,7 +216,7 @@ plot_data_struct run_simulation(){
 	  }
 	}
 
-	update_all_kappa(nodes, homes, workplaces, communities, time_step);
+	update_all_kappa(nodes, homes, workplaces, communities, nbr_cells, time_step);
 
     if(GLOBAL.USE_AGE_DEPENDENT_MIXING){
         for (count_type h = 0; h < GLOBAL.num_homes; ++h){

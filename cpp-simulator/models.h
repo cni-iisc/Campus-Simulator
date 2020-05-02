@@ -26,6 +26,9 @@ enum class Intervention {
    intv_nbr_containment=14
 };
 
+struct location{
+  double lat, lon; //latitude and longitude, in degrees
+};
 
 template<typename T>
 using matrix = std::vector< std::vector<T> >;
@@ -209,6 +212,10 @@ struct global_params{
   double SIGNIFICANT_EIGEN_VALUES = 3;
   bool USE_AGE_DEPENDENT_MIXING = false;
 
+  //City limits in lat,lon
+  location city_SW, city_NE;
+  double grid_size = 1; //in km
+  bool IGNORE_CONTAINMENT = true;
 };
 extern global_params GLOBAL;
 
@@ -237,8 +244,9 @@ double f_kernel(double dist);
 
 // End of global parameters
 
-struct location{
-  double lat, lon; //latitude and longitude, in degrees
+struct grid_cell{
+  count_type cell_x = 0;
+  count_type cell_y = 0; //latitude and longitude, in degrees
 };
 
 //Distance between two locations given by their latitude and longitude, in degrees
@@ -368,9 +376,9 @@ struct agent{
 
 struct house{
   location loc;
+  grid_cell neighbourhood;
   double lambda_home = 0;
   std::vector<int> individuals; //list of indices of individuals
-  std::vector<count_type> neighbours; //list of neighbouring houses
   double Q_h = 1;
   double scale = 0;
   bool compliant;
@@ -435,6 +443,11 @@ struct community {
   }
 };
 
+struct nbr_cell {
+  grid_cell neighbourhood;
+  std::vector<count_type> houses_list;
+  bool quarantined = false;
+};
 
 struct office_attendance{
   count_type number_of_entries;
@@ -456,4 +469,6 @@ double interpolate(double start, double end, double current, double threshold);
 
 //reset household and individual compliance flags based on compliance probability.
 void set_compliance(std::vector<agent> & nodes, std::vector<house> & homes,  double compliance_probability);
+
+void get_nbr_cell(house &home);
 #endif

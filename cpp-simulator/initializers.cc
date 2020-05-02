@@ -10,6 +10,7 @@
 #include <vector>
 #include <random>
 #include <string>
+#include <cmath>
 
 #include "models.h"
 #include "initializers.h"
@@ -51,7 +52,9 @@ vector<house> init_homes(){
 					 elem["lon"].GetDouble(),
 					 (temp_non_compliance_metric<=GLOBAL.COMPLIANCE_PROBABILITY)?1.0:0,
 					 temp_non_compliance_metric);
-	homes[index].neighbours.push_back(index); //add self to set of neighbours. TODO: Add actual list of neighbours based on neighour list json.
+	if(!GLOBAL.IGNORE_CONTAINMENT) { 
+		get_nbr_cell(homes[index]);
+	}
 	++index;
   }
   return homes;
@@ -115,6 +118,33 @@ vector<community> init_community() {
 	   });
   return communities;
 }
+
+vector<vector<nbr_cell>> init_nbr_cells() {
+
+  vector<vector<nbr_cell>> nbr_cells;
+
+  if(!GLOBAL.IGNORE_CONTAINMENT){
+	location loc_temp;
+
+	loc_temp.lat = GLOBAL.city_SW.lat;
+	loc_temp.lon = GLOBAL.city_NE.lon;
+	count_type num_x_grids = ceil(earth_distance(GLOBAL.city_SW,loc_temp)/GLOBAL.grid_size);
+
+	loc_temp.lon = GLOBAL.city_SW.lon;
+	loc_temp.lat = GLOBAL.city_NE.lat;
+	count_type num_y_grids = ceil(earth_distance(GLOBAL.city_SW,loc_temp)/GLOBAL.grid_size);
+
+	for(count_type count_x_grid = 0; count_x_grid < num_x_grids; count_x_grid++){
+		nbr_cells[count_x_grid] = vector<nbr_cell>(num_y_grids);
+		for(count_type count_y_grid = 0; count_y_grid < num_y_grids; count_y_grid++){
+			nbr_cells[count_x_grid][count_y_grid].neighbourhood.cell_x = count_x_grid;
+			nbr_cells[count_x_grid][count_y_grid].neighbourhood.cell_y = count_y_grid;
+		}
+	} 
+  }  
+  return nbr_cells;
+}
+
 
 
 vector<double> compute_prob_infection_given_community(double infection_probability, bool set_uniform){
@@ -376,6 +406,16 @@ void assign_individual_home_community(vector<agent>& nodes, vector<house>& homes
 	//No checking for null as all individuals have a community/ward
 	communities[nodes[i].community].individuals.push_back(i);
   }
+}
+
+void assign_homes_nbr_cell(vector<house>& homes, vector<vector<nbr_cell>>& neighbourhood_cells){
+	if(GLOBAL.IGNORE_CONTAINMENT){
+		return;
+	}
+	for (count_type home_count = 0; home_count < homes.size(); home_count++){
+		grid_cell my_nbr_cell = homes[home_count].neighbourhood;
+		neighbourhood_cells[my_nbr_cell.cell_x][my_nbr_cell.cell_y].houses_list.push_back(home_count);
+	}
 }
 
 // Compute scale factors for each home, workplace and community. Done once at the beginning.

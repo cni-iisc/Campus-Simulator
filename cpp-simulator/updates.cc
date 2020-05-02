@@ -166,7 +166,7 @@ node_update_status update_infection(agent& node, int cur_time){
   return update_status;
 }
 
-void update_all_kappa(vector<agent>& nodes, vector<house>& homes, vector<workplace>& workplaces, vector<community>& communities, int cur_time){
+void update_all_kappa(vector<agent>& nodes, vector<house>& homes, vector<workplace>& workplaces, vector<community>& communities, vector<vector<nbr_cell>>& nbr_cells, int cur_time){
   if(cur_time < GLOBAL.NUM_DAYS_BEFORE_INTERVENTIONS*GLOBAL.SIM_STEPS_PER_DAY){
     get_kappa_no_intervention(nodes, homes, workplaces, communities,cur_time);
   }
@@ -213,14 +213,14 @@ void update_all_kappa(vector<agent>& nodes, vector<house>& homes, vector<workpla
                                                    GLOBAL.FIRST_PERIOD, GLOBAL.SECOND_PERIOD, GLOBAL.THIRD_PERIOD);
       break;
     case Intervention::intv_NYC:
-      get_kappa_NYC(nodes, homes, workplaces, communities, cur_time);
+      get_kappa_NYC(nodes, homes, workplaces, communities, nbr_cells, cur_time);
       break;
 	  case Intervention::intv_Mum:
-      get_kappa_Mumbai(nodes, homes, workplaces, communities, cur_time,
+      get_kappa_Mumbai(nodes, homes, workplaces, communities, nbr_cells, cur_time,
                                                    GLOBAL.FIRST_PERIOD, GLOBAL.SECOND_PERIOD);
       break;
     case Intervention::intv_nbr_containment:
-      get_kappa_nbr_containment(nodes, homes, workplaces, communities, cur_time, GLOBAL.FIRST_PERIOD);
+      get_kappa_nbr_containment(nodes, homes, workplaces, communities, nbr_cells, cur_time, GLOBAL.FIRST_PERIOD);
       break;
     default:
 	  get_kappa_no_intervention(nodes, homes, workplaces, communities, cur_time);

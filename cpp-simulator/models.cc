@@ -158,3 +158,19 @@ void set_compliance(std::vector<agent> & nodes, std::vector<house> & homes,  dou
     }
   }
 }
+
+void get_nbr_cell(house &home){
+  if(GLOBAL.IGNORE_CONTAINMENT) {
+    return;
+  }
+
+  location loc_temp;
+
+  loc_temp.lon = home.loc.lon;
+  loc_temp.lat = GLOBAL.city_SW.lat;  
+  home.neighbourhood.cell_x = int(earth_distance(loc_temp,GLOBAL.city_SW)/GLOBAL.grid_size);
+
+  loc_temp.lat = home.loc.lat;
+  loc_temp.lon = GLOBAL.city_SW.lon;
+  home.neighbourhood.cell_y = int(earth_distance(loc_temp,GLOBAL.city_SW)/GLOBAL.grid_size);
+}

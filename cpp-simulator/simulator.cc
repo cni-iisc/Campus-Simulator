@@ -142,6 +142,8 @@ plot_data_struct run_simulation(){
 	 {"cumulative_mean_fraction_lambda_T", {}}
 	};
 
+  plot_data.quarantined_stats["quarantined_stats"] = {};
+
   
   for(auto& elem: plot_data.susceptible_lambdas){
 	elem.second.reserve(GLOBAL.NUM_TIMESTEPS);
@@ -158,6 +160,7 @@ plot_data_struct run_simulation(){
   vector<double> mean_lambda_fraction_data(AGENT_INCOMING_LAMBDA_COMPONENTS);
   vector<double> cumulative_mean_lambda_fraction_data(AGENT_INCOMING_LAMBDA_COMPONENTS, 0);
   count_type num_cases = 0; // Total number of agents who have progessed to symptomatic so far
+  count_type quarantined_num_cases = 0;
   count_type num_cumulative_hospitalizations = 0; //Total number of agents who have had to go to the hospital so far
 
   count_type num_total_infections = 0;
@@ -210,6 +213,9 @@ plot_data_struct run_simulation(){
 	  }
 	  if(node_update_status.new_symptomatic){
 		++num_cases;
+	  }
+	  if(node_update_status.new_symptomatic && nodes[j].quarantined){
+		++quarantined_num_cases;
 	  }
 	  if(node_update_status.new_hospitalization){
 		++num_cumulative_hospitalizations;
@@ -334,7 +340,9 @@ plot_data_struct run_simulation(){
 	  n_critical = 0,
 	  n_fatalities = 0,
 	  n_recovered = 0,
-	  n_affected = 0;
+	  n_affected = 0,
+	  quarantined_individuals = 0,
+	  quarantined_infectious = 0;
 	
 #pragma omp parallel for reduction (+:n_infected,n_exposed,n_hospitalised,n_critical,n_fatalities,n_recovered,n_affected)
 	for(count_type j = 0; j < GLOBAL.num_people; ++j){
@@ -362,6 +370,15 @@ plot_data_struct run_simulation(){
 	  }
 	  if(infection_status != Progression::susceptible){
 		n_affected += 1;
+	  }
+	  if(nodes[j].quarantined){
+		quarantined_individuals += 1;
+	  }
+	  if(nodes[j].quarantined && (infection_status == Progression::infective
+		 || infection_status == Progression::symptomatic
+		 || infection_status == Progression::hospitalised
+		 || infection_status == Progression::critical)){
+		quarantined_infectious += 1;
 	  }
 	}
 	plot_data.nums["num_infected"].push_back({time_step, {n_infected}});
@@ -405,6 +422,11 @@ plot_data_struct run_simulation(){
 																							   {cumulative_mean_lambda_fraction_data[2]}});
 	plot_data.cumulative_mean_lambda_fractions["cumulative_mean_fraction_lambda_T"].push_back({time_step,
 																							   {cumulative_mean_lambda_fraction_data[3]}});
+	plot_data.quarantined_stats["quarantined_stats"].push_back({time_step, {
+                 quarantined_individuals,
+				 quarantined_infectious,
+				 quarantined_num_cases
+                  }});
 
 	
   }

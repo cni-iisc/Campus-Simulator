@@ -300,4 +300,14 @@ void output_csv_files(const std::string& output_directory,
 					 elem.second);
 	gnuplot.plot_data(elem.first);
   }
+
+  for(const auto& elem: plot_data.quarantined_stats){
+    std::string csvfile_name = elem.first + ".csv";
+    std::string csvfile_path = output_directory + "/" + csvfile_name;
+    //This file contains quarantine_stats
+    output_timed_csv({"quarantined_individuals",
+            "quarantined_infectious",
+            "quarantined_cases"},
+    csvfile_path, elem.second);
+  }
 }

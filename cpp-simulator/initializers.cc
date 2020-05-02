@@ -52,9 +52,13 @@ vector<house> init_homes(){
 					 elem["lon"].GetDouble(),
 					 (temp_non_compliance_metric<=GLOBAL.COMPLIANCE_PROBABILITY)?1.0:0,
 					 temp_non_compliance_metric);
+
 	if(!GLOBAL.IGNORE_CONTAINMENT) { 
 		get_nbr_cell(homes[index]);
 	}
+	
+    homes[index].age_independent_mixing.resize(NUM_AGE_GROUPS, 0);
+    homes[index].age_dependent_mixing.resize(NUM_AGE_GROUPS, 0);
 	++index;
   }
   return homes;
@@ -79,7 +83,10 @@ vector<workplace> init_workplaces() {
 	wps[index].set(elem["lat"].GetDouble(),
 				   elem["lon"].GetDouble(),
 				   WorkplaceType::school);
-	++index;
+    
+    wps[index].age_independent_mixing.resize(NUM_AGE_GROUPS, 0);
+    wps[index].age_dependent_mixing.resize(NUM_AGE_GROUPS, 0);
+    ++index;
   }
   assert(index == GLOBAL.num_schools);
   for (auto &elem: wpJSON.GetArray()){
@@ -88,6 +95,8 @@ vector<workplace> init_workplaces() {
 				   WorkplaceType::office);
 
     wps[index].office_type = static_cast<OfficeType>(elem["officeType"].GetInt());
+    wps[index].age_independent_mixing.resize(NUM_AGE_GROUPS, 0);
+    wps[index].age_dependent_mixing.resize(NUM_AGE_GROUPS, 0);
 
     ++index;
   }
@@ -341,7 +350,7 @@ vector<agent> init_nodes(){
 }
 
 vector<double> read_JSON_convert_array(const string& file_name){
-  auto file_JSON = readJSONFile(GLOBAL.input_base + file_name);   
+  auto file_JSON = readJSONFile("../simulator/input_files/age_tx/" + file_name);   
   auto size = file_JSON.GetArray().Size();
   vector<double> return_object(size);
   int i = 0;
@@ -353,7 +362,7 @@ vector<double> read_JSON_convert_array(const string& file_name){
 }
 
 matrix<double> read_JSON_convert_matrix(const string& file_name){ 
-  auto file_JSON = readJSONFile(GLOBAL.input_base + file_name);   
+  auto file_JSON = readJSONFile("../simulator/input_files/age_tx/" + file_name);   
   auto size = file_JSON.GetArray().Size();
   matrix<double> return_object(size, vector<double>(size));
   int i =0;

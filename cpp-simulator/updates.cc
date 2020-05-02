@@ -229,33 +229,37 @@ void update_all_kappa(vector<agent>& nodes, vector<house>& homes, vector<workpla
   }
 }
 
-double updated_lambda_w_age_independent(const vector<agent>& nodes, const workplace& workplace){
+vector<double> updated_lambda_w_age_independent(const vector<agent>& nodes, const workplace& workplace){
   double sum_value = 0;
+  vector<double> lambda_age_group(GLOBAL.NUM_AGE_GROUPS);
   for (count_type i=0; i < workplace.individuals.size(); ++i){
 	sum_value += nodes[workplace.individuals[i]].lambda_w;
   }
-  return workplace.scale*sum_value;
+  std::fill(lambda_age_group.begin(), lambda_age_group.end(), workplace.scale*sum_value);
+  return lambda_age_group;
   // Populate it afterwards...
 }
 
-double updated_lambda_h_age_independent(const vector<agent>& nodes, const house& home){
+vector<double> updated_lambda_h_age_independent(const vector<agent>& nodes, const house& home){
   double sum_value = 0;
+  vector<double> lambda_age_group(GLOBAL.NUM_AGE_GROUPS);
   for (count_type i=0; i<home.individuals.size(); ++i){
 	sum_value += nodes[home.individuals[i]].lambda_h;
   }
-  return home.scale*sum_value;
+  std::fill(lambda_age_group.begin(), lambda_age_group.end(), home.scale*sum_value);
+  return lambda_age_group;
   // Populate it afterwards...
 }
 
-double updated_lambda_h_age_dependent(const vector<agent>& nodes, const house& home, const matrix<double>& home_tx_u, const vector<double>& home_tx_sigma, const matrix<double>& home_tx_vT){
+vector<double> updated_lambda_h_age_dependent(const vector<agent>& nodes, const house& home, const matrix<double>& home_tx_u, const vector<double>& home_tx_sigma, const matrix<double>& home_tx_vT){
   auto size = home_tx_u.size();
 
   vector<double> age_component(GLOBAL.NUM_AGE_GROUPS);
-  double lambda_age_group=0;
+  vector<double> lambda_age_group(GLOBAL.NUM_AGE_GROUPS);
   vector<double> V_tx(GLOBAL.SIGNIFICANT_EIGEN_VALUES);
 
   for (count_type i=0; i<home.individuals.size(); ++i){
-      int ind_age_group = (int) nodes[home.individuals[i]].age / 10;
+      int ind_age_group = (int) nodes[home.individuals[i]].age_group;
       age_component[ind_age_group] += nodes[home.individuals[i]].lambda_h;
   }
 
@@ -268,26 +272,25 @@ double updated_lambda_h_age_dependent(const vector<agent>& nodes, const house& h
 
   for (count_type count=0; count<GLOBAL.NUM_AGE_GROUPS; ++count){
     for (count_type eigen_count=0; eigen_count<GLOBAL.SIGNIFICANT_EIGEN_VALUES; ++eigen_count){
-      lambda_age_group += home.scale
+      lambda_age_group[count] = home.scale
                           * home_tx_u[count][eigen_count]
                           * home_tx_sigma[eigen_count]
                           * V_tx[eigen_count];
     }
   }
-
  return lambda_age_group;
 
 }
 
-double updated_lambda_w_age_dependent(const vector<agent>& nodes, const workplace& workplace, const matrix<double>& workplace_tx_u, const vector<double>& workplace_tx_sigma, const matrix<double>& workplace_tx_vT){
+vector<double> updated_lambda_w_age_dependent(const vector<agent>& nodes, const workplace& workplace, const matrix<double>& workplace_tx_u, const vector<double>& workplace_tx_sigma, const matrix<double>& workplace_tx_vT){
 
     auto size = workplace_tx_u.size();
 
     vector<double> age_component(GLOBAL.NUM_AGE_GROUPS);
-    double lambda_age_group=0;
+    vector<double> lambda_age_group(GLOBAL.NUM_AGE_GROUPS);
     vector<double> V_tx(GLOBAL.SIGNIFICANT_EIGEN_VALUES);
     for (count_type i=0; i<workplace.individuals.size(); ++i){
-        int ind_age_group = (int) nodes[workplace.individuals[i]].age / 10;
+        int ind_age_group = (int) nodes[workplace.individuals[i]].age_group;
         age_component[ind_age_group] += nodes[workplace.individuals[i]].lambda_h;
     }
 
@@ -300,7 +303,7 @@ double updated_lambda_w_age_dependent(const vector<agent>& nodes, const workplac
 
     for (count_type count=0; count<GLOBAL.NUM_AGE_GROUPS; ++count){
       for (count_type eigen_count=0; eigen_count<GLOBAL.SIGNIFICANT_EIGEN_VALUES; ++eigen_count){
-        lambda_age_group += workplace.scale
+        lambda_age_group[count] = workplace.scale
                             * workplace_tx_u[count][eigen_count]
                             * workplace_tx_sigma[eigen_count]
                             * V_tx[eigen_count];
@@ -309,16 +312,16 @@ double updated_lambda_w_age_dependent(const vector<agent>& nodes, const workplac
     return lambda_age_group;
 }
 
-double updated_lambda_c_local_age_dependent(const vector<agent>& nodes, const community& community, const matrix<double>& community_tx_u, const vector<double>& community_tx_sigma, const matrix<double>& community_tx_vT){
+vector<double> updated_lambda_c_local_age_dependent(const vector<agent>& nodes, const community& community, const matrix<double>& community_tx_u, const vector<double>& community_tx_sigma, const matrix<double>& community_tx_vT){
 
   auto size = community_tx_u.size();
 
   vector<double> age_component(GLOBAL.NUM_AGE_GROUPS);
-  double lambda_age_group=0;
+  vector<double> lambda_age_group(GLOBAL.NUM_AGE_GROUPS);
   vector<double> V_tx(GLOBAL.SIGNIFICANT_EIGEN_VALUES);
 
   for (count_type i=0; i<community.individuals.size(); ++i){
-      int ind_age_group = (int) nodes[community.individuals[i]].age / 10;
+      int ind_age_group = (int) nodes[community.individuals[i]].age_group;
       age_component[ind_age_group] += nodes[community.individuals[i]].lambda_h;
   }
 
@@ -331,15 +334,13 @@ double updated_lambda_c_local_age_dependent(const vector<agent>& nodes, const co
 
   for (count_type count=0; count<GLOBAL.NUM_AGE_GROUPS; ++count){
     for (count_type eigen_count=0; eigen_count<GLOBAL.SIGNIFICANT_EIGEN_VALUES; ++eigen_count){
-      lambda_age_group += community.scale
+      lambda_age_group[count] = community.scale
                           * community_tx_u[count][eigen_count]
                           * community_tx_sigma[eigen_count]
                           * V_tx[eigen_count];
     }
   }
-
  return lambda_age_group;
-
 }
 
 double updated_travel_fraction(const vector<agent>& nodes, int cur_time){
@@ -374,20 +375,31 @@ double updated_travel_fraction(const vector<agent>& nodes, int cur_time){
 void update_lambdas(agent&node, const vector<house>& homes, const vector<workplace>& workplaces, const vector<community>& communities, double travel_fraction, int cur_time){
   node.lambda_incoming={0,0,0,0};
   //Contributions from home, workplace, community, and travel
+  if (GLOBAL.USE_AGE_DEPENDENT_MIXING){
+    node.lambda_incoming[0] = node.kappa_H_incoming
+       * homes[node.home].age_independent_mixing[node.age_group]
+       * node.hd_area_factor;
 
-  //No null check for home as every agent has a home
-  node.lambda_incoming[0] = node.kappa_H_incoming
-	* homes[node.home].age_independent_mixing
-	* node.hd_area_factor;
-  //If the agent lives in a high population density area, eg, a slum
-  
-  //FEATURE_PROPOSAL: make the mixing dependent on node.age_group;
-  if(node.workplace != WORKPLACE_HOME) {
-	node.lambda_incoming[1] = (node.attending?1.0:GLOBAL.ATTENDANCE_LEAKAGE)*node.kappa_W_incoming
-	  * workplaces[node.workplace].age_independent_mixing;
-	//FEATURE_PROPOSAL: make the mixing dependent on node.age_group;
+    if(node.workplace != WORKPLACE_HOME) {
+       node.lambda_incoming[1] = (node.attending?1.0:GLOBAL.ATTENDANCE_LEAKAGE)*node.kappa_W_incoming
+         * workplaces[node.workplace].age_independent_mixing[node.age_group];
+    }
+    
   }
-
+  else{
+  //No null check for home as every agent has a home
+    node.lambda_incoming[0] = node.kappa_H_incoming
+      * homes[node.home].age_independent_mixing[0]
+      * node.hd_area_factor;
+    //If the agent lives in a high population density area, eg, a slum
+    
+    //FEATURE_PROPOSAL: make the mixing dependent on node.age_group;
+    if(node.workplace != WORKPLACE_HOME) {
+      node.lambda_incoming[1] = (node.attending?1.0:GLOBAL.ATTENDANCE_LEAKAGE)*node.kappa_W_incoming
+        * workplaces[node.workplace].age_independent_mixing[0];
+      //FEATURE_PROPOSAL: make the mixing dependent on node.age_group;
+    }
+  }
    
   // No null check for community as every node has a community.
   //
@@ -424,10 +436,12 @@ void update_lambdas(agent&node, const vector<house>& homes, const vector<workpla
 
 double updated_lambda_c_local(const vector<agent>& nodes, const community& community){
   double sum_value = 0;
+  //vector<double> lambda_age_group(GLOBAL.NUM_AGE_GROUPS);
   for(count_type i = 0; i < community.individuals.size(); ++i){
 	sum_value += nodes[community.individuals[i]].lambda_c;
   }
-
+  //std::fill(lambda_age_group.begin(), lambda_age_group.end(), community.scale*sum_value*community.w_c);
+  //return lambda_age_group;
   return community.scale*sum_value*community.w_c;
 }
 

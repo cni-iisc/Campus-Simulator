@@ -141,7 +141,7 @@ double get_attendance_probability(WorkplaceType workplace_type, OfficeType offic
 
 //interpolation with a threshold
 double interpolate(double start, double end, double current, double threshold){
-  if (current >= threshold){
+  if (current > threshold){
     return end;
   }
   else {
@@ -157,4 +157,20 @@ void set_compliance(std::vector<agent> & nodes, std::vector<house> & homes,  dou
       nodes[homes[count].individuals[individual_count]].compliant = homes[count].compliant;
     }
   }
+}
+
+void get_nbr_cell(house &home){
+  if(GLOBAL.IGNORE_CONTAINMENT) {
+    return;
+  }
+
+  location loc_temp;
+
+  loc_temp.lon = home.loc.lon;
+  loc_temp.lat = GLOBAL.city_SW.lat;  
+  home.neighbourhood.cell_x = int(earth_distance(loc_temp,GLOBAL.city_SW)/GLOBAL.NBR_CELL_SIZE);
+
+  loc_temp.lat = home.loc.lat;
+  loc_temp.lon = GLOBAL.city_SW.lon;
+  home.neighbourhood.cell_y = int(earth_distance(loc_temp,GLOBAL.city_SW)/GLOBAL.NBR_CELL_SIZE);
 }

@@ -21,11 +21,11 @@ struct node_update_status{
 //Returns whether the node was infected or turned symptomatic in this time step
 node_update_status update_infection(agent& node, int cur_time);
 
-void update_all_kappa(std::vector<agent>& nodes, std::vector<house>& homes, std::vector<workplace>& workplaces, std::vector<community>& communities, int cur_time);
+void update_all_kappa(std::vector<agent>& nodes, std::vector<house>& homes, std::vector<workplace>& workplaces, std::vector<community>& communities, std::vector<std::vector<nbr_cell>>& nbr_cells, int cur_time);
 
-double updated_lambda_w_age_independent(const std::vector<agent>& nodes, const workplace& workplace);
+std::vector<double> updated_lambda_w_age_independent(const std::vector<agent>& nodes, const workplace& workplace);
 
-double updated_lambda_h_age_independent(const std::vector<agent>& nodes, const house& home);
+std::vector<double> updated_lambda_h_age_independent(const std::vector<agent>& nodes, const house& home);
 
 double updated_travel_fraction(const std::vector<agent>& nodes, int cur_time);
 
@@ -34,11 +34,11 @@ void update_lambdas(agent&node, const std::vector<house>& homes, const std::vect
 double updated_lambda_c_local(const std::vector<agent>& nodes, const community& community);
 
 // Age stratification update functions.
-double updated_lambda_w_age_dependent(const std::vector<agent>& nodes, const workplace& workplace, const matrix<double>& workplace_tx_u, const std::vector<double>& workplace_tx_sigma, const matrix<double>& workplace_tx_vT);
+std::vector<double> updated_lambda_w_age_dependent(const std::vector<agent>& nodes, const workplace& workplace, const matrix<double>& workplace_tx_u, const std::vector<double>& workplace_tx_sigma, const matrix<double>& workplace_tx_vT);
 
-double updated_lambda_h_age_dependent(const std::vector<agent>& nodes, const house& home, const matrix<double>& home_tx_u, const std::vector<double>& home_tx_sigma, const matrix<double>& home_tx_vT);
+std::vector<double> updated_lambda_h_age_dependent(const std::vector<agent>& nodes, const house& home, const matrix<double>& home_tx_u, const std::vector<double>& home_tx_sigma, const matrix<double>& home_tx_vT);
 
-double updated_lambda_c_local_age_dependent(const std::vector<agent>& nodes, const community& community, const matrix<double>& community_tx_u, const std::vector<double>& community_tx_sigma, const matrix<double>& community_tx_vT);
+std::vector<double> updated_lambda_c_local_age_dependent(const std::vector<agent>& nodes, const community& community, const matrix<double>& community_tx_u, const std::vector<double>& community_tx_sigma, const matrix<double>& community_tx_vT);
 
 void update_lambda_c_global(std::vector<community>& communities, const matrix<double>& community_distance_matrix);
 

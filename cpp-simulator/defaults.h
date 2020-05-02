@@ -39,10 +39,17 @@ struct defaults{
   std::string THIRD_PERIOD = "42";
   std::string OE_SECOND_PERIOD = "30";
   std::string LOCKED_COMMUNITY_LEAKAGE = "1.0";
+  std::string COMMUNITY_LOCK_THRESHOLD = "0.001";
   std::string MASK_ACTIVE = "false";
   std::string USE_AGE_DEPENDENT_MIXING = "false";
   std::string SIGNIFICANT_EIGEN_VALUES = "3.0";
   std::string NUM_AGE_GROUPS = "16.0";
+  std::string CITY_SW_LAT = "12.8340125";
+  std::string CITY_SW_LON = "77.46010253";
+  std::string CITY_NE_LAT = "13.14366615";
+  std::string CITY_NE_LON = "77.78405146";
+  std::string NBR_CELL_SIZE = "0.178"; // in km
+  std::string IGNORE_CONTAINMENT = "true";  
 } DEFAULTS;
 
 #endif

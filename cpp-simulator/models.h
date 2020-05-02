@@ -22,9 +22,13 @@ enum class Intervention {
    ld_fper_ci_hq_sd65_sc_oe_sper = 10,
    intv_fper_intv_sper_intv_tper = 11,
    intv_NYC=12,
-   intv_Mum=13
+   intv_Mum=13,
+   intv_nbr_containment=14
 };
 
+struct location{
+  double lat, lon; //latitude and longitude, in degrees
+};
 
 template<typename T>
 using matrix = std::vector< std::vector<T> >;
@@ -208,6 +212,10 @@ struct global_params{
   double SIGNIFICANT_EIGEN_VALUES = 3;
   bool USE_AGE_DEPENDENT_MIXING = false;
 
+  //City limits in lat,lon
+  location city_SW, city_NE;
+  double NBR_CELL_SIZE = 1; //in km
+  bool IGNORE_CONTAINMENT = true;
 };
 extern global_params GLOBAL;
 
@@ -236,8 +244,9 @@ double f_kernel(double dist);
 
 // End of global parameters
 
-struct location{
-  double lat, lon; //latitude and longitude, in degrees
+struct grid_cell{
+  count_type cell_x = 0;
+  count_type cell_y = 0; //latitude and longitude, in degrees
 };
 
 //Distance between two locations given by their latitude and longitude, in degrees
@@ -292,6 +301,8 @@ struct agent{
   // time_of_infection is initialized to zero before seeding
 
   Progression infection_status = Progression::susceptible;
+  bool entered_symptomatic_state = false;
+  bool entered_hospitalised_state = false;
 
   bool infective = false;
 
@@ -317,6 +328,7 @@ struct agent{
 
 
   bool compliant = true;
+  
   double kappa_H = 1;
   double kappa_W = 1;
   double kappa_C = 1;
@@ -324,6 +336,7 @@ struct agent{
   double incubation_period;
   double asymptomatic_period;
   double symptomatic_period;
+  
 
   double hospital_regular_period;
   double hospital_critical_period;
@@ -363,6 +376,7 @@ struct agent{
 
 struct house{
   location loc;
+  grid_cell neighbourhood;
   double lambda_home = 0;
   std::vector<int> individuals; //list of indices of individuals
   double Q_h = 1;
@@ -370,7 +384,9 @@ struct house{
   bool compliant;
   double non_compliance_metric = 0; //0 - compliant, 1 - non-compliant
   bool quarantined = false;
-  double age_independent_mixing = 0;
+  std::vector<double> age_independent_mixing;
+  std::vector<double> age_dependent_mixing;
+
   //age_dependent_mixing not added yet, since it is unused
   house(){}
   house(double latitude, double longitude, bool compliance):
@@ -393,7 +409,9 @@ struct workplace {
   WorkplaceType workplace_type;
   OfficeType office_type = OfficeType::other;
   bool quarantined = false;
-  double age_independent_mixing = 0;
+  std::vector<double> age_independent_mixing;
+  std::vector<double> age_dependent_mixing;
+
   //age_dependent_mixing not added yet, since it is unused
 
   workplace(){}
@@ -429,6 +447,11 @@ struct community {
   }
 };
 
+struct nbr_cell {
+  grid_cell neighbourhood;
+  std::vector<count_type> houses_list;
+  bool quarantined = false;
+};
 
 struct office_attendance{
   count_type number_of_entries;
@@ -450,4 +473,6 @@ double interpolate(double start, double end, double current, double threshold);
 
 //reset household and individual compliance flags based on compliance probability.
 void set_compliance(std::vector<agent> & nodes, std::vector<house> & homes,  double compliance_probability);
+
+void get_nbr_cell(house &home);
 #endif

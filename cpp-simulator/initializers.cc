@@ -10,6 +10,7 @@
 #include <vector>
 #include <random>
 #include <string>
+#include <cmath>
 
 #include "models.h"
 #include "initializers.h"
@@ -51,6 +52,13 @@ vector<house> init_homes(){
 					 elem["lon"].GetDouble(),
 					 (temp_non_compliance_metric<=GLOBAL.COMPLIANCE_PROBABILITY)?1.0:0,
 					 temp_non_compliance_metric);
+
+	if(!GLOBAL.IGNORE_CONTAINMENT) { 
+		get_nbr_cell(homes[index]);
+	}
+
+    homes[index].age_independent_mixing.resize(NUM_AGE_GROUPS, 0);
+    homes[index].age_dependent_mixing.resize(NUM_AGE_GROUPS, 0);
 	++index;
   }
   return homes;
@@ -75,7 +83,10 @@ vector<workplace> init_workplaces() {
 	wps[index].set(elem["lat"].GetDouble(),
 				   elem["lon"].GetDouble(),
 				   WorkplaceType::school);
-	++index;
+    
+    wps[index].age_independent_mixing.resize(NUM_AGE_GROUPS, 0);
+    wps[index].age_dependent_mixing.resize(NUM_AGE_GROUPS, 0);
+    ++index;
   }
   assert(index == GLOBAL.num_schools);
   for (auto &elem: wpJSON.GetArray()){
@@ -84,6 +95,8 @@ vector<workplace> init_workplaces() {
 				   WorkplaceType::office);
 
     wps[index].office_type = static_cast<OfficeType>(elem["officeType"].GetInt());
+    wps[index].age_independent_mixing.resize(NUM_AGE_GROUPS, 0);
+    wps[index].age_dependent_mixing.resize(NUM_AGE_GROUPS, 0);
 
     ++index;
   }
@@ -114,6 +127,34 @@ vector<community> init_community() {
 	   });
   return communities;
 }
+
+vector<vector<nbr_cell>> init_nbr_cells() {
+
+  vector<vector<nbr_cell>> nbr_cells;
+
+  if(!GLOBAL.IGNORE_CONTAINMENT){
+	location loc_temp;
+
+	loc_temp.lat = GLOBAL.city_SW.lat;
+	loc_temp.lon = GLOBAL.city_NE.lon;
+	count_type num_x_grids = ceil(earth_distance(GLOBAL.city_SW,loc_temp)/GLOBAL.NBR_CELL_SIZE);
+	nbr_cells.resize(num_x_grids);
+
+	loc_temp.lon = GLOBAL.city_SW.lon;
+	loc_temp.lat = GLOBAL.city_NE.lat;
+	count_type num_y_grids = ceil(earth_distance(GLOBAL.city_SW,loc_temp)/GLOBAL.NBR_CELL_SIZE);
+
+	for(count_type count_x_grid = 0; count_x_grid < num_x_grids; count_x_grid++){
+		nbr_cells[count_x_grid].resize(num_y_grids);
+		for(count_type count_y_grid = 0; count_y_grid < num_y_grids; count_y_grid++){
+			nbr_cells[count_x_grid][count_y_grid].neighbourhood.cell_x = count_x_grid;
+			nbr_cells[count_x_grid][count_y_grid].neighbourhood.cell_y = count_y_grid;
+		}
+	} 
+  }  
+  return nbr_cells;
+}
+
 
 
 vector<double> compute_prob_infection_given_community(double infection_probability, bool set_uniform){
@@ -310,9 +351,13 @@ vector<agent> init_nodes(){
 }
 
 vector<double> read_JSON_convert_array(const string& file_name){
-  auto file_JSON = readJSONFile(GLOBAL.input_base + file_name);   
+  vector<double> return_object;
+  if(!GLOBAL.USE_AGE_DEPENDENT_MIXING) {
+	  return return_object;
+  }
+  auto file_JSON = readJSONFile(GLOBAL.input_base+"age_tx/" + file_name);   
   auto size = file_JSON.GetArray().Size();
-  vector<double> return_object(size);
+  return_object.resize(size);
   int i = 0;
   for (auto &elem: file_JSON.GetArray()){
     return_object[i] = elem[to_string(i).c_str()].GetDouble();
@@ -322,9 +367,13 @@ vector<double> read_JSON_convert_array(const string& file_name){
 }
 
 matrix<double> read_JSON_convert_matrix(const string& file_name){ 
-  auto file_JSON = readJSONFile(GLOBAL.input_base + file_name);   
+  matrix<double> return_object;
+  if(!GLOBAL.USE_AGE_DEPENDENT_MIXING) {
+	  return return_object;
+  }
+  auto file_JSON = readJSONFile(GLOBAL.input_base+"age_tx/" + file_name);   
   auto size = file_JSON.GetArray().Size();
-  matrix<double> return_object(size, vector<double>(size));
+  return_object.resize(size, vector<double>(size));
   int i =0;
   for (auto &elem: file_JSON.GetArray()){
     for (count_type j = 0; j < size; ++j){
@@ -375,6 +424,16 @@ void assign_individual_home_community(vector<agent>& nodes, vector<house>& homes
 	//No checking for null as all individuals have a community/ward
 	communities[nodes[i].community].individuals.push_back(i);
   }
+}
+
+void assign_homes_nbr_cell(vector<house>& homes, vector<vector<nbr_cell>>& neighbourhood_cells){
+	if(GLOBAL.IGNORE_CONTAINMENT){
+		return;
+	}
+	for (count_type home_count = 0; home_count < homes.size(); home_count++){
+		grid_cell my_nbr_cell = homes[home_count].neighbourhood;
+		neighbourhood_cells[my_nbr_cell.cell_x][my_nbr_cell.cell_y].houses_list.push_back(home_count);
+	}
 }
 
 // Compute scale factors for each home, workplace and community. Done once at the beginning.

@@ -55,15 +55,21 @@ string intervention_rep(Intervention i){
 	break;
   case Intervention::ld_fper_ci_hq_sd65_sc_oe_sper:
 	return "ld_fper_ci_hq_sd65_sc_oe_sper";
+  break;
   case Intervention::intv_fper_intv_sper_intv_tper:
 	return "intv_fper_intv_sper_intv_tper";
 	break;
   case Intervention::intv_NYC:
 	return "intv_NYC";
+  break;
   case Intervention::intv_Mum:
 	return "intv_Mum";
+  break;
   case Intervention::intv_nbr_containment:
 	return "intv_nbr_containment";
+	break;
+  case Intervention::intv_ward_containment:
+	return "intv_ward_containment";
 	break;
   default:
 	assert(false);

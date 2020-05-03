@@ -143,6 +143,7 @@ plot_data_struct run_simulation(){
 	};
 
   plot_data.quarantined_stats["quarantined_stats"] = {};
+  plot_data.quarantined_stats["curtailment_stats"] = {};
 
   
   for(auto& elem: plot_data.susceptible_lambdas){
@@ -344,6 +345,9 @@ plot_data_struct run_simulation(){
 	  quarantined_individuals = 0,
 	  quarantined_infectious = 0;
 	
+	double curtailed_interaction = 0,
+		normal_interaction = 0;
+
 #pragma omp parallel for reduction (+:n_infected,n_exposed,n_hospitalised,n_critical,n_fatalities,n_recovered,n_affected)
 	for(count_type j = 0; j < GLOBAL.num_people; ++j){
 	  auto infection_status = nodes[j].infection_status;
@@ -352,6 +356,17 @@ plot_data_struct run_simulation(){
 		 || infection_status == Progression::hospitalised
 		 || infection_status == Progression::critical){
 		n_infected += 1;
+	  }else if(infection_status != Progression::dead){
+		  curtailed_interaction+=(nodes[j].kappa_H_incoming * GLOBAL.BETA_H
+		  		+ nodes[j].kappa_C_incoming * GLOBAL.BETA_C
+				+ ((nodes[j].workplace_type == WorkplaceType::office)?GLOBAL.BETA_W:0)*nodes[j].kappa_W_incoming
+				+ ((nodes[j].workplace_type == WorkplaceType::school)?GLOBAL.BETA_S:0)*nodes[j].kappa_W_incoming
+				+ ((nodes[j].has_to_travel)?GLOBAL.BETA_TRAVEL:0)*nodes[j].travels());
+		  normal_interaction+=(GLOBAL.BETA_H
+		  		+ GLOBAL.BETA_C
+				+ ((nodes[j].workplace_type == WorkplaceType::office)?GLOBAL.BETA_W:0)
+				+ ((nodes[j].workplace_type == WorkplaceType::school)?GLOBAL.BETA_S:0)
+				+ ((nodes[j].has_to_travel)?GLOBAL.BETA_TRAVEL:0));
 	  }
 	  if(infection_status == Progression::exposed){
 		n_exposed += 1;
@@ -427,7 +442,10 @@ plot_data_struct run_simulation(){
 				 quarantined_infectious,
 				 quarantined_num_cases
                   }});
-
+	plot_data.curtailment_stats["curtailment_stats"].push_back({time_step, {
+				 normal_interaction,
+				 curtailed_interaction
+                  }});
 	
   }
 

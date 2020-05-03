@@ -660,9 +660,9 @@ void get_kappa_containment(vector<agent>& nodes, vector<house>& homes, const vec
 		get_kappa_custom(nodes, homes, workplaces, communities, nbr_cells, cur_time, false, false, true, false, false, false, 0, 1,false);
 	} else{
 		if(intv == Intervention::intv_nbr_containment){
-			get_kappa_custom(nodes, homes, workplaces, communities, nbr_cells, cur_time, true, true, false, false, false, false, 0, 1,true,false);
+			get_kappa_custom(nodes, homes, workplaces, communities, nbr_cells, cur_time, true, true, false, true, true, false, 0, 1,true,false);
 		} else{
-			get_kappa_custom(nodes, homes, workplaces, communities, nbr_cells, cur_time, true, true, false, false, false, false, 0, 1,false,true);
+			get_kappa_custom(nodes, homes, workplaces, communities, nbr_cells, cur_time, true, true, false, true, true, false, 0, 1,false,true);
 		}
 	}	
 }

@@ -30,10 +30,10 @@ body, html {
   /* height: 100%; */
 }
 
-#Qn {background-color: #997777;}
+#Qn {background-color: #886655;}
 #Scores {background-color: #669977;}
-#Contact {background-color: blue;}
-#About {background-color: orange;}
+#Contact {background-color: #555588;}
+#About {background-color: #996600;}
 
 table, th, td {
   border: 1px solid darkgreen;

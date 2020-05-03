@@ -8,10 +8,10 @@
 	<link rel="stylesheet" href="style.css">
     </head>
     <body>
-	 <button class="tablink" onclick="openPage('Qn', this, '#777777')" id="QnTab">Questionnaire</button>
-	<button class="tablink" onclick="openPage('Scores', this, 'darkgreen')" id="ScoresTab">Scores</button>
-	<button class="tablink" onclick="openPage('Contact', this, 'blue')">Contact</button>
-	<button class="tablink" onclick="openPage('About', this, 'orange')">About</button>
+	 <button class="tablink" onclick="openPage('Qn', this, '#886655')" id="QnTab">Questionnaire</button>
+	<button class="tablink" onclick="openPage('Scores', this, '#669977')" id="ScoresTab">Scores</button>
+	<button class="tablink" onclick="openPage('About', this, '#996600')">Information</button>
+	<button class="tablink" onclick="openPage('Contact', this, '#555588')">Contact</button>
 	
 	<div id="Qn" class="tabcontent">
         <div class="container">
@@ -504,14 +504,14 @@
                                   <input class="form-control" type="number" name="tCleanFreq" id="tCleanFreq" min="0" placeholder="0">
                              </div>
                              <div class="form-group col-md-12">
-                                  <label for="shop_present_flag">Is soap dispensed in each of the toilets</label>
+                                  <label for="soap_present_flag">Is soap dispensed in each of the toilets</label>
                                   <div class="form-check">
-                                      <input class="form-check-input" type="radio" name="shop_present" id="shop_present_1" value="0" checked>
-                                      <label class="form-check-label" for="shop_present_1">No</label>
+                                      <input class="form-check-input" type="radio" name="soapDisp_flag" value="1" checked>
+                                      <label class="form-check-label" for="soapDisp_flag">Yes</label>
                                   </div>
                                   <div class="form-check">
-                                      <input class="form-check-input" type="radio" name="shop_present" id="shop_present_2" value="1">
-                                      <label class="form-check-label" for="shop_present_2">Yes</label>
+                                      <input class="form-check-input" type="radio" name="soapDisp_flag" value="0">
+                                      <label class="form-check-label" for="soapDisp_flag">No</label>
                                   </div>
                              </div>
                              <div class="form-group col-md-6">
@@ -906,15 +906,17 @@
 
 	<div id="Scores" class="tabcontent">
 	  <h3>Scores</h3>
-				<div class="container">
-        	  <div class="row">
-        	      <div class="col-8">
-								    <div id="scoreTable"></div>
-
-        	        	<button type="Submit" class="btn btn-primary btn-block" onclick="reEnter()">Adjust inputs and recalculate</button>
-								</div>
-        	  </div>      
+		<div class="container">
+       	  <div class="row">
+             <div class="col-8">
+			    <div id="scoreTable"></div>
+				<br><br>
+				<p>
+       	        	<button type="Submit" class="btn btn-primary btn-block" onclick="reEnter()">Adjust inputs and recalculate</button>
+				</p>
 				</div>
+       	  </div>      
+		</div>
 	</div>
 	
 	<div id="Contact" class="tabcontent">
@@ -926,6 +928,8 @@
 	  <h3>About</h3>
 	  <p>Who we are and what we do.</p>
 	</div> 
+	<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/6.6.1/math.js"></script>
 	<script type="text/javascript" src="scripts.js"></script>
     </body>
 </html>

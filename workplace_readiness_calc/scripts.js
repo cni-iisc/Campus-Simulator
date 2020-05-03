@@ -15,20 +15,20 @@ function onSuccess (scoreMsg) {
 }
 
 function calcScore () {
-	/*
-	var est_name = document.getElementById("est_name").value;
-	var est_type = document.getElementById("est_type").value;
-	var num_emp_m = parseInt(document.getElementById("num_emp_m").value);
-	var num_emp_f = parseInt(document.getElementById("num_emp_f").value);
-	var num_emp_o = parseInt(document.getElementById("num_emp_o").value);
-	//var res_add = document.getElementById("res_add").value;
-	var num_ASApp = parseInt(document.getElementById("num_ASApp").value);
-	var num_shifts = parseInt(document.getElementById("num_shifts").value);
-	var gap_shifts_min = parseInt(document.getElementById("gap_shifts_min").value);
+	var est_type = document.getElementById("NOE").value;
+	var nM = parseInt(document.getElementById("nM").value);
+	var nF = parseInt(document.getElementById("nF").value);
+	var nOth = parseInt(document.getElementById("nOth").value);
+	var rAddrKn = parseInt(document.getElementById("rAddrKn").value);
+	var pCS = parseInt(document.getElementById("pCS").value);
+	//var num_ASApp = parseInt(document.getElementById("num_ASApp").value);
+	var nShifts = parseInt(document.getElementById("nShifts").value);
+	var tGapShift = parseFloat(document.getElementById("tGapShift").value);
+	var nGentsT = parseInt(document.getElementById("nGentsT").value);
+	var nLadiesT = parseInt(document.getElementById("nLadiesT").value);
 	    
-	var num_emp = num_emp_m + num_emp_f + num_emp_o; */
-	var num_emp = 100;
-	onSuccess("Total Employees: " + num_emp);
+	var nEmp = nM + nF + nOth;
+	onSuccess("Total Employees: " + nEmp);
 
 	var resTable = "<br><br><H3> Covid Readiness Score</H3>";
 	resTable += "<table><tr><td style='width: 200px; color: white;'>Category</td>";

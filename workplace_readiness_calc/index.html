@@ -37,42 +37,38 @@
                             </div>
                         </div>
  
-                        <p class="h4 mb-2 text-left">Employee Information</p>
+                        <p class="h4 mb-3 text-left">Employee Information</p>
                         <p class="h5 mb-2 text-left">Number of Employees in a Shift (including security, casual labour)</p>
                         <div class="form-row">
                              <div class="form-group col-md-4">
-                                  <label for="Nm">Men</label>
-                                  <input class="form-control" type="number" name="Nm" id="Nm" min="0" placeholder="0">
+                                  <label for="nM">Men</label>
+                                  <input class="form-control" type="number" name="nM" id="nM" min="0" placeholder="0">
                              </div>
                              <div class="form-group col-md-4">
-                                  <label for="Nw">Women</label>
-                                  <input class="form-control" type="number" name="Nw" id="Nw" min="0" placeholder="0">
+                                  <label for="nF">Women</label>
+                                  <input class="form-control" type="number" name="nF" id="nF" min="0" placeholder="0">
                              </div>
                              <div class="form-group col-md-4">
-                                  <label for="No">Others</label>
-                                  <input class="form-control" type="number" name="No" id="No" min="0" placeholder="0">
+                                  <label for="nOth">Others</label>
+                                  <input class="form-control" type="number" name="nOth" id="nOth" min="0" placeholder="0">
                              </div>
                              <div class="form-group col-md-6">
-                                  <label for="N">Total number of employees</label>
-                                  <input class="form-control" type="number" name="N" id="N" min="0" placeholder="0">
+                                  <label for="rAddrKn">Employees with address records</label>
+                                  <input class="form-control" type="number" name="rAddrKn" id="rAddrKn" min="0" placeholder="0">
                              </div>
                              <div class="form-group col-md-6">
-                                  <label for="Fcs">Fraction casual labour and security</label>
-                                  <input class="form-control" type="number" name="Fcs" id="Fcs" min="0" max="1" placeholder="0">
+                                  <label for="pCS">Percentage of casual labour and security</label>
+                                  <input class="form-control" type="number" name="pCS" id="pCS" min="0" max="1" placeholder="0">
                              </div>
                              <div class="form-group col-md-6">
-                                  <label for="Shifts">Shifts</label>
-                                  <input class="form-control" type="number" name="Shifts" id="Shifts" min="0" placeholder="0">
+                                  <label for="nShifts">Shifts</label>
+                                  <input class="form-control" type="number" name="nShifts" id="nShifts" min="0" placeholder="0">
                              </div>
                              <div class="form-group col-md-6">
-                                  <label for="Tgapshift">Time gap between shift (Hours)</label>
-                                  <input class="form-control" type="number" name="Tgapshift" id="Tgapshift" min="0" placeholder="0">
+                                  <label for="tGapShift">Time gap between shift (Hours)</label>
+                                  <input class="form-control" type="number" name="tGapShift" id="tGapShift" min="0" placeholder="0">
                              </div>
-                             <div class="form-group col-md-12">
-                                  <label for="RAddrKn">Employees with address records</label>
-                                  <input class="form-control" type="number" name="RAddrKn" id="RAddrKn" min="0" placeholder="0">
-                             </div>
-                             <div class="form-group col-md-12">
+                             <div class="form-group col-md-8">
                                   <label for="informCZEmp">Does the organisation inform those in containment zones not to come to office?</label>
                                   <div class="form-check">
                                       <input class="form-check-input" type="radio" name="informCZEmp" id="informCZEmp_0" value="0" checked>
@@ -85,7 +81,7 @@
                              </div>
                         </div>
                         
-                        <p class="h5 mb-5 text-left">Age Distribution</p>
+                        <p class="h5 mb-2 text-left">Age Distribution</p>
                         <div class="form-row">
                              <div class="form-group col-md-4">
                                   <label for="N19">Between 15-19</label>
@@ -496,16 +492,16 @@
                         <p class="h4 mb-4 text-left">Washroom Information</p>
                         <div class="form-row">
                              <div class="form-group col-md-6">
-                                  <label for="gents_toilet_count">Number of Gents toilets</label>
-                                  <input class="form-control" type="number" name="gents_toilet_count" id="gents_toilet_count" min="0" placeholder="0">
+                                  <label for="nGentsT">Number of Gents toilets</label>
+                                  <input class="form-control" type="number" name="nGentsT" id="nGentsT" min="0" placeholder="0">
                              </div>
                              <div class="form-group col-md-6">
-                                  <label for="ladies_toilet_count">Number of Ladies toilets</label>
-                                  <input class="form-control" type="number" name="ladies_toilet_count" id="ladies_toilet_count" min="0" placeholder="0">
+                                  <label for="nLadiesT">Number of Ladies toilets</label>
+                                  <input class="form-control" type="number" name="nLadiesT" id="nLadiesT" min="0" placeholder="0">
                              </div>
                              <div class="form-group col-md-12">
-                                  <label for="toilet_cleaning_freq">Number of times each toilet is cleaned in a day</label>
-                                  <input class="form-control" type="number" name="toilet_cleaning_freq" id="toilet_cleaning_freq" min="0" placeholder="0">
+                                  <label for="tCleanFreq">Number of times each toilet is cleaned in a day</label>
+                                  <input class="form-control" type="number" name="tCleanFreq" id="tCleanFreq" min="0" placeholder="0">
                              </div>
                              <div class="form-group col-md-12">
                                   <label for="shop_present_flag">Is soap dispensed in each of the toilets</label>

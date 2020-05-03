@@ -24,14 +24,12 @@ function calcScore () {
 	//var num_ASApp = parseInt(document.getElementById("num_ASApp").value);
 	var nShifts = parseInt(document.getElementById("nShifts").value);
 	var tGapShift = parseFloat(document.getElementById("tGapShift").value);
+	
+	//Toilets
 	var nGentsT = parseInt(document.getElementById("nGentsT").value);
 	var nLadiesT = parseInt(document.getElementById("nLadiesT").value);
 	var tCleanFreq = parseInt(document.getElementById("tCleanFreq").value);
-	
-    //Read all booleans here:
 	var soapDisp_flag = parseInt(document.querySelector('input[name="soapDisp_flag"]:checked').value);
-	console.log("SoapDisp: " + soapDisp_flag)
-
     var nUsersG = nM + nOth/2.0;
     var nUsersL = nF + nOth/2.0;
     var nAVT = 5;
@@ -42,7 +40,21 @@ function calcScore () {
     var score_GentsToilet = cRateGentsToilet;
     var cRateLadiesToilet = nUsersL * nAVT * durAVT * (Math.max(0.5, (1.0 - 0.1*tCleanFreq) )) * (1.0 - 0.1*soapDisp_flag) / (tConcHr*60*nLadiesT);
     var score_LadiesToilet = cRateLadiesToilet;
-    //var score_GentsToilet = 1000 - cRateGentsToilet*1000;
+
+    // Transport
+
+
+    // Sick Room
+    var HL_flag = parseInt(document.querySelector('input[name="HL"]:checked').value);
+    var IQS_flag = parseInt(document.querySelector('input[name="IQS"]:checked').value);
+    var Amblnc_flag = parseInt(document.querySelector('input[name="Amblnc"]:checked').value);
+    var LHsptl_flag = parseInt(document.querySelector('input[name="LHsptl"]:checked').value);
+    var EmrgncResp_flag = parseInt(document.querySelector('input[name="EmrgncResp"]:checked').value);
+    var ImdtFM_flag = parseInt(document.querySelector('input[name="ImdtFM"]:checked').value);
+	var lstUpdtTime = parseInt(document.getElementById("lstUpdtTime").value);
+    //console.log("flag: " + lstUpdtTime);
+    var score_sickRoom = 1.0 - 0.1*(IQS_flag*2 + Amblnc_flag*2 + LHsptl_flag*2 + EmrgncResp_flag + HL_flag + 
+            ImdtFM_flag + ImdtFM_flag * Math.max( 0, (1.0 - lstUpdtTime/30)) );
 
 	var nEmp = nM + nF + nOth;
 	
@@ -54,6 +66,7 @@ function calcScore () {
 	resTable += "<td>Possible improvement</td></tr>";
 	resTable += "<tr><td>Gents toilets</td><td>" + score_GentsToilet + "</td><td></td></tr>"
 	resTable += "<tr><td>Ladies toilets</td><td>" + score_LadiesToilet + "</td><td></td></tr>"
+	resTable += "<tr><td>Isolation room</td><td>" + score_sickRoom + "</td><td></td></tr>"
 	resTable += "</table>";
 	document.getElementById("scoreTable").innerHTML = resTable;
 

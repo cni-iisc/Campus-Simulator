@@ -164,9 +164,11 @@ void get_kappa_lockdown(vector<agent>& nodes, const vector<house>& homes, const 
 	  nodes[count].kappa_C_incoming = 0.25;
 	  if(nodes[count].workplace_type==WorkplaceType::office){
 		nodes[count].kappa_W = 0.25;
+		nodes[count].kappa_W_incoming = 0.25;
 	  }
 	  else{
 		nodes[count].kappa_W = 0;
+		nodes[count].kappa_W_incoming = 0;
 	  }
 	}
 	else{ //non-compliant

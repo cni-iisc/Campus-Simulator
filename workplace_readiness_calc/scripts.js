@@ -48,8 +48,8 @@ function getValues(){
   // Office Infrastructure Information
   dict["tArea"] = parseInt(document.getElementById("tArea").value); // Total office area in sq.ft
   dict["nFloors"] = parseInt(document.getElementById("nFloors").value); // Number of floors in office
-  dict["avgFA"] = parseInt(document.getElementById("avgFA").value); // Average area of floors in sq.ft
-  dict["avgFEmp"] = parseInt(document.getElementById("avgFEmp").value); // Average number of employees per floor
+  //dict["avgFA"] = parseInt(document.getElementById("avgFA").value); // Average area of floors in sq.ft
+  //dict["avgFEmp"] = parseInt(document.getElementById("avgFEmp").value); // Average number of employees per floor
   dict["mntrCCTV"] = parseInt(document.querySelector('input[name="mntrCCTV"]:checked').value); // CCTV monitoring
   dict["acsCntrl"] = parseInt(document.querySelector('input[name="acsCntrl"]:checked').value); // Access controlled
   dict["baDoor"] = parseInt(document.getElementById("baDoor").value); // Number of biometric based access doors

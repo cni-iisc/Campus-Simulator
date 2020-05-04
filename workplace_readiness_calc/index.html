@@ -413,7 +413,7 @@ SPDX-License-Identifier: Apache-2.0-->
                               <div class="card"> 
                                    <div class="card-header" id="headingOne">
                                         <h2 class="mb-0">
-                                        <button type="button" class="btn" data-toggle="collapse" data-target="#collapseSix">6. Meeting places</button>									
+                                        <button type="button" class="btn" data-toggle="collapse" data-target="#collapseSix">6. Interaction spaces</button>									
                                         </h2>
                                    </div>
                                    <div id="collapseSix" class="collapse" aria-labelledby="headingSix" data-parent="#accordionExample">
@@ -442,7 +442,7 @@ SPDX-License-Identifier: Apache-2.0-->
                                                        </div>
                                                   </div>
                                                   <div class="form-group col-md-12">
-                                                       <label for="cntnACOp_flag">Will air conditioner be operations?</label>
+                                                       <label for="cntnACOp_flag">Will air conditioner be operational?</label>
                                                        <div class="form-check">
                                                        <input class="form-check-input" type="radio" name="cntnACOp" id="cntnACOp_0" value="0" checked>
                                                        <label class="form-check-label" for="cntnACOp_0">No</label>
@@ -623,29 +623,45 @@ SPDX-License-Identifier: Apache-2.0-->
                                                        <label for="cmpnTrnsprtUsrs">Number of employees that will use company provided transport, if provided</label>
                                                        <input class="form-control" type="number" name="cmpnTrnsprtUsrs" id="cmpnTrnsprtUsrs" min="0" placeholder="0">
                                                   </div>
-                                                  <div class="form-group col-md-12">
-                                                       <label for="bsCpctFrac">Current Bus capacity | Bus Actual</label>
-                                                       <input class="form-control" type="number" name="bsCpctFrac" id="bsCpctFrac" min="0" placeholder="0">
+                                                  <div class="form-group col-md-6">
+                                                       <label for="bsCpctAct">Actual Bus capacity</label>
+                                                       <input class="form-control" type="number" name="bsCpctAct" id="bsCpctAct" min="0" placeholder="0">
                                                   </div>
-                                                  <div class="form-group col-md-12">
-                                                       <label for="mnBsCpctFrac">Minibus capacity | Minibus Actual</label>
-                                                       <input class="form-control" type="number" name="mnBsCpctFrac" id="mnBsCpctFrac" min="0" placeholder="0">
+                                                  <div class="form-group col-md-6">
+                                                       <label for="bsCpctCur">Current Bus capacity</label>
+                                                       <input class="form-control" type="number" name="bsCpctCur" id="bsCpctCur" min="0" placeholder="0">
                                                   </div>
-                                                  <div class="form-group col-md-12">
-                                                       <label for="vnCpctFrac">Van capacity | Van Actual</label>
-                                                       <input class="form-control" type="number" name="vnCpctFrac" id="vnCpctFrac" min="0" placeholder="0">
+                                                  <div class="form-group col-md-6">
+                                                       <label for="mnBsCpctAct"> Actual Minibus capacity</label>
+                                                       <input class="form-control" type="number" name="mnBsCpctAct" id="mnBsCpctAct" min="0" placeholder="0">
                                                   </div>
-                                                  <div class="form-group col-md-12">
-                                                       <label for="svCpctFrac">SUV capacity | SUV actual</label>
-                                                       <input class="form-control" type="number" name="svCpctFrac" id="svCpctFrac" min="0" placeholder="0">
+                                                  <div class="form-group col-md-6">
+                                                       <label for="mnBsCpctCur">Current Minibus capacity</label>
+                                                       <input class="form-control" type="number" name="mnBsCpctCur" id="mnBsCpctCur" min="0" placeholder="0">
                                                   </div>
-                                                  <div class="form-group col-md-12">
-                                                       <label for="crCpctFrac">Car capacity | Car actual</label>
-                                                       <input class="form-control" type="number" name="crCpctFrac" id="crCpctFrac" min="0" placeholder="0">
+                                                  <div class="form-group col-md-6">
+                                                       <label for="vnCpctAct">Actual Van capacity</label>
+                                                       <input class="form-control" type="number" name="vnCpctAct" id="vnCpctAct" min="0" placeholder="0">
                                                   </div>
-                                                  <div class="form-group col-md-12">
-                                                       <label for="crwdnss">Extent of crowdedness in vehicles</label>
-                                                       <input class="form-control" type="number" name="crwdnss" id="crwdnss" min="0" placeholder="0">
+                                                  <div class="form-group col-md-6">
+                                                       <label for="vnCpctCur">Current Van capacity</label>
+                                                       <input class="form-control" type="number" name="vnCpctCur" id="vnCpctCur" min="0" placeholder="0">
+                                                  </div>
+                                                  <div class="form-group col-md-6">
+                                                       <label for="svCpctAct">Actual SUV capacity</label>
+                                                       <input class="form-control" type="number" name="svCpctAct" id="svCpctAct" min="0" placeholder="0">
+                                                  </div>
+                                                  <div class="form-group col-md-6">
+                                                       <label for="svCpctCur">Current SUV capacity</label>
+                                                       <input class="form-control" type="number" name="svCpctCur" id="svCpctCur" min="0" placeholder="0">
+                                                  </div>
+                                                  <div class="form-group col-md-6">
+                                                       <label for="crCpctAct">Actual Car capacity</label>
+                                                       <input class="form-control" type="number" name="crCpctAct" id="crCpctAct" min="0" placeholder="0">
+                                                  </div>
+                                                  <div class="form-group col-md-6">
+                                                       <label for="crCpctCur">Current Car capacity</label>
+                                                       <input class="form-control" type="number" name="crCpctCur" id="crCpctCur" min="0" placeholder="0">
                                                   </div>
                                                   <div class="form-group col-md-6">
                                                        <label for="mskMndt_flag">Masks mandated in every <br>vehicle?</label>

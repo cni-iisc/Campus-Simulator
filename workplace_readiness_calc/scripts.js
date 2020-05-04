@@ -96,7 +96,7 @@ function getValues(){
   dict["nMPD"] = document.getElementById("nMPD").value; // Meetings per day
   dict["avgMS"] = document.getElementById("avgMS").value; // Average number of members in the meeting
   
-  // Meeting Places
+  // Interaction Places
   dict["cntn"] = parseInt(document.querySelector('input[name="cntn"]:checked').value); // Canteen/pantry
   dict["cntnAC"] = parseInt(document.querySelector('input[name="cntnAC"]:checked').value); // Canteen/pantry air condition
   dict["cntnACOp"] = parseInt(document.querySelector('input[name="cntnACOp"]:checked').value); // Canteen/pantry air condition operational
@@ -128,12 +128,17 @@ function getValues(){
 
   // Company Provided Transport
   dict["cmpnTrnsprtUsrs"] = document.getElementById("cmpnTrnsprtUsrs").value; // Company transport users
-  dict["bsCpctFrac"] = document.getElementById("bsCpctFrac").value; // Bus capacity fraction
-  dict["mnBsCpctFrac"] = document.getElementById("mnBsCpctFrac").value; // Mini bus capacity fraction
-  dict["vnCpctFrac"] = document.getElementById("vnCpctFrac").value; // Van capacity fraction
-  dict["svCpctFrac"] = document.getElementById("svCpctFrac").value; // SUV capacity fraction
-  dict["crCpctFrac"] = document.getElementById("crCpctFrac").value; // Car capacity fraction
-  dict["crwdnss"] = document.getElementById("crwdnss").value; // Crowdness extent
+  dict["bsCpctAct"] = document.getElementById("bsCpctAct").value; // Actual Bus capacity
+  dict["bsCpctCur"] = document.getElementById("bsCpctCur").value; // Current Bus capacity
+  dict["mnBsCpctAct"] = document.getElementById("mnBsCpctAct").value; // Actual Mini bus capacity 
+  dict["mnBsCpctCur"] = document.getElementById("mnBsCpctCur").value; // Current Mini bus capacity 
+  dict["vnCpctAct"] = document.getElementById("vnCpctAct").value; // Actual Van capacity 
+  dict["vnCpctCur"] = document.getElementById("vnCpctCur").value; // Current Van capacity 
+  dict["svCpctAct"] = document.getElementById("svCpctAct").value; // Actual SUV capacity 
+  dict["svCpctCur"] = document.getElementById("svCpctCur").value; // Current SUV capacity 
+  dict["crCpctAct"] = document.getElementById("crCpctAct").value; // Actual Car capacity
+  dict["crCpctCur"] = document.getElementById("crCpctCur").value; // Current Car capacity
+  dict["crwdnss"] = 0;// document.getElementById("crwdnss").value; // Crowdness extent
   dict["mskMndt"] = parseInt(document.querySelector('input[name="mskMndt"]:checked').value); // Mask mandate
   dict["hsVhcl"] = parseInt(document.querySelector('input[name="hsVhcl"]:checked').value); // Hand sanitiser in vehicle
   dict["noACVhcl"] = parseInt(document.querySelector('input[name="noACVhcl"]:checked').value); // No AC use in vehicle
@@ -210,9 +215,14 @@ function calcScore () {
   var score_isolation = Math.round((1.0 - score_sickRoom) * 100) * 10;
   
   // Meeting places
-  var time_breakfast
+  var time_breakfast = 15; // In minutes
+  var time_lunch = 15;
+  var time_snack = 15;
+  var time_water = 2;
+  var num_water_sought = 5;
+  var num_breakfast = inputs["nCntn"]
   
-  
+
   
   var nEmp = inputs["nM"] + inputs["nF"] + inputs["nOth"];
   onSuccess("Total Employees: " + nEmp);

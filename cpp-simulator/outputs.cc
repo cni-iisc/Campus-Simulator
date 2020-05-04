@@ -158,7 +158,8 @@ void output_global_params(const string& output_dir){
   fout << "HOSPITAL_CRITICAL_PERIOD: " << GLOBAL.HOSPITAL_CRITICAL_PERIOD << ";" << endl; 
   fout << "SYMPTOMATIC_FRACTION: " << GLOBAL.SYMPTOMATIC_FRACTION << ";" << endl; 
 
-  fout << "INTERVENTION: " << static_cast<count_type>(GLOBAL.INTERVENTION) << ";" << endl; 
+  fout << "INTERVENTION: " << static_cast<count_type>(GLOBAL.INTERVENTION)
+	   << ", " << intervention_rep(GLOBAL.INTERVENTION) << ";" << endl;
 
   // Beta values
   fout << "BETA_H: " << GLOBAL.BETA_H << ";" << endl;  //Thailand data

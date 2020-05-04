@@ -25,6 +25,10 @@ enum class Intervention {
    intv_Mum=13
 };
 
+enum class Cycle_Type {
+  home = 0,
+  individual = 1
+};
 
 template<typename T>
 using matrix = std::vector< std::vector<T> >;
@@ -55,6 +59,11 @@ inline bool bernoulli(double p){
 inline double uniform_real(double left, double right){
   return std::uniform_real_distribution<double>(left, right)(GENERATOR);
 }
+
+inline double uniform_count_type(double left, double right){
+  return std::uniform_int_distribution<count_type>(left, right)(GENERATOR);
+}
+
 
 // Global parameters
 //age related transition probabilities, symptomatic to hospitalised to critical to fatality.
@@ -162,6 +171,15 @@ struct global_params{
   double SECOND_PERIOD = 21;
   double THIRD_PERIOD = 42;
   double OE_SECOND_PERIOD = 30;
+
+
+  //Cyclic strategy
+  bool CYCLIC_POLICY_ENABLED = false;
+  //Are cycles assigned to individuals or homes?
+  Cycle_Type CYCLIC_POLICY_TYPE = Cycle_Type::individual;
+  count_type NUMBER_OF_CYCLIC_CLASSES = 3;
+  //How many days does the individual work for in a single phase of the cycle?
+  count_type PERIOD_OF_ATTENDANCE_CYCLE = 5;
 
   //Community lockdown threshold.
   //
@@ -333,6 +351,11 @@ struct agent{
   double kappa_C_incoming = 1;
   bool quarantined = false;
 
+  //Cyclic strategy class.
+  //
+  //If a cyclic workplace strategy is being followed, then every agent will get
+  //a class, which will determine the periods in which it goes to work.
+  count_type cyclic_strategy_class = 0;
 
   //Transporation
   bool has_to_travel = false; //does the agent take a train to go to
@@ -369,6 +392,14 @@ struct house{
   double lambda_home = 0;
   std::vector<int> individuals; //list of indices of individuals
   double Q_h = 1;
+
+  //Cyclic strategy class.
+  //
+  //If a cyclic workplace strategy is being followed, then every home will get a
+  //class, which will determine the periods in which individuals in it go to
+  //work, when CYCLIC_POLICY_TYPE is Count_Type::home.
+  count_type cyclic_strategy_class = 0;
+
   double scale = 0;
   bool compliant;
   double non_compliance_metric = 0; //0 - compliant, 1 - non-compliant

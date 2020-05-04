@@ -51,6 +51,12 @@ vector<house> init_homes(){
 					 elem["lon"].GetDouble(),
 					 (temp_non_compliance_metric<=GLOBAL.COMPLIANCE_PROBABILITY)?1.0:0,
 					 temp_non_compliance_metric);
+
+	//Cyclic strategy class
+	if(GLOBAL.CYCLIC_POLICY_ENABLED && GLOBAL.CYCLIC_POLICY_TYPE == Cycle_Type::home){
+	  homes[index].cyclic_strategy_class = uniform_count_type(0, GLOBAL.NUMBER_OF_CYCLIC_CLASSES - 1);
+	}
+
 	++index;
   }
   return homes;
@@ -333,6 +339,23 @@ void assign_individual_home_community(vector<agent>& nodes, vector<house>& homes
 	 //No checking for null as all individuals have a home
 	nodes[i].compliant = homes[home].compliant;
 	//All members of the household are set the same compliance value
+
+	//Assign cyclic strategy class for this node
+	if(GLOBAL.CYCLIC_POLICY_ENABLED){
+	  switch(GLOBAL.CYCLIC_POLICY_TYPE){
+	  case Cycle_Type::home:
+		nodes[i].cyclic_strategy_class = homes[home].cyclic_strategy_class;
+		break;
+	  case Cycle_Type::individual:
+		nodes[i].cyclic_strategy_class = uniform_count_type(0, GLOBAL.NUMBER_OF_CYCLIC_CLASSES - 1);
+		break;
+	  default:
+		assert(false);
+		break;
+	  }
+	  assert(0 <= nodes[i].cyclic_strategy_class &&
+			 nodes[i].cyclic_strategy_class < GLOBAL.NUMBER_OF_CYCLIC_CLASSES);
+	}
 	
 	int workplace = nodes[i].workplace;
     if(nodes[i].workplace_type == WorkplaceType::office){

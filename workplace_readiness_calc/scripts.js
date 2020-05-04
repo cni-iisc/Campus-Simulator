@@ -96,12 +96,13 @@ function getValues(){
   dict["nMPD"] = document.getElementById("nMPD").value; // Meetings per day
   dict["avgMS"] = document.getElementById("avgMS").value; // Average number of members in the meeting
   
-  // Interaction Places
+  // Interaction Spaces
   dict["cntn"] = parseInt(document.querySelector('input[name="cntn"]:checked').value); // Canteen/pantry
   dict["cntnAC"] = parseInt(document.querySelector('input[name="cntnAC"]:checked').value); // Canteen/pantry air condition
   dict["cntnACOp"] = parseInt(document.querySelector('input[name="cntnACOp"]:checked').value); // Canteen/pantry air condition operational
   dict["nBrkfst"] = document.getElementById("nBrkfst").value; // Number of employees having breakfast in canteen
   dict["nLnch"] = document.getElementById("nLnch").value; // Number of employees having lunch in canteen
+  dict["nSnck"] = document.getElementById("nSnck").value; // Number of employees having snacks/coffee in canteen
   dict["nEmpHL"] = document.getElementById("nEmpHL").value; // Number of employees who bring lunch from home
   dict["brkfst"] = parseInt(document.querySelector('input[name="brkfst"]:checked').value); // Breakfast served
   dict["lnch"] = parseInt(document.querySelector('input[name="lnch"]:checked').value); // Lunch served
@@ -120,11 +121,6 @@ function getValues(){
   dict["nLdsT"] = document.getElementById("nLdsT").value; // Number of ladies toilet
   dict["tClnFreq"] = document.getElementById("tClnFreq").value; // Frequency of toilet cleaning
   dict["spPrsnt"] = parseInt(document.querySelector('input[name="spPrsnt"]:checked').value); // Soap dispensed in toilet
-  dict["nGntsTlt"] = nM + nOth/2.0; //document.getElementById("nGntsTlt").value; // Number using gents toilet
-  dict["nLdsTlt"] = nM + nOth/2.0; //document.getElementById("nLdsTlt").value; // Number using ladies toilet
-  dict["avgTltVstsPrDy"] = 5; //document.getElementById("avgTltVstsPrDy").value; // Average toilets per day
-  dict["avgTltDrtn"] = 4; //document.getElementById("avgTltDrtn").value; // Average toilets duration
-  dict["tltCnctrtnHrs"] = 4; //document.getElementById("tltCnctrtnHrs").value; // Toilet concentration hours
 
   // Company Provided Transport
   dict["cmpnTrnsprtUsrs"] = document.getElementById("cmpnTrnsprtUsrs").value; // Company transport users
@@ -198,9 +194,15 @@ function calcScore () {
   inputs = getValues(); //Read values from html page...
   console.log(inputs);
 
+  var nGntsTlt = nM + nOth/2.0; 
+  var nLdsTlt = nM + nOth/2.0; 
+  var avgTltVstsPrDy = 5; 
+  var avgTltDrtn = 4;
+  var tltCnctrtnHrs = 4; 
+
   // Toilet scores
-  var cRateGentsToilet = inputs["nGntsTlt"] * inputs["avgTltVstsPrDy"] * inputs["avgTltDrtn"] * (Math.max(0.5, (1.0 - 0.1*inputs["tClnFreq"]) )) * (1.0 - 0.1*inputs["spPrsnt"]) / (inputs["tltCnctrtnHrs"]*60*inputs["nGntsT"]);
-  var cRateLadiesToilet = inputs["nLdsTlt"] * inputs["avgTltVstsPrDy"] * inputs["avgTltDrtn"] * (Math.max(0.5, (1.0 - 0.1*inputs["tClnFreq"]) )) * (1.0 - 0.1*inputs["spPrsnt"]) / (inputs["tltCnctrtnHrs"]*60*inputs["nGntsT"]);
+  var cRateGentsToilet = nGntsTlt * avgTltVstsPrDy * avgTltDrtn * (Math.max(0.5, (1.0 - 0.1*inputs["tClnFreq"]) )) * (1.0 - 0.1*inputs["spPrsnt"]) / (tltCnctrtnHrs*60*inputs["nGntsT"]);
+  var cRateLadiesToilet = nLdsTlt * avgTltVstsPrDy * avgTltDrtn * (Math.max(0.5, (1.0 - 0.1*inputs["tClnFreq"]) )) * (1.0 - 0.1*inputs["spPrsnt"]) / (tltCnctrtnHrs*60*inputs["nGntsT"]);
   var score_sanitation = 1000;
   console.log(cRateLadiesToilet, cRateGentsToilet);
   if (cRateGentsToilet + cRateLadiesToilet == 0) {
@@ -215,14 +217,19 @@ function calcScore () {
   var score_isolation = Math.round((1.0 - score_sickRoom) * 100) * 10;
   
   // Meeting places
-  var time_breakfast = 15; // In minutes
-  var time_lunch = 15;
-  var time_snack = 15;
-  var time_water = 2;
-  var num_water_sought = 5;
-  var num_breakfast = inputs["nCntn"]
-  
+  var time_brkfst = 15; // In minutes
+  var time_lnch = 30;
+  var time_snck = 15;
+  var time_wtr = 2;
+  var num_wtr_sought = 5;
+  var prsnl_area = 10; // In feet
+  var pvtl_hrs = 4;
+  var nEmp = inputs["nM"] + inputs["nF"] + inputs["nOth"];
 
+  var mtng_brkfst = (inputs["nBrkfst"] * time_brkfst * prsnl_area) / (inputs["cntnArea"] * 60);
+  var mtng_lnch = (inputs["nLnch"] * time_lnch * prsnl_area) / (inputs["cntnArea"] * 90);
+  var mntg_snck = (inputs["nSnck"] * time_snck * prsnl_area) / (inputs["cntnArea"] * 60);
+  var mntg_wtr = (nEmp * time_wtr * num_wtr_sought * prsnl_area) / (inputs["nWS"] * inputs["cntnArea"] * pvtl_hrs *  60);
   
   var nEmp = inputs["nM"] + inputs["nF"] + inputs["nOth"];
   onSuccess("Total Employees: " + nEmp);

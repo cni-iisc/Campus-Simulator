@@ -242,6 +242,7 @@ vector<agent> init_nodes(){
 		  //Travel
 		  nodes[i].has_to_travel = bernoulli(GLOBAL.P_TRAIN);
 		}
+		break;
 	  default:
 		break;
 	  }

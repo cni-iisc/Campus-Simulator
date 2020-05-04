@@ -413,7 +413,7 @@ void get_kappa_custom(vector<agent>& nodes, vector<house>& homes, const vector<w
   if(home_quarantine){
 	
 	for (count_type count = 0; count < nodes.size(); ++count){
-		time_since_symptoms = cur_time
+		double time_since_symptoms = cur_time
 		- (nodes[count].time_of_infection
 			+ nodes[count].incubation_period
 			+ nodes[count].asymptomatic_period);
@@ -427,7 +427,7 @@ void get_kappa_custom(vector<agent>& nodes, vector<house>& homes, const vector<w
 
   if(neighbourhood_containment && GLOBAL.ENABLE_CONTAINMENT){	
 	for (count_type count = 0; count < nodes.size(); ++count){
-		time_since_hospitalised = cur_time
+		double time_since_hospitalised = cur_time
 		- (nodes[count].time_of_infection
 			+ nodes[count].incubation_period
 			+ nodes[count].asymptomatic_period
@@ -454,7 +454,7 @@ void get_kappa_custom(vector<agent>& nodes, vector<house>& homes, const vector<w
 	}
 	vector<count_type> num_ward_infected(communities.size(),0);
 	for (count_type count = 0; count < nodes.size(); ++count){
-		time_since_hospitalised = cur_time
+		double time_since_hospitalised = cur_time
 		- (nodes[count].time_of_infection
 			+ nodes[count].incubation_period
 			+ nodes[count].asymptomatic_period

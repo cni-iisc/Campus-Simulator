@@ -582,13 +582,12 @@ void get_kappa_Mumbai(vector<agent>& nodes, vector<house>& homes, const vector<w
 	  GLOBAL.TRAINS_RUNNING = false;
 	  GLOBAL.KAPPA_TRAVEL = 0.0;
 	} else if(cur_time < (GLOBAL.NUM_DAYS_BEFORE_INTERVENTIONS+FIRST_PERIOD+SECOND_PERIOD)*GLOBAL.SIM_STEPS_PER_DAY){
-	  set_compliance(nodes,homes,0.8); //compliance hard coded to 0.8 post lockdown.
 	  get_kappa_lockdown(nodes, homes, workplaces, communities, cur_time);
 	  //Update global travel parameters
 	  GLOBAL.TRAINS_RUNNING = false;
 	  GLOBAL.KAPPA_TRAVEL = 0.0;
 	} else{
-	  set_compliance(nodes,homes,0.8); //compliance hard coded to 0.8 post lockdown.
+	  set_compliance(nodes, homes, 0.6); //compliance hard coded to 0.6 post lockdown.
 	  get_kappa_custom(nodes, homes, workplaces, communities, cur_time, true, true, false, true, true, false, 0, 0.75);
 	  //Update global travel parameters
 	  GLOBAL.TRAINS_RUNNING = true;

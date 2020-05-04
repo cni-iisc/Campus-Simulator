@@ -69,6 +69,8 @@ int main(int argc, char** argv){
 	 cxxopts::value<double>()->default_value(DEFAULTS.HD_AREA_EXPONENT))
 	("INTERVENTION", "index of the intervention",
 	 cxxopts::value<count_type>()->default_value(DEFAULTS.INTERVENTION))
+	("CYCLIC_POLICY_TYPE", "whether cyclic policy (only relevant in interventions which enable cyclic work schedule) is implemented based on homes or individuals",
+	 cxxopts::value<count_type>()->default_value(DEFAULTS.CYCLIC_POLICY_TYPE))
 	("output_directory", "output directory",
 	 cxxopts::value<std::string>()->default_value(DEFAULTS.output_dir))
 	("input_directory", "input directory",
@@ -138,6 +140,11 @@ int main(int argc, char** argv){
   GLOBAL.SECOND_PERIOD = optvals["SECOND_PERIOD"].as<double>();
   GLOBAL.THIRD_PERIOD = optvals["THIRD_PERIOD"].as<double>();
   GLOBAL.OE_SECOND_PERIOD = optvals["OE_SECOND_PERIOD"].as<double>();
+
+  GLOBAL.CYCLIC_POLICY_TYPE
+	= static_cast<Cycle_Type>(optvals["CYCLIC_POLICY_TYPE"].as<count_type>());
+  GLOBAL.CYCLIC_POLICY_START_DAY = GLOBAL.NUM_DAYS_BEFORE_INTERVENTIONS +
+	GLOBAL.FIRST_PERIOD + GLOBAL.SECOND_PERIOD;
 
   std::string output_dir(optvals["output_directory"].as<std::string>());
 

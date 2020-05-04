@@ -43,5 +43,7 @@ void get_kappa_custom(std::vector<agent>& nodes, std::vector<house>& homes, cons
 
 void get_kappa_Mumbai(std::vector<agent>& nodes, std::vector<house>& homes, const std::vector<workplace>& workplaces, const std::vector<community>& communities, int cur_time, double FIRST_PERIOD, double SECOND_PERIOD);
 
+void get_kappa_Mumbai_cyclic(std::vector<agent>& nodes, std::vector<house>& homes, const std::vector<workplace>& workplaces, const std::vector<community>& communities, int cur_time, double FIRST_PERIOD, double SECOND_PERIOD);
+
 #endif
 

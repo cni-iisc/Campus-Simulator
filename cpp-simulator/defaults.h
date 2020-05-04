@@ -25,6 +25,7 @@ struct defaults{
   std::string HD_AREA_FACTOR = "2.0";
   std::string HD_AREA_EXPONENT = "0";
   std::string INTERVENTION = "0";
+  std::string CYCLIC_POLICY_TYPE = "0";
   std::string output_dir = "outputs/test_output_timing";
   std::string input_base = "../simulator/input_files";
   std::string attendance_filename = "attendance.json";

@@ -63,6 +63,8 @@ string intervention_rep(Intervention i){
   case Intervention::intv_Mum:
 	return "intv_Mum";
 	break;
+  case Intervention::intv_Mum_cyclic:
+	return "intv_Mum_cyclic";
   default:
 	assert(false);
 	break;
@@ -151,6 +153,10 @@ void output_global_params(const string& output_dir){
   fout << "SYMPTOMATIC_FRACTION: " << GLOBAL.SYMPTOMATIC_FRACTION << ";" << endl; 
 
   fout << "INTERVENTION: " << static_cast<count_type>(GLOBAL.INTERVENTION) << ";" << endl; 
+
+  //Cylic policy
+  fout << "CYCLIC_POLICY_TYPE: " << static_cast<count_type>(GLOBAL.CYCLIC_POLICY_TYPE) << ";" << endl;
+  fout << "CYCLIC_POLICY_START_DAY: " << GLOBAL.CYCLIC_POLICY_START_DAY << ";" << endl;
 
   // Beta values
   fout << "BETA_H: " << GLOBAL.BETA_H << ";" << endl;  //Thailand data

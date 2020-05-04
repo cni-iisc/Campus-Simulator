@@ -22,7 +22,8 @@ enum class Intervention {
    ld_fper_ci_hq_sd65_sc_oe_sper = 10,
    intv_fper_intv_sper_intv_tper = 11,
    intv_NYC=12,
-   intv_Mum=13
+   intv_Mum=13,
+   intv_Mum_cyclic=14
 };
 
 enum class Cycle_Type {

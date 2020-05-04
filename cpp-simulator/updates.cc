@@ -209,6 +209,7 @@ void update_all_kappa(vector<agent>& nodes, vector<house>& homes, vector<workpla
     case Intervention::ld_fper_ci_hq_sd65_sc_oe_sper:
       get_kappa_LD_fper_CI_HQ_SD65_SC_OE_sper(nodes, homes, workplaces, communities, cur_time,
                                               GLOBAL.FIRST_PERIOD, GLOBAL.OE_SECOND_PERIOD);
+	  break;
     case Intervention::intv_fper_intv_sper_intv_tper:
       get_kappa_intv_fper_intv_sper_intv_tper(nodes, homes, workplaces, communities, cur_time,
                                                    GLOBAL.FIRST_PERIOD, GLOBAL.SECOND_PERIOD, GLOBAL.THIRD_PERIOD);

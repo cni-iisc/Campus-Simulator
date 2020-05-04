@@ -14,6 +14,59 @@ function onSuccess (scoreMsg) {
     document.getElementById("output").style.display = "inline";
 }
 
+function getValues(){
+  var dict = new Object();
+  
+  // Nature of Establishment
+  dict["est_type"] = document.getElementById("NOE").value; // Nature of Establishment
+  
+  // Employee Information
+  dict["nM"] = document.getElementById("nM").value; // Number of male employees
+  dict["nF"] = document.getElementById("nF").value; // Number of female employees
+  dict["nOth"] = document.getElementById("nOth").value; // Number of other employees
+  dict["rAddrKn"] = document.getElementById("rAddrKn").value; // Number of employees with address records
+  dict["pCS"] = document.getElementById("pCS").value; // Percentage of casual labour and security
+  dict["nShifts"] = document.getElementById("nShifts").value; // Number of shifts
+  dict["tGapShift"] = document.getElementById("tGapShift").value; // Time gap between shifts in hours
+  dict["informCZEmp"] = Boolean (document.getElementById("informCZEmp").value); // Inform containment zone employee not to come
+  dict["n19"] = document.getElementById("n19").value; // Number of employees with age betwwen 15 and 19
+  dict["n29"] = document.getElementById("n29").value; // Number of employees with age betwwen 20 and 29
+  dict["n39"] = document.getElementById("n39").value; // Number of employees with age betwwen 30 and 39
+  dict["n49"] = document.getElementById("n49").value; // Number of employees with age betwwen 40 and 49
+  dict["n59"] = document.getElementById("n59").value; // Number of employees with age betwwen 50 and 59
+  dict["n60plus"] = document.getElementById("n60plus").value; // Number of employees with age more than 60
+  dict["nASapp"] = document.getElementById("nASapp").value; // Number of employees with Aarogya Setu app
+  dict["fracGCGapp"] = document.getElementById("fracGCGapp").value; // Fraction of employees with Go Corona Go app
+
+  //Office Infrastructure Information
+  dict["tArea"] = document.getElementById("tArea").value; // Total office area in sq.ft
+  dict["nFloors"] = document.getElementById("nFloors").value; // Number of floors in office
+  dict["avgFA"] = document.getElementById("avgFA").value; // Average area of floors in sq.ft
+  dict["avgFEmp"] = document.getElementById("avgFEmp").value; // Average number of employees per floor
+  dict["mntrCCTV"] = Boolean (document.getElementById("mntrCCTV").value); // CCTV monitoring
+  dict["acsCntrl"] = Boolean (document.getElementById("acsCntrl").value); // Access controlled
+  dict["baDoor"] = document.getElementById("baDoor").value; // Number of biometric based access doors
+  dict["rfidDoor"] = document.getElementById("rfidDoor").value; // Number of RFID based access doors
+  dict["sntBio"] = Boolean (document.getElementById("sntBio").value); // Sanitiser at Biometric access doors
+  dict["nCW"] = document.getElementById("nCW").value; // Number of companies in Cowork space
+
+  //Office Composition
+  dict["nSOfcRm"] = document.getElementById("nSOfcRm").value; // Number of single office rooms
+  dict["n2pOfcRm"] = document.getElementById("n2pOfcRm").value; // Number of office rooms with 2 people
+  dict["n2pPlusOfcRm"] = document.getElementById("n2pPlusOfcRm").value; // Number of office rooms with more than 2 people
+  dict["nCub"] = document.getElementById("nCub").value; // Number of office seats with cubicle separation
+  dict["nRem"] = document.getElementById("nRem").value; // Number of remaining office seats
+  dict["percAc"] = document.getElementById("percAC").value; // Percentage of air conditioned premise
+  dict["tempAC"] = document.getElementById("tempAC").value; // Temperature setting
+  dict["humAC"] = document.getElementById("humAC").value; // Relative humidity setting
+
+  //Common Usage Area
+  dict["nEle"] = document.getElementById("nEle").value; // Number of Elevetors
+  dict["nEleDinf"] = document.getElementById("nEleDinf").value; // Frequency of elevetor disinfection process
+  dict["nStrCln"] = document.getElementById("nStrCln").value; // Frequency of stairway cleaning
+  dict["nStrHrDinf"] = document.getElementById("nStrHrDinf").value; // Frequency of stairway handrails disinfection process
+}
+
 function calcScore () {
 	var est_type = document.getElementById("NOE").value;
 	var nM = parseInt(document.getElementById("nM").value);

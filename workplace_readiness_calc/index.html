@@ -73,7 +73,7 @@ SPDX-License-Identifier: Apache-2.0-->
                                                        <input class="form-control" type="number" name="nOth" id="nOth" min="0" placeholder="0">
                                                   </div>
                                                   <div class="form-group col-md-6">
-                                                       <label for="rAddrKn">Employees with address records</label>
+                                                       <label for="rAddrKn">Number of employees with address records</label>
                                                        <input class="form-control" type="number" name="rAddrKn" id="rAddrKn" min="0" placeholder="0">
                                                   </div>
                                                   <div class="form-group col-md-6">
@@ -89,7 +89,7 @@ SPDX-License-Identifier: Apache-2.0-->
                                                        <input class="form-control" type="number" name="tGapShift" id="tGapShift" min="0" placeholder="0">
                                                   </div>
                                                   <div class="form-group col-md-12">
-                                                       <label for="informCZEmp">Does the organisation inform those in containment zones not to come to office?</label>
+                                                       <label for="informCZEmp">Has the organisation informed those in containment zones not to come to office?</label>
                                                        <div class="form-check">
                                                             <input class="form-check-input" type="radio" name="informCZEmp" id="informCZEmp_0" value="0" checked>
                                                             <label class="form-check-label" for="informCZEmp_0">No</label>
@@ -99,9 +99,20 @@ SPDX-License-Identifier: Apache-2.0-->
                                                             <label class="form-check-label" for="informCZEmp_1">Yes</label>
                                                        </div>
                                                   </div>
+                                                  <div class="form-group col-md-12">
+                                                       <label for="informWFH">Has the organisation encouraged staff to work from home?</label>
+                                                       <div class="form-check">
+                                                            <input class="form-check-input" type="radio" name="informWFH" id="informWFH_0" value="0" checked>
+                                                            <label class="form-check-label" for="informWFH_0">No</label>
+                                                       </div>
+                                                       <div class="form-check">
+                                                            <input class="form-check-input" type="radio" name="informWFH" id="informWFH_1" value="1">
+                                                            <label class="form-check-label" for="informWFH_1">Yes</label>
+                                                       </div>
+                                                  </div>
                                              </div>
 
-                                             <p class="h5 mb-2 text-left">Age Distribution</p>
+                                             <p class="h5 mb-2 text-left">Age Distribution of Employees</p>
                                              <div class="form-row">
                                                   <div class="form-group col-md-4">
                                                        <label for="n19">Between 15-19</label>
@@ -182,11 +193,11 @@ SPDX-License-Identifier: Apache-2.0-->
                                                        </div>
                                                   </div>
                                                   <div class="form-group col-md-6">
-                                                       <label for="baDoor">Number biometric based access doors</label>
+                                                       <label for="baDoor">Number of biometric based access doors</label>
                                                        <input class="form-control" type="number" name="baDoor" id="baDoor" min="0" placeholder="0">
                                                   </div>
                                                   <div class="form-group col-md-6">
-                                                       <label for="rfidDoor">Number RFID tag based doors </label>
+                                                       <label for="rfidDoor">Number of RFID tag based doors </label>
                                                        <input class="form-control" type="number" name="rfidDoor" id="rfidDoor" min="0" placeholder="0">
                                                   </div>
                                                   <div class="form-group col-md-12">
@@ -201,7 +212,7 @@ SPDX-License-Identifier: Apache-2.0-->
                                                        </div>
                                                   </div>
                                                   <div class="form-group col-md-12">
-                                                       <label for="nCW">Number of companies sharing space, if co-work space, including your company.</label>
+                                                       <label for="nCW">Number of companies sharing office space, if co-work space, including your company</label>
                                                        <input class="form-control" type="number" name="nCW" id="nCW" min="0" placeholder="0">
                                                   </div>
 
@@ -228,7 +239,7 @@ SPDX-License-Identifier: Apache-2.0-->
                                                        <input class="form-control" type="number" name="nRem" id="nRem" min="0" placeholder="0">
                                                   </div>
                                                   <div class="form-group col-md-12">
-                                                       <label for="percAC">Percentage of air conditioned premise</label>
+                                                       <label for="percAC">Percentage of the premises with air conditioning</label>
                                                        <input class="form-control" type="number" name="percAC" id="percAC" min="0" max="100" placeholder="0">
                                                   </div>
                                                   <div class="form-group col-md-6">
@@ -241,17 +252,17 @@ SPDX-License-Identifier: Apache-2.0-->
                                                   </div>
                                              </div>
 
-                                                  <p class="h5 mb-2 text-left">Common usage areas</p>
+                                                  <p class="h5 mb-2 text-left">Common Usage Areas</p>
                                                   <div class="form-group col-md-12">
-                                                       <label for="nEle">Number of elevators</label>
+                                                       <label for="nEle">Number of lifts</label>
                                                        <input class="form-control" type="number" name="nEle" id="nEle" min="0" placeholder="0">
                                                   </div>
                                                   <div class="form-group col-md-12">
-                                                       <label for="nEleDinf">Number of times a day each elevator is disinfected</label>
+                                                       <label for="nEleDinf">Number of times a day each lift is disinfected</label>
                                                        <input class="form-control" type="number" name="nEleDinf" id="nEleDinf" min="0" placeholder="0">
                                                   </div>
                                                   <div class="form-group col-md-12">
-                                                       <label for="nStrCln">Number of times a day stairs are cleaned</label>
+                                                       <label for="nStrCln">Number of times a day each stairway is cleaned</label>
                                                        <input class="form-control" type="number" name="nStrCln" id="nStrCln" min="0" placeholder="0">
                                                   </div>
                                                   <div class="form-group col-md-12">
@@ -267,7 +278,7 @@ SPDX-License-Identifier: Apache-2.0-->
                               <div class="card"> 
                                    <div class="card-header" id="headingOne">
                                         <h2 class="mb-0">
-                                        <button type="button" class="btn" data-toggle="collapse" data-target="#collapseFour">4. Epidemic related precautions</button>									
+                                        <button type="button" class="btn" data-toggle="collapse" data-target="#collapseFour">4. Epidemic Related Precautions</button>									
                                         </h2>
                                    </div>
                                    <div id="collapseFour" class="collapse" aria-labelledby="headingFour" data-parent="#accordionExample">
@@ -284,7 +295,7 @@ SPDX-License-Identifier: Apache-2.0-->
                                                   </div>
                                              </div>
                                              <div class="form-group col-md-12">
-                                                  <label for="faceCover_flag">Are face covers mandated at all times within premises?</label>
+                                                  <label for="faceCover_flag">Are face covers mandated within premises?</label>
                                                   <div class="form-check">
                                                   <input class="form-check-input" type="radio" name="faceCover" id="faceCover_0" value="0" checked>
                                                   <label class="form-check-label" for="faceCover_0">No</label>
@@ -331,8 +342,9 @@ SPDX-License-Identifier: Apache-2.0-->
                                    <div id="collapseFive" class="collapse" aria-labelledby="headingFive" data-parent="#accordionExample">
                                         <div class="card-body">
                                              <p class="h5 mb-2 text-left">Canteen/Pantry</p>
+                                             <!--
                                              <div class="form-group col-md-12">
-                                                  <label for="safetyPerson_flag">Is there a designated cleaniness, awareness, safety person?</label>
+                                                  <label for="safetyPerson_flag">Is there a designated cleanliness, awareness, safety person?</label>
                                                   <div class="form-check">
                                                   <input class="form-check-input" type="radio" name="safetyPerson" id="safetyPerson_0" value="0" checked>
                                                   <label class="form-check-label" for="safetyPerson_0">No</label>
@@ -342,18 +354,21 @@ SPDX-License-Identifier: Apache-2.0-->
                                                   <label class="form-check-label" for="safetyPerson_1">Yes</label>
                                                   </div>
                                              </div>
+                                             -->
                                              <div class="form-group col-md-12">
-                                                  <label for="nVisitors">Number of outside visitors or customers expected in the premises</label>
+                                                  <label for="nVisitors">Number of outside visitors or customers expected in a day in the premises</label>
                                                   <input class="form-control" type="number" name="nVisitors" id="nVisitors" min="0" placeholder="0">
                                              </div>
                                              <div class="form-group col-md-12">
                                                   <label for="nEmpCstmr">Number of employees that meet these customers</label>
                                                   <input class="form-control" type="number" name="nEmpCstmr" id="nEmpCstmr" min="0" placeholder="0">
                                              </div>
+                                             <!--
                                              <div class="form-group col-md-12">
                                                   <label for="avgExt">Average number of external contacts for these employees per day</label>
                                                   <input class="form-control" type="number" name="avgExt" id="avgExt" min="0" placeholder="0">
                                              </div>
+                                             -->
                                              <div class="form-group col-md-12">
                                                   <label for="nDlvrHndlng">Number of employees handling deliveries and receipt</label>
                                                   <input class="form-control" type="number" name="nDlvrHndlng" id="nDlvrHndlng" min="0" placeholder="0">
@@ -379,10 +394,12 @@ SPDX-License-Identifier: Apache-2.0-->
                                                   <label for="nMM">Number of employees that are more than 1 hr away from assigned work area during a day (mild mobility)</label>
                                                   <input class="form-control" type="number" name="nMM" id="nMM" min="0" placeholder="0">
                                              </div>
+                                             <!--
                                              <div class="form-group col-md-12">
                                                   <label for="nLM">Remaining number of employees have low mobility</label>
                                                   <input class="form-control" type="number" name="nLM" id="nLM" min="0" placeholder="0">
                                              </div>
+                                             -->
                                              
                                              <p class="h5 mb-2 text-left">Work Related Interactions</p>
                                              <div class="form-group col-md-12">
@@ -390,7 +407,7 @@ SPDX-License-Identifier: Apache-2.0-->
                                                   <input class="form-control" type="number" name="nMPD" id="nMPD" min="0" placeholder="0">
                                              </div>
                                              <div class="form-group col-md-12">
-                                                  <label for="avgMS">Average number of members in the meeting</label>
+                                                  <label for="avgMS">Average number of members in a typical meeting</label>
                                                   <input class="form-control" type="number" name="avgMS" id="avgMS" min="2" placeholder="0">
                                              </div>
                                         </div>
@@ -401,7 +418,7 @@ SPDX-License-Identifier: Apache-2.0-->
                               <div class="card"> 
                                    <div class="card-header" id="headingOne">
                                         <h2 class="mb-0">
-                                        <button type="button" class="btn" data-toggle="collapse" data-target="#collapseSix">6. Interaction spaces</button>									
+                                        <button type="button" class="btn" data-toggle="collapse" data-target="#collapseSix">6. Interaction Spaces</button>									
                                         </h2>
                                    </div>
                                    <div id="collapseSix" class="collapse" aria-labelledby="headingSix" data-parent="#accordionExample">
@@ -512,7 +529,7 @@ SPDX-License-Identifier: Apache-2.0-->
                                                        </div>
                                                   </div>
                                                   <div class="form-group col-md-12">
-                                                       <label for="cntnArea">Area of canteen/pantry in square feet</label>
+                                                       <label for="cntnArea">Area of canteen/pantry in Sq.ft.</label>
                                                        <input class="form-control" type="number" name="cntnArea" id="cntnArea" min="0" placeholder="0">
                                                   </div>
                                                   <div class="form-group col-md-12">
@@ -532,7 +549,7 @@ SPDX-License-Identifier: Apache-2.0-->
                                                        <input class="form-control" type="number" name="freqCln" id="freqCln" min="0" placeholder="0">
                                                   </div>
                                                   <div class="form-group col-md-12">
-                                                       <label for="nHskpngStff">Number of housekeeping staff</label>
+                                                       <label for="nHskpngStff">Number of house-keeping staff</label>
                                                        <input class="form-control" type="number" name="nHskpngStff" id="nHskpngStff" min="0" placeholder="0">
                                                   </div>
                                              </div>
@@ -551,11 +568,11 @@ SPDX-License-Identifier: Apache-2.0-->
                                         <div class="card-body">
                                              <div class="form-row">
                                                   <div class="form-group col-md-6">
-                                                       <label for="nGntsT">Number of Gents toilets</label>
+                                                       <label for="nGntsT">Number of gents toilets</label>
                                                        <input class="form-control" type="number" name="nGntsT" id="nGntsT" min="0" placeholder="0">
                                                   </div>
                                                   <div class="form-group col-md-6">
-                                                       <label for="nLdsT">Number of Ladies toilets</label>
+                                                       <label for="nLdsT">Number of ladies toilets</label>
                                                        <input class="form-control" type="number" name="nLdsT" id="nLdsT" min="0" placeholder="0">
                                                   </div>
                                                   <div class="form-group col-md-12">
@@ -563,7 +580,7 @@ SPDX-License-Identifier: Apache-2.0-->
                                                        <input class="form-control" type="number" name="tClnFreq" id="tClnFreq" min="0" placeholder="0">
                                                   </div>
                                                   <div class="form-group col-md-12">
-                                                       <label for="spPrsnt_flag">Is soap dispensed in each of the toilets</label>
+                                                       <label for="spPrsnt_flag">Is soap dispensed in each of the toilets?</label>
                                                        <div class="form-check">
                                                        <input class="form-check-input" type="radio" name="spPrsnt" id="spPrsnt_0" value="0" checked>
                                                        <label class="form-check-label" for="spPrsnt_0">No</label>
@@ -616,27 +633,27 @@ SPDX-License-Identifier: Apache-2.0-->
                                                        <input class="form-control" type="number" name="cmpnTrnsprtUsrs" id="cmpnTrnsprtUsrs" min="0" placeholder="0">
                                                   </div>
                                                   <div class="form-group col-md-6">
-                                                       <label for="bsCpctAct">Actual Bus capacity</label>
+                                                       <label for="bsCpctAct">Actual bus capacity</label>
                                                        <input class="form-control" type="number" name="bsCpctAct" id="bsCpctAct" min="0" placeholder="0">
                                                   </div>
                                                   <div class="form-group col-md-6">
-                                                       <label for="bsCpctCur">Current Bus capacity</label>
+                                                       <label for="bsCpctCur">Current bus capacity</label>
                                                        <input class="form-control" type="number" name="bsCpctCur" id="bsCpctCur" min="0" placeholder="0">
                                                   </div>
                                                   <div class="form-group col-md-6">
-                                                       <label for="mnBsCpctAct"> Actual Minibus capacity</label>
+                                                       <label for="mnBsCpctAct"> Actual minibus capacity</label>
                                                        <input class="form-control" type="number" name="mnBsCpctAct" id="mnBsCpctAct" min="0" placeholder="0">
                                                   </div>
                                                   <div class="form-group col-md-6">
-                                                       <label for="mnBsCpctCur">Current Minibus capacity</label>
+                                                       <label for="mnBsCpctCur">Current minibus capacity</label>
                                                        <input class="form-control" type="number" name="mnBsCpctCur" id="mnBsCpctCur" min="0" placeholder="0">
                                                   </div>
                                                   <div class="form-group col-md-6">
-                                                       <label for="vnCpctAct">Actual Van capacity</label>
+                                                       <label for="vnCpctAct">Actual van capacity</label>
                                                        <input class="form-control" type="number" name="vnCpctAct" id="vnCpctAct" min="0" placeholder="0">
                                                   </div>
                                                   <div class="form-group col-md-6">
-                                                       <label for="vnCpctCur">Current Van capacity</label>
+                                                       <label for="vnCpctCur">Current van capacity</label>
                                                        <input class="form-control" type="number" name="vnCpctCur" id="vnCpctCur" min="0" placeholder="0">
                                                   </div>
                                                   <div class="form-group col-md-6">
@@ -648,11 +665,11 @@ SPDX-License-Identifier: Apache-2.0-->
                                                        <input class="form-control" type="number" name="svCpctCur" id="svCpctCur" min="0" placeholder="0">
                                                   </div>
                                                   <div class="form-group col-md-6">
-                                                       <label for="crCpctAct">Actual Car capacity</label>
+                                                       <label for="crCpctAct">Actual car capacity</label>
                                                        <input class="form-control" type="number" name="crCpctAct" id="crCpctAct" min="0" placeholder="0">
                                                   </div>
                                                   <div class="form-group col-md-6">
-                                                       <label for="crCpctCur">Current Car capacity</label>
+                                                       <label for="crCpctCur">Current car capacity</label>
                                                        <input class="form-control" type="number" name="crCpctCur" id="crCpctCur" min="0" placeholder="0">
                                                   </div>
                                                   <div class="form-group col-md-6">
@@ -854,7 +871,7 @@ SPDX-License-Identifier: Apache-2.0-->
                               <div class="card"> 
                                    <div class="card-header" id="headingOne">
                                         <h2 class="mb-0">
-                                        <button type="button" class="btn" data-toggle="collapse" data-target="#collapseNine">9. Isolation room</button>									
+                                        <button type="button" class="btn" data-toggle="collapse" data-target="#collapseNine">9. Isolation Room</button>									
                                         </h2>
                                    </div>
                                    <div id="collapseNine" class="collapse" aria-labelledby="headingNine" data-parent="#accordionExample">
@@ -979,7 +996,7 @@ SPDX-License-Identifier: Apache-2.0-->
                                                        </div>
                                                   </div>
                                                   <div class="form-group col-md-12">
-                                                       <label for="sPers_flag">Is there a designated cleaniness, awareness, safety person?</label>
+                                                       <label for="sPers_flag">Is there a designated cleanliness, awareness, and safety person?</label>
                                                        <div class="form-check">
                                                        <input class="form-check-input" type="radio" name="sPers" id="sPers_0" value="0" checked>
                                                        <label class="form-check-label" for="sPers_0">No</label>

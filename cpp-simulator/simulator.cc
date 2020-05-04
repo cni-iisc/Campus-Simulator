@@ -323,7 +323,7 @@ plot_data_struct run_simulation(){
 	  susceptible_lambda_C = 0,
 	  susceptible_lambda_T = 0;
 	
-#pragma omp parallel for reduction (+:susceptible_lambda, susceptible_lambda_H, susceptible_lambda_W, susceptible_lambda_C, susceptible_lambda_T)
+#pragma omp parallel for reduction(+:susceptible_lambda, susceptible_lambda_H, susceptible_lambda_W, susceptible_lambda_C, susceptible_lambda_T)
 	for (count_type j = 0; j < GLOBAL.num_people; ++j){
 	  update_lambdas(nodes[j], homes, workplaces, communities, travel_fraction, time_step);
 	  if(nodes[j].infection_status == Progression::susceptible){
@@ -350,7 +350,7 @@ plot_data_struct run_simulation(){
 
 	double curtailed_interaction = 0, normal_interaction = 0;
 	
-#pragma omp parallel for reduction (+:n_infected,n_exposed,n_hospitalised,n_symptomatic,n_critical,n_fatalities,n_recovered,n_affected,quarantined_individuals,quarantined_infectious,curtailed_interaction,normal_interaction)
+#pragma omp parallel for reduction(+:n_infected,n_exposed,n_hospitalised,n_symptomatic,n_critical,n_fatalities,n_recovered,n_affected,quarantined_individuals,quarantined_infectious,curtailed_interaction,normal_interaction)
 	for(count_type j = 0; j < GLOBAL.num_people; ++j){
 	  auto infection_status = nodes[j].infection_status;
 	  if(infection_status == Progression::infective

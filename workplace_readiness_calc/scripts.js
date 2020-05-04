@@ -1,3 +1,10 @@
+//Copyright [2020] [Indian Institute of Science, Bangalore]
+//SPDX-License-Identifier: Apache-2.0
+//
+// Centre for Networked Intelligence, EECS-RBCCPS, Indian Institute of Science Bangalore
+// Calculator to gauge the readiness of workplace to re-open with precautions for
+// avoiding spread of COVID-19
+//
 // Prevent forms from submitting.
 function preventFormSubmit() {
   var forms = document.querySelectorAll('form');
@@ -105,7 +112,7 @@ function calcScore () {
     if (cRateGentsToilet + cRateLadiesToilet == 0) {
         score_sanitation = 1000;
     } else {
-        score_sanitation = Math.floor(Math.min( 100, 70.0/(cRateGentsToilet + cRateLadiesToilet) )) * 10; // change to round
+        score_sanitation = Math.round(Math.min( 100, 70.0/(cRateGentsToilet + cRateLadiesToilet) )) * 10; // change to round
     }
 
 
@@ -119,27 +126,21 @@ function calcScore () {
 	var lstUpdtTime = parseInt(document.getElementById("lstUpdtTime").value);
     var score_sickRoom = 1.0 - 0.1*(IQS_flag*2 + Amblnc_flag*2 + LHsptl_flag*2 + EmrgncResp_flag + HL_flag + 
              ImdtFM_flag * Math.max( 0, (1.0 - lstUpdtTime/30)) );
-    var score_isolation = Math.floor((1.0 - score_sickRoom) * 100) * 10;
+    var score_isolation = Math.round((1.0 - score_sickRoom) * 100) * 10;
 
 	var nEmp = nM + nF + nOth;
 	
 	onSuccess("Total Employees: " + nEmp);
 
-	var resTable = "<br><br><H3> COVID-19 Readiness Report</H3>";
+	var resTable = "";
 	resTable += "<table><tr><td>Category</td>";
 	resTable += "<td>Score</td>";
-	resTable += "<td>Possible improvement</td></tr>";
+	resTable += "<td>Suggestions for improvements</td></tr>";
 	resTable += "<tr><td>Seating arrangements and work timings</td><td>" + "1000" + "</td><td></td></tr>"
 	resTable += "<tr><td>Transportation</td><td>" + "1000" + "</td><td></td></tr>"
 	resTable += "<tr><td>Office infrastructure</td><td>" + "1000" + "</td><td></td></tr>"
 	resTable += "<tr><td>Hygiene and sanitation</td><td>" + score_sanitation + "</td><td>Disinfect the toilets more often</td></tr>"
 	resTable += "<tr><td>Awareness and readiness</td><td>" + score_isolation + "</td><td>Update employee contact lists more frequently</td></tr>"
-	resTable += "<tr><td></td><td>" + score_GentsToilet + "</td><td></td></tr>"
-	/*
-	resTable += "<tr><td>Gents toilets</td><td>" + score_GentsToilet + "</td><td></td></tr>"
-	resTable += "<tr><td>Ladies toilets</td><td>" + score_LadiesToilet + "</td><td></td></tr>"
-	resTable += "<tr><td>Isolation room</td><td>" + score_sickRoom + "</td><td></td></tr>"
-	*/
 	resTable += "</table>";
 	document.getElementById("scoreTable").innerHTML = resTable;
 
@@ -174,11 +175,11 @@ function handleFormSubmit(formObject) {
   /* google.script.run.withSuccessHandler(onSuccess).processForm(formObject); */
   /* document.getElementById("myForm").reset(); */
         calcScore();
-	openPage('Scores', document.getElementById("ScoresTab"), '#669977')
+	openPage('Scores', document.getElementById("ScoresTab"), '#26734d')
 }
 
 function reEnter() {
-	openPage('Qn', document.getElementById("QnTab"), '#886655')
+	openPage('Qn', document.getElementById("QnTab"), '#2c4268')
 }
 
 

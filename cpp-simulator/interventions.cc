@@ -401,26 +401,24 @@ void get_kappa_CI_HQ_65P_SC_OE(vector<agent>& nodes, vector<house>& homes, const
 
 void get_kappa_custom(vector<agent>& nodes, vector<house>& homes, const vector<workplace>& workplaces, const vector<community>& communities, int cur_time, bool case_isolation = false, bool home_quarantine = false, bool lockdown = false, bool social_dist_elderly = false, bool school_closed = false, bool workplace_odd_even = false, double SC_factor = 0, double community_factor = 1){
   
-  double time_since_symptoms = 0;
-
   if(home_quarantine){
 	for(count_type count = 0; count<homes.size(); ++count){
-		//reset all homes as non-quarantined. The status will be updated depending on the household individuals.
-		homes[count].quarantined = false;
+	  //reset all homes as non-quarantined. The status will be updated depending on the household individuals.
+	  homes[count].quarantined = false;
   	}
 	for (count_type count = 0; count < nodes.size(); ++count){
-		time_since_symptoms = cur_time
+	  double time_since_symptoms = cur_time
 		- (nodes[count].time_of_infection
-			+ nodes[count].incubation_period
-			+ nodes[count].asymptomatic_period);
-		if((nodes[count].compliant) &&
-		(time_since_symptoms > NUM_DAYS_TO_RECOG_SYMPTOMS*GLOBAL.SIM_STEPS_PER_DAY) &&
-		(time_since_symptoms <= (NUM_DAYS_TO_RECOG_SYMPTOMS+HOME_QUARANTINE_DAYS)*GLOBAL.SIM_STEPS_PER_DAY)){
+		   + nodes[count].incubation_period
+		   + nodes[count].asymptomatic_period);
+	  if((nodes[count].compliant) &&
+		 (time_since_symptoms > NUM_DAYS_TO_RECOG_SYMPTOMS*GLOBAL.SIM_STEPS_PER_DAY) &&
+		 (time_since_symptoms <= (NUM_DAYS_TO_RECOG_SYMPTOMS+HOME_QUARANTINE_DAYS)*GLOBAL.SIM_STEPS_PER_DAY)){
 		homes[nodes[count].home].quarantined = true;
-		}
+	  }
 	}
   }
-
+  
 #pragma omp parallel for
   for (count_type count = 0; count < nodes.size(); ++count){
 	double time_since_symptoms = cur_time

@@ -49,7 +49,8 @@ struct defaults{
   std::string CITY_NE_LAT = "13.14366615";
   std::string CITY_NE_LON = "77.78405146";
   std::string NBR_CELL_SIZE = "0.178"; // in km
-  std::string ENABLE_CONTAINMENT = "false";  
+  std::string ENABLE_CONTAINMENT = "false";
+  std::string WARD_CONTAINMENT_THRESHOLD  = "1";
 } DEFAULTS;
 
 #endif

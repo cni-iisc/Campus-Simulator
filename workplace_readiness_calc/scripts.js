@@ -43,7 +43,7 @@ function getValues(){
   dict["n59"] = document.getElementById("n59").value; // Number of employees with age betwwen 50 and 59
   dict["n60plus"] = document.getElementById("n60plus").value; // Number of employees with age more than 60
   dict["nASapp"] = document.getElementById("nASapp").value; // Number of employees with Aarogya Setu app
-  dict["fracGCGapp"] = document.getElementById("fracGCGapp").value; // Fraction of employees with Go Corona Go app
+  dict["nGCGapp"] = document.getElementById("nGCGapp").value; // Fraction of employees with Go Corona Go app
 
   // Office Infrastructure Information
   dict["tArea"] = document.getElementById("tArea").value; // Total office area in sq.ft
@@ -208,10 +208,14 @@ function calcScore () {
   var score_sickRoom = 1.0 - 0.1*(inputs["iQS"]*2 + inputs["amblnc"]*2 + inputs["lHsptl"]*2 + inputs["emrgncResp"] + inputs["hl"] + 
                                   inputs["imdtFM"] * Math.max( 0, (1.0 - inputs["lstUpdtTime"]/30)) );
   var score_isolation = Math.round((1.0 - score_sickRoom) * 100) * 10;
-
+  
+  // Meeting places
+  var time_breakfast
+  
+  
+  
   var nEmp = inputs["nM"] + inputs["nF"] + inputs["nOth"];
-	
-	onSuccess("Total Employees: " + nEmp);
+  onSuccess("Total Employees: " + nEmp);
 
 	var resTable = "";
 	resTable += "<table><tr><td>Category</td>";

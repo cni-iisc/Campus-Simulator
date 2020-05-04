@@ -144,10 +144,12 @@ plot_data_struct run_simulation(){
 	 {"cumulative_mean_fraction_lambda_T", {}}
 	};
 
-  plot_data.quarantined_stats["quarantined_stats"] = {};
-  plot_data.quarantined_stats["curtailment_stats"] = {};
-
-  
+  plot_data.quarantined_stats =
+	{
+	 {"quarantined_stats", {}},
+	 {"curtailment_stats", {}}
+	};
+	   
   for(auto& elem: plot_data.susceptible_lambdas){
 	elem.second.reserve(GLOBAL.NUM_TIMESTEPS);
   }
@@ -277,20 +279,20 @@ plot_data_struct run_simulation(){
         }
     }
     else{
-	for (count_type h = 0; h < GLOBAL.num_homes; ++h){
-	  homes[h].age_independent_mixing = updated_lambda_h_age_independent(nodes, homes[h]);
-	  //FEATURE_PROPOSAL: make the mixing dependent on node.age_group;
-	}
-
-	for (count_type w = 0; w < GLOBAL.num_schools + GLOBAL.num_workplaces; ++w){
-	  workplaces[w].age_independent_mixing = updated_lambda_w_age_independent(nodes, workplaces[w]);
-	  //FEATURE_PROPOSAL: make the mixing dependent on node.age_group;
-	}
-
-	for (count_type c = 0; c < GLOBAL.num_communities; ++c){
-	  auto temp_stats = get_infected_community(nodes, communities[c]);
-	  //let row = [time_step/SIM_STEPS_PER_DAY,c,temp_stats[0],temp_stats[1],temp_stats[2],temp_stats[3],temp_stats[4]].join(",");
-	  plot_data.nums["csvContent"].push_back({time_step, {
+	  for (count_type h = 0; h < GLOBAL.num_homes; ++h){
+		homes[h].age_independent_mixing = updated_lambda_h_age_independent(nodes, homes[h]);
+		//FEATURE_PROPOSAL: make the mixing dependent on node.age_group;
+	  }
+	  
+	  for (count_type w = 0; w < GLOBAL.num_schools + GLOBAL.num_workplaces; ++w){
+		workplaces[w].age_independent_mixing = updated_lambda_w_age_independent(nodes, workplaces[w]);
+		//FEATURE_PROPOSAL: make the mixing dependent on node.age_group;
+	  }
+	  
+	  for (count_type c = 0; c < GLOBAL.num_communities; ++c){
+		auto temp_stats = get_infected_community(nodes, communities[c]);
+		//let row = [time_step/SIM_STEPS_PER_DAY,c,temp_stats[0],temp_stats[1],temp_stats[2],temp_stats[3],temp_stats[4]].join(",");
+		plot_data.nums["csvContent"].push_back({time_step, {
 		  c,
 		  temp_stats.infected,
 		  temp_stats.affected,
@@ -302,19 +304,19 @@ plot_data_struct run_simulation(){
           temp_stats.hd_area_hospitalised,
           temp_stats.hd_area_critical,
           temp_stats.hd_area_dead
-		  }});
+			}});
 
-      //Update w_c value for this community, followed by update of lambdas
-      if(communities[c].individuals.size()>0){
+		//Update w_c value for this community, followed by update of lambdas
+		if(communities[c].individuals.size()>0){
 		  communities[c].w_c = interpolate(1.0, GLOBAL.LOCKED_COMMUNITY_LEAKAGE,
-                                       double(temp_stats.hospitalised)/double(communities[c].individuals.size()),
-                                       GLOBAL.COMMUNITY_LOCK_THRESHOLD);
-	  }else{
+										   double(temp_stats.hospitalised)/double(communities[c].individuals.size()),
+										   GLOBAL.COMMUNITY_LOCK_THRESHOLD);
+		} else{
 		  communities[c].w_c = 1;
+		}
+		
+		communities[c].lambda_community = updated_lambda_c_local(nodes, communities[c]);
 	  }
-	  
-      communities[c].lambda_community = updated_lambda_c_local(nodes, communities[c]);
-	}
     }
 
 	update_lambda_c_global(communities, community_dist_matrix);

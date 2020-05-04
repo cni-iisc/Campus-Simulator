@@ -222,8 +222,10 @@ void update_all_kappa(vector<agent>& nodes, vector<house>& homes, vector<workpla
                                                    GLOBAL.FIRST_PERIOD, GLOBAL.SECOND_PERIOD);
       break;
     case Intervention::intv_nbr_containment:
+	  get_kappa_containment(nodes, homes, workplaces, communities, nbr_cells, cur_time, GLOBAL.FIRST_PERIOD, Intervention::intv_nbr_containment);
+	  break;
     case Intervention::intv_ward_containment:
-      get_kappa_containment(nodes, homes, workplaces, communities, nbr_cells, cur_time, GLOBAL.FIRST_PERIOD, GLOBAL.INTERVENTION);
+      get_kappa_containment(nodes, homes, workplaces, communities, nbr_cells, cur_time, GLOBAL.FIRST_PERIOD, Intervention::intv_ward_containment);
       break;
     default:
 	  get_kappa_no_intervention(nodes, homes, workplaces, communities, cur_time);
@@ -257,12 +259,12 @@ vector<double> updated_lambda_h_age_independent(const vector<agent>& nodes, cons
 vector<double> updated_lambda_h_age_dependent(const vector<agent>& nodes, const house& home, const matrix<double>& home_tx_u, const vector<double>& home_tx_sigma, const matrix<double>& home_tx_vT){
   auto size = home_tx_u.size();
 
-  vector<double> age_component(GLOBAL.NUM_AGE_GROUPS);
-  vector<double> lambda_age_group(GLOBAL.NUM_AGE_GROUPS);
-  vector<double> V_tx(GLOBAL.SIGNIFICANT_EIGEN_VALUES);
+  vector<double> age_component(GLOBAL.NUM_AGE_GROUPS, 0.0);
+  vector<double> lambda_age_group(GLOBAL.NUM_AGE_GROUPS, 0.0);
+  vector<double> V_tx(GLOBAL.SIGNIFICANT_EIGEN_VALUES, 0.0);
 
   for (count_type i=0; i<home.individuals.size(); ++i){
-      int ind_age_group = (int) nodes[home.individuals[i]].age_group;
+      int ind_age_group = nodes[home.individuals[i]].age_group;
       age_component[ind_age_group] += nodes[home.individuals[i]].lambda_h;
   }
 
@@ -275,11 +277,11 @@ vector<double> updated_lambda_h_age_dependent(const vector<agent>& nodes, const 
 
   for (count_type count=0; count<GLOBAL.NUM_AGE_GROUPS; ++count){
     for (count_type eigen_count=0; eigen_count<GLOBAL.SIGNIFICANT_EIGEN_VALUES; ++eigen_count){
-      lambda_age_group[count] = home.scale
-                          * home_tx_u[count][eigen_count]
+      lambda_age_group[count] += home_tx_u[count][eigen_count]
                           * home_tx_sigma[eigen_count]
                           * V_tx[eigen_count];
     }
+	lambda_age_group[count] *= home.scale;
   }
  return lambda_age_group;
 
@@ -289,11 +291,11 @@ vector<double> updated_lambda_w_age_dependent(const vector<agent>& nodes, const 
 
     auto size = workplace_tx_u.size();
 
-    vector<double> age_component(GLOBAL.NUM_AGE_GROUPS);
-    vector<double> lambda_age_group(GLOBAL.NUM_AGE_GROUPS);
-    vector<double> V_tx(GLOBAL.SIGNIFICANT_EIGEN_VALUES);
+    vector<double> age_component(GLOBAL.NUM_AGE_GROUPS, 0.0);
+    vector<double> lambda_age_group(GLOBAL.NUM_AGE_GROUPS, 0.0);
+    vector<double> V_tx(GLOBAL.SIGNIFICANT_EIGEN_VALUES, 0.0);
     for (count_type i=0; i<workplace.individuals.size(); ++i){
-        int ind_age_group = (int) nodes[workplace.individuals[i]].age_group;
+        int ind_age_group = nodes[workplace.individuals[i]].age_group;
         age_component[ind_age_group] += nodes[workplace.individuals[i]].lambda_h;
     }
 
@@ -306,11 +308,11 @@ vector<double> updated_lambda_w_age_dependent(const vector<agent>& nodes, const 
 
     for (count_type count=0; count<GLOBAL.NUM_AGE_GROUPS; ++count){
       for (count_type eigen_count=0; eigen_count<GLOBAL.SIGNIFICANT_EIGEN_VALUES; ++eigen_count){
-        lambda_age_group[count] = workplace.scale
-                            * workplace_tx_u[count][eigen_count]
+        lambda_age_group[count] += workplace_tx_u[count][eigen_count]
                             * workplace_tx_sigma[eigen_count]
                             * V_tx[eigen_count];
       }
+	  lambda_age_group[count] *=  workplace.scale;
     }
     return lambda_age_group;
 }
@@ -319,12 +321,12 @@ vector<double> updated_lambda_c_local_age_dependent(const vector<agent>& nodes, 
 
   auto size = community_tx_u.size();
 
-  vector<double> age_component(GLOBAL.NUM_AGE_GROUPS);
-  vector<double> lambda_age_group(GLOBAL.NUM_AGE_GROUPS);
-  vector<double> V_tx(GLOBAL.SIGNIFICANT_EIGEN_VALUES);
+  vector<double> age_component(GLOBAL.NUM_AGE_GROUPS, 0.0);
+  vector<double> lambda_age_group(GLOBAL.NUM_AGE_GROUPS, 0.0);
+  vector<double> V_tx(GLOBAL.SIGNIFICANT_EIGEN_VALUES, 0.0);
 
   for (count_type i=0; i<community.individuals.size(); ++i){
-      int ind_age_group = (int) nodes[community.individuals[i]].age_group;
+      int ind_age_group = nodes[community.individuals[i]].age_group;
       age_component[ind_age_group] += nodes[community.individuals[i]].lambda_h;
   }
 
@@ -337,11 +339,11 @@ vector<double> updated_lambda_c_local_age_dependent(const vector<agent>& nodes, 
 
   for (count_type count=0; count<GLOBAL.NUM_AGE_GROUPS; ++count){
     for (count_type eigen_count=0; eigen_count<GLOBAL.SIGNIFICANT_EIGEN_VALUES; ++eigen_count){
-      lambda_age_group[count] = community.scale
-                          * community_tx_u[count][eigen_count]
+      lambda_age_group[count] += community_tx_u[count][eigen_count]
                           * community_tx_sigma[eigen_count]
                           * V_tx[eigen_count];
     }
+	lambda_age_group[count] *=  community.scale;
   }
  return lambda_age_group;
 }
@@ -380,12 +382,12 @@ void update_lambdas(agent&node, const vector<house>& homes, const vector<workpla
   //Contributions from home, workplace, community, and travel
   if (GLOBAL.USE_AGE_DEPENDENT_MIXING){
     node.lambda_incoming[0] = node.kappa_H_incoming
-       * homes[node.home].age_independent_mixing[node.age_group]
-       * node.hd_area_factor;
+	  * homes[node.home].age_dependent_mixing[node.age_group]
+	  * node.hd_area_factor;
 
     if(node.workplace != WORKPLACE_HOME) {
-       node.lambda_incoming[1] = (node.attending?1.0:GLOBAL.ATTENDANCE_LEAKAGE)*node.kappa_W_incoming
-         * workplaces[node.workplace].age_independent_mixing[node.age_group];
+	  node.lambda_incoming[1] = (node.attending?1.0:GLOBAL.ATTENDANCE_LEAKAGE)*node.kappa_W_incoming
+		* workplaces[node.workplace].age_dependent_mixing[node.age_group];
     }
     
   }

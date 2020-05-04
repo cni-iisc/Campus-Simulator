@@ -209,7 +209,7 @@ struct global_params{
   double MASK_START_DATE = 0;//40+
   
   //Age stratification
-  double NUM_AGE_GROUPS = 16;
+  count_type NUM_AGE_GROUPS = 16;
   double SIGNIFICANT_EIGEN_VALUES = 3;
   bool USE_AGE_DEPENDENT_MIXING = false;
 
@@ -233,10 +233,9 @@ inline double get_non_compliance_metric(){
 
 //Age groups (5-years)
 
-const int NUM_AGE_GROUPS = 16;
-inline int get_age_group(int age){
-  int age_group = age/5;
-  return std::min(age_group, NUM_AGE_GROUPS - 1);
+inline count_type get_age_group(int age){
+  count_type age_group = age/5;
+  return std::min(age_group, GLOBAL.NUM_AGE_GROUPS - 1);
 }
 
 // Age index for STATE_TRAN matrix
@@ -477,5 +476,5 @@ double interpolate(double start, double end, double current, double threshold);
 //reset household and individual compliance flags based on compliance probability.
 void set_compliance(std::vector<agent> & nodes, std::vector<house> & homes,  double compliance_probability);
 
-void get_nbr_cell(house &home);
+void set_nbr_cell(house &home);
 #endif

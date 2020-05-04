@@ -102,7 +102,7 @@ int main(int argc, char** argv){
     ("SIGNIFICANT_EIGEN_VALUES", "Number of principal components to use",
      cxxopts::value<double>()->default_value(DEFAULTS.SIGNIFICANT_EIGEN_VALUES))
     ("NUM_AGE_GROUPS", "Number of age groups in the age",
-     cxxopts::value<double>()->default_value(DEFAULTS.NUM_AGE_GROUPS))
+     cxxopts::value<count_type>()->default_value(DEFAULTS.NUM_AGE_GROUPS))
     ("CITY_SW_LAT", "South West latitude boundary of the City",
      cxxopts::value<double>()->default_value(DEFAULTS.CITY_SW_LAT))
     ("CITY_SW_LON", "South West longitude boundary of the City",
@@ -170,7 +170,7 @@ int main(int argc, char** argv){
 
   GLOBAL.USE_AGE_DEPENDENT_MIXING = optvals["USE_AGE_DEPENDENT_MIXING"].count();
   GLOBAL.SIGNIFICANT_EIGEN_VALUES = optvals["SIGNIFICANT_EIGEN_VALUES"].as<double>();
-  GLOBAL.NUM_AGE_GROUPS = optvals["NUM_AGE_GROUPS"].as<double>();
+  GLOBAL.NUM_AGE_GROUPS = optvals["NUM_AGE_GROUPS"].as<count_type>();
   
   if(optvals["PROVIDE_INITIAL_SEED"].count()){
 	//Initial seed was provided

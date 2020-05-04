@@ -28,7 +28,7 @@ function getValues(){
   dict["pCS"] = document.getElementById("pCS").value; // Percentage of casual labour and security
   dict["nShifts"] = document.getElementById("nShifts").value; // Number of shifts
   dict["tGapShift"] = document.getElementById("tGapShift").value; // Time gap between shifts in hours
-  dict["informCZEmp"] = Boolean (document.getElementById("informCZEmp").value); // Inform containment zone employee not to come
+  dict["informCZEmp"] = parseInt(document.querySelector('input[name="informCZEmp"]:checked').value); // Inform containment zone employee not to come
   dict["n19"] = document.getElementById("n19").value; // Number of employees with age betwwen 15 and 19
   dict["n29"] = document.getElementById("n29").value; // Number of employees with age betwwen 20 and 29
   dict["n39"] = document.getElementById("n39").value; // Number of employees with age betwwen 30 and 39
@@ -43,11 +43,12 @@ function getValues(){
   dict["nFloors"] = document.getElementById("nFloors").value; // Number of floors in office
   dict["avgFA"] = document.getElementById("avgFA").value; // Average area of floors in sq.ft
   dict["avgFEmp"] = document.getElementById("avgFEmp").value; // Average number of employees per floor
-  dict["mntrCCTV"] = Boolean (document.getElementById("mntrCCTV").value); // CCTV monitoring
-  dict["acsCntrl"] = Boolean (document.getElementById("acsCntrl").value); // Access controlled
+  dict["mntrCCTV"] = parseInt(document.querySelector('input[name="mntrCCTV"]:checked').value); // CCTV monitoring
+  dict["acsCntrl"] = parseInt(document.querySelector('input[name="acsCntrl"]:checked').value); // Access controlled
   dict["baDoor"] = document.getElementById("baDoor").value; // Number of biometric based access doors
   dict["rfidDoor"] = document.getElementById("rfidDoor").value; // Number of RFID based access doors
-  dict["sntBio"] = Boolean (document.getElementById("sntBio").value); // Sanitiser at Biometric access doors
+  dict["sntBio"] = parseInt(document.querySelector('input[name="sntBio"]:checked').value); // Sanitiser at Biometric access doors
+
   dict["nCW"] = document.getElementById("nCW").value; // Number of companies in Cowork space
 
   //Office Composition
@@ -65,9 +66,16 @@ function getValues(){
   dict["nEleDinf"] = document.getElementById("nEleDinf").value; // Frequency of elevetor disinfection process
   dict["nStrCln"] = document.getElementById("nStrCln").value; // Frequency of stairway cleaning
   dict["nStrHrDinf"] = document.getElementById("nStrHrDinf").value; // Frequency of stairway handrails disinfection process
+    //console.log("Bool: " + dict["informCZEmp"] )
+    //var xyz = 1.0 * dict["informCZEmp"];
+    //console.log("Val: " + xyz )
+  return dict;
 }
 
 function calcScore () {
+    form_inputs = getValues();
+    console.log(form_inputs);
+
 	var est_type = document.getElementById("NOE").value;
 	var nM = parseInt(document.getElementById("nM").value);
 	var nF = parseInt(document.getElementById("nF").value);
@@ -82,7 +90,7 @@ function calcScore () {
 	var nGentsT = parseInt(document.getElementById("nGentsT").value);
 	var nLadiesT = parseInt(document.getElementById("nLadiesT").value);
 	var tCleanFreq = parseInt(document.getElementById("tCleanFreq").value);
-	var soapDisp_flag = parseInt(document.querySelector('input[name="soapDisp_flag"]:checked').value);
+	var soapDisp_flag = parseInt(document.querySelector('input[name="soap_present"]:checked').value);
     var nUsersG = nM + nOth/2.0;
     var nUsersL = nF + nOth/2.0;
     var nAVT = 5;
@@ -92,9 +100,13 @@ function calcScore () {
     var cRateGentsToilet = nUsersG * nAVT * durAVT * (Math.max(0.5, (1.0 - 0.1*tCleanFreq) )) * (1.0 - 0.1*soapDisp_flag) / (tConcHr*60*nGentsT);
     var score_GentsToilet = cRateGentsToilet;
     var cRateLadiesToilet = nUsersL * nAVT * durAVT * (Math.max(0.5, (1.0 - 0.1*tCleanFreq) )) * (1.0 - 0.1*soapDisp_flag) / (tConcHr*60*nLadiesT);
-    var score_LadiesToilet = cRateLadiesToilet;
-
-    // Transport
+    var score_sanitation = 1000;
+    console.log(cRateLadiesToilet, cRateGentsToilet);
+    if (cRateGentsToilet + cRateLadiesToilet == 0) {
+        score_sanitation = 1000;
+    } else {
+        score_sanitation = Math.floor(Math.min( 100, 70.0/(cRateGentsToilet + cRateLadiesToilet) )) * 10; // change to round
+    }
 
 
     // Sick Room
@@ -105,21 +117,29 @@ function calcScore () {
     var EmrgncResp_flag = parseInt(document.querySelector('input[name="EmrgncResp"]:checked').value);
     var ImdtFM_flag = parseInt(document.querySelector('input[name="ImdtFM"]:checked').value);
 	var lstUpdtTime = parseInt(document.getElementById("lstUpdtTime").value);
-    //console.log("flag: " + lstUpdtTime);
     var score_sickRoom = 1.0 - 0.1*(IQS_flag*2 + Amblnc_flag*2 + LHsptl_flag*2 + EmrgncResp_flag + HL_flag + 
-            ImdtFM_flag + ImdtFM_flag * Math.max( 0, (1.0 - lstUpdtTime/30)) );
+             ImdtFM_flag * Math.max( 0, (1.0 - lstUpdtTime/30)) );
+    var score_isolation = Math.floor((1.0 - score_sickRoom) * 100) * 10;
 
 	var nEmp = nM + nF + nOth;
 	
 	onSuccess("Total Employees: " + nEmp);
 
-	var resTable = "<br><br><H3> Covid Readiness Score</H3>";
+	var resTable = "<br><br><H3> COVID-19 Readiness Report</H3>";
 	resTable += "<table><tr><td>Category</td>";
 	resTable += "<td>Score</td>";
 	resTable += "<td>Possible improvement</td></tr>";
+	resTable += "<tr><td>Seating arrangements and work timings</td><td>" + "1000" + "</td><td></td></tr>"
+	resTable += "<tr><td>Transportation</td><td>" + "1000" + "</td><td></td></tr>"
+	resTable += "<tr><td>Office infrastructure</td><td>" + "1000" + "</td><td></td></tr>"
+	resTable += "<tr><td>Hygiene and sanitation</td><td>" + score_sanitation + "</td><td>Disinfect the toilets more often</td></tr>"
+	resTable += "<tr><td>Awareness and readiness</td><td>" + score_isolation + "</td><td>Update employee contact lists more frequently</td></tr>"
+	resTable += "<tr><td></td><td>" + score_GentsToilet + "</td><td></td></tr>"
+	/*
 	resTable += "<tr><td>Gents toilets</td><td>" + score_GentsToilet + "</td><td></td></tr>"
 	resTable += "<tr><td>Ladies toilets</td><td>" + score_LadiesToilet + "</td><td></td></tr>"
 	resTable += "<tr><td>Isolation room</td><td>" + score_sickRoom + "</td><td></td></tr>"
+	*/
 	resTable += "</table>";
 	document.getElementById("scoreTable").innerHTML = resTable;
 

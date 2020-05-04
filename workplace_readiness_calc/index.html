@@ -43,7 +43,6 @@ SPDX-License-Identifier: Apache-2.0-->
                                                        </select>
                                                   </div>
                                              </div>
-                                             
                                         </div>
                                    </div>
                               </div>
@@ -310,6 +309,10 @@ SPDX-License-Identifier: Apache-2.0-->
                                                   <input class="form-control" type="number" name="nHsS" id="nHsS" min="0" placeholder="0">
                                              </div>
                                              <div class="form-group col-md-12">
+                                                  <label for="nDinf">Number of times disinfection activity is performed per day</label>
+                                                  <input class="form-control" type="number" name="nDinf" id="nDinf" min="0" placeholder="0">
+                                             </div>
+                                             <div class="form-group col-md-12">
                                                   <label for="smkZS">Are smoking zones sealed?</label>
                                                   <div class="form-check">
                                                   <input class="form-check-input" type="radio" name="smkZS" id="smkZS_0" value="0" checked>
@@ -342,22 +345,9 @@ SPDX-License-Identifier: Apache-2.0-->
                                    <div id="collapseFive" class="collapse" aria-labelledby="headingFive" data-parent="#accordionExample">
                                         <div class="card-body">
                                              <p class="h5 mb-2 text-left">Canteen/Pantry</p>
-                                             <!--
                                              <div class="form-group col-md-12">
-                                                  <label for="safetyPerson_flag">Is there a designated cleanliness, awareness, safety person?</label>
-                                                  <div class="form-check">
-                                                  <input class="form-check-input" type="radio" name="safetyPerson" id="safetyPerson_0" value="0" checked>
-                                                  <label class="form-check-label" for="safetyPerson_0">No</label>
-                                                  </div>
-                                                  <div class="form-check">
-                                                  <input class="form-check-input" type="radio" name="safetyPerson" id="safetyPerson_1" value="1">
-                                                  <label class="form-check-label" for="safetyPerson_1">Yes</label>
-                                                  </div>
-                                             </div>
-                                             -->
-                                             <div class="form-group col-md-12">
-                                                  <label for="nVisitors">Number of outside visitors or customers expected in a day in the premises</label>
-                                                  <input class="form-control" type="number" name="nVisitors" id="nVisitors" min="0" placeholder="0">
+                                                  <label for="nVstrs">Number of outside visitors or customers expected in a day in the premises</label>
+                                                  <input class="form-control" type="number" name="nVstrs" id="nVstrs" min="0" placeholder="0">
                                              </div>
                                              <div class="form-group col-md-12">
                                                   <label for="nEmpCstmr">Number of employees that meet these customers</label>
@@ -374,14 +364,25 @@ SPDX-License-Identifier: Apache-2.0-->
                                                   <input class="form-control" type="number" name="nDlvrHndlng" id="nDlvrHndlng" min="0" placeholder="0">
                                              </div>
                                              <div class="form-group col-md-12">
-                                                  <label for="gloves_flag">Do these employees wear masks and gloves?</label>
+                                                  <label for="msk_flag">Do these employees wear masks?</label>
                                                   <div class="form-check">
-                                                  <input class="form-check-input" type="radio" name="gloves" id="gloves_0" value="0" checked>
-                                                  <label class="form-check-label" for="gloves_0">No</label>
+                                                  <input class="form-check-input" type="radio" name="msk" id="msk_0" value="0" checked>
+                                                  <label class="form-check-label" for="msk_0">No</label>
                                                   </div>
                                                   <div class="form-check">
-                                                  <input class="form-check-input" type="radio" name="gloves" id="gloves_1" value="1">
-                                                  <label class="form-check-label" for="gloves_1">Yes</label>
+                                                  <input class="form-check-input" type="radio" name="msk" id="msk_1" value="1">
+                                                  <label class="form-check-label" for="msk_1">Yes</label>
+                                                  </div>
+                                             </div>
+                                             <div class="form-group col-md-12">
+                                                  <label for="glvs_flag">Do these employees wear gloves?</label>
+                                                  <div class="form-check">
+                                                  <input class="form-check-input" type="radio" name="glvs" id="glvs_0" value="0" checked>
+                                                  <label class="form-check-label" for="glvs_0">No</label>
+                                                  </div>
+                                                  <div class="form-check">
+                                                  <input class="form-check-input" type="radio" name="glvs" id="glvs_1" value="1">
+                                                  <label class="form-check-label" for="glvs_1">Yes</label>
                                                   </div>
                                              </div>
 
@@ -394,12 +395,6 @@ SPDX-License-Identifier: Apache-2.0-->
                                                   <label for="nMM">Number of employees that are more than 1 hr away from assigned work area during a day (mild mobility)</label>
                                                   <input class="form-control" type="number" name="nMM" id="nMM" min="0" placeholder="0">
                                              </div>
-                                             <!--
-                                             <div class="form-group col-md-12">
-                                                  <label for="nLM">Remaining number of employees have low mobility</label>
-                                                  <input class="form-control" type="number" name="nLM" id="nLM" min="0" placeholder="0">
-                                             </div>
-                                             -->
                                              
                                              <p class="h5 mb-2 text-left">Work Related Interactions</p>
                                              <div class="form-group col-md-12">
@@ -590,28 +585,6 @@ SPDX-License-Identifier: Apache-2.0-->
                                                        <label class="form-check-label" for="spPrsnt_1">Yes</label>
                                                        </div>
                                                   </div>
-                                                  <!--
-                                                  <div class="form-group col-md-6">
-                                                       <label for="nGntsTlt">Number using gents' toilet</label>
-                                                       <input class="form-control" type="number" name="nGntsTlt" id="nGntsTlt" min="0" placeholder="0">
-                                                  </div>
-                                                  <div class="form-group col-md-6">
-                                                       <label for="NldsTlt">Number using ladies' toilet</label>
-                                                       <input class="form-control" type="number" name="NldsTlt" id="NldsTlt" min="0" placeholder="0">
-                                                  </div>
-                                                  <div class="form-group col-md-6">
-                                                       <label for="avgTltVstsPrDy">Average number of visits to toilet</label>
-                                                       <input class="form-control" type="number" name="avgTltVstsPrDy" id="avgTltVstsPrDy" min="0" placeholder="0">
-                                                  </div>
-                                                  <div class="form-group col-md-6">
-                                                       <label for="avgTltDrtn">Average duration of a visit</label>
-                                                       <input class="form-control" type="number" name="AveToiletDuration" id="AveToiletDuration" min="0" placeholder="0">
-                                                  </div>
-                                                  <div class="form-group col-md-12">
-                                                       <label for="tltCnctrtnHrs">Toilet usage concentration hours</label>
-                                                       <input class="form-control" type="number" name="tltCnctrtnHrs" id="tltCnctrtnHrs" min="0" placeholder="0">
-                                                  </div>
-                                                  -->
                                              </div>
                                         </div>
                                    </div>
@@ -776,6 +749,17 @@ SPDX-License-Identifier: Apache-2.0-->
                                                        </div>
                                                   </div>
                                                   <div class="form-group col-md-12">
+                                                       <label for="hsLbb_flag">Is there hand sanitiser available at the Lobby?</label>
+                                                       <div class="form-check">
+                                                       <input class="form-check-input" type="radio" name="hsLbb" id="hsLbb_0" value="0" checked>
+                                                       <label class="form-check-label" for="hsLbb_0">No</label>
+                                                       </div>
+                                                       <div class="form-check">
+                                                       <input class="form-check-input" type="radio" name="hsLbb" id="hsLbb_1" value="1">
+                                                       <label class="form-check-label" for="hsLbb_1">Yes</label>
+                                                       </div>
+                                                  </div>
+                                                  <div class="form-group col-md-12">
                                                        <label for="mskCar_flag">Do they wear face masks?</label>
                                                        <div class="form-check">
                                                        <input class="form-check-input" type="radio" name="mskCar" id="mskCar_0" value="0" checked>
@@ -824,6 +808,17 @@ SPDX-License-Identifier: Apache-2.0-->
                                                   <div class="form-group col-md-12">
                                                        <label for="nPubTrvl"> Number of employees that uses public/ride-share vehicles</label>
                                                        <input class="form-control" type="number" name="nPubTrvl" id="nPubTrvl" min="0" placeholder="0">
+                                                  </div>
+                                                  <div class="form-group col-md-12">
+                                                       <label for="mskPub_flag">Do they wear face masks?</label>
+                                                       <div class="form-check">
+                                                       <input class="form-check-input" type="radio" name="mskPub" id="mskPub_0" value="0" checked>
+                                                       <label class="form-check-label" for="mskPub_0">No</label>
+                                                       </div>
+                                                       <div class="form-check">
+                                                       <input class="form-check-input" type="radio" name="mskPub" id="mskPub_1" value="1">
+                                                       <label class="form-check-label" for="mskPub_1">Yes</label>
+                                                       </div>
                                                   </div>
                                                   <div class="form-group col-md-6">
                                                        <label for="trvlr5Kpub">Number travelling 0-5 km</label>

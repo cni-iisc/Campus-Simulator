@@ -273,6 +273,7 @@ vector<agent> init_nodes(){
 		  nodes[i].workplace_type = WorkplaceType::school;
 		  nodes[i].workplace = int(elem["school"].GetDouble());
 		}
+		break;
 	  default:
 		break;
 	  }

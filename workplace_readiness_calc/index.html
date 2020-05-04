@@ -22,7 +22,7 @@ SPDX-License-Identifier: Apache-2.0-->
                     <form id="myForm" onsubmit="handleFormSubmit(this)">
                         <p class="h3 mb-3 text-left">COVID-19 Readiness Index Calculator</p>
 
-                        <div class="accordion" id="accordionExample">
+                         <div class="accordion" id="accordionExample">
                               <div class="card">   
                                    <div class="card-header" id="headingOne">
                                         <h2 class="mb-0">
@@ -61,7 +61,7 @@ SPDX-License-Identifier: Apache-2.0-->
                                    </div>
                                    <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
                                         <div class="card-body">
-     
+
                                              <p class="h5 mb-2 text-left">Number of Employees in a Shift (including security, casual labour)</p>
                                              <div class="form-row">
                                                   <div class="form-group col-md-4">
@@ -285,49 +285,49 @@ SPDX-License-Identifier: Apache-2.0-->
                                    <div id="collapseFour" class="collapse" aria-labelledby="headingFour" data-parent="#accordionExample">
                                         <div class="card-body">
                                              <div class="form-group col-md-12">
-                                                  <label for="temp_screening_flag">Is temperature screening done for every employee at entry and exit?</label>
+                                                  <label for="tempScreening_flag">Is temperature screening done for every employee at entry and exit?</label>
                                                   <div class="form-check">
-                                                      <input class="form-check-input" type="radio" name="temp_screening" id="temp_screening_0" value="0" checked>
-                                                      <label class="form-check-label" for="temp_screening_0">No</label>
+                                                  <input class="form-check-input" type="radio" name="tempScreening" id="tempScreening_0" value="0" checked>
+                                                  <label class="form-check-label" for="temp_screening_0">No</label>
                                                   </div>
                                                   <div class="form-check">
-                                                      <input class="form-check-input" type="radio" name="temp_screening" id="temp_screening_1" value="1">
-                                                      <label class="form-check-label" for="temp_screening_1">Yes</label>
-                                                  </div>
-                                             </div>
-                                             <div class="form-group col-md-12">
-                                                  <label for="face_cover_flag">Are face covers mandated at all times within premises?</label>
-                                                  <div class="form-check">
-                                                      <input class="form-check-input" type="radio" name="face_cover" id="face_cover_0" value="0" checked>
-                                                      <label class="form-check-label" for="face_cover_0">No</label>
-                                                  </div>
-                                                  <div class="form-check">
-                                                      <input class="form-check-input" type="radio" name="face_cover" id="face_cover_1" value="1">
-                                                      <label class="form-check-label" for="face_cover_1">Yes</label>
+                                                  <input class="form-check-input" type="radio" name="tempScreening" id="tempScreening_1" value="1">
+                                                  <label class="form-check-label" for="tempScreening_1">Yes</label>
                                                   </div>
                                              </div>
                                              <div class="form-group col-md-12">
-                                                  <label for="hc_count">Number of hand-sanitiser dispensing stations</label>
-                                                  <input class="form-control" type="number" name="hc_count" id="hc_count" min="0" placeholder="0">
+                                                  <label for="faceCover_flag">Are face covers mandated at all times within premises?</label>
+                                                  <div class="form-check">
+                                                  <input class="form-check-input" type="radio" name="faceCover" id="faceCover_0" value="0" checked>
+                                                  <label class="form-check-label" for="faceCover_0">No</label>
+                                                  </div>
+                                                  <div class="form-check">
+                                                  <input class="form-check-input" type="radio" name="faceCover" id="faceCover_1" value="1">
+                                                  <label class="form-check-label" for="faceCover_1">Yes</label>
+                                                  </div>
+                                             </div>
+                                             <div class="form-group col-md-12">
+                                                  <label for="nHsS">Number of hand-sanitiser dispensing stations</label>
+                                                  <input class="form-control" type="number" name="nHsS" id="nHsS" min="0" placeholder="0">
                                              </div>
                                              <div class="form-group col-md-12">
                                                   <label for="smkZS">Are smoking zones sealed?</label>
                                                   <div class="form-check">
-                                                      <input class="form-check-input" type="radio" name="smkZS" id="smkZS_0" value="0" checked>
-                                                      <label class="form-check-label" for="temp_screening_0">No</label>
+                                                  <input class="form-check-input" type="radio" name="smkZS" id="smkZS_0" value="0" checked>
+                                                  <label class="form-check-label" for="temp_screening_0">No</label>
                                                   </div>
                                                   <div class="form-check">
-                                                      <input class="form-check-input" type="radio" name="smkZS" id="smkZS_1" value="1">
-                                                      <label class="form-check-label" for="smkZS_1">Yes</label>
+                                                  <input class="form-check-input" type="radio" name="smkZS" id="smkZS_1" value="1">
+                                                  <label class="form-check-label" for="smkZS_1">Yes</label>
                                                   </div>
                                              </div>
-                                              <div class="form-group col-md-12">
-                                                  <label for="NPGT">Number of employees that consume pan masala, gutkha, tobacco products</label>
-                                                  <input class="form-control" type="number" name="NPGT" id="NPGT" min="0" placeholder="0">
+                                             <div class="form-group col-md-12">
+                                                  <label for="nPGT">Number of employees that consume pan masala, gutkha, tobacco products</label>
+                                                  <input class="form-control" type="number" name="nPGT" id="nPGT" min="0" placeholder="0">
                                              </div>
-                                              <div class="form-group col-md-12">
-                                                  <label for="NWS">Number of warning sign boards in common areas indicating "No spitting"</label>
-                                                  <input class="form-control" type="number" name="NWS" id="NWS" min="0" placeholder="0">
+                                             <div class="form-group col-md-12">
+                                                  <label for="nWsB">Number of warning sign boards in common areas indicating "No spitting"</label>
+                                                  <input class="form-control" type="number" name="nWsB" id="nWsB" min="0" placeholder="0">
                                              </div>
                                         </div>
                                    </div>
@@ -344,62 +344,62 @@ SPDX-License-Identifier: Apache-2.0-->
                                         <div class="card-body">
                                              <p class="h5 mb-2 text-left">Canteen/Pantry</p>
                                              <div class="form-group col-md-12">
-                                                  <label for="safety_person_flag">Is there a designated cleaniness, awareness, safety person?</label>
+                                                  <label for="safetyPerson_flag">Is there a designated cleaniness, awareness, safety person?</label>
                                                   <div class="form-check">
-                                                      <input class="form-check-input" type="radio" name="safety_person" id="safety_person_0" value="0" checked>
-                                                      <label class="form-check-label" for="safety_person_0">No</label>
+                                                  <input class="form-check-input" type="radio" name="safetyPerson" id="safetyPerson_0" value="0" checked>
+                                                  <label class="form-check-label" for="safetyPerson_0">No</label>
                                                   </div>
                                                   <div class="form-check">
-                                                      <input class="form-check-input" type="radio" name="safety_person" id="safety_person_1" value="1">
-                                                      <label class="form-check-label" for="safety_person_1">Yes</label>
+                                                  <input class="form-check-input" type="radio" name="safetyPerson" id="safetyPerson_1" value="1">
+                                                  <label class="form-check-label" for="safetyPerson_1">Yes</label>
                                                   </div>
                                              </div>
                                              <div class="form-group col-md-12">
-                                                  <label for="visitor_count">Number of outside visitors or customers expected in the premises</label>
-                                                  <input class="form-control" type="number" name="visitor_count" id="visitor_count" min="0" placeholder="0">
+                                                  <label for="nVisitors">Number of outside visitors or customers expected in the premises</label>
+                                                  <input class="form-control" type="number" name="nVisitors" id="nVisitors" min="0" placeholder="0">
                                              </div>
                                              <div class="form-group col-md-12">
-                                                  <label for="employees_customer_count">Number of employees that meet these customers</label>
-                                                  <input class="form-control" type="number" name="employees_customer_count" id="employees_customer_count" min="0" placeholder="0">
+                                                  <label for="nEmpCstmr">Number of employees that meet these customers</label>
+                                                  <input class="form-control" type="number" name="nEmpCstmr" id="nEmpCstmr" min="0" placeholder="0">
                                              </div>
                                              <div class="form-group col-md-12">
-                                                  <label for="external_count">Average number of external contacts for these employees per day</label>
-                                                  <input class="form-control" type="number" name="external_count" id="external_count" min="0" placeholder="0">
+                                                  <label for="avgExt">Average number of external contacts for these employees per day</label>
+                                                  <input class="form-control" type="number" name="avgExt" id="avgExt" min="0" placeholder="0">
                                              </div>
                                              <div class="form-group col-md-12">
-                                                  <label for="deliveries_handling_count">Number of employees handling deliveries and receipt</label>
-                                                  <input class="form-control" type="number" name="deliveries_handling_count" id="deliveries_handling_count" min="0" placeholder="0">
+                                                  <label for="nDlvrHndlng">Number of employees handling deliveries and receipt</label>
+                                                  <input class="form-control" type="number" name="nDlvrHndlng" id="nDlvrHndlng" min="0" placeholder="0">
                                              </div>
                                              <div class="form-group col-md-12">
                                                   <label for="gloves_flag">Do these employees wear masks and gloves?</label>
                                                   <div class="form-check">
-                                                      <input class="form-check-input" type="radio" name="gloves" id="gloves_0" value="0" checked>
-                                                      <label class="form-check-label" for="gloves_0">No</label>
+                                                  <input class="form-check-input" type="radio" name="gloves" id="gloves_0" value="0" checked>
+                                                  <label class="form-check-label" for="gloves_0">No</label>
                                                   </div>
                                                   <div class="form-check">
-                                                      <input class="form-check-input" type="radio" name="gloves" id="gloves_1" value="1">
-                                                      <label class="form-check-label" for="gloves_1">Yes</label>
+                                                  <input class="form-check-input" type="radio" name="gloves" id="gloves_1" value="1">
+                                                  <label class="form-check-label" for="gloves_1">Yes</label>
                                                   </div>
                                              </div>
 
                                              <p class="h5 mb-2 text-left">Mobility Related</p>
                                              <div class="form-group col-md-12">
-                                                  <label for="NHM">Number of employees that are more than 2 hrs away from assigned work area during the day (high mobility)</label>
-                                                  <input class="form-control" type="number" name="NHM" id="NHM" min="0" placeholder="0">
+                                                  <label for="nHM">Number of employees that are more than 2 hrs away from assigned work area during the day (high mobility)</label>
+                                                  <input class="form-control" type="number" name="nHM" id="nHM" min="0" placeholder="0">
                                              </div>
                                              <div class="form-group col-md-12">
-                                                  <label for="NMM">Number of employees that are more than 1 hr away from assigned work area during a day (mild mobility)</label>
-                                                  <input class="form-control" type="number" name="NMM" id="NMM" min="0" placeholder="0">
+                                                  <label for="nMM">Number of employees that are more than 1 hr away from assigned work area during a day (mild mobility)</label>
+                                                  <input class="form-control" type="number" name="nMM" id="nMM" min="0" placeholder="0">
                                              </div>
                                              <div class="form-group col-md-12">
-                                                  <label for="NLM">Remaining number of employees have low mobility</label>
-                                                  <input class="form-control" type="number" name="NLM" id="NLM" min="0" placeholder="0">
+                                                  <label for="nLM">Remaining number of employees have low mobility</label>
+                                                  <input class="form-control" type="number" name="nLM" id="nLM" min="0" placeholder="0">
                                              </div>
                                              
                                              <p class="h5 mb-2 text-left">Work Related Interactions</p>
                                              <div class="form-group col-md-12">
-                                                  <label for="NMPD">Number of meetings per day</label>
-                                                  <input class="form-control" type="number" name="NMPD" id="NMPD" min="0" placeholder="0">
+                                                  <label for="nMPD">Number of meetings per day</label>
+                                                  <input class="form-control" type="number" name="nMPD" id="nMPD" min="0" placeholder="0">
                                              </div>
                                              <div class="form-group col-md-12">
                                                   <label for="avgMS">Average number of members in the meeting</label>
@@ -420,128 +420,128 @@ SPDX-License-Identifier: Apache-2.0-->
                                         <div class="card-body">
                                              <div class="form-row">
                                                   <div class="form-group col-md-6">
-                                                       <label for="canteen_flag">Will canteen/pantry be functional?</label>
+                                                       <label for="cntn_flag">Will canteen/pantry be functional?</label>
                                                        <div class="form-check">
-                                                       <input class="form-check-input" type="radio" name="canteen" id="canteen_0" value="0" checked>
-                                                       <label class="form-check-label" for="canteen_0">No</label>
+                                                       <input class="form-check-input" type="radio" name="cntn" id="cntn_0" value="0" checked>
+                                                       <label class="form-check-label" for="cntn_0">No</label>
                                                        </div>
                                                        <div class="form-check">
-                                                       <input class="form-check-input" type="radio" name="canteen" id="canteen_1" value="1">
-                                                       <label class="form-check-label" for="canteen_1">Yes</label>
+                                                       <input class="form-check-input" type="radio" name="cntn" id="cntn_1" value="1">
+                                                       <label class="form-check-label" for="cntn_1">Yes</label>
                                                        </div>
                                                   </div>
                                                   <div class="form-group col-md-6">
-                                                       <label for="canteen_AC_flag">Is the canteen air conditioned?</label>
+                                                       <label for="cntnAC_flag">Is the canteen air conditioned?</label>
                                                        <div class="form-check">
-                                                       <input class="form-check-input" type="radio" name="canteen_AC" id="canteen_AC_0" value="0" checked>
-                                                       <label class="form-check-label" for="canteen_AC_0">No</label>
+                                                       <input class="form-check-input" type="radio" name="cntnAC" id="cntnAC_0" value="0" checked>
+                                                       <label class="form-check-label" for="cntnAC_0">No</label>
                                                        </div>
                                                        <div class="form-check">
-                                                       <input class="form-check-input" type="radio" name="canteen_AC" id="canteen_AC_1" value="1">
-                                                       <label class="form-check-label" for="canteen_AC_1">Yes</label>
-                                                       </div>
-                                                  </div>
-                                                  <div class="form-group col-md-12">
-                                                       <label for="canteen_ACOp_flag">Will air conditioner be operations?</label>
-                                                       <div class="form-check">
-                                                       <input class="form-check-input" type="radio" name="canteen_ACOp" id="canteen_ACOp_0" value="0" checked>
-                                                       <label class="form-check-label" for="canteen_ACOp_0">No</label>
-                                                       </div>
-                                                       <div class="form-check">
-                                                       <input class="form-check-input" type="radio" name="canteen_ACOp" id="canteen_ACOp_1" value="1">
-                                                       <label class="form-check-label" for="canteen_ACOp_1">Yes</label>
+                                                       <input class="form-check-input" type="radio" name="cntnAC" id="cntnAC_1" value="1">
+                                                       <label class="form-check-label" for="cntnAC_1">Yes</label>
                                                        </div>
                                                   </div>
                                                   <div class="form-group col-md-12">
-                                                       <label for="NBrfst">Number of people having breakfast in canteen</label>
-                                                       <input class="form-control" type="number" name="NBrfst" id="NBrfst" min="0" placeholder="0">
+                                                       <label for="cntnACOp_flag">Will air conditioner be operations?</label>
+                                                       <div class="form-check">
+                                                       <input class="form-check-input" type="radio" name="cntnACOp" id="cntnACOp_0" value="0" checked>
+                                                       <label class="form-check-label" for="cntnACOp_0">No</label>
+                                                       </div>
+                                                       <div class="form-check">
+                                                       <input class="form-check-input" type="radio" name="cntnACOp" id="cntnACOp_1" value="1">
+                                                       <label class="form-check-label" for="cntnACOp_1">Yes</label>
+                                                       </div>
                                                   </div>
                                                   <div class="form-group col-md-12">
-                                                       <label for="NLnc">Number of people having lunch in canteen</label>
-                                                       <input class="form-control" type="number" name="NLnc" id="NLnc" min="0" placeholder="0">
+                                                       <label for="nBrkfst">Number of people having breakfast in canteen</label>
+                                                       <input class="form-control" type="number" name="nBrkfst" id="nBrkfst" min="0" placeholder="0">
                                                   </div>
                                                   <div class="form-group col-md-12">
-                                                       <label for="NEmpHL">Number of employees that bring their lunch from home</label>
-                                                       <input class="form-control" type="number" name="NEmpHL" id="NEmpHL" min="0" placeholder="0">
+                                                       <label for="nLnch">Number of people having lunch in canteen</label>
+                                                       <input class="form-control" type="number" name="nLnch" id="nLnch" min="0" placeholder="0">
+                                                  </div>
+                                                  <div class="form-group col-md-12">
+                                                       <label for="nEmpHL">Number of employees who bring their lunch from home</label>
+                                                       <input class="form-control" type="number" name="nEmpHL" id="nEmpHL" min="0" placeholder="0">
                                                   </div>
                                                   <div class="form-group col-md-4">
-                                                       <label for="breakfast_flag">Is breakfast served?</label>
+                                                       <label for="brkfst_flag">Is breakfast served?</label>
                                                        <div class="form-check">
-                                                       <input class="form-check-input" type="radio" name="breakfast" id="breakfast_0" value="0" checked>
-                                                       <label class="form-check-label" for="breakfast_0">No</label>
+                                                       <input class="form-check-input" type="radio" name="brkfst" id="brkfst_0" value="0" checked>
+                                                       <label class="form-check-label" for="brkfst_0">No</label>
                                                        </div>
                                                        <div class="form-check">
-                                                       <input class="form-check-input" type="radio" name="breakfast" id="breakfast_1" value="1">
-                                                       <label class="form-check-label" for="breakfast_1">Yes</label>
-                                                       </div>
-                                                  </div>
-                                                  <div class="form-group col-md-4">
-                                                       <label for="lunch_flag">Is lunch served</label>
-                                                       <div class="form-check">
-                                                       <input class="form-check-input" type="radio" name="lunch" id="lunch_0" value="0" checked>
-                                                       <label class="form-check-label" for="lunch_0">No</label>
-                                                       </div>
-                                                       <div class="form-check">
-                                                       <input class="form-check-input" type="radio" name="lunch" id="lunch_1" value="1">
-                                                       <label class="form-check-label" for="lunch_1">Yes</label>
+                                                       <input class="form-check-input" type="radio" name="brkfst" id="brkfst_1" value="1">
+                                                       <label class="form-check-label" for="brkfst_1">Yes</label>
                                                        </div>
                                                   </div>
                                                   <div class="form-group col-md-4">
-                                                       <label for="coffee_flag">Is snacks/coffee served?</label>
+                                                       <label for="lnch_flag">Is lunch served</label>
                                                        <div class="form-check">
-                                                       <input class="form-check-input" type="radio" name="coffee" id="coffee_0" value="0" checked>
-                                                       <label class="form-check-label" for="coffee_0">No</label>
+                                                       <input class="form-check-input" type="radio" name="lnch" id="lnch_0" value="0" checked>
+                                                       <label class="form-check-label" for="lnch_0">No</label>
                                                        </div>
                                                        <div class="form-check">
-                                                       <input class="form-check-input" type="radio" name="coffee" id="coffee_1" value="1">
-                                                       <label class="form-check-label" for="coffee_1">Yes</label>
+                                                       <input class="form-check-input" type="radio" name="lnch" id="lnch_1" value="1">
+                                                       <label class="form-check-label" for="lnch_1">Yes</label>
+                                                       </div>
+                                                  </div>
+                                                  <div class="form-group col-md-4">
+                                                       <label for="cff_flag">Is snacks/coffee served?</label>
+                                                       <div class="form-check">
+                                                       <input class="form-check-input" type="radio" name="cff" id="cff_0" value="0" checked>
+                                                       <label class="form-check-label" for="cff_0">No</label>
+                                                       </div>
+                                                       <div class="form-check">
+                                                       <input class="form-check-input" type="radio" name="cff" id="cff_1" value="1">
+                                                       <label class="form-check-label" for="cff_1">Yes</label>
                                                        </div>
                                                   </div>
                                                   <div class="form-group col-md-5">
-                                                       <label for="meal_staggered_flag">Is the meal time staggered?</label>
+                                                       <label for="mlStggrd_flag">Is the meal time staggered?</label>
                                                        <div class="form-check">
-                                                       <input class="form-check-input" type="radio" name="meal_staggered" id="meal_staggered_0" value="0" checked>
-                                                       <label class="form-check-label" for="meal_staggered_0">No</label>
+                                                       <input class="form-check-input" type="radio" name="mlStggrd" id="mlStggrd_0" value="0" checked>
+                                                       <label class="form-check-label" for="mlStggrd_0">No</label>
                                                        </div>
                                                        <div class="form-check">
-                                                       <input class="form-check-input" type="radio" name="meal_staggered" id="meal_staggered_1" value="1">
-                                                       <label class="form-check-label" for="meal_staggered_1">Yes</label>
+                                                       <input class="form-check-input" type="radio" name="mlStggrd" id="mlStggrd_1" value="1">
+                                                       <label class="form-check-label" for="mlStggrd_1">Yes</label>
                                                        </div>
                                                   </div>
                                                   <div class="form-group col-md-7">
-                                                       <label for="utensil_shared_flag">Are utensils in canteen and pantry shared?</label>
+                                                       <label for="utnslShrd_flag">Are utensils in canteen and pantry shared?</label>
                                                        <div class="form-check">
-                                                       <input class="form-check-input" type="radio" name="utensil_shared" id="utensil_shared_0" value="0" checked>
-                                                       <label class="form-check-label" for="utensil_shared_0">No</label>
+                                                       <input class="form-check-input" type="radio" name="utnslShrd" id="utnslShrd_0" value="0" checked>
+                                                       <label class="form-check-label" for="utnslShrd_0">No</label>
                                                        </div>
                                                        <div class="form-check">
-                                                       <input class="form-check-input" type="radio" name="utensil_shared" id="utensil_shared_1" value="1">
-                                                       <label class="form-check-label" for="utensil_shared_1">Yes</label>
+                                                       <input class="form-check-input" type="radio" name="utnslShrd" id="utnslShrd_1" value="1">
+                                                       <label class="form-check-label" for="utnslShrd_1">Yes</label>
                                                        </div>
                                                   </div>
                                                   <div class="form-group col-md-12">
-                                                       <label for="canteen_area">Area of canteen/pantry in square feet</label>
-                                                       <input class="form-control" type="number" name="canteen_area" id="canteen_area" min="0" placeholder="0">
+                                                       <label for="cntnArea">Area of canteen/pantry in square feet</label>
+                                                       <input class="form-control" type="number" name="cntnArea" id="cntnArea" min="0" placeholder="0">
                                                   </div>
                                                   <div class="form-group col-md-12">
-                                                       <label for="max_canteen_people">Maximum number permitted at each time.</label>
-                                                       <input class="form-control" type="number" name="max_canteen_people" id="max_canteen_people" min="0" placeholder="0">
+                                                       <label for="mxCntnPpl">Maximum number permitted at each time.</label>
+                                                       <input class="form-control" type="number" name="mxCntnPpl" id="mxCntnPpl" min="0" placeholder="0">
                                                   </div>
                                                   <div class="form-group col-md-12">
-                                                       <label for="water_station_count">Number of water dispensing stations</label>
-                                                       <input class="form-control" type="number" name="water_station_count" id="water_station_count" min="0" placeholder="0">
+                                                       <label for="nWS">Number of water dispensing stations</label>
+                                                       <input class="form-control" type="number" name="nWS" id="nWS" min="0" placeholder="0">
                                                   </div>
                                                   <div class="form-group col-md-12">
-                                                       <label for="other_meeting_spots">Number of other meeting spaces (gym, lockers and storage, ATMs, on-premise shops, libraries, lounges, meeting rooms, halls, etc.)</label>
-                                                       <input class="form-control" type="number" name="other_meeting_spots" id="other_meeting_spots" min="0" placeholder="0">
+                                                       <label for="oMtngSpts">Number of other meeting spaces (gym, lockers and storage, ATMs, on-premise shops, libraries, lounges, meeting rooms, halls, etc.)</label>
+                                                       <input class="form-control" type="number" name="oMtngSpts" id="oMtngSpts" min="0" placeholder="0">
                                                   </div>
                                                   <div class="form-group col-md-12">
-                                                       <label for="freq_clean">Number of times house-keeping staff clean the premises in a day</label>
-                                                       <input class="form-control" type="number" name="freq_clean" id="freq_clean" min="0" placeholder="0">
+                                                       <label for="freqCln">Number of times house-keeping staff clean the premises in a day</label>
+                                                       <input class="form-control" type="number" name="freqCln" id="freqCln" min="0" placeholder="0">
                                                   </div>
                                                   <div class="form-group col-md-12">
-                                                       <label for="housekeeping_staff_count">Number of housekeeping staff</label>
-                                                       <input class="form-control" type="number" name="housekeeping_staff_count" id="housekeeping_staff_count" min="0" placeholder="0">
+                                                       <label for="nHskpngStff">Number of housekeeping staff</label>
+                                                       <input class="form-control" type="number" name="nHskpngStff" id="nHskpngStff" min="0" placeholder="0">
                                                   </div>
                                              </div>
                                         </div>
@@ -559,50 +559,50 @@ SPDX-License-Identifier: Apache-2.0-->
                                         <div class="card-body">
                                              <div class="form-row">
                                                   <div class="form-group col-md-6">
-                                                       <label for="nGentsT">Number of Gents toilets</label>
-                                                       <input class="form-control" type="number" name="nGentsT" id="nGentsT" min="0" placeholder="0">
+                                                       <label for="nGntsT">Number of Gents toilets</label>
+                                                       <input class="form-control" type="number" name="nGntsT" id="nGntsT" min="0" placeholder="0">
                                                   </div>
                                                   <div class="form-group col-md-6">
-                                                       <label for="nLadiesT">Number of Ladies toilets</label>
-                                                       <input class="form-control" type="number" name="nLadiesT" id="nLadiesT" min="0" placeholder="0">
+                                                       <label for="nLdsT">Number of Ladies toilets</label>
+                                                       <input class="form-control" type="number" name="nLdsT" id="nLdsT" min="0" placeholder="0">
                                                   </div>
                                                   <div class="form-group col-md-12">
-                                                       <label for="tCleanFreq">Number of times each toilet is cleaned in a day</label>
-                                                       <input class="form-control" type="number" name="tCleanFreq" id="tCleanFreq" min="0" placeholder="0">
+                                                       <label for="tClnFreq">Number of times each toilet is cleaned in a day</label>
+                                                       <input class="form-control" type="number" name="tClnFreq" id="tClnFreq" min="0" placeholder="0">
                                                   </div>
                                                   <div class="form-group col-md-12">
-                                                       <label for="soap_present_flag">Is soap dispensed in each of the toilets</label>
+                                                       <label for="spPrsnt_flag">Is soap dispensed in each of the toilets</label>
                                                        <div class="form-check">
-                                                       <input class="form-check-input" type="radio" name="soap_present" id="soap_present_0" value="0" checked>
-                                                       <label class="form-check-label" for="soap_present_0">No</label>
+                                                       <input class="form-check-input" type="radio" name="spPrsnt" id="spPrsnt_0" value="0" checked>
+                                                       <label class="form-check-label" for="spPrsnt_0">No</label>
                                                        </div>
                                                        <div class="form-check">
-                                                       <input class="form-check-input" type="radio" name="soap_present" id="soap_present_1" value="1">
-                                                       <label class="form-check-label" for="soap_present_1">Yes</label>
+                                                       <input class="form-check-input" type="radio" name="spPrsnt" id="spPrsnt_1" value="1">
+                                                       <label class="form-check-label" for="spPrsnt_1">Yes</label>
                                                        </div>
                                                   </div>
                                                   <!--
                                                   <div class="form-group col-md-6">
-                                                       <label for="NgentsToilet">Number using gents' toilet</label>
-                                                       <input class="form-control" type="number" name="NgentsToilet" id="NgentsToilet" min="0" placeholder="0">
+                                                       <label for="nGntsTlt">Number using gents' toilet</label>
+                                                       <input class="form-control" type="number" name="nGntsTlt" id="nGntsTlt" min="0" placeholder="0">
                                                   </div>
                                                   <div class="form-group col-md-6">
-                                                       <label for="NladiesToilet">Number using ladies' toilet</label>
-                                                       <input class="form-control" type="number" name="NladiesToilet" id="NladiesToilet" min="0" placeholder="0">
+                                                       <label for="NldsTlt">Number using ladies' toilet</label>
+                                                       <input class="form-control" type="number" name="NldsTlt" id="NldsTlt" min="0" placeholder="0">
                                                   </div>
                                                   <div class="form-group col-md-6">
-                                                       <label for="AveToiletVisitsPerDay">Average number of visits to toilet</label>
-                                                       <input class="form-control" type="number" name="AveToiletVisitsPerDay" id="AveToiletVisitsPerDay" min="0" placeholder="0">
+                                                       <label for="avgTltVstsPrDy">Average number of visits to toilet</label>
+                                                       <input class="form-control" type="number" name="avgTltVstsPrDy" id="avgTltVstsPrDy" min="0" placeholder="0">
                                                   </div>
                                                   <div class="form-group col-md-6">
-                                                       <label for="AveToiletDuration">Average duration of a visit</label>
+                                                       <label for="avgTltDrtn">Average duration of a visit</label>
                                                        <input class="form-control" type="number" name="AveToiletDuration" id="AveToiletDuration" min="0" placeholder="0">
                                                   </div>
                                                   <div class="form-group col-md-12">
-                                                       <label for="ToiletConcHrs">Toilet usage concentration hrs</label>
-                                                       <input class="form-control" type="number" name="ToiletConcHrs" id="ToiletConcHrs" min="0" placeholder="0">
-                                                  -->
+                                                       <label for="tltCnctrtnHrs">Toilet usage concentration hours</label>
+                                                       <input class="form-control" type="number" name="tltCnctrtnHrs" id="tltCnctrtnHrs" min="0" placeholder="0">
                                                   </div>
+                                                  -->
                                              </div>
                                         </div>
                                    </div>
@@ -620,113 +620,113 @@ SPDX-License-Identifier: Apache-2.0-->
                                              <div class="form-row">
                                                   <p class="h5 mb-2 text-left">Company provided vehicles</p>
                                                   <div class="form-group col-md-12">
-                                                       <label for="company_transport_users">Number of employees that will use company provided transport, if provided</label>
-                                                       <input class="form-control" type="number" name="company_transport_users" id="company_transport_users" min="0" placeholder="0">
+                                                       <label for="cmpnTrnsprtUsrs">Number of employees that will use company provided transport, if provided</label>
+                                                       <input class="form-control" type="number" name="cmpnTrnsprtUsrs" id="cmpnTrnsprtUsrs" min="0" placeholder="0">
                                                   </div>
                                                   <div class="form-group col-md-12">
-                                                       <label for="busCapFrac">Current Bus capacity | Bus Actual</label>
-                                                       <input class="form-control" type="number" name="busCapFrac" id="busCapFrac" min="0" placeholder="0">
+                                                       <label for="bsCpctFrac">Current Bus capacity | Bus Actual</label>
+                                                       <input class="form-control" type="number" name="bsCpctFrac" id="bsCpctFrac" min="0" placeholder="0">
                                                   </div>
                                                   <div class="form-group col-md-12">
-                                                       <label for="minibusCapFrac">Minibus capacity | Minibus Actual</label>
-                                                       <input class="form-control" type="number" name="minibusCapFrac" id="minibusCapFrac" min="0" placeholder="0">
+                                                       <label for="mnBsCpctFrac">Minibus capacity | Minibus Actual</label>
+                                                       <input class="form-control" type="number" name="mnBsCpctFrac" id="mnBsCpctFrac" min="0" placeholder="0">
                                                   </div>
                                                   <div class="form-group col-md-12">
-                                                       <label for="vanCapFrac">Van capacity | Van Actual</label>
-                                                       <input class="form-control" type="number" name="vanCapFrac" id="vanCapFrac" min="0" placeholder="0">
+                                                       <label for="vnCpctFrac">Van capacity | Van Actual</label>
+                                                       <input class="form-control" type="number" name="vnCpctFrac" id="vnCpctFrac" min="0" placeholder="0">
                                                   </div>
                                                   <div class="form-group col-md-12">
-                                                       <label for="suvCapFrac">SUV capacity | SUV actual</label>
-                                                       <input class="form-control" type="number" name="suvCapFrac" id="suvCapFrac" min="0" placeholder="0">
+                                                       <label for="svCpctFrac">SUV capacity | SUV actual</label>
+                                                       <input class="form-control" type="number" name="svCpctFrac" id="svCpctFrac" min="0" placeholder="0">
                                                   </div>
                                                   <div class="form-group col-md-12">
-                                                       <label for="carCapFrac">Car capacity | Car actual</label>
-                                                       <input class="form-control" type="number" name="carCapFrac" id="carCapFrac" min="0" placeholder="0">
+                                                       <label for="crCpctFrac">Car capacity | Car actual</label>
+                                                       <input class="form-control" type="number" name="crCpctFrac" id="crCpctFrac" min="0" placeholder="0">
                                                   </div>
                                                   <div class="form-group col-md-12">
                                                        <label for="crwdnss">Extent of crowdedness in vehicles</label>
                                                        <input class="form-control" type="number" name="crwdnss" id="crwdnss" min="0" placeholder="0">
                                                   </div>
                                                   <div class="form-group col-md-6">
-                                                       <label for="mask_mandate_flag">Masks mandated in every <br>vehicle?</label>
+                                                       <label for="mskMndt_flag">Masks mandated in every <br>vehicle?</label>
                                                        <div class="form-check">
-                                                       <input class="form-check-input" type="radio" name="mask_mandate" id="mask_mandate_0" value="0" checked>
-                                                       <label class="form-check-label" for="mask_mandate_0">No</label>
+                                                       <input class="form-check-input" type="radio" name="mskMndt" id="mskMndt_0" value="0" checked>
+                                                       <label class="form-check-label" for="mskMndt_0">No</label>
                                                        </div>
                                                        <div class="form-check">
-                                                       <input class="form-check-input" type="radio" name="mask_mandate" id="mask_mandate_1" value="1">
-                                                       <label class="form-check-label" for="mask_mandate_1">Yes</label>
+                                                       <input class="form-check-input" type="radio" name="mskMndt" id="mskMndt_1" value="1">
+                                                       <label class="form-check-label" for="mskMndt_1">Yes</label>
                                                        </div>
                                                   </div>
                                                   <div class="form-group col-md-6">
-                                                       <label for="hs_vehicle_flag"> Hand sanitiser provided in every vehicle?</label>
+                                                       <label for="hsVhcl_flag"> Hand sanitiser provided in every vehicle?</label>
                                                        <div class="form-check">
-                                                       <input class="form-check-input" type="radio" name="hs_vehicle" id="hs_vehicle_0" value="0" checked>
-                                                       <label class="form-check-label" for="hs_vehicle_0">No</label>
+                                                       <input class="form-check-input" type="radio" name="hsVhcl" id="hsVhcl_0" value="0" checked>
+                                                       <label class="form-check-label" for="hsVhcl_0">No</label>
                                                        </div>
                                                        <div class="form-check">
-                                                       <input class="form-check-input" type="radio" name="hs_vehicle" id="hs_vehicle_1" value="1">
-                                                       <label class="form-check-label" for="hs_vehicle_1">Yes</label>
+                                                       <input class="form-check-input" type="radio" name="hsVhcl" id="hsVhcl_1" value="1">
+                                                       <label class="form-check-label" for="hsVhcl_1">Yes</label>
                                                        </div>
                                                   </div>
                                                   <div class="form-group col-md-12">
-                                                       <label for="NoACVhcl_flag">Have drivers been instructed not to use a/c in cabs and buses?</label>
+                                                       <label for="noACVhcl_flag">Have drivers been instructed not to use a/c in cabs and buses?</label>
                                                        <div class="form-check">
-                                                       <input class="form-check-input" type="radio" name="NoACVhcl" id="NoACVhcl_0" value="0" checked>
-                                                       <label class="form-check-label" for="NoACVhcl_0">No</label>
+                                                       <input class="form-check-input" type="radio" name="noACVhcl" id="noACVhcl_0" value="0" checked>
+                                                       <label class="form-check-label" for="noACVhcl_0">No</label>
                                                        </div>
                                                        <div class="form-check">
-                                                       <input class="form-check-input" type="radio" name="NoACVhcl" id="NoACVhcl_1" value="1">
-                                                       <label class="form-check-label" for="NoACVhcl_1">Yes</label>
+                                                       <input class="form-check-input" type="radio" name="noACVhcl" id="noACVhcl_1" value="1">
+                                                       <label class="form-check-label" for="noACVhcl_1">Yes</label>
                                                        </div>
                                                   </div>
                                                   <div class="form-group col-md-12">
-                                                       <label for="NTrnsptS">Number of times the transport bay is sanitised</label>
-                                                       <input class="form-control" type="number" name="NTrnsptS" id="NTrnsptS" min="0" placeholder="0">
+                                                       <label for="nTrnsptSnt">Number of times the transport bay is sanitised</label>
+                                                       <input class="form-control" type="number" name="nTrnsptSnt" id="nTrnsptSnt" min="0" placeholder="0">
                                                   </div>
                                                   <div class="form-group col-md-6">
-                                                       <label for="DrvSrnd_flag">Are drivers screened after every trip?</label>
+                                                       <label for="drvSrnd_flag">Are drivers screened after every trip?</label>
                                                        <div class="form-check">
-                                                       <input class="form-check-input" type="radio" name="DrvSrnd" id="DrvSrnd_0" value="0" checked>
-                                                       <label class="form-check-label" for="DrvSrnd_0">No</label>
+                                                       <input class="form-check-input" type="radio" name="drvSrnd" id="drvSrnd_0" value="0" checked>
+                                                       <label class="form-check-label" for="drvSrnd_0">No</label>
                                                        </div>
                                                        <div class="form-check">
-                                                       <input class="form-check-input" type="radio" name="DrvSrnd" id="DrvSrnd_1" value="1">
-                                                       <label class="form-check-label" for="DrvSrnd_1">Yes</label>
-                                                       </div>
-                                                  </div>
-                                                  <div class="form-group col-md-6">
-                                                       <label for="vhclSntz_flag">Is the vehicle sanitised after every trip?</label>
-                                                       <div class="form-check">
-                                                       <input class="form-check-input" type="radio" name="vhclSntz" id="vhclSntz_0" value="0" checked>
-                                                       <label class="form-check-label" for="vhclSntz_0">No</label>
-                                                       </div>
-                                                       <div class="form-check">
-                                                       <input class="form-check-input" type="radio" name="vhclSntz" id="vhclSntz_1" value="1">
-                                                       <label class="form-check-label" for="vhclSntz_1">Yes</label>
+                                                       <input class="form-check-input" type="radio" name="drvSrnd" id="drvSrnd_1" value="1">
+                                                       <label class="form-check-label" for="drvSrnd_1">Yes</label>
                                                        </div>
                                                   </div>
                                                   <div class="form-group col-md-6">
-                                                       <label for="Trvlr5K">Number travelling 0-5 km</label>
-                                                       <input class="form-control" type="number" name="Trvlr5K" id="Trvlr5K" min="0" placeholder="0">
+                                                       <label for="vhclSnt_flag">Is the vehicle sanitised after every trip?</label>
+                                                       <div class="form-check">
+                                                       <input class="form-check-input" type="radio" name="vhclSnt" id="vhclSnt_0" value="0" checked>
+                                                       <label class="form-check-label" for="vhclSnt_0">No</label>
+                                                       </div>
+                                                       <div class="form-check">
+                                                       <input class="form-check-input" type="radio" name="vhclSnt" id="vhclSnt_1" value="1">
+                                                       <label class="form-check-label" for="vhclSnt_1">Yes</label>
+                                                       </div>
                                                   </div>
                                                   <div class="form-group col-md-6">
-                                                       <label for="Trvlr10K">Number travelling 5-10 km</label>
-                                                       <input class="form-control" type="number" name="Trvlr10K" id="Trvlr10K" min="0" placeholder="0">
+                                                       <label for="trvlr5K">Number travelling 0-5 km</label>
+                                                       <input class="form-control" type="number" name="Trvlr5K" id="trvlr5K" min="0" placeholder="0">
                                                   </div>
                                                   <div class="form-group col-md-6">
-                                                       <label for="Trvlr15K">Number travelling 10-15 km</label>
-                                                       <input class="form-control" type="number" name="Trvlr15K" id="Trvlr15K" min="0" placeholder="0">
+                                                       <label for="trvlr10K">Number travelling 5-10 km</label>
+                                                       <input class="form-control" type="number" name="Trvlr10K" id="trvlr10K" min="0" placeholder="0">
                                                   </div>
                                                   <div class="form-group col-md-6">
-                                                       <label for="Trvlr15Kplus">Number travelling >15 km</label>
-                                                       <input class="form-control" type="number" name="Trvlr15Kplus" id="Trvlr15Kplus" min="0" placeholder="0">
+                                                       <label for="trvlr15K">Number travelling 10-15 km</label>
+                                                       <input class="form-control" type="number" name="Trvlr15K" id="trvlr15K" min="0" placeholder="0">
+                                                  </div>
+                                                  <div class="form-group col-md-6">
+                                                       <label for="trvlr15Kplus">Number travelling >15 km</label>
+                                                       <input class="form-control" type="number" name="Trvlr15Kplus" id="trvlr15Kplus" min="0" placeholder="0">
                                                   </div>
 
                                                   <p class="h5 mb-2 text-left">Self-owned vehicle travellers</p>
                                                   <div class="form-group col-md-12">
-                                                       <label for="self_transport_users">Number of employees that will use self-owned vehicles</label>
-                                                       <input class="form-control" type="number" name="self_transport_users" id="self_transport_users" min="0" placeholder="0">
+                                                       <label for="slfTrnsprtUsrs">Number of employees that will use self-owned vehicles</label>
+                                                       <input class="form-control" type="number" name="slfTrnsprtUsrs" id="slfTrnsprtUsrs" min="0" placeholder="0">
                                                   </div>
                                                   <div class="form-group col-md-12">
                                                        <label for="noPlnR_flag">Have employees been instructed not to take pillion riders on two wheelers?</label>
@@ -740,14 +740,14 @@ SPDX-License-Identifier: Apache-2.0-->
                                                        </div>
                                                   </div>
                                                   <div class="form-group col-md-12">
-                                                       <label for="no2plusTrv_flag">Have employees been instructed not to travel more than 2 in a car?</label>
+                                                       <label for="no2plusTrvl_flag">Have employees been instructed not to travel more than 2 in a car?</label>
                                                        <div class="form-check">
-                                                       <input class="form-check-input" type="radio" name="no2plusTrv" id="no2plusTrv_0" value="0" checked>
-                                                       <label class="form-check-label" for="no2plusTrv_0">No</label>
+                                                       <input class="form-check-input" type="radio" name="no2plusTrvl" id="no2plusTrvl_0" value="0" checked>
+                                                       <label class="form-check-label" for="no2plusTrvl_0">No</label>
                                                        </div>
                                                        <div class="form-check">
-                                                       <input class="form-check-input" type="radio" name="no2plusTrv" id="no2plusTrv_1" value="1">
-                                                       <label class="form-check-label" for="no2plusTrv_1">Yes</label>
+                                                       <input class="form-check-input" type="radio" name="no2plusTrv" id="no2plusTrvl_1" value="1">
+                                                       <label class="form-check-label" for="no2plusTrvl_1">Yes</label>
                                                        </div>
                                                   </div>
                                                   <div class="form-group col-md-12">
@@ -762,69 +762,69 @@ SPDX-License-Identifier: Apache-2.0-->
                                                        </div>
                                                   </div>
                                                   <div class="form-group col-md-6">
-                                                       <label for="Trvlr5Kslf">Number travelling 0-5 km</label>
-                                                       <input class="form-control" type="number" name="Trvlr5Kslf" id="Trvlr5Kslf" min="0" placeholder="0">
+                                                       <label for="trvlr5Kslf">Number travelling 0-5 km</label>
+                                                       <input class="form-control" type="number" name="trvlr5Kslf" id="trvlr5Kslf" min="0" placeholder="0">
                                                   </div>
                                                   <div class="form-group col-md-6">
-                                                       <label for="Trvlr10Kslf">Number travelling 5-10 km</label>
-                                                       <input class="form-control" type="number" name="Trvlr10Kslf" id="Trvlr10Kslf" min="0" placeholder="0">
+                                                       <label for="trvlr10Kslf">Number travelling 5-10 km</label>
+                                                       <input class="form-control" type="number" name="trvlr10Kslf" id="trvlr10Kslf" min="0" placeholder="0">
                                                   </div>
                                                   <div class="form-group col-md-6">
-                                                       <label for="Trvlr15Kslf">Number travelling 10-15 km</label>
-                                                       <input class="form-control" type="number" name="Trvlr15Kslf" id="Trvlr15Kslf" min="0" placeholder="0">
+                                                       <label for="trvlr15Kslf">Number travelling 10-15 km</label>
+                                                       <input class="form-control" type="number" name="trvlr15Kslf" id="trvlr15Kslf" min="0" placeholder="0">
                                                   </div>
                                                   <div class="form-group col-md-6">
-                                                       <label for="Trvlr15Kplusslf">Number travelling >15 km</label>
-                                                       <input class="form-control" type="number" name="Trvlr15Kplusslf" id="Trvlr15Kplusslf" min="0" placeholder="0">
+                                                       <label for="trvlr15Kplusslf">Number travelling >15 km</label>
+                                                       <input class="form-control" type="number" name="trvlr15Kplusslf" id="trvlr15Kplusslf" min="0" placeholder="0">
                                                   </div> 
 
                                                   <p class="h5 mb-2 text-left">Employees that walk to work</p>
                                                   <div class="form-group col-md-12">
-                                                       <label for="NWalk">Number of employees who walks to office?</label>
-                                                       <input class="form-control" type="number" name="NWalk" id="NWalk" min="0" placeholder="0">
+                                                       <label for="nWlk">Number of employees who walks to office?</label>
+                                                       <input class="form-control" type="number" name="nWlk" id="nWlk" min="0" placeholder="0">
                                                   </div>  
                                                   <div class="form-group col-md-12">
-                                                       <label for="mskWalk_flag">Do they wear face masks?</label>
+                                                       <label for="mskWlk_flag">Do they wear face masks?</label>
                                                        <div class="form-check">
-                                                       <input class="form-check-input" type="radio" name="mskWalk" id="mskWalk_0" value="0" checked>
-                                                       <label class="form-check-label" for="mskWalk_0">No</label>
+                                                       <input class="form-check-input" type="radio" name="mskWlk" id="mskWlk_0" value="0" checked>
+                                                       <label class="form-check-label" for="mskWlk_0">No</label>
                                                        </div>
                                                        <div class="form-check">
-                                                       <input class="form-check-input" type="radio" name="mskWalk" id="mskWalk_1" value="1">
-                                                       <label class="form-check-label" for="mskWalk_1">Yes</label>
+                                                       <input class="form-check-input" type="radio" name="mskWlk" id="mskWlk_1" value="1">
+                                                       <label class="form-check-label" for="mskWlk_1">Yes</label>
                                                        </div>
                                                   </div>
 
                                                   <p class="h5 mb-2 text-left">Employees traveling in public/ride-share vehicles</p>
                                                   <div class="form-group col-md-12">
-                                                       <label for="NPubTrvl"> Number of employees that uses public/ride-share vehicles</label>
-                                                       <input class="form-control" type="number" name="NPubTrvl" id="NPubTrvl" min="0" placeholder="0">
+                                                       <label for="nPubTrvl"> Number of employees that uses public/ride-share vehicles</label>
+                                                       <input class="form-control" type="number" name="nPubTrvl" id="nPubTrvl" min="0" placeholder="0">
                                                   </div>
                                                   <div class="form-group col-md-6">
-                                                       <label for="Trvlr5Kpub">Number travelling 0-5 km</label>
-                                                       <input class="form-control" type="number" name="Trvlr5Kpub" id="Trvlr5Kpub" min="0" placeholder="0">
+                                                       <label for="trvlr5Kpub">Number travelling 0-5 km</label>
+                                                       <input class="form-control" type="number" name="trvlr5Kpub" id="trvlr5Kpub" min="0" placeholder="0">
                                                   </div>
                                                   <div class="form-group col-md-6">
-                                                       <label for="Trvlr10Kpub">Number travelling 5-10 km</label>
-                                                       <input class="form-control" type="number" name="Trvlr10Kpub" id="Trvlr10Kpub" min="0" placeholder="0">
+                                                       <label for="trvlr10Kpub">Number travelling 5-10 km</label>
+                                                       <input class="form-control" type="number" name="trvlr10Kpub" id="trvlr10Kpub" min="0" placeholder="0">
                                                   </div>
                                                   <div class="form-group col-md-6">
-                                                       <label for="Trvlr15Kpub">Number travelling 10-15 km</label>
-                                                       <input class="form-control" type="number" name="Trvlr15Kpub" id="Trvlr15Kpub" min="0" placeholder="0">
+                                                       <label for="trvlr15Kpub">Number travelling 10-15 km</label>
+                                                       <input class="form-control" type="number" name="trvlr15Kpub" id="trvlr15Kpub" min="0" placeholder="0">
                                                   </div>
                                                   <div class="form-group col-md-6">
-                                                       <label for="Trvlr15Kpluspub">Number travelling >15 km</label>
-                                                       <input class="form-control" type="number" name="Trvlr15Kpluspub" id="Trvlr15Kpluspub" min="0" placeholder="0">
+                                                       <label for="trvlr15Kpluspub">Number travelling >15 km</label>
+                                                       <input class="form-control" type="number" name="trvlr15Kpluspub" id="trvlr15Kpluspub" min="0" placeholder="0">
                                                   </div> 
 
                                                   <p class="h5 mb-2 text-left">Time taken to reach office</p>
                                                   <div class="form-group col-md-12">
-                                                       <label for="N60Min">Number of employees that take 30-60 minutes</label>
-                                                       <input class="form-control" type="number" name="N60Min" id="N60Min" min="0" placeholder="0">
+                                                       <label for="n60Min">Number of employees that take 30-60 minutes</label>
+                                                       <input class="form-control" type="number" name="n60Min" id="n60Min" min="0" placeholder="0">
                                                   </div>
                                                   <div class="form-group col-md-12">
-                                                       <label for="N60plusMin">Number of employees that take >60 minutes</label>
-                                                       <input class="form-control" type="number" name="N60plusMin" id="N60plusMin" min="0" placeholder="0">
+                                                       <label for="n60plusMin">Number of employees that take >60 minutes</label>
+                                                       <input class="form-control" type="number" name="n60plusMin" id="n60plusMin" min="0" placeholder="0">
                                                   </div> 
                                                   <div class="form-group col-md-12">
                                                        <label for="mskAll_flag">Do they all wear facemasks, gloves?</label>
@@ -853,80 +853,80 @@ SPDX-License-Identifier: Apache-2.0-->
                                         <div class="card-body">
                                              <p class="h5 mb-2 text-left">If an employee gets sick at work</p>
                                              <div class="form-group col-md-12">
-                                                  <label for="HL_flag">Is there a company helpline?</label>
+                                                  <label for="hl_flag">Is there a company helpline?</label>
                                                   <div class="form-check">
-                                                      <input class="form-check-input" type="radio" name="HL" id="HL_0" value="0" checked>
-                                                      <label class="form-check-label" for="HL_0">No</label>
+                                                  <input class="form-check-input" type="radio" name="hl" id="hl_0" value="0" checked>
+                                                  <label class="form-check-label" for="hl_0">No</label>
                                                   </div>
                                                   <div class="form-check">
-                                                      <input class="form-check-input" type="radio" name="HL" id="HL_1" value="1">
-                                                      <label class="form-check-label" for="HL_1">Yes</label>
-                                                  </div>
-                                             </div>
-                                             <div class="form-group col-md-12">
-                                                  <label for="IQS_flag">Is there a designated space for immediate quarantine?</label>
-                                                  <div class="form-check">
-                                                      <input class="form-check-input" type="radio" name="IQS" id="IQS_0" value="0" checked>
-                                                      <label class="form-check-label" for="IQS_0">No</label>
-                                                  </div>
-                                                  <div class="form-check">
-                                                      <input class="form-check-input" type="radio" name="IQS" id="IQS_1" value="1">
-                                                      <label class="form-check-label" for="IQS_1">Yes</label>
+                                                  <input class="form-check-input" type="radio" name="hl" id="hl_1" value="1">
+                                                  <label class="form-check-label" for="hl_1">Yes</label>
                                                   </div>
                                              </div>
                                              <div class="form-group col-md-12">
-                                                  <label for="Amblnc_flag">Is there an ambulance facility?</label>
+                                                  <label for="iQS_flag">Is there a designated space for immediate quarantine?</label>
                                                   <div class="form-check">
-                                                      <input class="form-check-input" type="radio" name="Amblnc" id="Amblnc_0" value="0" checked>
-                                                      <label class="form-check-label" for="Amblnc_0">No</label>
+                                                  <input class="form-check-input" type="radio" name="iQS" id="iQS_0" value="0" checked>
+                                                  <label class="form-check-label" for="iQS_0">No</label>
                                                   </div>
                                                   <div class="form-check">
-                                                      <input class="form-check-input" type="radio" name="Amblnc" id="Amblnc_1" value="1">
-                                                      <label class="form-check-label" for="Amblnc_1">Yes</label>
-                                                  </div>
-                                             </div>
-                                             <div class="form-group col-md-12">
-                                                  <label for="LHsptl_flag">Has a list of nearby hospitals, fever clinic, isolation centre been prepared?</label>
-                                                  <div class="form-check">
-                                                      <input class="form-check-input" type="radio" name="LHsptl" id="LHsptl_0" value="0" checked>
-                                                      <label class="form-check-label" for="LHsptl_0">No</label>
-                                                  </div>
-                                                  <div class="form-check">
-                                                      <input class="form-check-input" type="radio" name="LHsptl" id="LHsptl_1" value="1">
-                                                      <label class="form-check-label" for="LHsptl_1">Yes</label>
+                                                  <input class="form-check-input" type="radio" name="iQS" id="iQS_1" value="1">
+                                                  <label class="form-check-label" for="iQS_1">Yes</label>
                                                   </div>
                                              </div>
                                              <div class="form-group col-md-12">
-                                                  <label for="EmrgncResp_flag">Has the transport department been given instructions on how to respond to a Covid-19 emergency?</label>
+                                                  <label for="amblnc_flag">Is there an ambulance facility?</label>
                                                   <div class="form-check">
-                                                      <input class="form-check-input" type="radio" name="EmrgncResp" id="EmrgncResp_0" value="0" checked>
-                                                      <label class="form-check-label" for="EmrgncResp_0">No</label>
+                                                  <input class="form-check-input" type="radio" name="amblnc" id="amblnc_0" value="0" checked>
+                                                  <label class="form-check-label" for="amblnc_0">No</label>
                                                   </div>
                                                   <div class="form-check">
-                                                      <input class="form-check-input" type="radio" name="EmrgncResp" id="EmrgncResp_1" value="1">
-                                                      <label class="form-check-label" for="EmrgncResp_1">Yes</label>
-                                                  </div>
-                                             </div>
-                                             <div class="form-group col-md-12">
-                                                  <label for="Alrg_flag">Has each employee's allergy list been identified for information to the hospital at the time of admission?</label>
-                                                  <div class="form-check">
-                                                      <input class="form-check-input" type="radio" name="Alrg" id="Alrg_0" value="0" checked>
-                                                      <label class="form-check-label" for="Alrg_0">No</label>
-                                                  </div>
-                                                  <div class="form-check">
-                                                      <input class="form-check-input" type="radio" name="Alrg" id="Alrg_1" value="1">
-                                                      <label class="form-check-label" for="Alrg_1">Yes</label>
+                                                  <input class="form-check-input" type="radio" name="amblnc" id="amblnc_1" value="1">
+                                                  <label class="form-check-label" for="amblnc_1">Yes</label>
                                                   </div>
                                              </div>
                                              <div class="form-group col-md-12">
-                                                  <label for="ImdtFM_flag">Has a contact list of employee's immediate family members and caretakers been idenfied?</label>
+                                                  <label for="lHsptl_flag">Has a list of nearby hospitals, fever clinic, isolation centre been prepared?</label>
                                                   <div class="form-check">
-                                                      <input class="form-check-input" type="radio" name="ImdtFM" id="ImdtFM_0" value="0" checked>
-                                                      <label class="form-check-label" for="ImdtFM_0">No</label>
+                                                  <input class="form-check-input" type="radio" name="lHsptl" id="lHsptl_0" value="0" checked>
+                                                  <label class="form-check-label" for="lHsptl_0">No</label>
                                                   </div>
                                                   <div class="form-check">
-                                                      <input class="form-check-input" type="radio" name="ImdtFM" id="ImdtFM_1" value="1">
-                                                      <label class="form-check-label" for="ImdtFM_1">Yes</label>
+                                                  <input class="form-check-input" type="radio" name="lHsptl" id="lHsptl_1" value="1">
+                                                  <label class="form-check-label" for="lHsptl_1">Yes</label>
+                                                  </div>
+                                             </div>
+                                             <div class="form-group col-md-12">
+                                                  <label for="emrgncResp_flag">Has the transport department been given instructions on how to respond to a Covid-19 emergency?</label>
+                                                  <div class="form-check">
+                                                  <input class="form-check-input" type="radio" name="emrgncResp" id="emrgncResp_0" value="0" checked>
+                                                  <label class="form-check-label" for="emrgncResp_0">No</label>
+                                                  </div>
+                                                  <div class="form-check">
+                                                  <input class="form-check-input" type="radio" name="emrgncResp" id="emrgncResp_1" value="1">
+                                                  <label class="form-check-label" for="emrgncResp_1">Yes</label>
+                                                  </div>
+                                             </div>
+                                             <div class="form-group col-md-12">
+                                                  <label for="alrg_flag">Has each employee's allergy list been identified for information to the hospital at the time of admission?</label>
+                                                  <div class="form-check">
+                                                  <input class="form-check-input" type="radio" name="alrg" id="alrg_0" value="0" checked>
+                                                  <label class="form-check-label" for="alrg_0">No</label>
+                                                  </div>
+                                                  <div class="form-check">
+                                                  <input class="form-check-input" type="radio" name="alrg" id="alrg_1" value="1">
+                                                  <label class="form-check-label" for="alrg_1">Yes</label>
+                                                  </div>
+                                             </div>
+                                             <div class="form-group col-md-12">
+                                                  <label for="imdtFM_flag">Has a contact list of employee's immediate family members and caretakers been idenfied?</label>
+                                                  <div class="form-check">
+                                                  <input class="form-check-input" type="radio" name="imdtFM" id="imdtFM_0" value="0" checked>
+                                                  <label class="form-check-label" for="imdtFM_0">No</label>
+                                                  </div>
+                                                  <div class="form-check">
+                                                  <input class="form-check-input" type="radio" name="imdtFM" id="imdtFM_1" value="1">
+                                                  <label class="form-check-label" for="imdtFM_1">Yes</label>
                                                   </div>
                                              </div>
                                              <div class="form-group col-md-12">
@@ -949,44 +949,43 @@ SPDX-License-Identifier: Apache-2.0-->
                                              <p class="h5 mb-2 text-left">Website</p>
                                              <div class="form-row">
                                                   <div class="form-group col-md-7">
-                                                       <label for="CovidPage_flag">Does your company have a covid-awareness page?</label>
+                                                       <label for="covidPage_flag">Does your company have a covid-awareness page?</label>
                                                        <div class="form-check">
-                                                       <input class="form-check-input" type="radio" name="CovidPage" id="CovidPage_0" value="0" checked>
-                                                       <label class="form-check-label" for="CovidPage_0">No</label>
+                                                       <input class="form-check-input" type="radio" name="covidPage" id="covidPage_0" value="0" checked>
+                                                       <label class="form-check-label" for="covidPage_0">No</label>
                                                        </div>
                                                        <div class="form-check">
-                                                       <input class="form-check-input" type="radio" name="CovidPage" id="CovidPage_1" value="1">
-                                                       <label class="form-check-label" for="CovidPage_1">Yes</label>
+                                                       <input class="form-check-input" type="radio" name="covidPage" id="covidPage_1" value="1">
+                                                       <label class="form-check-label" for="covidPage_1">Yes</label>
                                                        </div>
                                                   </div>
                                                   <div class="form-group col-md-5">
-                                                       <label for="FAQ_flag">Is there an FAQ?</label>
+                                                       <label for="faq_flag">Is there an FAQ?</label>
                                                        <div class="form-check">
-                                                       <input class="form-check-input" type="radio" name="FAQ" id="FAQ_0" value="0" checked>
-                                                       <label class="form-check-label" for="FAQ_0">No</label>
+                                                       <input class="form-check-input" type="radio" name="faq" id="faq_0" value="0" checked>
+                                                       <label class="form-check-label" for="faq_0">No</label>
                                                        </div>
                                                        <div class="form-check">
-                                                       <input class="form-check-input" type="radio" name="FAQ" id="FAQ_1" value="1">
-                                                       <label class="form-check-label" for="FAQ_1">Yes</label>
+                                                       <input class="form-check-input" type="radio" name="faq" id="faq_1" value="1">
+                                                       <label class="form-check-label" for="faq_1">Yes</label>
                                                        </div>
                                                   </div>
                                                   <div class="form-group col-md-12">
-                                                       <label for="SPers_flag">Is there a designated cleaniness, awareness, safety person?</label>
+                                                       <label for="sPers_flag">Is there a designated cleaniness, awareness, safety person?</label>
                                                        <div class="form-check">
-                                                       <input class="form-check-input" type="radio" name="SPers" id="SPers_0" value="0" checked>
-                                                       <label class="form-check-label" for="SPers_0">No</label>
+                                                       <input class="form-check-input" type="radio" name="sPers" id="sPers_0" value="0" checked>
+                                                       <label class="form-check-label" for="sPers_0">No</label>
                                                        </div>
                                                        <div class="form-check">
-                                                       <input class="form-check-input" type="radio" name="SPers" id="SPers_1" value="1">
-                                                       <label class="form-check-label" for="SPers_1">Yes</label>
+                                                       <input class="form-check-input" type="radio" name="sPers" id="sPers_1" value="1">
+                                                       <label class="form-check-label" for="sPers_1">Yes</label>
                                                        </div>
                                                   </div>
                                              </div>
                                         </div>
                                    </div>
-                              </div>
+                              </div>  
                          </div>
-                         
                          <p style="margin-bottom:0.5cm;"> </p>
                          <button type="submit" class="sub-btn btn-primary btn-block">Submit</button>
                     </form>

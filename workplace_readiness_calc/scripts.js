@@ -83,17 +83,17 @@ function getValues(){
   dict["nWsB"] = parseInt(document.getElementById("nWsB").value); // Number of warning sign boards
 
   // Employee Interactions
-  dict["safetyPerson"] = parseInt(document.querySelector('input[name="safetyPerson"]:checked').value); // Designated safety person
+  //DUPLICATE dict["safetyPerson"] = parseInt(document.querySelector('input[name="safetyPerson"]:checked').value); // Designated safety person
   dict["nVisitors"] = parseInt(document.getElementById("nVisitors").value); // Number of visitors
   dict["nEmpCstmr"] = parseInt(document.getElementById("nEmpCstmr").value); // Number of employees that meet with customer
-  dict["avgExt"] = parseInt(document.getElementById("avgExt").value); // Average number of external contacts with employees
+  // dict["avgExt"] = parseInt(document.getElementById("avgExt").value); // Average number of external contacts with employees
   dict["nDlvrHndlng"] = parseInt(document.getElementById("nDlvrHndlng").value); // Number of employees handling deliveries 
   dict["gloves"] = parseInt(document.querySelector('input[name="gloves"]:checked').value); // Employess wear mask and gloves
 
   // Mobility Related
   dict["nHM"] = parseInt(document.getElementById("nHM").value); // Number of employees that are more than 2 hours aways
   dict["nMM"] = parseInt(document.getElementById("nMM").value); // Number of employees that are more than 1 hour aways 
-  dict["nLM"] = parseInt(document.getElementById("nLM").value); // Remaining employees
+  //DERIVED dict["nLM"] = parseInt(document.getElementById("nLM").value); // Remaining employees
   dict["nMPD"] = parseFloat(document.getElementById("nMPD").value); // Meetings per day
   dict["avgMS"] = parseFloat(document.getElementById("avgMS").value); // Average number of members in the meeting
   

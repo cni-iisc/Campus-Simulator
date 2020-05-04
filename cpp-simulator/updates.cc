@@ -220,7 +220,8 @@ void update_all_kappa(vector<agent>& nodes, vector<house>& homes, vector<workpla
                                                    GLOBAL.FIRST_PERIOD, GLOBAL.SECOND_PERIOD);
       break;
     case Intervention::intv_nbr_containment:
-      get_kappa_nbr_containment(nodes, homes, workplaces, communities, nbr_cells, cur_time, GLOBAL.FIRST_PERIOD);
+    case Intervention::intv_ward_containment:
+      get_kappa_containment(nodes, homes, workplaces, communities, nbr_cells, cur_time, GLOBAL.FIRST_PERIOD, GLOBAL.INTERVENTION);
       break;
     default:
 	  get_kappa_no_intervention(nodes, homes, workplaces, communities, cur_time);

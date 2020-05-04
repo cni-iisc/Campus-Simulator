@@ -111,8 +111,8 @@ int main(int argc, char** argv){
      cxxopts::value<double>()->default_value(DEFAULTS.CITY_NE_LON))
      ("NBR_CELL_SIZE", "Neighbourhood cell size (length of side)",
      cxxopts::value<double>()->default_value(DEFAULTS.NBR_CELL_SIZE))
-     ("IGNORE_CONTAINMENT", "Enable containment",
-     cxxopts::value<bool>()->default_value(DEFAULTS.IGNORE_CONTAINMENT))
+     ("ENABLE_CONTAINMENT", "Enable containment",
+     cxxopts::value<bool>()->default_value(DEFAULTS.ENABLE_CONTAINMENT))
      ;
 
   auto optvals = options.parse(argc, argv);
@@ -198,7 +198,7 @@ int main(int argc, char** argv){
   GLOBAL.city_NE.lat = optvals["CITY_NE_LAT"].as<double>();
   GLOBAL.city_NE.lon = optvals["CITY_NE_LON"].as<double>();
   GLOBAL.NBR_CELL_SIZE = optvals["NBR_CELL_SIZE"].as<double>();
-  GLOBAL.IGNORE_CONTAINMENT = optvals["IGNORE_CONTAINMENT"].count();
+  GLOBAL.ENABLE_CONTAINMENT = optvals["ENABLE_CONTAINMENT"].count();
 
 
 

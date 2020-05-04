@@ -53,7 +53,7 @@ vector<house> init_homes(){
 					 (temp_non_compliance_metric<=GLOBAL.COMPLIANCE_PROBABILITY)?1.0:0,
 					 temp_non_compliance_metric);
 
-	if(!GLOBAL.IGNORE_CONTAINMENT) { 
+	if(GLOBAL.ENABLE_CONTAINMENT) { 
 		get_nbr_cell(homes[index]);
 	}
 
@@ -132,7 +132,7 @@ vector<vector<nbr_cell>> init_nbr_cells() {
 
   vector<vector<nbr_cell>> nbr_cells;
 
-  if(!GLOBAL.IGNORE_CONTAINMENT){
+  if(GLOBAL.ENABLE_CONTAINMENT){
 	location loc_temp;
 
 	loc_temp.lat = GLOBAL.city_SW.lat;
@@ -427,7 +427,7 @@ void assign_individual_home_community(vector<agent>& nodes, vector<house>& homes
 }
 
 void assign_homes_nbr_cell(vector<house>& homes, vector<vector<nbr_cell>>& neighbourhood_cells){
-	if(GLOBAL.IGNORE_CONTAINMENT){
+	if(!GLOBAL.ENABLE_CONTAINMENT){
 		return;
 	}
 	for (count_type home_count = 0; home_count < homes.size(); home_count++){

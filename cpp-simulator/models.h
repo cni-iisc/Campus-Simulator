@@ -23,7 +23,8 @@ enum class Intervention {
    intv_fper_intv_sper_intv_tper = 11,
    intv_NYC=12,
    intv_Mum=13,
-   intv_nbr_containment=14
+   intv_nbr_containment=14,
+   intv_ward_containment=15
 };
 
 struct location{
@@ -167,7 +168,7 @@ struct global_params{
   //crosses this fraction
   double COMMUNITY_LOCK_THRESHOLD = 1E-3; //0.1%
   double LOCKED_COMMUNITY_LEAKAGE = 1.0;
-  
+  count_type WARD_CONTAINMENT_THRESHOLD = 1; // threshold of hospitalised individuals in ward, beyond which the ward is quarantined.
   //Switches
   //If this is false, the file quarantinedPopulation.json is needed
   bool USE_SAME_INFECTION_PROB_FOR_ALL_WARDS = true;
@@ -212,10 +213,12 @@ struct global_params{
   double SIGNIFICANT_EIGEN_VALUES = 3;
   bool USE_AGE_DEPENDENT_MIXING = false;
 
-  //City limits in lat,lon
+  //Neighbourhood containment. City limits in lat,lon
   location city_SW, city_NE;
   double NBR_CELL_SIZE = 1; //in km
-  bool IGNORE_CONTAINMENT = true;
+  bool ENABLE_CONTAINMENT = false;
+
+  
 };
 extern global_params GLOBAL;
 

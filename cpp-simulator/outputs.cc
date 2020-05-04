@@ -55,15 +55,21 @@ string intervention_rep(Intervention i){
 	break;
   case Intervention::ld_fper_ci_hq_sd65_sc_oe_sper:
 	return "ld_fper_ci_hq_sd65_sc_oe_sper";
+  break;
   case Intervention::intv_fper_intv_sper_intv_tper:
 	return "intv_fper_intv_sper_intv_tper";
 	break;
   case Intervention::intv_NYC:
 	return "intv_NYC";
+  break;
   case Intervention::intv_Mum:
 	return "intv_Mum";
+  break;
   case Intervention::intv_nbr_containment:
 	return "intv_nbr_containment";
+	break;
+  case Intervention::intv_ward_containment:
+	return "intv_ward_containment";
 	break;
   default:
 	assert(false);
@@ -293,5 +299,24 @@ void output_csv_files(const std::string& output_directory,
 					 csvfile_path,
 					 elem.second);
 	gnuplot.plot_data(elem.first);
+  }
+
+  for(const auto& elem: plot_data.quarantined_stats){
+    std::string csvfile_name = elem.first + ".csv";
+    std::string csvfile_path = output_directory + "/" + csvfile_name;
+    //This file contains quarantine_stats
+    output_timed_csv({"quarantined_individuals",
+            "quarantined_infectious",
+            "quarantined_cases"},
+    csvfile_path, elem.second);
+  }
+
+  for(const auto& elem: plot_data.curtailment_stats){
+    std::string csvfile_name = elem.first + ".csv";
+    std::string csvfile_path = output_directory + "/" + csvfile_name;
+    //This file contains quarantine_stats
+    output_timed_csv({"normal_interactions",
+            "curtailed_interactions"},
+    csvfile_path, elem.second);
   }
 }

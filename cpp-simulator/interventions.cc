@@ -403,9 +403,6 @@ void get_kappa_CI_HQ_65P_SC_OE(vector<agent>& nodes, vector<house>& homes, const
 
 void get_kappa_custom(vector<agent>& nodes, vector<house>& homes, const vector<workplace>& workplaces, vector<community>& communities, vector<vector<nbr_cell>>& nbr_cells, int cur_time, bool case_isolation = false, bool home_quarantine = false, bool lockdown = false, bool social_dist_elderly = false, bool school_closed = false, bool workplace_odd_even = false, double SC_factor = 0, double community_factor = 1,bool neighbourhood_containment = false, bool ward_containment = false){
   
-  double time_since_symptoms = 0;
-  double time_since_hospitalised = 0;
-
   if(home_quarantine || neighbourhood_containment){
 	  for(count_type count = 0; count<homes.size(); ++count){
 		//reset all homes as non-quarantined. The status will be updated depending on the household individuals.

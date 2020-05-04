@@ -75,6 +75,36 @@ int get_age_index(int age){
   }
 }
 
+//attendance probability at given time, for agent, based on the global ATTENDANCE parameters
+double agent::get_attendance_probability(count_type time) const{
+  count_type day = time/GLOBAL.SIM_STEPS_PER_DAY;
+  if(!GLOBAL.CYCLIC_POLICY_ENABLED
+	 || day < GLOBAL.CYCLIC_POLICY_START_DAY){
+	if (this->workplace_type != WorkplaceType::office || GLOBAL.IGNORE_ATTENDANCE_FILE){
+	  return 1;
+	  //Let the other features handle these workplaces
+	} else {
+	  if (day >= ATTENDANCE.number_of_entries){
+		day = ATTENDANCE.number_of_entries - 1;
+		//Just use the last entry
+	  }
+	  return ATTENDANCE.probabilities[day][static_cast<count_type>(this->office_type)];
+	}
+  } else {
+	day -= GLOBAL.CYCLIC_POLICY_START_DAY;
+	auto cyclic_period = (day / GLOBAL.PERIOD_OF_ATTENDANCE_CYCLE)
+	  % GLOBAL.NUMBER_OF_CYCLIC_CLASSES;
+	if (cyclic_period == this->cyclic_strategy_class){
+	  return 1.0;
+	}
+	else {
+	  return 0.0;
+	}
+  }
+}
+
+
+
 
 double f_kernel(double dist){
   double a = GLOBAL.F_KERNEL_A;
@@ -123,21 +153,6 @@ double earth_distance(location a, location b){
 
 
 office_attendance ATTENDANCE;
-
-//attendance probability at given time
-double get_attendance_probability(WorkplaceType workplace_type, OfficeType office_type, count_type time){
-  if (workplace_type != WorkplaceType::office || GLOBAL.IGNORE_ATTENDANCE_FILE){
-    return 1;
-    //Let the other features handle these workplaces
-  } else {
-    auto entry = time/GLOBAL.SIM_STEPS_PER_DAY;
-    if (entry >= ATTENDANCE.number_of_entries){
-      entry = ATTENDANCE.number_of_entries - 1;
-      //Just use the last entry
-    }
-    return ATTENDANCE.probabilities[entry][static_cast<count_type>(office_type)];
-  }
-}
 
 //interpolation with a threshold
 double interpolate(double start, double end, double current, double threshold){

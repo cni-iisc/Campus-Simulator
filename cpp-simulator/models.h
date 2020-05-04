@@ -177,6 +177,7 @@ struct global_params{
   bool CYCLIC_POLICY_ENABLED = false;
   //Are cycles assigned to individuals or homes?
   Cycle_Type CYCLIC_POLICY_TYPE = Cycle_Type::individual;
+  count_type CYCLIC_POLICY_START_DAY = 0;
   count_type NUMBER_OF_CYCLIC_CLASSES = 3;
   //How many days does the individual work for in a single phase of the cycle?
   count_type PERIOD_OF_ATTENDANCE_CYCLE = 5;
@@ -384,6 +385,9 @@ struct agent{
 		   || infection_status == Progression::critical
 		   || infection_status == Progression::dead);
   }
+
+  //attendance probability at given time, for the agent
+  double get_attendance_probability(count_type time) const;
 };
 
 
@@ -473,10 +477,6 @@ extern office_attendance ATTENDANCE;
 
 // Absenteeism parameter. This may depend on the workplace type.
 double psi_T(const agent& node, double cur_time);
-
-
-//attendance probability at given time
-double get_attendance_probability(WorkplaceType workplace_type, OfficeType office_type, count_type time);
 
 
 //interpolation with a threshold

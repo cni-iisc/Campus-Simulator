@@ -144,7 +144,7 @@ plot_data_struct run_simulation(){
       for(count_type j = 0; j < GLOBAL.num_people; ++j){
         nodes[j].attending =
           bernoulli(communities[nodes[j].community].w_c
-                    * get_attendance_probability(nodes[j].workplace_type, nodes[j].office_type, time_step));
+                    * nodes[j].get_attendance_probability(time_step));
 		nodes[j].kappa_travel = GLOBAL.TRAINS_RUNNING && bernoulli(GLOBAL.KAPPA_TRAVEL);
       }
     }

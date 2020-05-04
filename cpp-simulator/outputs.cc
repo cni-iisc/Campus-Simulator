@@ -193,6 +193,9 @@ void output_global_params(const string& output_dir){
   fout << "MASK_ACTIVE: " << GLOBAL.MASK_ACTIVE << ";" << endl;
   fout << "MASK_FACTOR: " << GLOBAL.MASK_FACTOR << ";" << endl;
   fout << "MASK_START_DATE: " << GLOBAL.MASK_START_DATE << ";" << endl;
+
+  fout << "WARD_CONTAINMENT_THRESHOLD:" <<GLOBAL.WARD_CONTAINMENT_THRESHOLD << ";"<< endl;
+  fout << "ENABLE_CONTAINMENT:" <<GLOBAL.ENABLE_CONTAINMENT << ";"<< endl;
   
   fout.close();
 }

@@ -95,6 +95,8 @@ int main(int argc, char** argv){
 	 cxxopts::value<double>()->default_value(DEFAULTS.LOCKED_COMMUNITY_LEAKAGE))
    ("COMMUNITY_LOCK_THRESHOLD", "hospitalisation fraciton in a ward beyond which the ward will be cordoned off.",
 	 cxxopts::value<double>()->default_value(DEFAULTS.COMMUNITY_LOCK_THRESHOLD))
+   ("WARD_CONTAINMENT_THRESHOLD", "number of individuals beyond which  ward is contained.",
+	 cxxopts::value<count_type>()->default_value(DEFAULTS.WARD_CONTAINMENT_THRESHOLD))
     ("USE_AGE_DEPENDENT_MIXING", "Boolean for using age dependent interactions",
      cxxopts::value<bool>()->default_value(DEFAULTS.USE_AGE_DEPENDENT_MIXING))
     ("SIGNIFICANT_EIGEN_VALUES", "Number of principal components to use",
@@ -199,6 +201,7 @@ int main(int argc, char** argv){
   GLOBAL.city_NE.lon = optvals["CITY_NE_LON"].as<double>();
   GLOBAL.NBR_CELL_SIZE = optvals["NBR_CELL_SIZE"].as<double>();
   GLOBAL.ENABLE_CONTAINMENT = optvals["ENABLE_CONTAINMENT"].count();
+  GLOBAL.WARD_CONTAINMENT_THRESHOLD = optvals["WARD_CONTAINMENT_THRESHOLD"].as<count_type>();
 
 
 

@@ -97,7 +97,7 @@ function getValues(){
   
   // Interaction Spaces
   dict["cntn"] = parseInt(document.querySelector('input[name="cntn"]:checked').value); // Canteen/pantry
-  dict["cntnAC"] = parseInt(document.querySelector('input[name="cntnAC"]:checked').value); // Canteen/pantry air condition
+  //dict["cntnAC"] = parseInt(document.querySelector('input[name="cntnAC"]:checked').value); // Canteen/pantry air condition
   dict["cntnACOp"] = parseInt(document.querySelector('input[name="cntnACOp"]:checked').value); // Canteen/pantry air condition operational
   dict["nBrkfst"] = parseInt(document.getElementById("nBrkfst").value); // Number of employees having breakfast in canteen
   dict["nLnch"] = parseInt(document.getElementById("nLnch").value); // Number of employees having lunch in canteen
@@ -171,7 +171,6 @@ function getValues(){
   // Time to reach office
   dict["n60Min"] = parseInt(document.getElementById("n60Min").value); // Number of employees taking 30-60 minutes
   dict["n60plusMin"] = parseInt(document.getElementById("n60plusMin").value); // Number of employees taking >60 minutes
-  dict["mskAll"] = parseInt(document.querySelector('input[name="mskAll"]:checked').value); // Mask and gloves for all
 
   // Isolation room
   dict["hl"] = parseInt(document.querySelector('input[name="hl"]:checked').value); // Company helpline
@@ -215,33 +214,44 @@ function calcScore () {
   var tltCnctrtnHrs = 4; 
 
   // Toilet scores
-  var cRateGentsToilet = nGntsTlt * avgTltVstsPrDy * avgTltDrtn * (Math.max(0.5, (1.0 - 0.1*inputs["tClnFreq"]) )) * (1.0 - 0.1*inputs["spPrsnt"]) / (tltCnctrtnHrs*60*inputs["nGntsT"]);
-  var cRateLadiesToilet = nLdsTlt * avgTltVstsPrDy * avgTltDrtn * (Math.max(0.5, (1.0 - 0.1*inputs["tClnFreq"]) )) * (1.0 - 0.1*inputs["spPrsnt"]) / (tltCnctrtnHrs*60*inputs["nLdsT"]);
-  var aggrToiletSc = (cRateLadiesToilet + cRateGentsToilet) / (inputs["nM"] + inputs["nF"] + inputs["nOth"] );
-  var score_sanitation = 1000;
-    var sg_sanitation = "";
-  console.log(cRateLadiesToilet, cRateGentsToilet, aggrToiletSc);
+  var cRateGentsToilet = nGntsTlt * avgTltVstsPrDy * avgTltDrtn * (Math.max(0.5, (1.0 - 0.1*inputs["tClnFreq"]))) * (1.0 - 0.1*inputs["spPrsnt"]) / (tltCnctrtnHrs*60*inputs["nGntsT"]);
+  var cRateLadiesToilet = nLdsTlt * avgTltVstsPrDy * avgTltDrtn * (Math.max(0.5, (1.0 - 0.1*inputs["tClnFreq"]))) * (1.0 - 0.1*inputs["spPrsnt"]) / (tltCnctrtnHrs*60*inputs["nLdsT"]);
+  //var aggrToiletSc = (cRateLadiesToilet + cRateGentsToilet) / (inputs["nM"] + inputs["nF"] + inputs["nOth"] );
+  var aggrToiletSc = 800/(Math.max(cRateLadiesToilet, cRateGentsToilet)+0.001)
+  var score_sanitation = 0;
+  if (aggrToiletSc>1000){
+    score_sanitation = 1000;
+  }else{
+    score_sanitation = aggrToiletSc;
+  }
+  score_sanitation = Math.round(score_sanitation/10) * 10;
 
-  if (cRateGentsToilet + cRateLadiesToilet == 0) {
-      score_sanitation = 1000;
-      sg_sanitation = "Well done!"
-  } else if (isNaN(cRateLadiesToilet) || isNaN(cRateGentsToilet)) {
-        score_sanitation = "";
-        sg_sanitation = "Provide inputs and recalculate";
-  } else {
-      score_sanitation = Math.round(Math.min( 100, 70.0/(cRateGentsToilet + cRateLadiesToilet) )) * 10;
-        if (score_sanitation >= 900) { 
-            sg_sanitation = "Well done!"
-        } else{
-            sg_sanitation = "Disinfect toilets more often";
-        }
+  var sg_sanitation = "Well done!";
+
+  //score_sanitation = Math.round(Math.min( 100, 70.0/(cRateGentsToilet + cRateLadiesToilet) )) * 10;
+  if (score_sanitation < 700) {
+      sg_sanitation = "Disinfect toilets more often or consider reducing the employees per shift";
   }
 
-  // Sick Roomz
-  var score_sickRoom = 1.0 - 0.1*(inputs["iQS"]*2 + inputs["amblnc"]*2 + inputs["lHsptl"]*2 + inputs["emrgncResp"] + inputs["hl"] + 
-                                  inputs["imdtFM"] * Math.max( 0, (1.0 - inputs["lstUpdtTime"]/30)) );
-  var score_isolation = Math.round((1.0 - score_sickRoom) * 100) * 10;
-  
+  // Sick Rooms
+  var score_sickRoom = 100*(inputs["iQS"]*2 + inputs["amblnc"]*2 + inputs["lHsptl"]*2 + inputs["emrgncResp"] + inputs["hl"] + 
+                                  inputs["imdtFM"] * Math.max( 0, (1.0 - inputs["lstUpdtTime"]/30))*2 );
+  var score_isolation = Math.round(score_sickRoom / 10) * 10;
+  var sg_isolation = "Well done!";
+  if (!inputs["iQS"]){
+    sg_isolation = "Designate place for immediate quarantine";
+  } else if (!inputs["lHsptl"]){
+    sg_isolation = "Prepare a list of COVID-19 ready hospitals";
+  } else if (!inputs["amblnc"]){
+    sg_isolation = "Keep an ambulance on stand-by";
+  } else if (!inputs["emrgncResp"]) {
+    sg_isolation = "Give instructions to transport department on COVID-19 emergency";
+  } else if (!inputs["hl"]) {
+    sg_isolation = "Consider having a dedicated COVID-19 helpline";
+  } else if (Math.max( 0, (1.0 - inputs["lstUpdtTime"]/30)) < 0.5 ) {
+    sg_isolation = "Update contact list of employees and immediate family members";
+  }
+
   // Interactions spaces
   var time_brkfst = 15; // In minutes
   var time_lnch = 30;
@@ -265,9 +275,32 @@ function calcScore () {
   // Mobility
   var nLM = nEmp - inputs["nHM"] - inputs["nMM"]
   var score_mobility = ((0.25*nLM + 0.5*inputs["nMM"] + inputs["nHM"])/(nLM+inputs["nMM"]+inputs["nHM"])) * (1-0.4*inputs["msk"]);
+  score_mobility = (1-score_mobility)*1000/0.85;
+  score_mobility = Math.round(score_mobility / 10) * 10;
 
+  var sg_mobility = "Well done!";
+  if (!inputs["msk"]){
+    sg_mobility = "Consider mandating masks while interacting with other employees";
+  } else if (score_mobility<700){
+    sg_mobility = "Consider allowing a few high mobility users to work from home";
+  }
+
+  var score_meetings = 1000;
   // Meetings
-  var score_meetings = inputs["nMPD"] * inputs["avgMS"] * (1-0.4*inputs["msk"]) / (2*nEmp);
+  if (inputs["nMPD"] && inputs["avgMS"]){
+    score_meetings = 1000*nEmp/(inputs["nMPD"] * inputs["avgMS"] * (1-0.4*inputs["msk"]));
+  }
+  if (score_meetings>1000){
+    score_meetings = 1000;
+  }
+  var sg_meetings = "Well done!";
+  if (!inputs["msk"]){
+    sg_meetings = "Consider making mask mandatory in all the meetings";
+  } else if (score_meetings<700){
+    sg_meetings = "Consider shifting to online meetings";
+  } else if (inputs["avgMS"]>5) {
+    sg_meetings = "Consider reducing number of employees per meeting";
+  }
 
   // Outside contacts
   var score_outside =  inputs["nVstrs"] * Math.pow(inputs["nEmpCstmr"], 0.1) * (1-0.4*inputs["msk"]) * (1-0.1*inputs["glvs"]) / nEmp
@@ -276,13 +309,41 @@ function calcScore () {
   var score_other_spaces = 0.5 * inputs["oMtngSpts"] * Math.max(1-0.1*(inputs["freqCln"] + Math.min(1, inputs["nHskpngStff"])), 0.5) * (1-0.4*inputs["msk"]);
 
   // Epidemic related precautions
-  var score_epidemic = 1 - 0.1*(inputs["tempScreening"]*2 + inputs["faceCover"]*2 + 
-                                ((inputs["nHsS"] > (inputs["tArea"]/2000)) ? 1 : 0))*2 +
-                                Math.max(inputs["nDinf"], 2) + Math.min(1, inputs["smkZS"]*inputs["nPGT"]) + 
-                                ((inputs["nWsB"] > (inputs["nFloors"]*2) ? 1 : 0));                              
+  var score_epidemic = 100*(inputs["tempScreening"]*2 + inputs["faceCover"]*2 +
+                                ((inputs["nHsS"] > (inputs["tArea"]/1000)) ? 1 : 0)*2 +
+                                Math.min(inputs["nDinf"], 2) + Math.min(1, inputs["smkZS"]*((inputs["nPGT"]>0) ? 0 : 1)) + 
+                                ((inputs["nWsB"] > (inputs["nFloors"]*2) ? 1 : 0)) );                              
+  
+  score_epidemic = Math.round(score_epidemic / 10) * 10;
+  var sg_epidemic = "Well done!";
+  if (!inputs["tempScreening"]){
+    sg_epidemic = "Consider temperature screening of all employees on entry and exit";
+  } else if (!inputs["faceCover"]){
+    sg_epidemic = "Consider mandating face cover inside the office premise";
+  } else if (!(inputs["nHsS"] > (inputs["tArea"]/1000)) ? 1 : 0){
+    sg_epidemic = "Consider increasing hand sanitiser stations";
+  } else if (inputs["nDinf"]<2){
+    sg_epidemic = "Consider disinfecting the office at least 2 times a day";
+  } else if (!inputs["smkZS"]){
+    sg_epidemic = "Consider sealing smoking zones";
+  } else if (!(inputs["nPGT"]>0) ? 0 : 1){
+    sg_epidemic = "Consider banning pan-masala, gutkha and tobaccon on premise";
+  } else if (!(inputs["nWsB"] > (inputs["nFloors"]*2) ? 1 : 0)){
+    sg_epidemic = "Consider having more warning sign boards for \'no spitting\'";
+  }
 
   // Advertisement and outreach
-  var score_adv_outrch = 1 - (inputs["covidPage"] + inputs["faq"] + inputs["sPers"])/3 ;
+  var score_adv_outrch = (inputs["covidPage"] + inputs["faq"] + inputs["sPers"] + (inputs["nWsB"] > (inputs["nFloors"]*2) ? 1 : 0))*1000/4 ;
+  var sg_adv_outrch = "Well done!";
+  if (!inputs["covidPage"]){
+    sg_adv_outrch = "Prepare a COVID-19 awareness page";
+  } else if (!inputs["faq"]){
+    sg_adv_outrch = "Provide access to COVID-19 FAQ to the employees";
+  } else if (!inputs["sPers"]){
+    sg_adv_outrch = "Designate a cleanliness, awareness and safety person";
+  } else if (!(inputs["nWsB"] > (inputs["nFloors"]*2) ? 1 : 0)){
+    sg_adv_outrch = "Consider having more warning sign boards for \'no spitting\'";
+  }
 
   // Company Transport
   var F = Math.max(inputs["bsCpctCur"]/inputs["bsCpctAct"], inputs["mnBsCpctCur"]/inputs["mnBsCpctAct"], inputs["vnCpctCur"]/inputs["vnCpctAct"],
@@ -331,16 +392,16 @@ function calcScore () {
 	resTable += "<th>Category</th><th>Score</th>";
 	resTable += "<th>Suggestions for improvements</th></thead>";
   resTable += "<tr><td>Seating arrangements and work timings</td><td>" + "1000" + "</td><td></td></tr>"
-  resTable += "<tr><td>Mobility in office</td><td>" + score_mobility + "</td><td></td></tr>"
-  resTable += "<tr><td>Meeting space in office</td><td>" + score_meetings + "</td><td></td></tr>"
+  resTable += "<tr><td>Mobility in office</td><td>" + score_mobility + "</td><td>"+ sg_mobility +"</td></tr>"
+  resTable += "<tr><td>Meeting space in office</td><td>" + score_meetings + "</td><td>" + sg_meetings + "</td></tr>"
   resTable += "<tr><td>Outside contacts in office</td><td>" + score_outside + "</td><td></td></tr>"
   resTable += "<tr><td>Interaction spaces</td><td>" + score_other_spaces + "</td><td></td></tr>"
-  resTable += "<tr><td>Epidemic related precautions</td><td>" + score_epidemic + "</td><td></td></tr>"
+  resTable += "<tr><td>Epidemic related precautions</td><td>" + score_epidemic + "</td><td>" + sg_epidemic + "</td></tr>"
   resTable += "<tr><td>Transportation</td><td>" + score_total_transport + "</td><td>" + sg_transport + "</td></tr>"
 	resTable += "<tr><td>Office infrastructure</td><td>" + "1000" + "</td><td></td></tr>"
 	resTable += "<tr><td>Hygiene and sanitation</td><td>" + score_sanitation + "</td><td>" + sg_sanitation + "</td></tr>"
-	resTable += "<tr><td>Awareness and readiness</td><td>" + score_isolation + "</td><td>Update employee contact lists more frequently</td></tr>"
-  resTable += "<tr><td>Advertisement and outreach</td><td>" + score_adv_outrch + "</td><td></td></tr>"
+	resTable += "<tr><td>Awareness and readiness</td><td>" + score_isolation + "</td><td>" + sg_isolation + "</td></tr>"
+  resTable += "<tr><td>Advertisement and outreach</td><td>" + score_adv_outrch + "</td><td>" + sg_adv_outrch + "</td></tr>"
   resTable += "</table>";
 	document.getElementById("scoreTable").innerHTML = resTable;
 }

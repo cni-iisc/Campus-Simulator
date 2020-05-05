@@ -272,7 +272,7 @@ function calcScore () {
   var score_outside =  inputs["nVstrs"] * Math.pow(inputs["nEmpCstmr"], 0.1) * (1-0.4*inputs["msk"]) * (1-0.1*inputs["glvs"]) / nEmp
 
   // Other meeting spaces
-  var score_others = 0.5 * inputs["oMtngSpts"] * Math.max(1-0.1*(inputs["freqCln"] + Math.min(1, inputs["nHskpngStff"])), 0.5) * (1-0.4*inputs["msk"]);
+  var score_other_spaces = 0.5 * inputs["oMtngSpts"] * Math.max(1-0.1*(inputs["freqCln"] + Math.min(1, inputs["nHskpngStff"])), 0.5) * (1-0.4*inputs["msk"]);
 
   // Epidemic related precautions
   var score_epidemic = 1 - 0.1*(inputs["tempScreening"]*2 + inputs["faceCover"]*2 + 

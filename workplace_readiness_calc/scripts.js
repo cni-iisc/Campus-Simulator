@@ -288,11 +288,13 @@ function calcScore () {
   var score_meetings = 1000;
   // Meetings
   if (inputs["nMPD"] && inputs["avgMS"]){
-    score_meetings = 1000*nEmp/(inputs["nMPD"] * inputs["avgMS"] * (1-0.4*inputs["msk"]));
+    score_meetings = 1000*nEmp/(inputs["nMPD"] * Math.pow(inputs["avgMS"], 1.2) * (1-0.4*inputs["msk"]));
   }
   if (score_meetings>1000){
     score_meetings = 1000;
   }
+  score_meetings = Math.round(score_meetings / 10) * 10;
+
   var sg_meetings = "Well done!";
   if (!inputs["msk"]){
     sg_meetings = "Consider making mask mandatory in all the meetings";
@@ -303,7 +305,20 @@ function calcScore () {
   }
 
   // Outside contacts
-  var score_outside =  inputs["nVstrs"] * Math.pow(inputs["nEmpCstmr"], 0.1) * (1-0.4*inputs["msk"]) * (1-0.1*inputs["glvs"]) / nEmp
+  var score_outside = 0;
+  if (inputs["nVstrs"] && inputs["nEmpCstmr"]){
+    score_outside =  1000*nEmp/(inputs["nVstrs"] * Math.pow(inputs["nEmpCstmr"], 0.1) * (1-0.4*inputs["msk"]) * (1-0.1*inputs["glvs"]));
+  }
+  if (score_outside>1000){
+    score_outside = 1000;
+  }
+
+  var sg_outside = "well done!";
+  if (!inputs["msk"]){
+    sg_outside = "Consider using masks while meeting visitors";
+  } else if (!inputs["glvs"]){
+    sg_outside = "Consider wearing gloves while meeting visitors";
+  }
 
   // Other meeting spaces
   var score_other_spaces = 0.5 * inputs["oMtngSpts"] * Math.max(1-0.1*(inputs["freqCln"] + Math.min(1, inputs["nHskpngStff"])), 0.5) * (1-0.4*inputs["msk"]);
@@ -375,17 +390,19 @@ function calcScore () {
   }
   var score_total_transport = (score_company_transport + score_self_transport + score_walk + score_public_transport)/
                               (inputs["cmpnTrnsprtUsrs"] + inputs["slfTrnsprtUsrs"] + inputs["nWlk"] + inputs["nPubTrvl"]);
+  var score_total_transport_scaled = 800*3.5/score_total_transport;
+  score_total_transport_scaled = Math.round(score_total_transport_scaled / 10) * 10;
 
-  var sg_transport = "";
-  if (F>0.5){
+  var sg_transport = "Well done!";
+  if ((inputs["mskMndt"]+inputs["mskCar"]+inputs["mskWlk"]+inputs["mskPub"])<3){
+    sg_transport = "Consider using mask while travelling";
+  } else if (F>0.5){
     sg_transport = "Consider reducing numbers per journey";
-  } else if ((inputs["nTrnsptSnt"]+inputs["drvSrnd"]+inputs["hsVhcl"]+inputs["vhclSnt"]+inputs["noACVhcl"])<0.3){
-    sg_transport = "Consider more frequent cleaning of vehicles, use of hand sanitiser etc.";
-  } else if (inputs["mskMndt"]==0){
-    sg_transport = "Consider mandating masks while travelling";
+  } else if ((inputs["nTrnsptSnt"]+inputs["drvSrnd"]+inputs["hsVhcl"]+inputs["vhclSnt"]+inputs["noACVhcl"])<3 && inputs["cmpnTrnsprtUsrs"]>0){
+      sg_transport = "Consider more use of hand sanitiser etc.";
   }
 
-  onSuccess("Total Employees: " + nEmp);
+  onSuccess("Check you workplace ratings!");
 
 	var resTable = "";
 	resTable += "<table class='table table-bordered'><thead class='bg-dark'>";
@@ -394,10 +411,10 @@ function calcScore () {
   resTable += "<tr><td>Seating arrangements and work timings</td><td>" + "1000" + "</td><td></td></tr>"
   resTable += "<tr><td>Mobility in office</td><td>" + score_mobility + "</td><td>"+ sg_mobility +"</td></tr>"
   resTable += "<tr><td>Meeting space in office</td><td>" + score_meetings + "</td><td>" + sg_meetings + "</td></tr>"
-  resTable += "<tr><td>Outside contacts in office</td><td>" + score_outside + "</td><td></td></tr>"
+  resTable += "<tr><td>Outside contacts in office</td><td>" + score_outside + "</td><td>" + sg_outside + "</td></tr>"
   resTable += "<tr><td>Interaction spaces</td><td>" + score_other_spaces + "</td><td></td></tr>"
   resTable += "<tr><td>Epidemic related precautions</td><td>" + score_epidemic + "</td><td>" + sg_epidemic + "</td></tr>"
-  resTable += "<tr><td>Transportation</td><td>" + score_total_transport + "</td><td>" + sg_transport + "</td></tr>"
+  resTable += "<tr><td>Transportation</td><td>" + score_total_transport_scaled + "</td><td>" + sg_transport + "</td></tr>"
 	resTable += "<tr><td>Office infrastructure</td><td>" + "1000" + "</td><td></td></tr>"
 	resTable += "<tr><td>Hygiene and sanitation</td><td>" + score_sanitation + "</td><td>" + sg_sanitation + "</td></tr>"
 	resTable += "<tr><td>Awareness and readiness</td><td>" + score_isolation + "</td><td>" + sg_isolation + "</td></tr>"

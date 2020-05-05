@@ -25,7 +25,7 @@ function getValues(){
   var dict = new Object();
   
   // Nature of Establishment
-  dict["NOE"] = document.getElementById("NOE").value; // Nature of Establishment
+  dict["NOE"] = parseInt(document.getElementById("NOE").value); // Nature of Establishment
   
   // Employee Information
   dict["nM"] = parseInt(document.getElementById("nM").value); // Number of male employees
@@ -76,7 +76,7 @@ function getValues(){
   dict["tempScreening"] = parseInt(document.querySelector('input[name="tempScreening"]:checked').value); // Temperature screening of employee
   dict["faceCover"] = parseInt(document.querySelector('input[name="faceCover"]:checked').value); // Face is covered with mask
   dict["nHsS"] = parseInt(document.getElementById("nHsS").value); // Number of hand-sanitiser stations
-  dict["nDinf"] = document.getElementById("nDinf").value; // Number of disinfection activity per day
+  dict["nDinf"] = parseInt(document.getElementById("nDinf").value); // Number of disinfection activity per day
   dict["smkZS"] = parseInt(document.querySelector('input[name="smkZS"]:checked').value); // Smoking zone sealed
   dict["nPGT"] = parseInt(document.getElementById("nPGT").value); // Number of employees consuming Pan masala, gutkha, tobacco 
   dict["nWsB"] = parseInt(document.getElementById("nWsB").value); // Number of warning sign boards
@@ -277,7 +277,7 @@ function calcScore () {
   // Epidemic related precautions
   var score_epidemic = 1 - 0.1*(inputs["tempScreening"]*2 + inputs["faceCover"]*2 + 
                                 ((inputs["nHsS"] > (inputs["tArea"]/2000)) ? 1 : 0))*2 +
-                                Math.max(inputs["Dinf"], 2) + Math.min(1, inputs["smkZS"]*inputs["nPGT"]) + 
+                                Math.max(inputs["nDinf"], 2) + Math.min(1, inputs["smkZS"]*inputs["nPGT"]) + 
                                 ((inputs["nWsB"] > (inputs["nFloors"]*2) ? 1 : 0));                              
 
   // Advertisement and outreach

@@ -87,9 +87,11 @@ body, html {
 #Contact {background-color: #6600cc;}
 #About {background-color: #b38600;}
 
+/*
 table, th, td {
-  border: 1px solid darkgreen;
+  border: 1px solid #ffff80;
 }
+*/
 
 a {
     text-decoration: none;

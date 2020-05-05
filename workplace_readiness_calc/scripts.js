@@ -326,9 +326,8 @@ function calcScore () {
   onSuccess("Total Employees: " + nEmp);
 
 	var resTable = "";
-	resTable += "<table><tr><td>Category</td>";
-	resTable += "<td>Score</td>";
-	resTable += "<td>Suggestions for improvements</td></tr>";
+	resTable += "<table class='table table-bordered'><thead class='bg-dark'>";
+	resTable += "<tr><th>Category</th><th>Score</th><th>Suggestions for improvements</th></tr></thead>";
 	resTable += "<tr><td>Seating arrangements and work timings</td><td>" + "1000" + "</td><td></td></tr>"
 	resTable += "<tr><td>Transportation</td><td>" + score_total_transport + "</td><td>" + sg_transport + "</td></tr>"
 	resTable += "<tr><td>Office infrastructure</td><td>" + "1000" + "</td><td></td></tr>"

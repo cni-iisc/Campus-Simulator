@@ -217,9 +217,10 @@ function calcScore () {
   // Toilet scores
   var cRateGentsToilet = nGntsTlt * avgTltVstsPrDy * avgTltDrtn * (Math.max(0.5, (1.0 - 0.1*inputs["tClnFreq"]) )) * (1.0 - 0.1*inputs["spPrsnt"]) / (tltCnctrtnHrs*60*inputs["nGntsT"]);
   var cRateLadiesToilet = nLdsTlt * avgTltVstsPrDy * avgTltDrtn * (Math.max(0.5, (1.0 - 0.1*inputs["tClnFreq"]) )) * (1.0 - 0.1*inputs["spPrsnt"]) / (tltCnctrtnHrs*60*inputs["nLdsT"]);
+  var aggrToiletSc = (cRateLadiesToilet + cRateGentsToilet) / (inputs["nM"] + inputs["nF"] + inputs["nOth"] );
   var score_sanitation = 1000;
     var sg_sanitation = "";
-  console.log(cRateLadiesToilet, cRateGentsToilet);
+  console.log(cRateLadiesToilet, cRateGentsToilet, aggrToiletSc);
 
   if (cRateGentsToilet + cRateLadiesToilet == 0) {
       score_sanitation = 1000;

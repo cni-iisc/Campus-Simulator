@@ -4,17 +4,46 @@ SPDX-License-Identifier: Apache-2.0-->
 
 <html>
     <head>
+        <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <base target="_top">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 	<!-- <?!= include('JavaScript'); ?> -->
+	<title>COVID-19 Workplace Readiness Assessment</title>
 	<link rel="stylesheet" href="style.css">
+	<link rel="stylesheet" href="font-awesome.min.css">
+        <link rel="icon" type="image/png" sizes="32x32" href="https://iisc.ac.in/wp-content/themes/iisc/images/favicon/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="96x96" href="https://iisc.ac.in/wp-content/themes/iisc/images/favicon/favicon-96x96.png">
     </head>
+
     <body>
+      <section id="header">
+      <div class="d-flex bg-dark justify-content-between align-items-center">
+            <div class="d-flex p-2 text-white">
+              <div class="d-flex flex-column px-3 py-1">
+              <a target="_blank" href="https://www.iisc.ac.in"><img src="images/iisc_1.png" alt="IISc logo" width="70px"></a>
+              </div>
+              <div class="flex-shrink-1 flex-column">
+                <div class="d-flex"><a target="_blank" href="https://cni.iisc.ac.in" style="color:#ffff99">Centre for Networked Intelligence</a></div>
+                <div class="d-flex"><a target="blank" href="https://cps.iisc.ac.in" style="color:#ffff99">Robert Bosch Centre for CPS</a></div>
+                <div class="d-flex"><a target="blank" href="https://iisc.ac.in" style="color:#ffff99">Indian Institute of Science, Bangalore</a></div>
+              </div>
+            </div>
+            <div class="d-flex p-2 text-white">
+              <h4>COVID-19 Workplace Readiness Assessment</h4>
+            </div>
+            <div class="d-flex p-2 text-white">
+                <div class="d-flex px-3 py-1">
+                  <a target="_blank" href="https://www.cisco.com/c/en_in/about/csr.html"><img src="images/cisco-csr.png" alt="Cisco CSR logo" width="180px"></a>
+                </div>
+            </div>
+      </div>
+      </section>
+
 	<button class="tablink" onclick="openPage('Qn', this, '#2c4268')" id="QnTab">Questionnaire</button>
 	<button class="tablink" onclick="openPage('Scores', this, '#26734d')" id="ScoresTab">Scores</button>
 	<button class="tablink" onclick="openPage('About', this, '#b38600')">About</button>
-	<button class="tablink" onclick="openPage('Contact', this, '#660066')">Contact</button>
+	<button class="tablink" onclick="openPage('Contact', this, '#472686')">Contact</button>
 	
 	<div id="Qn" class="tabcontent">
         <div class="container">
@@ -1034,30 +1063,44 @@ SPDX-License-Identifier: Apache-2.0-->
           </div>
      </div>
 	
-	<div id="Contact" class="tabcontent">
+	    <div id="Contact" class="tabcontent">
+            <div class="container">
+                <div class="row justify-content-between">
+                <div class="col">
+        	        <h3>Contact</h3>
+                    <p><h5><a href="https://cni.iisc.ac.in"  target="_blank">Centre for Networked Intelligence</a></h5></p>
+                    <p><h5><a href="https://cps.iisc.ac.in"  target="_blank">Robert Bosch Centre for Networked Intelligence</a></h5></p>
+                    <p><h5><a href="https://iisc.ac.in"  target="_blank">Indian Institute of Science, Bangalore</a></h5></p>
+                </div>
+                <div class="col-md-2 justify-content-end">
+                    <a href="https://www.iisc.ac.in" target="_blank"><img src="images/iisc_1.png" alt="IISc logo" width="120px"></a>
+                </div>
+                </div>
+            </div>
+	    </div>
+	    
+	    <div id="About" class="tabcontent">
         <div class="container">
-            <div class="row justify-content-between">
-            <div class="col">
-    	        <h3>Contact</h3>
-                <p><h5><a href="https://cni.iisc.ac.in"  target="_blank">Centre for Networked Intelligence</a></h5></p>
-                <p><h5><a href="https://cps.iisc.ac.in"  target="_blank">Robert Bosch Centre for Networked Intelligence</a></h5></p>
-                <p><h5><a href="https://iisc.ac.in"  target="_blank">Indian Institute of Science, Bangalore</a></h5></p>
-            </div>
-            <div class="col-md-2 justify-content-end">
-                <a href="https://www.iisc.ac.in" target="_blank"><img src="images/iisc_1.png" alt="IISc logo" width="120px"></a>
-            </div>
-            </div>
+          <div class="row">
+	        <h3>About</h3>
+	        <p>This is a COVID-19 workplace readiness calculator, developed with inputs from COVID-19 Task Force Karnataka, to help establishments assess their readiness for re-opening their premises after shutdown.</p>
+          </div>
         </div>
-	</div>
-	
-	<div id="About" class="tabcontent">
-	  <h3>About</h3>
-	  <p>This is a COVID-19 workplace readiness calculator, developed with inputs from COVID-19 Task Force Karnataka, to help establishments assess their readiness for re-opening their premises after shutdown.</p>
-	</div> 
+	    </div> 
+
+      <section id="footer">
+        <div class="d-flex bg-dark p-1 text-white justify-content-between">
+          <div class="d-flex px-3"><b><a href="mailto:contact.cni@iisc.ac.in" style="color:#ffff99"><i class="fa fa-envelope" aria-hidden="true"></i> contact.cni@iisc.ac.in</a></b></div>
+            
+          <div class="d-flex px-3"><a style="color:#ffff99" target="_blank" href="https://cni.iisc.ac.in/workplace-readiness">https://cni.iisc.ac.in/workplace-readiness</a></div>
+          <div class="d-flex px-3">Licensed under Apache 2.0 license. Copyright [2020] IISc, Bangalore</div>
+        </div>
+      </section>
+
      <script type="text/javascript" src="scripts.js"></script>
      <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
      <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
-    </body>
+  </body>
 </html>
 

@@ -194,8 +194,8 @@ function calcScore () {
   inputs = getValues(); //Read values from html page...
   console.log(inputs);
 
-  //Preetam changes; insert near Office Infra inputs
-  var nTravels = 4;
+  // Office Infrastructure
+  var nEmp = inputs["nM"] + inputs["nF"] + inputs["nOth"];
   var nMeets = 4;
   var aOpen = inputs["tArea"] - inputs["nSOfcRm"]*150 - inputs["n2pOfcRm"]*200 - inputs["n2pPlusOfcRm"]*240;
   var cFactor = Math.max( ((inputs["nCub"] + inputs["nRem"])*40 / aOpen), 1 ); 
@@ -207,13 +207,24 @@ function calcScore () {
   var shiftDelta = ( (inputs["tGapShift"] > 8) ? 0 : (8 - inputs["tGapShift"]));
   var premContacts = (accessContacts + stairsElev + crowding/ nEmp ) * (1 + (shiftDelta/8.0));
 
+  // Other meeting spaces
+  var score_other_spaces = 0.5 * inputs["oMtngSpts"] * Math.max(1-0.1*(inputs["freqCln"] + Math.min(1, inputs["nHskpngStff"])), 0.5) * (1-0.4*inputs["msk"]);
+  var score_office_infra = 800*31/(premContacts + score_other_spaces);
+  var score_office_infra = Math.round(score_office_infra / 10) * 10;
+  var sg_office_infra = "Well done!"
+  if (score_office_infra<700){
+    sg_office_infra = "Consider encouraging more employees to work from home or shifts";
+  } else if (inputs["nEleDinf"]<2) {
+    sg_office_infra = "Consider cleaning the lifts more often";
+  }
+
+  // Toilet scores
   var nGntsTlt = inputs["nM"] + inputs["nOth"]/2.0; 
   var nLdsTlt = inputs["nF"] + inputs["nOth"]/2.0; 
   var avgTltVstsPrDy = 5; 
   var avgTltDrtn = 4;
   var tltCnctrtnHrs = 4; 
 
-  // Toilet scores
   var cRateGentsToilet = nGntsTlt * avgTltVstsPrDy * avgTltDrtn * (Math.max(0.5, (1.0 - 0.1*inputs["tClnFreq"]))) * (1.0 - 0.1*inputs["spPrsnt"]) / (tltCnctrtnHrs*60*inputs["nGntsT"]);
   var cRateLadiesToilet = nLdsTlt * avgTltVstsPrDy * avgTltDrtn * (Math.max(0.5, (1.0 - 0.1*inputs["tClnFreq"]))) * (1.0 - 0.1*inputs["spPrsnt"]) / (tltCnctrtnHrs*60*inputs["nLdsT"]);
   //var aggrToiletSc = (cRateLadiesToilet + cRateGentsToilet) / (inputs["nM"] + inputs["nF"] + inputs["nOth"] );
@@ -260,7 +271,6 @@ function calcScore () {
   var num_wtr_sought = 5;
   var prsnl_area = 10; // In feet
   var pvtl_hrs = 4;
-  var nEmp = inputs["nM"] + inputs["nF"] + inputs["nOth"];
   var nCftr = inputs["nBrkfst"] + inputs["nLnch"] + inputs["nSnck"];
   var anncmnt = 1;
 
@@ -272,6 +282,16 @@ function calcScore () {
   var score_cafeteria = (mtng_brkfst + mtng_lnch + mntg_snck + mntg_wtr + (inputs["nEmpHL"]*mtng_lnch/(nCftr*2))) / nEmp;
   score_cafeteria = score_cafeteria * Math.max((1 - 0.1*( anncmnt + inputs["freqCln"] - inputs["utnslShrd"])), 1/2);
   
+  var score_cafeteria_scaled = 800*0.015/score_cafeteria;
+  if (score_cafeteria_scaled>1000){
+    score_cafeteria_scaled = 1000;
+  }
+  var score_cafeteria_scaled = Math.round(score_cafeteria_scaled / 10) * 10;
+  var sg_cafeteria = "Well done!";
+  if (score_cafeteria_scaled<700){
+    sg_cafeteria = "Increase the cafeteria area to accomodate more people or encourage work from home";
+  }
+
   // Mobility
   var nLM = nEmp - inputs["nHM"] - inputs["nMM"]
   var score_mobility = ((0.25*nLM + 0.5*inputs["nMM"] + inputs["nHM"])/(nLM+inputs["nMM"]+inputs["nHM"])) * (1-0.4*inputs["msk"]);
@@ -313,15 +333,12 @@ function calcScore () {
     score_outside = 1000;
   }
 
-  var sg_outside = "well done!";
+  var sg_outside = "Well done!";
   if (!inputs["msk"]){
     sg_outside = "Consider using masks while meeting visitors";
   } else if (!inputs["glvs"]){
     sg_outside = "Consider wearing gloves while meeting visitors";
   }
-
-  // Other meeting spaces
-  var score_other_spaces = 0.5 * inputs["oMtngSpts"] * Math.max(1-0.1*(inputs["freqCln"] + Math.min(1, inputs["nHskpngStff"])), 0.5) * (1-0.4*inputs["msk"]);
 
   // Epidemic related precautions
   var score_epidemic = 100*(inputs["tempScreening"]*2 + inputs["faceCover"]*2 +
@@ -408,14 +425,13 @@ function calcScore () {
 	resTable += "<table class='table table-bordered'><thead class='bg-dark'>";
 	resTable += "<th>Category</th><th>Score</th>";
 	resTable += "<th>Suggestions for improvements</th></thead>";
-  resTable += "<tr><td>Seating arrangements and work timings</td><td>" + "1000" + "</td><td></td></tr>"
   resTable += "<tr><td>Mobility in office</td><td>" + score_mobility + "</td><td>"+ sg_mobility +"</td></tr>"
   resTable += "<tr><td>Meeting space in office</td><td>" + score_meetings + "</td><td>" + sg_meetings + "</td></tr>"
   resTable += "<tr><td>Outside contacts in office</td><td>" + score_outside + "</td><td>" + sg_outside + "</td></tr>"
-  resTable += "<tr><td>Interaction spaces</td><td>" + score_other_spaces + "</td><td></td></tr>"
+  resTable += "<tr><td>Interaction spaces</td><td>" + score_cafeteria_scaled + "</td><td>" + sg_cafeteria + "</td></tr>"
   resTable += "<tr><td>Epidemic related precautions</td><td>" + score_epidemic + "</td><td>" + sg_epidemic + "</td></tr>"
   resTable += "<tr><td>Transportation</td><td>" + score_total_transport_scaled + "</td><td>" + sg_transport + "</td></tr>"
-	resTable += "<tr><td>Office infrastructure</td><td>" + "1000" + "</td><td></td></tr>"
+	resTable += "<tr><td>Office infrastructure</td><td>" + score_office_infra + "</td><td>" + sg_office_infra + "</td></tr>"
 	resTable += "<tr><td>Hygiene and sanitation</td><td>" + score_sanitation + "</td><td>" + sg_sanitation + "</td></tr>"
 	resTable += "<tr><td>Awareness and readiness</td><td>" + score_isolation + "</td><td>" + sg_isolation + "</td></tr>"
   resTable += "<tr><td>Advertisement and outreach</td><td>" + score_adv_outrch + "</td><td>" + sg_adv_outrch + "</td></tr>"

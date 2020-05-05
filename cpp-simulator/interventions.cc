@@ -573,19 +573,23 @@ void get_kappa_NYC(vector<agent>& nodes, vector<house>& homes, const vector<work
 }
 
 void get_kappa_Mumbai(vector<agent>& nodes, vector<house>& homes, const vector<workplace>& workplaces, const vector<community>& communities, int cur_time, double FIRST_PERIOD, double SECOND_PERIOD){
-	
-	if(cur_time < (GLOBAL.NUM_DAYS_BEFORE_INTERVENTIONS+FIRST_PERIOD)*GLOBAL.SIM_STEPS_PER_DAY){
-	  get_kappa_lockdown(nodes, homes, workplaces, communities, cur_time);
-	  //Update global travel parameters
-	  GLOBAL.TRAINS_RUNNING = false;
-	  GLOBAL.KAPPA_TRAVEL = 0.0;
-	} else if(cur_time < (GLOBAL.NUM_DAYS_BEFORE_INTERVENTIONS+FIRST_PERIOD+SECOND_PERIOD)*GLOBAL.SIM_STEPS_PER_DAY){
+    auto LOCKDOWN_PERIOD = FIRST_PERIOD + SECOND_PERIOD;
+	double USUAL_COMPLIANCE_PROBABILITY = 0.6;
+	double HD_AREA_COMPLIANCE_PROBABILITY = 0.5;
+	if(cur_time
+	   < (GLOBAL.NUM_DAYS_BEFORE_INTERVENTIONS + LOCKDOWN_PERIOD)
+	   *GLOBAL.SIM_STEPS_PER_DAY){
+	  set_compliance(nodes, homes,
+					 USUAL_COMPLIANCE_PROBABILITY,
+					 HD_AREA_COMPLIANCE_PROBABILITY);
 	  get_kappa_lockdown(nodes, homes, workplaces, communities, cur_time);
 	  //Update global travel parameters
 	  GLOBAL.TRAINS_RUNNING = false;
 	  GLOBAL.KAPPA_TRAVEL = 0.0;
 	} else{
-	  set_compliance(nodes, homes, 0.6); //compliance hard coded to 0.6 post lockdown.
+	  set_compliance(nodes, homes,
+					 USUAL_COMPLIANCE_PROBABILITY,
+					 HD_AREA_COMPLIANCE_PROBABILITY);
 	  get_kappa_custom(nodes, homes, workplaces, communities, cur_time, true, true, false, true, true, false, 0, 0.75);
 	  //Update global travel parameters
 	  GLOBAL.TRAINS_RUNNING = true;
@@ -595,15 +599,22 @@ void get_kappa_Mumbai(vector<agent>& nodes, vector<house>& homes, const vector<w
 
 void get_kappa_Mumbai_cyclic(vector<agent>& nodes, vector<house>& homes, const vector<workplace>& workplaces, const vector<community>& communities, int cur_time, double FIRST_PERIOD, double SECOND_PERIOD){
   auto LOCKDOWN_PERIOD = FIRST_PERIOD + SECOND_PERIOD;
+  double USUAL_COMPLIANCE_PROBABILITY = 0.6;
+  double HD_AREA_COMPLIANCE_PROBABILITY = 0.5;
   if(cur_time
 	 < (GLOBAL.NUM_DAYS_BEFORE_INTERVENTIONS + LOCKDOWN_PERIOD)
 	 *GLOBAL.SIM_STEPS_PER_DAY){
+	set_compliance(nodes, homes,
+				   USUAL_COMPLIANCE_PROBABILITY,
+				   HD_AREA_COMPLIANCE_PROBABILITY);
 	get_kappa_lockdown(nodes, homes, workplaces, communities, cur_time);
 	//Update global travel parameters
 	GLOBAL.TRAINS_RUNNING = false;
 	GLOBAL.KAPPA_TRAVEL = 0.0;
   } else{
-	set_compliance(nodes, homes, 0.6); //compliance hard coded to 0.6 post lockdown.
+	set_compliance(nodes, homes,
+				   USUAL_COMPLIANCE_PROBABILITY,
+				   HD_AREA_COMPLIANCE_PROBABILITY);
 	get_kappa_custom(nodes, homes, workplaces, communities, cur_time, true, true, false, true, true, false, 0, 0.75);
 	//Update global travel parameters
 	GLOBAL.CYCLIC_POLICY_ENABLED = true;

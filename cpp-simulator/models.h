@@ -484,5 +484,6 @@ double psi_T(const agent& node, double cur_time);
 double interpolate(double start, double end, double current, double threshold);
 
 //reset household and individual compliance flags based on compliance probability.
-void set_compliance(std::vector<agent> & nodes, std::vector<house> & homes,  double compliance_probability);
+void set_compliance(std::vector<agent> & nodes, std::vector<house> & homes,
+					double usual_compliance_probability, double hd_area_compliance_probability);
 #endif

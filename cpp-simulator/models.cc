@@ -164,12 +164,20 @@ double interpolate(double start, double end, double current, double threshold){
   }
 }
 
-void set_compliance(std::vector<agent> & nodes, std::vector<house> & homes,  double compliance_probability){
+void set_compliance(std::vector<agent> & nodes, std::vector<house> & homes,
+					double usual_compliance_probability, double hd_area_compliance_probability){
   //set the compliant flag for a household and it's individuals based on compliance_probability
-  for(count_type count = 0; count < homes.size(); ++count){
-    homes[count].compliant=(homes[count].non_compliance_metric <= compliance_probability);
-    for(count_type individual_count = 0; individual_count<homes[count].individuals.size();++individual_count){
-      nodes[homes[count].individuals[individual_count]].compliant = homes[count].compliant;
-    }
+  for(auto& node: nodes){
+	auto home = node.home;
+	if(node.hd_area_resident){
+	  homes[home].compliant =
+		(homes[home].non_compliance_metric
+		 <= hd_area_compliance_probability);
+	} else {
+	  homes[home].compliant =
+		(homes[home].non_compliance_metric
+		 <= usual_compliance_probability);
+	}
+	node.compliant = homes[home].compliant;
   }
 }

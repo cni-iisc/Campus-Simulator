@@ -297,6 +297,10 @@ SPDX-License-Identifier: Apache-2.0-->
                                                        <input class="form-control" type="number" name="nEle" id="nEle" min="0" value="1">
                                                   </div>
                                                   <div class="form-group col-md-12">
+                                                       <label for="eleCpct">Average capacity of lifts</label>
+                                                       <input class="form-control" type="number" name="eleCpct" id="eleCpct" min="0" value="5">
+                                                  </div>
+                                                  <div class="form-group col-md-12">
                                                        <label for="nEleDinf">Number of times a day each lift is disinfected</label>
                                                        <input class="form-control" type="number" name="nEleDinf" id="nEleDinf" min="0" value="1">
                                                   </div>
@@ -988,6 +992,17 @@ SPDX-License-Identifier: Apache-2.0-->
                                         <div class="card-body">
                                              <p class="h5 mb-2 text-left">Website</p>
                                              <div class="form-row">
+                                                  <div class="form-group col-md-12">
+                                                       <label for="advSclDis_flag">Have employees been advised to practice social distancing?</label>
+                                                       <div class="form-check">
+                                                       <input class="form-check-input" type="radio" name="advSclDis" id="advSclDis_0" value="0">
+                                                       <label class="form-check-label" for="advSclDis_0">No</label>
+                                                       </div>
+                                                       <div class="form-check">
+                                                       <input class="form-check-input" type="radio" name="advSclDis" id="advSclDis_1" value="1" checked>
+                                                       <label class="form-check-label" for="advSclDis_1">Yes</label>
+                                                       </div>
+                                                  </div>
                                                   <div class="form-group col-md-7">
                                                        <label for="covidPage_flag">Does your company have a covid-awareness page?</label>
                                                        <div class="form-check">

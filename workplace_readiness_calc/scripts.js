@@ -190,6 +190,18 @@ function getValues(){
   return dict;
 }
 
+function clipAndRound_bounds (score) {
+  var score_out = Math.round(score/10);
+  /*
+  if (score_out < 0 ) {
+    score_out = 0;
+  } else if (score_out > 100 ) {
+    score_out = 100;
+  }
+  */
+  return score_out;
+}
+
 function calcScore () {
   inputs = getValues(); //Read values from html page...
   console.log(inputs);
@@ -205,18 +217,20 @@ function calcScore () {
   var bmFlag = ((inputs["baDoor"] >= 1) ? 1 : 0);
   var accessContacts = 4 * ( 1 - 0.1*((bmFlag * inputs["sntBio"]) + inputs["mntrCCTV"]) ) * bmFlag;
   var shiftDelta = ( (inputs["tGapShift"] > 8) ? 0 : (8 - inputs["tGapShift"]));
-  var premContacts = (accessContacts + stairsElev + crowding/ nEmp ) * (1 + (shiftDelta/8.0));
+  var premisesContacts = (accessContacts + stairsElev + crowding/ nEmp ) * (1 + (shiftDelta/8.0));
 
   // Other meeting spaces
   var score_other_spaces = 0.5 * inputs["oMtngSpts"] * Math.max(1-0.1*(inputs["freqCln"] + Math.min(1, inputs["nHskpngStff"])), 0.5) * (1-0.4*inputs["msk"]);
-  var score_office_infra = 800*31/(premContacts + score_other_spaces);
-  var score_office_infra = Math.round(score_office_infra/10);
+  var score_office_infra = 800*31/(premisesContacts + score_other_spaces);
+  score_office_infra = clipAndRound_bounds(score_office_infra);
+
   var sg_office_infra = "Well done!"
   if (score_office_infra<70){
     sg_office_infra = "Consider encouraging more employees to work from home or shifts";
   } else if (inputs["nEleDinf"]<2) {
     sg_office_infra = "Consider cleaning the lifts more often";
   }
+
 
   // Toilet scores
   var nGntsTlt = inputs["nM"] + inputs["nOth"]/2.0; 

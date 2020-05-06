@@ -210,9 +210,9 @@ function calcScore () {
   // Other meeting spaces
   var score_other_spaces = 0.5 * inputs["oMtngSpts"] * Math.max(1-0.1*(inputs["freqCln"] + Math.min(1, inputs["nHskpngStff"])), 0.5) * (1-0.4*inputs["msk"]);
   var score_office_infra = 800*31/(premContacts + score_other_spaces);
-  var score_office_infra = Math.round(score_office_infra / 10) * 10;
+  var score_office_infra = Math.round(score_office_infra/10);
   var sg_office_infra = "Well done!"
-  if (score_office_infra<700){
+  if (score_office_infra<70){
     sg_office_infra = "Consider encouraging more employees to work from home or shifts";
   } else if (inputs["nEleDinf"]<2) {
     sg_office_infra = "Consider cleaning the lifts more often";
@@ -235,19 +235,19 @@ function calcScore () {
   }else{
     score_sanitation = aggrToiletSc;
   }
-  score_sanitation = Math.round(score_sanitation/10) * 10;
+  score_sanitation = Math.round(score_sanitation/10);
 
   var sg_sanitation = "Well done!";
 
   //score_sanitation = Math.round(Math.min( 100, 70.0/(cRateGentsToilet + cRateLadiesToilet) )) * 10;
-  if (score_sanitation < 700) {
+  if (score_sanitation < 70) {
       sg_sanitation = "Disinfect toilets more often or consider reducing the employees per shift";
   }
 
   // Sick Rooms
   var score_sickRoom = 100*(inputs["iQS"]*2 + inputs["amblnc"]*2 + inputs["lHsptl"]*2 + inputs["emrgncResp"] + inputs["hl"] + 
                                   inputs["imdtFM"] * Math.max( 0, (1.0 - inputs["lstUpdtTime"]/30))*2 );
-  var score_isolation = Math.round(score_sickRoom / 10) * 10;
+  var score_isolation = Math.round(score_sickRoom/10);
   var sg_isolation = "Well done!";
   if (!inputs["iQS"]){
     sg_isolation = "Designate place for immediate quarantine";
@@ -286,7 +286,7 @@ function calcScore () {
   if (score_cafeteria_scaled>1000){
     score_cafeteria_scaled = 1000;
   }
-  var score_cafeteria_scaled = Math.round(score_cafeteria_scaled / 10) * 10;
+  var score_cafeteria_scaled = Math.round(score_cafeteria_scaled / 10);
   var sg_cafeteria = "Well done!";
   if (score_cafeteria_scaled<700){
     sg_cafeteria = "Increase the cafeteria area to accomodate more people or encourage work from home";
@@ -296,12 +296,12 @@ function calcScore () {
   var nLM = nEmp - inputs["nHM"] - inputs["nMM"]
   var score_mobility = ((0.25*nLM + 0.5*inputs["nMM"] + inputs["nHM"])/(nLM+inputs["nMM"]+inputs["nHM"])) * (1-0.4*inputs["msk"]);
   score_mobility = (1-score_mobility)*1000/0.85;
-  score_mobility = Math.round(score_mobility / 10) * 10;
+  score_mobility = Math.round(score_mobility / 10);
 
   var sg_mobility = "Well done!";
   if (!inputs["msk"]){
     sg_mobility = "Consider mandating masks while interacting with other employees";
-  } else if (score_mobility<700){
+  } else if (score_mobility<70){
     sg_mobility = "Consider allowing a few high mobility users to work from home";
   }
 
@@ -313,12 +313,12 @@ function calcScore () {
   if (score_meetings>1000){
     score_meetings = 1000;
   }
-  score_meetings = Math.round(score_meetings / 10) * 10;
+  score_meetings = Math.round(score_meetings / 10);
 
   var sg_meetings = "Well done!";
   if (!inputs["msk"]){
     sg_meetings = "Consider making mask mandatory in all the meetings";
-  } else if (score_meetings<700){
+  } else if (score_meetings<70){
     sg_meetings = "Consider shifting to online meetings";
   } else if (inputs["avgMS"]>5) {
     sg_meetings = "Consider reducing number of employees per meeting";
@@ -327,10 +327,10 @@ function calcScore () {
   // Outside contacts
   var score_outside = 0;
   if (inputs["nVstrs"] && inputs["nEmpCstmr"]){
-    score_outside =  1000*nEmp/(inputs["nVstrs"] * Math.pow(inputs["nEmpCstmr"], 0.1) * (1-0.4*inputs["msk"]) * (1-0.1*inputs["glvs"]));
+    score_outside =  100*nEmp/(inputs["nVstrs"] * Math.pow(inputs["nEmpCstmr"], 0.1) * (1-0.4*inputs["msk"]) * (1-0.1*inputs["glvs"]));
   }
-  if (score_outside>1000){
-    score_outside = 1000;
+  if (score_outside>100){
+    score_outside = 100;
   }
 
   var sg_outside = "Well done!";
@@ -346,7 +346,7 @@ function calcScore () {
                                 Math.min(inputs["nDinf"], 2) + Math.min(1, inputs["smkZS"]*((inputs["nPGT"]>0) ? 0 : 1)) + 
                                 ((inputs["nWsB"] > (inputs["nFloors"]*2) ? 1 : 0)) );                              
   
-  score_epidemic = Math.round(score_epidemic / 10) * 10;
+  score_epidemic = Math.round(score_epidemic / 10);
   var sg_epidemic = "Well done!";
   if (!inputs["tempScreening"]){
     sg_epidemic = "Consider temperature screening of all employees on entry and exit";
@@ -365,7 +365,7 @@ function calcScore () {
   }
 
   // Advertisement and outreach
-  var score_adv_outrch = (inputs["covidPage"] + inputs["faq"] + inputs["sPers"] + (inputs["nWsB"] > (inputs["nFloors"]*2) ? 1 : 0))*1000/4 ;
+  var score_adv_outrch = (inputs["covidPage"] + inputs["faq"] + inputs["sPers"] + (inputs["nWsB"] > (inputs["nFloors"]*2) ? 1 : 0))*100/4 ;
   var sg_adv_outrch = "Well done!";
   if (!inputs["covidPage"]){
     sg_adv_outrch = "Prepare a COVID-19 awareness page";
@@ -405,10 +405,17 @@ function calcScore () {
     var score_public_transport = (1-0.1*inputs["hsLbb"]) * (1-0.1*inputs["mskPub"]) *
                                  (inputs["trvlr5Kpub"]*5 + inputs["trvlr10Kpub"]*(10/1.25) + (inputs["trvlr15Kpub"]+ inputs["trvlr15Kpluspub"])*(15/1.5));
   }
+  /*
   var score_total_transport = (score_company_transport + score_self_transport + score_walk + score_public_transport)/
                               (inputs["cmpnTrnsprtUsrs"] + inputs["slfTrnsprtUsrs"] + inputs["nWlk"] + inputs["nPubTrvl"]);
+  */
+  var score_total_transport = (score_company_transport*inputs["cmpnTrnsprtUsrs"] + score_self_transport*inputs["slfTrnsprtUsrs"] + score_walk*inputs["nWlk"] + score_public_transport*inputs["nPubTrvl"])/
+                              (inputs["cmpnTrnsprtUsrs"] + inputs["slfTrnsprtUsrs"] + inputs["nWlk"] + inputs["nPubTrvl"]);
   var score_total_transport_scaled = 800*3.5/score_total_transport;
-  score_total_transport_scaled = Math.round(score_total_transport_scaled / 10) * 10;
+  score_total_transport_scaled = Math.round(score_total_transport_scaled / 10);
+  if (score_total_transport_scaled>100){
+    score_total_transport_scaled = 100;
+  }
 
   var sg_transport = "Well done!";
   if ((inputs["mskMndt"]+inputs["mskCar"]+inputs["mskWlk"]+inputs["mskPub"])<3){

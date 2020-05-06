@@ -7,6 +7,24 @@
 
 double kappa_T(const agent&node, double cur_time);
 
+void set_kappa_base_node(agent& node, double community_factor, int cur_time);
+
+void set_kappa_lockdown_node(agent& node, int cur_time);
+
+void modify_kappa_SDE_node(agent& node);
+
+void modify_kappa_SC_node(agent& node);
+
+void modify_kappa_OE_node(agent& node);
+
+void reset_home_quarantines(std::vector<house>& homes);
+
+void modify_kappa_case_isolate_node(agent& node);
+
+bool should_be_isolated_node(const agent& node, int cur_time);
+
+void mark_and_isolate_quarantined_homes(std::vector<agent>& nodes, std::vector<house>& homes, int cur_time);
+
 void get_kappa_no_intervention(std::vector<agent>& nodes, const std::vector<house>& homes, const std::vector<workplace>& workplaces, const std::vector<community>& communities, int cur_time);
 
 void get_kappa_case_isolation(std::vector<agent>& nodes, const std::vector<house>& homes, const std::vector<workplace>& workplaces, const std::vector<community>& communities, int cur_time);
@@ -39,6 +57,8 @@ void get_kappa_intv_fper_intv_sper_intv_tper(std::vector<agent>& nodes, std::vec
 
 void get_kappa_NYC(std::vector<agent>& nodes, std::vector<house>& homes, const std::vector<workplace>& workplaces, const std::vector<community>& communities, int cur_time);
 
+void get_kappa_custom_modular(std::vector<agent>& nodes, std::vector<house>& homes, int cur_time, bool case_isolation, bool home_quarantine, bool lockdown, bool social_dist_elderly, bool school_closed, bool workplace_odd_even);
+
 void get_kappa_custom(std::vector<agent>& nodes, std::vector<house>& homes, const std::vector<workplace>& workplaces, const std::vector<community>& communities, int cur_time, bool case_isolation, bool home_quarantine, bool lockdown, bool social_dist_elderly, bool school_closed, bool workplace_odd_even);
 
 void get_kappa_Mumbai(std::vector<agent>& nodes, std::vector<house>& homes, const std::vector<workplace>& workplaces, const std::vector<community>& communities, int cur_time, double FIRST_PERIOD, double SECOND_PERIOD);
@@ -46,4 +66,3 @@ void get_kappa_Mumbai(std::vector<agent>& nodes, std::vector<house>& homes, cons
 void get_kappa_Mumbai_cyclic(std::vector<agent>& nodes, std::vector<house>& homes, const std::vector<workplace>& workplaces, const std::vector<community>& communities, int cur_time, double FIRST_PERIOD, double SECOND_PERIOD);
 
 #endif
-

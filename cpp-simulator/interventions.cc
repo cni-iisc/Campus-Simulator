@@ -516,42 +516,81 @@ void get_kappa_CI_HQ_65P_SC_OE(vector<agent>& nodes, vector<house>& homes, const
   }
 }
 
-void get_kappa_custom_modular(vector<agent>& nodes, vector<house>& homes, const int cur_time,
-							  const bool case_isolation = false,
-							  const bool home_quarantine = false,
-							  const bool lockdown = false,
-							  const bool social_dist_elderly = false,
-							  const bool school_closed = false,
-							  const bool workplace_odd_even = false,
-							  const double SC_factor = 0,
-							  const double community_factor = 1){
+struct intervention_decription {
+  bool case_isolation = false;
+  bool home_quarantine = false;
+  bool lockdown = false;
+  bool social_dist_elderly = false;
+  bool school_closed = false;
+  bool workplace_odd_even = false;
+  double SC_factor = 0;
+  double community_factor = 1;
 
-  if(home_quarantine){
+  intervention_decription& set_case_isolation(bool c){
+	this->case_isolation = c;
+	return *this;
+  }
+  intervention_decription& set_home_quarantine(bool c){
+	this->home_quarantine = c;
+	return *this;
+  }
+  intervention_decription& set_lockdown(bool c){
+	this->lockdown = c;
+	return *this;
+  }
+  intervention_decription& set_social_dist_elderly(bool c){
+	this->social_dist_elderly = c;
+	return *this;
+  }
+  intervention_decription& set_school_closed(bool c){
+	this->school_closed = c;
+	return *this;
+  }
+  intervention_decription& set_workplace_odd_even(bool c){
+	this->workplace_odd_even = c;
+	return *this;
+  }
+  intervention_decription& set_SC_factor(double c){
+	this->SC_factor = c;
+	return *this;
+  }
+  intervention_decription& set_community_factor(double c){
+	this->community_factor = c;
+	return *this;
+  }
+};
+
+
+
+void get_kappa_custom_modular(vector<agent>& nodes, vector<house>& homes, const int cur_time,
+							  const intervention_decription& intv){
+
+  if(intv.home_quarantine){
     reset_home_quarantines(homes);
     mark_and_isolate_quarantined_homes(nodes, homes, cur_time);
   }
-#pragma omp parallel for default(none) shared(nodes)
+#pragma omp parallel for default(none) shared(nodes, intv)
   for (count_type count = 0; count < nodes.size(); ++count){
     //choose base kappas
-    if(lockdown){
+    if(intv.lockdown){
       set_kappa_lockdown_node(nodes[count], cur_time);
     }else{
-      set_kappa_base_node(nodes[count], community_factor, cur_time);
+      set_kappa_base_node(nodes[count], intv.community_factor, cur_time);
     }
 
     //modifiers begin
-    if(social_dist_elderly){
+    if(intv.social_dist_elderly){
       modify_kappa_SDE_node(nodes[count]);
     }
-    if(workplace_odd_even){
+    if(intv.workplace_odd_even){
 	  //This is only for the old attendance implementation.  Now odd even should
 	  //be implemented in the attendance file.
       modify_kappa_OE_node(nodes[count]);
     }
-    if(school_closed){
-      modify_kappa_SC_node(nodes[count], SC_factor);
+    if(intv.school_closed){
+      modify_kappa_SC_node(nodes[count], intv.SC_factor);
     }
-    if(case_isolation){
+    if(intv.case_isolation){
       if(should_be_isolated_node(nodes[count],cur_time)){
         modify_kappa_case_isolate_node(nodes[count]);
       }
@@ -787,7 +826,17 @@ void get_kappa_Mumbai_cyclic(vector<agent>& nodes, vector<house>& homes, const v
 	set_compliance(nodes, homes,
 				   USUAL_COMPLIANCE_PROBABILITY,
 				   HD_AREA_COMPLIANCE_PROBABILITY);
-	get_kappa_custom(nodes, homes, workplaces, communities, cur_time, true, true, false, true, true, false, 0, 0.75);
+	//get_kappa_custom(nodes, homes, workplaces, communities, cur_time, true, true, false, true, true, false, 0, 0.75);
+	{
+	  intervention_decription intv;
+	  intv.case_isolation = true;
+	  intv.home_quarantine = true;
+	  intv.social_dist_elderly = true;
+	  intv.school_closed = true;
+	  intv.community_factor = 0.75;
+	  //All others are default values
+	  get_kappa_custom_modular(nodes, homes, cur_time, intv);
+	}
 	//Update global travel parameters
 	GLOBAL.CYCLIC_POLICY_ENABLED = true;
 	GLOBAL.NUMBER_OF_CYCLIC_CLASSES = 3;

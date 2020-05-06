@@ -133,6 +133,10 @@ plot_data_struct run_simulation(){
   //Total number of individuals who have become infected via transmission so far
   //This does not included the initially seeded infections
 
+  vector<long double> infections_by_new_infectives(GLOBAL.NUM_TIMESTEPS, 0);
+  //For keeping track of infections ascribed to agents that became infective at
+  //each time
+
   for(count_type time_step = 0; time_step < GLOBAL.NUM_TIMESTEPS; ++time_step){
 
 	std::fill(total_lambda_fraction_data.begin(),
@@ -265,9 +269,10 @@ plot_data_struct run_simulation(){
 	  n_critical = 0,
 	  n_fatalities = 0,
 	  n_recovered = 0,
-	  n_affected = 0;
+	  n_affected = 0,
+	  n_infective = 0;
 	
-#pragma omp parallel for reduction (+:n_infected,n_exposed,n_hospitalised,n_symptomatic,n_critical,n_fatalities,n_recovered,n_affected)
+#pragma omp parallel for default(none) shared(nodes,GLOBAL) reduction (+:n_infected,n_exposed,n_hospitalised,n_symptomatic,n_critical,n_fatalities,n_recovered,n_affected,n_infective)
 	for(count_type j = 0; j < GLOBAL.num_people; ++j){
 	  auto infection_status = nodes[j].infection_status;
 	  if(infection_status == Progression::infective
@@ -297,7 +302,24 @@ plot_data_struct run_simulation(){
 	  if(infection_status != Progression::susceptible){
 		n_affected += 1;
 	  }
+	  if(nodes[j].infective){
+		n_infective += 1;
+	  }
 	}
+
+	//Apportion new expected infections (in next time step) to currently
+	//infective nodes
+	if(n_infective){
+	  long double expected_infections_per_infective_node
+		= (long double)(susceptible_lambda)/n_infective;
+	  for(const auto& node: nodes){
+		if(node.infective){
+		  infections_by_new_infectives[node.time_became_infective]
+			+= expected_infections_per_infective_node;
+		}
+	  }
+	}
+
 	plot_data.nums["num_infected"].push_back({time_step, {n_infected}});
 	plot_data.nums["num_exposed"].push_back({time_step, {n_exposed}});
 	plot_data.nums["num_hospitalised"].push_back({time_step, {n_hospitalised}});
@@ -343,6 +365,15 @@ plot_data_struct run_simulation(){
 																							   {cumulative_mean_lambda_fraction_data[3]}});
 
 	
+  }
+
+  //Create CSV data out of the date for infections per new infective node
+  plot_data.infections_by_new_infectives = {
+	{"infections_by_new_infectives", {}}
+  };
+  for(count_type time_step = 0; time_step < GLOBAL.NUM_TIMESTEPS; ++time_step){
+	plot_data.infections_by_new_infectives["infections_by_new_infectives"].push_back({time_step,
+																					  {infections_by_new_infectives[time_step]}});
   }
 
 #ifdef TIMING

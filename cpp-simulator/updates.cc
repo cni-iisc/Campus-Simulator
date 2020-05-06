@@ -80,6 +80,7 @@ node_update_status update_infection(agent& node, int cur_time){
 			  > node.incubation_period)){
 	node.infection_status = Progression::infective; //move to infective state
 	node.infective = true;
+	node.time_became_infective = cur_time;
 	update_status.new_infective = true;
   }
   else if(node.infection_status==Progression::infective

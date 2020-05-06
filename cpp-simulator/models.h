@@ -314,6 +314,7 @@ struct agent{
   Progression infection_status = Progression::susceptible;
 
   bool infective = false;
+  count_type time_became_infective = 0;
 
   double lambda_h = 0;
   //individuals contribution to his home cluster

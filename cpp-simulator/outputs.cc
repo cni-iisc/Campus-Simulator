@@ -305,4 +305,14 @@ void output_csv_files(const std::string& output_directory,
 					 elem.second);
 	gnuplot.plot_data(elem.first);
   }
+
+  //Now output infections by individuals that became infective at this time
+  for(const auto& elem: plot_data.infections_by_new_infectives){
+	std::string csvfile_name = elem.first + ".csv";
+	std::string csvfile_path = output_directory + "/" + csvfile_name;
+	output_timed_csv({elem.first},
+					 csvfile_path,
+					 elem.second);
+	gnuplot.plot_data(elem.first);
+  }
 }

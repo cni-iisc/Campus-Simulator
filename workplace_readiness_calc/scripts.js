@@ -194,13 +194,11 @@ function getValues(){
 
 function clipAndRound_bounds (score) {
   var score_out = Math.round(score/10);
-  /*
   if (score_out < 0 ) {
     score_out = 0;
   } else if (score_out > 100 ) {
     score_out = 100;
   }
-  */
   return score_out;
 }
 
@@ -214,7 +212,7 @@ function calcScore () {
   var aOpen = inputs["tArea"] - inputs["nSOfcRm"]*150 - inputs["n2pOfcRm"]*200 - inputs["n2pPlusOfcRm"]*240;
   var cFactor = Math.max( ((inputs["nCub"] + inputs["nRem"])*40 / aOpen), 1 ); 
   var crowding = 2*inputs["n2pOfcRm"] * nMeets + 3*inputs["n2pPlusOfcRm"] * nMeets * 1.2 +
-      (inputs["nCub"] + inputs["nRem"] * 1.2)* nMeets * cFactor;    
+      (inputs["nCub"] + inputs["nRem"] * 1.2)* nMeets * cFactor;
   var stairsElev = 0.5 * inputs["nFloors"] * (1 + inputs["eleCpct"]/2 * (1-0.1*inputs["advSclDis"]))/2 * 4 * Math.max( (1 - 0.1*Math.min( inputs["nStrCln"], inputs["nEleDinf"] )), 0.5);
   var bmFlag = ((inputs["baDoor"] >= 1) ? 1 : 0);
   var accessContacts = 4 * ( 1 - 0.1*((bmFlag * inputs["sntBio"]) + inputs["mntrCCTV"]) ) * bmFlag;
@@ -233,7 +231,6 @@ function calcScore () {
     sg_office_infra = "Consider cleaning the lifts more often";
   }
 
-
   // Toilet scores
   var nGntsTlt = inputs["nM"] + inputs["nOth"]/2.0; 
   var nLdsTlt = inputs["nF"] + inputs["nOth"]/2.0; 
@@ -243,7 +240,7 @@ function calcScore () {
 
   var cRateGentsToilet = nGntsTlt * avgTltVstsPrDy * avgTltDrtn * (Math.max(0.5, (1.0 - 0.1*inputs["tClnFreq"]))) * (1.0 - 0.1*inputs["spPrsnt"]) / (tltCnctrtnHrs*60*inputs["nGntsT"]);
   var cRateLadiesToilet = nLdsTlt * avgTltVstsPrDy * avgTltDrtn * (Math.max(0.5, (1.0 - 0.1*inputs["tClnFreq"]))) * (1.0 - 0.1*inputs["spPrsnt"]) / (tltCnctrtnHrs*60*inputs["nLdsT"]);
-  //var aggrToiletSc = (cRateLadiesToilet + cRateGentsToilet) / (inputs["nM"] + inputs["nF"] + inputs["nOth"] );
+  //var aggrToiletSc = 800*nEmp/(cRateLadiesToilet + cRateGentsToilet);
   var aggrToiletSc = 800/(Math.max(cRateLadiesToilet, cRateGentsToilet)+0.001);
   var score_sanitation = clipAndRound_bounds(aggrToiletSc);
 
@@ -254,9 +251,9 @@ function calcScore () {
       sg_sanitation = "Disinfect toilets more often or consider reducing the employees per shift";
   }
 
-  // Sick Rooms
+  // Sick Rooms/Isolation Ward
   var score_sickRoom = 100*(inputs["iQS"]*2 + inputs["amblnc"]*2 + inputs["lHsptl"]*2 + inputs["emrgncResp"] + inputs["hl"] + 
-                                  inputs["imdtFM"] * Math.max( 0, (1.0 - inputs["lstUpdtTime"]/30))*2 );
+                            inputs["imdtFM"] * Math.max( 0, (1.0 - inputs["lstUpdtTime"]/30))*2);
   var score_isolation = clipAndRound_bounds(score_sickRoom);
   var sg_isolation = "Well done!";
   if (!inputs["iQS"]){
@@ -279,7 +276,7 @@ function calcScore () {
   var time_snck = 15;
   var time_wtr = 2;
   var num_wtr_sought = 5;
-  var prsnl_area = 10; // In feet
+  var prsnl_area = 28; // In sq. feet: Approx. 3 feet radius
   var pvtl_hrs = 4;
   var nCftr = inputs["nBrkfst"] + inputs["nLnch"] + inputs["nSnck"];
   var anncmnt = 1;
@@ -329,7 +326,7 @@ function calcScore () {
   }
 
   // Outside contacts
-  var score_outside = 0;
+  var score_outside = 1000;
   if (inputs["nVstrs"] && inputs["nEmpCstmr"]){
     score_outside =  100*nEmp/(inputs["nVstrs"] * Math.pow(inputs["nEmpCstmr"], 0.1) * (1-0.4*inputs["msk"]) * (1-0.1*inputs["glvs"]));
   }
@@ -368,7 +365,7 @@ function calcScore () {
   }
 
   // Advertisement and outreach
-  var score_adv_outrch = (inputs["covidPage"] + inputs["faq"] + inputs["sPers"] + (inputs["nWsB"] > (inputs["nFloors"]*2) ? 1 : 0))*100/4 ;
+  var score_adv_outrch = (inputs["covidPage"] + inputs["faq"] + inputs["sPers"] + (inputs["nWsB"] > (inputs["nFloors"]*2) ? 1 : 0))*1000/4 ;
   score_adv_outrch = clipAndRound_bounds(score_adv_outrch);
 
   var sg_adv_outrch = "Well done!";
@@ -395,8 +392,12 @@ function calcScore () {
   // Self-owned Vehicles
   var ttl_slf_trnsprt_mtchs = (inputs["slfTrnsprtUsrs"]<=inputs["trvlr5Kslf"]+inputs["trvlr10Kslf"]+inputs["trvlr15Kslf"]) ? 1 : 0;
   var score_self_transport = 0;
+  var F_slf = 1
+  if (inputs["noPlnR"] && inputs["no2plusTrvl"]){
+    F_slf = 1/2;
+  }
   if (ttl_slf_trnsprt_mtchs){
-    score_self_transport = F * (1-0.1*inputs["hsLbb"]) * (1-0.4*inputs["mskCar"])
+    score_self_transport = F_slf * (1-0.1*inputs["hsLbb"]) * (1-0.4*inputs["mskCar"])
                              * (inputs["trvlr5Kslf"]*5 + inputs["trvlr10Kslf"]*(10/1.25) + inputs["trvlr15Kslf"]*(15/1.5) + inputs["trvlr15Kplusslf"]*(20/1.5));
   }
 
@@ -410,12 +411,9 @@ function calcScore () {
     var score_public_transport = (1-0.1*inputs["hsLbb"]) * (1-0.1*inputs["mskPub"]) *
                                  (inputs["trvlr5Kpub"]*5 + inputs["trvlr10Kpub"]*(10/1.25) + (inputs["trvlr15Kpub"]+ inputs["trvlr15Kpluspub"])*(15/1.5));
   }
-  /*
   var score_total_transport = (score_company_transport + score_self_transport + score_walk + score_public_transport)/
                               (inputs["cmpnTrnsprtUsrs"] + inputs["slfTrnsprtUsrs"] + inputs["nWlk"] + inputs["nPubTrvl"]);
-  */
-  var score_total_transport = (score_company_transport*inputs["cmpnTrnsprtUsrs"] + score_self_transport*inputs["slfTrnsprtUsrs"] + score_walk*inputs["nWlk"] + score_public_transport*inputs["nPubTrvl"])/
-                              (inputs["cmpnTrnsprtUsrs"] + inputs["slfTrnsprtUsrs"] + inputs["nWlk"] + inputs["nPubTrvl"]);
+  // Possible to use max instead of the above formula.
   var score_total_transport_scaled = 800*3.5/score_total_transport;
   score_total_transport_scaled = clipAndRound_bounds(score_total_transport_scaled);
 

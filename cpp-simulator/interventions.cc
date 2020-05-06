@@ -34,13 +34,8 @@ void set_kappa_base_node(agent& node, double community_factor, int cur_time){
   node.kappa_T = kappa_T(node, cur_time);
   node.kappa_H = 1.0;
   node.kappa_H_incoming = 1.0;
-  if(node.workplace_type==WorkplaceType::office){
-    node.kappa_W = 1.0;
-    node.kappa_W_incoming = 1.0;
-  }else{
-    node.kappa_W = 0.0;
-    node.kappa_W_incoming = 0.0;
-  }
+  node.kappa_W = 1.0;
+  node.kappa_W_incoming = 1.0;
   if(node.compliant){
     node.kappa_C = community_factor;
     node.kappa_C_incoming = community_factor;
@@ -56,6 +51,7 @@ void set_kappa_lockdown_node(agent& node, int cur_time){
     node.kappa_W = 0.25;
     node.kappa_W_incoming = 0.25;
   }else{
+	//Schools and colleges are assumed closed in all lockdowns
     node.kappa_W = 0.0;
     node.kappa_W_incoming = 0.0;
   }
@@ -97,7 +93,7 @@ void modify_kappa_OE_node(agent& node){
 }
 
 void reset_home_quarantines(vector<house>& homes){
-#pragma omp parallel for
+#pragma omp parallel for default(none) shared(homes)
   for(count_type count = 0; count<homes.size(); ++count){
     homes[count].quarantined = false;
   }
@@ -105,15 +101,15 @@ void reset_home_quarantines(vector<house>& homes){
 
 void modify_kappa_case_isolate_node(agent& node){
   node.quarantined = true;
-  node.kappa_H = min(0.75,node.kappa_H);
+  node.kappa_H = min(0.75, node.kappa_H);
   node.kappa_W = min(0.0, node.kappa_W);
-  node.kappa_C = min(0.1,node.kappa_C);
-  node.kappa_H_incoming = min(0.75,node.kappa_H_incoming);
-  node.kappa_W_incoming = min(0.0,node.kappa_W_incoming);
-  node.kappa_C_incoming = min(0.1,node.kappa_C_incoming);
+  node.kappa_C = min(0.1, node.kappa_C);
+  node.kappa_H_incoming = min(0.75, node.kappa_H_incoming);
+  node.kappa_W_incoming = min(0.0, node.kappa_W_incoming);
+  node.kappa_C_incoming = min(0.1, node.kappa_C_incoming);
 }
 
-bool should_be_isolated_node(agent &node, int cur_time){
+bool should_be_isolated_node(const agent& node, int cur_time){
   double time_since_symptoms = cur_time
                               - (node.time_of_infection
                               + node.incubation_period
@@ -125,7 +121,6 @@ bool should_be_isolated_node(agent &node, int cur_time){
 
 void mark_and_isolate_quarantined_homes(vector<agent>& nodes, vector<house>& homes, int cur_time){
   //mark all homes for quarantine
-#pragma omp parallel for
   for (count_type count = 0; count < nodes.size(); ++count){
     if(should_be_isolated_node(nodes[count],cur_time)){
        homes[nodes[count].home].quarantined = true;
@@ -133,7 +128,6 @@ void mark_and_isolate_quarantined_homes(vector<agent>& nodes, vector<house>& hom
   }
 
   //isolate all members in quarantined homes
-#pragma omp parallel for
   for (count_type count = 0; count < homes.size(); ++count){
     if(homes[count].quarantined){
       for(count_type resident = 0; resident < homes[count].individuals.size(); ++resident){
@@ -513,14 +507,21 @@ void get_kappa_CI_HQ_65P_SC_OE(vector<agent>& nodes, vector<house>& homes, const
   }
 }
 
-void get_kappa_custom_modular(vector<agent>& nodes, vector<house>& homes, int cur_time, bool case_isolation = false, bool home_quarantine = false, bool lockdown = false, bool social_dist_elderly = false, bool school_closed = false, bool workplace_odd_even = false, double SC_factor = 0, double community_factor = 1){
+void get_kappa_custom_modular(vector<agent>& nodes, vector<house>& homes, const int cur_time,
+							  const bool case_isolation = false,
+							  const bool home_quarantine = false,
+							  const bool lockdown = false,
+							  const bool social_dist_elderly = false,
+							  const bool school_closed = false,
+							  const bool workplace_odd_even = false,
+							  const double SC_factor = 0,
+							  const double community_factor = 1){
 
   if(home_quarantine){
     reset_home_quarantines(homes);
-    mark_and_isolate_quarantined_homes(nodes, homes,cur_time);
+    mark_and_isolate_quarantined_homes(nodes, homes, cur_time);
   }
-
-  #pragma omp parallel for
+#pragma omp parallel for default(none) shared(nodes)
   for (count_type count = 0; count < nodes.size(); ++count){
     //choose base kappas
     if(lockdown){
@@ -534,8 +535,8 @@ void get_kappa_custom_modular(vector<agent>& nodes, vector<house>& homes, int cu
       modify_kappa_SDE_node(nodes[count]);
     }
     if(workplace_odd_even){
-      // shouldn't this be happening at the attendance level?
-      // This is averaging it out over nodes, isn't it?
+	  //This is only for the old attendance implementation.  Now odd even should
+	  //be implemented in the attendance file.
       modify_kappa_OE_node(nodes[count]);
     }
     if(school_closed){

@@ -135,9 +135,6 @@ function getValues(){
   dict["dLnch"] = parseInt(document.getElementById("dLnch").value); // Duration for which lunch is served
   dict["dSnck"] = parseInt(document.getElementById("dSnck").value); // Duration for which coffee/snacks is served
   dict["nEmpHL"] = parseInt(document.getElementById("nEmpHL").value); // Number of employees who bring lunch from home
-  dict["brkfst"] = parseInt(document.querySelector('input[name="brkfst"]:checked').value); // Breakfast served
-  dict["lnch"] = parseInt(document.querySelector('input[name="lnch"]:checked').value); // Lunch served
-  dict["cff"] = parseInt(document.querySelector('input[name="cff"]:checked').value); // Coffee/snacks served
   dict["mlStggrd"] = parseInt(document.querySelector('input[name="mlStggrd"]:checked').value); // Meals staggered
   dict["utnslShrd"] = parseInt(document.querySelector('input[name="utnslShrd"]:checked').value); // Utensils shared
   dict["cntnArea"] = parseInt(document.getElementById("cntnArea").value); // Canteen area in sq.ft
@@ -152,7 +149,6 @@ function getValues(){
   dict["typeSanitation"] = parseInt(document.querySelector('input[name="typeSanitation"]:checked').value); //  Type of sanitation
 
   // Company Provided Transport
-  dict["cmpnTrnsprtUsrs"] = parseInt(document.getElementById("cmpnTrnsprtUsrs").value); // Company transport users
   dict["bsCpctAct"] = parseInt(document.getElementById("bsCpctAct").value); // Actual Bus capacity
   dict["bsCpctCur"] = parseInt(document.getElementById("bsCpctCur").value); // Current Bus capacity
   dict["mnBsCpctAct"] = parseInt(document.getElementById("mnBsCpctAct").value); // Actual Mini bus capacity 
@@ -174,7 +170,6 @@ function getValues(){
   dict["trvlr10Kplus"] = parseInt(document.getElementById("trvlr10Kplus").value); // Numbers travelling >10 km
 
   // Self-owned vehicle transport
-  dict["slfTrnsprtUsrs"] = parseInt(document.getElementById("slfTrnsprtUsrs").value); // Self-owned transport users
   dict["noPlnR"] = parseInt(document.querySelector('input[name="noPlnR"]:checked').value); // No pillion riders
   dict["no2plusTrvl"] = parseInt(document.querySelector('input[name="no2plusTrvl"]:checked').value); // No 2 plus travel in car
   dict["hsLbb"] = parseInt(document.querySelector('input[name="hsLbb"]:checked').value); // Hand sanitiser in the lobby
@@ -188,7 +183,6 @@ function getValues(){
   dict["mskWlk"] = parseInt(document.querySelector('input[name="mskWlk"]:checked').value); // Mask while walking
 
   // Public Transport
-  dict["nPubTrvl"] = parseInt(document.getElementById("nPubTrvl").value); // Number of employees travelling in public transport
   dict["mskPub"] = parseInt(document.querySelector('input[name="mskPub"]:checked').value); // Mask while in public transport
   dict["trvlr5Kpub"] = parseInt(document.getElementById("trvlr5Kpub").value); // Numbers travelling 0-5 km private vehicle
   dict["trvlr10Kpub"] = parseInt(document.getElementById("trvlr10Kpub").value); // Numbers travelling 5-10 km private vehicle
@@ -405,39 +399,33 @@ function calcScore () {
   }
 
   // Company Transport
-  var F = Math.max(inputs["bsCpctCur"]/inputs["bsCpctAct"], inputs["mnBsCpctCur"]/inputs["mnBsCpctAct"], inputs["vnCpctCur"]/inputs["vnCpctAct"],
-                   inputs["svCpctCur"]/inputs["svCpctAct"], inputs["crCpctCur"]/inputs["crCpctAct"]);
-  var ttl_cmpn_trnsprt_mtchs = (inputs["cmpnTrnsprtUsrs"]<=inputs["trvlr5K"]+inputs["trvlr10K"]) ? 1 : 0;
-  var score_company_transport = 0;
-  if (ttl_cmpn_trnsprt_mtchs){
-    score_company_transport = F * (1-0.1*(inputs["nTrnsptSnt"]+inputs["drvSrnd"]+inputs["hsVhcl"]+inputs["vhclSnt"]+inputs["noACVhcl"])) * (1-0.4*inputs["mskMndt"])
+  var cmpnTrnsprtUsrs = inputs["trvlr5K"]+inputs["trvlr10K"]+inputs["trvlr10Kplus"];
+  var F = Math.max( (inputs["bsCpctAct"]) ? inputs["bsCpctCur"]/inputs["bsCpctAct"] : 0, (inputs["mnBsCpctAct"]) ? inputs["mnBsCpctCur"]/inputs["mnBsCpctAct"] : 0, 
+                    (inputs["vnCpctAct"]) ? inputs["vnCpctCur"]/inputs["vnCpctAct"] : 0, (inputs["svCpctAct"]) ? inputs["svCpctCur"]/inputs["svCpctAct"] : 0,
+                    (inputs["crCpctAct"]) ? inputs["crCpctCur"]/inputs["crCpctAct"] : 0);
+  var score_company_transport = F * (1-0.1*(inputs["nTrnsptSnt"]+inputs["drvSrnd"]+inputs["hsVhcl"]+inputs["vhclSnt"]+inputs["noACVhcl"])) * (1-0.4*inputs["mskMndt"])
                                 * (inputs["trvlr5K"]*5 + inputs["trvlr10K"]*(10/1.25) + inputs["trvlr10Kplus"]*(15/1.5));
-  }
 
   // Self-owned Vehicles
-  var ttl_slf_trnsprt_mtchs = (inputs["slfTrnsprtUsrs"]<=inputs["trvlr5Kslf"]+inputs["trvlr10Kslf"]) ? 1 : 0;
-  var score_self_transport = 0;
+  var slfTrnsprtUsrs = inputs["trvlr5Kslf"]+inputs["trvlr10Kslf"]+inputs["trvlr10Kplusslf"];
   var F_slf = 1
   if (inputs["noPlnR"] && inputs["no2plusTrvl"]){
     F_slf = 1/2;
   }
-  if (ttl_slf_trnsprt_mtchs){
-    score_self_transport = F_slf * (1-0.1*inputs["hsLbb"]) * (1-0.4*inputs["mskCar"])
+  
+  var score_self_transport = F_slf * (1-0.1*inputs["hsLbb"]) * (1-0.4*inputs["mskCar"])
                              * (inputs["trvlr5Kslf"]*5 + inputs["trvlr10Kslf"]*(10/1.25) + inputs["trvlr10Kplusslf"]*(15/1.5));
-  }
 
   // Walking
   var score_walk = inputs["nWlk"] * ((1-inputs["hsLbb"])*0.2 + inputs["hsLbb"]*0.1)*(1-0.4*inputs["mskWlk"]);
 
   // Public Transport
-  var ttl_pblc_trnsprt_mtchs = (inputs["slfTrnsprtUsrs"]<=inputs["trvlr5Kslf"]+inputs["trvlr10Kslf"]) ? 1 : 0;
-  var score_public_transport = 0;
-  if (ttl_pblc_trnsprt_mtchs){
-    var score_public_transport = (1-0.1*inputs["hsLbb"]) * (1-0.1*inputs["mskPub"]) *
+  var pubTrnsprtUsrs = inputs["trvlr5Kpub"]+inputs["trvlr10Kpub"]+inputs["trvlr10Kpluspub"];
+  
+  var score_public_transport = (1-0.1*inputs["hsLbb"]) * (1-0.4*inputs["mskPub"]) *
                                  (inputs["trvlr5Kpub"]*5 + inputs["trvlr10Kpub"]*(10/1.25) + inputs["trvlr10Kpluspub"]*(15/1.5));
-  }
   var score_total_transport = (score_company_transport + score_self_transport + score_walk + score_public_transport)/
-                              (inputs["cmpnTrnsprtUsrs"] + inputs["slfTrnsprtUsrs"] + inputs["nWlk"] + inputs["nPubTrvl"]);
+                              (cmpnTrnsprtUsrs + slfTrnsprtUsrs + inputs["nWlk"] + pubTrnsprtUsrs);
   // Average is more appropriate for large companies.
   var score_total_transport_scaled = 800*3.5/score_total_transport;
   score_total_transport_scaled = clipAndRound_bounds(score_total_transport_scaled);

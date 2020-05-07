@@ -171,28 +171,40 @@ SPDX-License-Identifier: Apache-2.0-->
                                                        <input class="form-control" type="number" name="nCW" id="nCW" min="1" value="1">
                                                   </div>
 
-                                             <p class="h5 mb-2 text-left">Office Composition</p>
+                                             <p class="h5 mb-2 text-left pt-2">Office Composition</p>
                                              <div class="form-row">
-                                                  <div class="form-group col-md-6">
-                                                       <label for="nSOfcRm">Number of single occupancy cabins</label>
-                                                       <input class="form-control" type="number" name="nSOfcRm" id="nSOfcRm" min="0" value="1">
-                                                  </div>
-                                                  <div class="form-group col-md-6">
-                                                       <label for="n2pOfcRm">Number of dual occupancy cabins</label>
-                                                       <input class="form-control" type="number" name="n2pOfcRm" id="n2pOfcRm" min="0" value="1">
-                                                  </div>
-                                                  <div class="form-group col-md-12">
-                                                       <label for="n2pPlusOfcRm">Number of cabins shared by 3 employees or more</label>
-                                                       <input class="form-control" type="number" name="n2pPlusOfcRm" id="n2pPlusOfcRm" min="0" value="9">
-                                                  </div>
-                                                  <div class="form-group col-md-6">
-                                                       <label for="nCub">Number of open cubicle office desks</label>
-                                                       <input class="form-control" type="number" name="nCub" id="nCub" min="0" value="40">
-                                                  </div>
-                                                  <div class="form-group col-md-6">
-                                                       <label for="nRem">Number of remaining office spaces/seats</label>
-                                                       <input class="form-control" type="number" name="nRem" id="nRem" min="0" value="30">
-                                                  </div>
+                                                  <table style="width: 100%;">
+                                                       <thead>
+                                                       <tr>
+                                                            <th class="px-1" style="width: 50%;">Item</th>
+                                                            <th class="px-1" style="text-align: center; width:50%">Count</th>
+                                                       </tr>
+                                                       </thead>
+                                                       <tbody>
+                                                       <tr>
+                                                            <td>Single occupancy cabins</td>
+                                                            <td class="px-1"><input class="form-control" type="number" id="nSOfcRm" min="0" value="1"></td>
+                                                       </tr>
+                                                       <tr>
+                                                            <td>Dual occupancy cabins</td>
+                                                            <td class="px-1"><input class="form-control" type="number" id="n2pOfcRm" min="0" value="1"></td>
+                                                       </tr>
+                                                       <tr>
+                                                            <td>Cabins shared by 3 employees or more</td>
+                                                            <td class="px-1"><input class="form-control" type="number" id="n2pPlusOfcRm" min="0" value="1"></td>
+                                                       </tr>
+                                                       <tr>
+                                                            <td>open cubicle office desks</td>
+                                                            <td class="px-1"><input class="form-control" type="number" id="nCub" min="0" value="1"></td>
+                                                       </tr>
+                                                       <tr>
+                                                            <td>Remaining office spaces/seats</td>
+                                                            <td class="px-1"><input class="form-control" type="number" id="nRem" min="0" value="1"></td>
+                                                       </tr>
+                                                       </tbody>
+                                                  </table>
+
+                                                  <p class="h5 mb-2 text-left px-2 pt-4">Air-conditioning</p>
                                                   <div class="form-group col-md-12">
                                                        <label for="percAC">Percentage of the premises with air-conditioning</label>
                                                        <input class="form-control" type="number" name="percAC" id="percAC" min="0" max="100" value="100">
@@ -295,7 +307,37 @@ SPDX-License-Identifier: Apache-2.0-->
                                                   </div>
                                              </div>
 
-                                             <p class="h5 mb-2 text-left">Shifts</p>
+                                             <p class="h5 mb-2 text-left pt-2">Age Distribution of Employees (company wide and across all shifts)</p>
+                                             <div class="form-row">
+                                                  <table style="width: 100%;">
+                                                       <thead>
+                                                       <tr>
+                                                            <th class="px-1" style="width: 40%;">Age Group</th>
+                                                            <th class="px-1" style="text-align: center; width:60%">Number of employees</th>
+                                                       </tr>
+                                                       </thead>
+                                                       <tbody>
+                                                       <tr>
+                                                            <td>Between 15-29 years</td>
+                                                            <td class="px-1"><input class="form-control" type="number" id="n29" min="0" value="1"></td>
+                                                       </tr>
+                                                       <tr>
+                                                            <td>Between 30-49 years</td>
+                                                            <td class="px-1"><input class="form-control" type="number" id="n49" min="0" value="1"></td>
+                                                       </tr>
+                                                       <tr>
+                                                            <td>Between 50-64 years</td>
+                                                            <td class="px-1"><input class="form-control" type="number" id="n64" min="0" value="1"></td>
+                                                       </tr>
+                                                       <tr>
+                                                            <td>65 years and older</td>
+                                                            <td class="px-1"><input class="form-control" type="number" id="n65plus" min="0" value="1"></td>
+                                                       </tr>
+                                                       </tbody>
+                                                  </table>
+                                             </div>
+
+                                             <p class="h5 mb-2 text-left pt-3">Shifts</p>
                                              <div class="form-row">
                                                   <div class="form-group col-md-4">
                                                        <label for="nShifts">Number of <b>shifts</b></label>
@@ -323,26 +365,6 @@ SPDX-License-Identifier: Apache-2.0-->
                                                   <div class="form-group col-md-12">
                                                        <label for="pCS">Number of casual labourers and security staff</label>
                                                        <input class="form-control" type="number" name="pCS" id="pCS" min="0" max="100" value="2">
-                                                  </div>
-                                             </div>
-
-                                             <p class="h5 mb-2 text-left">Age Distribution of Employees (company wide and across all shifts)</p>
-                                             <div class="form-row">
-                                                  <div class="form-group col-md-6">
-                                                       <label for="n29">Between 15-29</label>
-                                                       <input class="form-control" type="number" name="n29" id="n29" min="0" value="30">
-                                                  </div>
-                                                  <div class="form-group col-md-6">
-                                                       <label for="n49">Between 30-49</label>
-                                                       <input class="form-control" type="number" name="n49" id="n49" min="0" value="40">
-                                                  </div>
-                                                  <div class="form-group col-md-6">
-                                                       <label for="n64">Between 50-64</label>
-                                                       <input class="form-control" type="number" name="n64" id="n64" min="0" value="5">
-                                                  </div>
-                                                  <div class="form-group col-md-6">
-                                                       <label for="n65plus">65 and older</label>
-                                                       <input class="form-control" type="number" name="n65plus" id="n65plus" min="0" value="0">
                                                   </div>
                                              </div>
                                         </div>
@@ -697,12 +719,6 @@ SPDX-License-Identifier: Apache-2.0-->
                                                   <label for="nEmpCstmr">Number of employees that meet these customers</label>
                                                   <input class="form-control" type="number" name="nEmpCstmr" id="nEmpCstmr" min="0" value="20">
                                              </div>
-                                             <!--
-                                             <div class="form-group col-md-12">
-                                                  <label for="avgExt">Average number of external contacts for these employees per day</label>
-                                                  <input class="form-control" type="number" name="avgExt" id="avgExt" min="0" value="0">
-                                             </div>
-                                             -->
                                              <div class="form-group col-md-12">
                                                   <label for="nDlvrHndlng">Number of employees handling deliveries and receipts</label>
                                                   <input class="form-control" type="number" name="nDlvrHndlng" id="nDlvrHndlng" min="0" value="3">
@@ -796,68 +812,39 @@ SPDX-License-Identifier: Apache-2.0-->
                                                        <label class="form-check-label" for="cntnACOp_1">Yes</label>
                                                        </div>
                                                   </div>
-                                                  <div class="form-group col-md-12">
-                                                       <label for="nBrkfst">Number of people having breakfast in canteen/pantry</label>
-                                                       <input class="form-control" type="number" name="nBrkfst" id="nBrkfst" min="0" value="5">
-                                                  </div>
-                                                  <div class="form-group col-md-12">
-                                                       <label for="nLnch">Number of people having lunch in canteen/pantry</label>
-                                                       <input class="form-control" type="number" name="nLnch" id="nLnch" min="0" value="15">
-                                                  </div>
-                                                  <div class="form-group col-md-12">
-                                                       <label for="nSnck">Number of people having snacks/coffee in canteen/pantry</label>
-                                                       <input class="form-control" type="number" name="nSnck" id="nSnck" min="0" value="15">
-                                                  </div>
-                                                  <div class="form-group col-md-12">
-                                                       <label for="nEmpHL">Number of employees who bring their lunch from home</label>
-                                                       <input class="form-control" type="number" name="nEmpHL" id="nEmpHL" min="0" value="15">
-                                                  </div>
-                                                  <div class="form-group col-md-4">
-                                                       <label for="brkfst_flag">Is breakfast served?</label>
-                                                       <div class="form-check">
-                                                       <input class="form-check-input" type="radio" name="brkfst" id="brkfst_0" value="0" checked>
-                                                       <label class="form-check-label" for="brkfst_0">No</label>
-                                                       </div>
-                                                       <div class="form-check">
-                                                       <input class="form-check-input" type="radio" name="brkfst" id="brkfst_1" value="1">
-                                                       <label class="form-check-label" for="brkfst_1">Yes</label>
-                                                       </div>
-                                                  </div>
-                                                  <div class="form-group col-md-4">
-                                                       <label for="lnch_flag">Is lunch served</label>
-                                                       <div class="form-check">
-                                                       <input class="form-check-input" type="radio" name="lnch" id="lnch_0" value="0" checked>
-                                                       <label class="form-check-label" for="lnch_0">No</label>
-                                                       </div>
-                                                       <div class="form-check">
-                                                       <input class="form-check-input" type="radio" name="lnch" id="lnch_1" value="1">
-                                                       <label class="form-check-label" for="lnch_1">Yes</label>
-                                                       </div>
-                                                  </div>
-                                                  <div class="form-group col-md-4">
-                                                       <label for="cff_flag">Is snacks/coffee served?</label>
-                                                       <div class="form-check">
-                                                       <input class="form-check-input" type="radio" name="cff" id="cff_0" value="0"> 
-                                                       <label class="form-check-label" for="cff_0">No</label>
-                                                       </div>
-                                                       <div class="form-check">
-                                                       <input class="form-check-input" type="radio" name="cff" id="cff_1" value="1" checked>
-                                                       <label class="form-check-label" for="cff_1">Yes</label>
-                                                       </div>
-                                                  </div>
-                                                  <div class="form-group col-md-12">
-                                                       <label for="dBrkfst">Duration for which breakfast is served (minutes)</label>
-                                                       <input class="form-control" type="number" name="dBrkfst" id="dBrkfst" min="0" value="60">
-                                                  </div>
-                                                  <div class="form-group col-md-12">
-                                                       <label for="dLnch">Duration for which lunch is served (minutes)</label>
-                                                       <input class="form-control" type="number" name="dLnch" id="dLnch" min="0" value="90">
-                                                  </div>
-                                                  <div class="form-group col-md-12">
-                                                       <label for="dSnck">Duration for which coffee/snacks are served (minutes)</label>
-                                                       <input class="form-control" type="number" name="dSnck" id="dSnck" min="0" value="60">
-                                                  </div>
-                                                  <div class="form-group col-md-5">
+                                                  <table style="width: 100%;">
+                                                       <thead>
+                                                       <tr>
+                                                            <th class="px-1" style="width: 20%;">Meal</th>
+                                                            <th class="px-1" style="text-align: center; width:40%">Number of employees availing the facility</th>
+                                                            <th class="px-1" style="text-align: center; width:40%">Duration for which cafeteria is open (minutes)</th>
+                                                       </tr>
+                                                       </thead>
+                                                       <tbody>
+                                                       <tr>
+                                                            <td>Breakfast</td>
+                                                            <td class="px-1"><input class="form-control" type="number" id="nBrkfst" min="0" value="20"></td>
+                                                            <td class="px-1"><input class="form-control" type="number" id="dBrkfst" min="0" value="60"></td>
+                                                       </tr>
+                                                       <tr>
+                                                            <td>Lunch</td>
+                                                            <td class="px-1"><input class="form-control" type="number" id="nLnch" min="0" value="35"></td>
+                                                            <td class="px-1"><input class="form-control" type="number" id="dLnch" min="0" value="90"></td>
+                                                       </tr>
+                                                       <tr>
+                                                            <td>Coffee / Snacks</td>
+                                                            <td class="px-1"><input class="form-control" type="number" id="nSnck" min="0" value="15"></td>
+                                                            <td class="px-1"><input class="form-control" type="number" id="dSnck" min="0" value="60"></td>
+                                                       </tr>
+                                                       <tr>
+                                                            <td>Home Lunch</td>
+                                                            <td class="px-1"><input class="form-control" type="number" id="nEmpHL" min="0" value="2"></td>
+                                                            <td class="px-1"><input class="form-control" type="number" min="0" value="20" readonly></td>
+                                                       </tr>
+                                                       </tbody>
+                                                  </table>
+
+                                                  <div class="form-group col-md-5 pt-3">
                                                        <label for="mlStggrd_flag">Is the meal time staggered?</label>
                                                        <div class="form-check">
                                                        <input class="form-check-input" type="radio" name="mlStggrd" id="mlStggrd_0" value="0">
@@ -868,7 +855,7 @@ SPDX-License-Identifier: Apache-2.0-->
                                                        <label class="form-check-label" for="mlStggrd_1">Yes</label>
                                                        </div>
                                                   </div>
-                                                  <div class="form-group col-md-7">
+                                                  <div class="form-group col-md-7 pt-3">
                                                        <label for="utnslShrd_flag">Are utensils in canteen and pantry shared?</label>
                                                        <div class="form-check">
                                                        <input class="form-check-input" type="radio" name="utnslShrd" id="utnslShrd_0" value="0">
@@ -880,11 +867,11 @@ SPDX-License-Identifier: Apache-2.0-->
                                                        </div>
                                                   </div>
                                                   <div class="form-group col-md-12">
-                                                       <label for="cntnArea">Area of canteen/pantry in Sq.ft.</label>
+                                                       <label for="cntnArea">Total area of canteen/pantry in Sq.ft. (In case of multiple cafeterias, add all of them)</label>
                                                        <input class="form-control" type="number" name="cntnArea" id="cntnArea" min="0" value="100">
                                                   </div>
                                                   <div class="form-group col-md-12">
-                                                       <label for="mxCntnPpl">Maximum number permitted at each time.</label>
+                                                       <label for="mxCntnPpl">Maximum number permitted at each time. (In case of multiple cafeterias, add all of them)</label>
                                                        <input class="form-control" type="number" name="mxCntnPpl" id="mxCntnPpl" min="1" value="2">
                                                   </div>
                                                   <div class="form-group col-md-12">
@@ -962,7 +949,7 @@ SPDX-License-Identifier: Apache-2.0-->
                                    </div>
                               </div>
 
-                              <p style="margin-bottom:0.1cm;"> </p>
+                              <p style="margin-bottom:0.1cm;"></p>
                               <div class="card"> 
                                    <div class="card-header" id="headingOne">
                                         <h2 class="mb-0">
@@ -973,66 +960,111 @@ SPDX-License-Identifier: Apache-2.0-->
                                         <div class="card-body">
                                              <div class="form-row">
                                                   <p class="h5 mb-2 text-left">Time taken to reach office</p>
-                                                  <div class="form-group col-md-12">
-                                                       <label for="n30Min">Number of employees that take 0-30 minutes</label>
-                                                       <input class="form-control" type="number" name="n30Min" id="n30Min" min="0" value="10">
-                                                  </div>
-                                                  <div class="form-group col-md-12">
-                                                       <label for="n60Min">Number of employees that take 30-60 minutes</label>
-                                                       <input class="form-control" type="number" name="n60Min" id="n60Min" min="0" value="45">
-                                                  </div>
-                                                  <!-- auto-calculate this field -->
-                                                  <div class="form-group col-md-12">
-                                                       <label for="n60plusMin">Number of employees that take >60 minutes</label>
-                                                       <input class="form-control" type="number" name="n60plusMin" id="n60plusMin" min="0" value="15" readonly>
-                                                  </div>
+                                                  <table>
+                                                       <thead>
+                                                       <tr>
+                                                            <th></th>
+                                                            <th class="px-1" style="text-align: center;">0-30 minutes</th>
+                                                            <th class="px-1" style="text-align: center;">30-60 minutes</th>
+                                                            <th class="px-1" style="text-align: center;">> 60 minutes</th>
+                                                       </tr>
+                                                       </thead>
+                                                       <tbody>
+                                                       <tr>
+                                                            <td>Number of employees</td>
+                                                            <td class="px-1"><input class="form-control" type="number" id="n30Min" min="0" value="10"></td>
+                                                            <td class="px-1"><input class="form-control" type="number" id="n60Min" min="0" value="45"></td>
+                                                            <td class="px-1"><input class="form-control" type="number" id="n60plusMin" min="0" value="15"></td>
+                                                       </tr>
+                                                       </tbody>
+                                                  </table>
 
-                                                  <p class="h5 mb-2 text-left">Company provided vehicles</p>
-                                                  <div class="form-group col-md-12">
-                                                       <label for="cmpnTrnsprtUsrs">Number of employees that will use company provided transport, if provided</label>
-                                                       <input class="form-control" type="number" name="cmpnTrnsprtUsrs" id="cmpnTrnsprtUsrs" min="0" value="0">
+                                                  <div class="d-flex pt-3">
+                                                  <p class="h5 mb-2 text-left">Commute distance matrix</p>
                                                   </div>
-                                                  <div class="form-group col-md-6">
-                                                       <label for="bsCpctAct">Actual bus capacity</label>
-                                                       <input class="form-control" type="number" name="bsCpctAct" id="bsCpctAct" min="0" value="2">
+                                                  <table>
+                                                       <thead>
+                                                            <th></th>
+                                                            <th colspan="3" style="text-align: center; font-size: 18px;">Number of employees travelling:</th>
+                                                       </thead>
+                                                       <thead>
+                                                       <tr>
+                                                            <th class="px-1">Type of transport</th>
+                                                            <th class="px-1" style="text-align: center;">0-5 Km</th>
+                                                            <th class="px-1" style="text-align: center;">5-10 Km</th>
+                                                            <th class="px-1" style="text-align: center;">> 10 Km</th>
+                                                       </tr>
+                                                       </thead>
+                                                       <tbody>
+                                                       <tr>
+                                                            <td>Company owned / contracted</td>
+                                                            <td class="px-1"><input class="form-control" type="number" id="trvlr5K" min="0" value="10"></td>
+                                                            <td class="px-1"><input class="form-control" type="number" id="trvlr10K" min="0" value="45"></td>
+                                                            <td class="px-1"><input class="form-control" type="number" id="trvlr10Kplus" min="0" value="15"></td>
+                                                       </tr>
+                                                       <tr>
+                                                            <td>Self owned</td>
+                                                            <td class="px-1"><input class="form-control" type="number" id="trvlr5Kslf" min="0" value="10"></td>
+                                                            <td class="px-1"><input class="form-control" type="number" id="trvlr10Kslf" min="0" value="45"></td>
+                                                            <td class="px-1"><input class="form-control" type="number" id="trvlr10Kplusslf" min="0" value="15"></td>
+                                                       </tr>
+                                                       <tr>
+                                                            <td>Public / ride-share</td>
+                                                            <td class="px-1"><input class="form-control" type="number" id="trvlr5Kpub"  min="0" value="10"></td>
+                                                            <td class="px-1"><input class="form-control" type="number" id="trvlr10Kpub" min="0" value="45"></td>
+                                                            <td class="px-1"><input class="form-control" type="number" id="trvlr10Kpluspub" min="0" value="15"></td>
+                                                       </tr>
+                                                       <tr>
+                                                            <td>Walk</td>
+                                                            <td class="px-1"><input class="form-control" type="number" id="nWlk" min="0" value="10"></td>
+                                                            <td class="px-1"><input class="form-control" type="number" min="0" value="0" readonly></td>
+                                                            <td class="px-1"><input class="form-control" type="number" min="0" value="0" readonly></td>
+                                                       </tr>
+                                                       </tbody>
+                                                  </table>
+
+
+                                                  <div class="d-flex pt-4">
+                                                  <p class="h5 mb-2 text-left">Company owned / contracted vehicles</p>
                                                   </div>
-                                                  <div class="form-group col-md-6">
-                                                       <label for="bsCpctCur">Restricted bus capacity</label>
-                                                       <input class="form-control" type="number" name="bsCpctCur" id="bsCpctCur" min="0" value="1">
-                                                  </div>
-                                                  <div class="form-group col-md-6">
-                                                       <label for="mnBsCpctAct"> Actual minibus capacity</label>
-                                                       <input class="form-control" type="number" name="mnBsCpctAct" id="mnBsCpctAct" min="0" value="2">
-                                                  </div>
-                                                  <div class="form-group col-md-6">
-                                                       <label for="mnBsCpctCur">Restricted minibus capacity</label>
-                                                       <input class="form-control" type="number" name="mnBsCpctCur" id="mnBsCpctCur" min="0" value="1">
-                                                  </div>
-                                                  <div class="form-group col-md-6">
-                                                       <label for="vnCpctAct">Actual van capacity</label>
-                                                       <input class="form-control" type="number" name="vnCpctAct" id="vnCpctAct" min="0" value="2">
-                                                  </div>
-                                                  <div class="form-group col-md-6">
-                                                       <label for="vnCpctCur">Restricted van capacity</label>
-                                                       <input class="form-control" type="number" name="vnCpctCur" id="vnCpctCur" min="0" value="1">
-                                                  </div>
-                                                  <div class="form-group col-md-6">
-                                                       <label for="svCpctAct">Actual SUV capacity</label>
-                                                       <input class="form-control" type="number" name="svCpctAct" id="svCpctAct" min="0" value="2">
-                                                  </div>
-                                                  <div class="form-group col-md-6">
-                                                       <label for="svCpctCur">Restricted SUV capacity</label>
-                                                       <input class="form-control" type="number" name="svCpctCur" id="svCpctCur" min="0" value="1">
-                                                  </div>
-                                                  <div class="form-group col-md-6">
-                                                       <label for="crCpctAct">Actual car capacity</label>
-                                                       <input class="form-control" type="number" name="crCpctAct" id="crCpctAct" min="0" value="2">
-                                                  </div>
-                                                  <div class="form-group col-md-6">
-                                                       <label for="crCpctCur">Restricted car capacity</label>
-                                                       <input class="form-control" type="number" name="crCpctCur" id="crCpctCur" min="0" value="1">
-                                                  </div>
-                                                  <div class="form-group col-md-6">
+                                                  <table style="width: 100%;">
+                                                       <thead>
+                                                       <tr>
+                                                            <th class="px-1" style="width: 20%;">Type of vehicle</th>
+                                                            <th class="px-1" style="text-align: center; width:40%">Seating capcity</th>
+                                                            <th class="px-1" style="text-align: center; width:40%">Resticted seating capacity</th>
+                                                       </tr>
+                                                       </thead>
+                                                       <tbody>
+                                                       <tr>
+                                                            <td>Bus</td>
+                                                            <td class="px-1"><input class="form-control" type="number" id="bsCpctAct" min="0" value="2"></td>
+                                                            <td class="px-1"><input class="form-control" type="number" id="bsCpctCur" min="0" value="1"></td>
+                                                       </tr>
+                                                       <tr>
+                                                            <td>Minibus</td>
+                                                            <td class="px-1"><input class="form-control" type="number" id="mnBsCpctAct" min="0" value="2"></td>
+                                                            <td class="px-1"><input class="form-control" type="number" id="mnBsCpctCur" min="0" value="1"></td>
+                                                       </tr>
+                                                       <tr>
+                                                            <td>Van</td>
+                                                            <td class="px-1"><input class="form-control" type="number" id="vnCpctAct" min="0" value="2"></td>
+                                                            <td class="px-1"><input class="form-control" type="number" id="vnCpctCur" min="0" value="1"></td>
+                                                       </tr>
+                                                       <tr>
+                                                            <td>SUV</td>
+                                                            <td class="px-1"><input class="form-control" type="number" id="svCpctAct" min="0" value="2"></td>
+                                                            <td class="px-1"><input class="form-control" type="number" id="svCpctCur" min="0" value="1"></td>
+                                                       </tr>
+                                                       <tr>
+                                                            <td>Car</td>
+                                                            <td class="px-1"><input class="form-control" type="number" id="crCpctAct" min="0" value="2"></td>
+                                                            <td class="px-1"><input class="form-control" type="number" id="crCpctCur" min="0" value="1"></td>
+                                                       </tr>
+                                                       </tbody>
+                                                  </table>
+
+                                                  <div class="form-group col-md-6 pt-4">
                                                        <label for="mskMndt_flag">Are face covers mandated in every vehicle?</label>
                                                        <div class="form-check">
                                                        <input class="form-check-input" type="radio" name="mskMndt" id="mskMndt_0" value="0">
@@ -1043,7 +1075,7 @@ SPDX-License-Identifier: Apache-2.0-->
                                                        <label class="form-check-label" for="mskMndt_1">Yes</label>
                                                        </div>
                                                   </div>
-                                                  <div class="form-group col-md-6">
+                                                  <div class="form-group col-md-6 pt-4">
                                                        <label for="hsVhcl_flag">Hand sanitiser provided in every vehicle?</label>
                                                        <div class="form-check">
                                                        <input class="form-check-input" type="radio" name="hsVhcl" id="hsVhcl_0" value="0" checked>
@@ -1081,7 +1113,7 @@ SPDX-License-Identifier: Apache-2.0-->
                                                        </div>
                                                   </div>
                                                   <div class="form-group col-md-6">
-                                                       <label for="vhclSnt_flag">Is the vehicle sanitised after every trip?</label>
+                                                       <label for="vhclSnt_flag">Are the vehicles sanitised after every trip?</label>
                                                        <div class="form-check">
                                                        <input class="form-check-input" type="radio" name="vhclSnt" id="vhclSnt_0" value="0" checked>
                                                        <label class="form-check-label" for="vhclSnt_0">No</label>
@@ -1091,24 +1123,8 @@ SPDX-License-Identifier: Apache-2.0-->
                                                        <label class="form-check-label" for="vhclSnt_1">Yes</label>
                                                        </div>
                                                   </div>
-                                                  <div class="form-group col-md-4">
-                                                       <label for="trvlr5K">Number travelling 0-5 km</label>
-                                                       <input class="form-control" type="number" name="Trvlr5K" id="trvlr5K" min="0" value="0">
-                                                  </div>
-                                                  <div class="form-group col-md-4">
-                                                       <label for="trvlr10K">Number travelling 5-10 km</label>
-                                                       <input class="form-control" type="number" name="Trvlr10K" id="trvlr10K" min="0" value="0">
-                                                  </div>
-                                                  <div class="form-group col-md-4">
-                                                       <label for="trvlr10Kplus">Number travelling >10 km</label>
-                                                       <input class="form-control" type="number" name="Trvlr10Kplus" id="trvlr10Kplus" min="0" value="0">
-                                                  </div>
 
                                                   <p class="h5 mb-2 text-left">Self-owned vehicle travellers</p>
-                                                  <div class="form-group col-md-12">
-                                                       <label for="slfTrnsprtUsrs">Number of employees that will use self-owned vehicles</label>
-                                                       <input class="form-control" type="number" name="slfTrnsprtUsrs" id="slfTrnsprtUsrs" min="0" value="30">
-                                                  </div>
                                                   <div class="form-group col-md-12">
                                                        <label for="noPlnR_flag">Have employees been instructed not to take pillion riders on two wheelers?</label>
                                                        <div class="form-check">
@@ -1131,7 +1147,7 @@ SPDX-License-Identifier: Apache-2.0-->
                                                        <label class="form-check-label" for="no2plusTrvl_1">Yes</label>
                                                        </div>
                                                   </div>
-                                                  <div class="form-group col-md-12">
+                                                  <div class="form-group col-md-6">
                                                        <label for="mskCar_flag">Do they wear face covers?</label>
                                                        <div class="form-check">
                                                        <input class="form-check-input" type="radio" name="mskCar" id="mskCar_0" value="0">
@@ -1142,7 +1158,7 @@ SPDX-License-Identifier: Apache-2.0-->
                                                        <label class="form-check-label" for="mskCar_1">Yes</label>
                                                        </div>
                                                   </div>
-                                                  <div class="form-group col-md-12">
+                                                  <div class="form-group col-md-6">
                                                        <label for="hsLbb_flag">Is hand sanitiser available at the lobby?</label>
                                                        <div class="form-check">
                                                        <input class="form-check-input" type="radio" name="hsLbb" id="hsLbb_0" value="0">
@@ -1153,24 +1169,8 @@ SPDX-License-Identifier: Apache-2.0-->
                                                        <label class="form-check-label" for="hsLbb_1">Yes</label>
                                                        </div>
                                                   </div>
-                                                  <div class="form-group col-md-4">
-                                                       <label for="trvlr5Kslf">Number travelling 0-5 km</label>
-                                                       <input class="form-control" type="number" name="trvlr5Kslf" id="trvlr5Kslf" min="0" value="37">
-                                                  </div>
-                                                  <div class="form-group col-md-4">
-                                                       <label for="trvlr10Kslf">Number travelling 5-10 km</label>
-                                                       <input class="form-control" type="number" name="trvlr10Kslf" id="trvlr10Kslf" min="0" value="10">
-                                                  </div>
-                                                  <div class="form-group col-md-4">
-                                                       <label for="trvlr10Kplusslf">Number travelling >10 km</label>
-                                                       <input class="form-control" type="number" name="trvlr10Kplusslf" id="trvlr10Kplusslf" min="0" value="5">
-                                                  </div> 
 
                                                   <p class="h5 mb-2 text-left">Employees that walk to work</p>
-                                                  <div class="form-group col-md-12">
-                                                       <label for="nWlk">Number of employees who walks to office?</label>
-                                                       <input class="form-control" type="number" name="nWlk" id="nWlk" min="0" value="5">
-                                                  </div>  
                                                   <div class="form-group col-md-12">
                                                        <label for="mskWlk_flag">Do they wear face covers?</label>
                                                        <div class="form-check">
@@ -1184,10 +1184,6 @@ SPDX-License-Identifier: Apache-2.0-->
                                                   </div>
 
                                                   <p class="h5 mb-2 text-left">Employees traveling in public/ride-share vehicles</p>
-                                                  <div class="form-group col-md-12"> 
-                                                       <label for="nPubTrvl"> Number of employees that uses public/ride-share vehicles</label>
-                                                       <input class="form-control" type="number" name="nPubTrvl" id="nPubTrvl" min="0" value="3" readonly>
-                                                  </div>
                                                   <div class="form-group col-md-12">
                                                        <label for="mskPub_flag">Do they wear face covers?</label>
                                                        <div class="form-check">
@@ -1199,18 +1195,6 @@ SPDX-License-Identifier: Apache-2.0-->
                                                        <label class="form-check-label" for="mskPub_1">Yes</label>
                                                        </div>
                                                   </div>
-                                                  <div class="form-group col-md-4">
-                                                       <label for="trvlr5Kpub">Number travelling 0-5 km</label>
-                                                       <input class="form-control" type="number" name="trvlr5Kpub" id="trvlr5Kpub" min="0" value="0">
-                                                  </div>
-                                                  <div class="form-group col-md-4">
-                                                       <label for="trvlr10Kpub">Number travelling 5-10 km</label>
-                                                       <input class="form-control" type="number" name="trvlr10Kpub" id="trvlr10Kpub" min="0" value="3">
-                                                  </div>
-                                                  <div class="form-group col-md-4">
-                                                       <label for="trvlr10Kpluspub">Number travelling >10 km</label>
-                                                       <input class="form-control" type="number" name="trvlr10Kpluspub" id="trvlr10Kpluspub" min="0" value="0">
-                                                  </div> 
                                              </div>
                                         </div>
                                    </div>

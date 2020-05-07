@@ -17,9 +17,9 @@ SPDX-License-Identifier: Apache-2.0-->
           gtag('config', 'UA-164131064-2');
         </script>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-	<title>COVID-19 Workplace Readiness Assessment</title>
-	<link rel="stylesheet" href="style.css">
-	<link rel="stylesheet" href="font-awesome.min.css">
+	   <title>COVID-19 Workplace Readiness Assessment</title>
+	   <link rel="stylesheet" href="style.css">
+	   <link rel="stylesheet" href="font-awesome.min.css">
         <link rel="icon" type="image/png" sizes="32x32" href="https://iisc.ac.in/wp-content/themes/iisc/images/favicon/favicon-32x32.png">
         <link rel="icon" type="image/png" sizes="96x96" href="https://iisc.ac.in/wp-content/themes/iisc/images/favicon/favicon-96x96.png">
     </head>
@@ -103,7 +103,7 @@ SPDX-License-Identifier: Apache-2.0-->
                                              <div class="form-row">
                                                   <div class="form-group col-md-12">
                                                        <label for="nBldng">Total number of standalone buildings</label>
-                                                       <input class="form-control" type="number" name="nBldng" id="nBldng" min="0" value="1">
+                                                       <input class="form-control" type="number" name="nBldng" id="nBldng" min="1" value="1">
                                                   </div>
                                                   <div class="form-group col-md-12">
                                                        <label for="tArea">Total built-up area (sq.ft) including common spaces</label>
@@ -111,7 +111,7 @@ SPDX-License-Identifier: Apache-2.0-->
                                                   </div>
                                                   <div class="form-group col-md-12">
                                                        <label for="nFloors">Total number of floors (across all buildings)</label>
-                                                       <input class="form-control" type="number" name="nFloors" id="nFloors" min="0" value="2">
+                                                       <input class="form-control" type="number" name="nFloors" id="nFloors" min="1" value="2">
                                                   </div>
                                                   <div class="form-group col-md-12">
                                                        <label for="opnCubArea">Total approximate area of open and cubicle working space (sq. ft)</label>
@@ -160,7 +160,7 @@ SPDX-License-Identifier: Apache-2.0-->
                                                   </div>
                                                   <div class="form-group col-md-12">
                                                        <label for="nCW">Number of companies sharing office space, if co-work space, including your company</label>
-                                                       <input class="form-control" type="number" name="nCW" id="nCW" min="0" value="1">
+                                                       <input class="form-control" type="number" name="nCW" id="nCW" min="1" value="1">
                                                   </div>
 
                                              <p class="h5 mb-2 text-left">Office Composition</p>
@@ -191,7 +191,7 @@ SPDX-License-Identifier: Apache-2.0-->
                                                   </div>
                                                   <div class="form-group col-md-6">
                                                        <label for="tempAC">Temperature setting</label>
-                                                       <input class="form-control" type="number" name="tempAC" id="tempAC" min="0" value="21">
+                                                       <input class="form-control" type="number" name="tempAC" id="tempAC" min="15" value="21">
                                                   </div>
                                                   <div class="form-group col-md-6">
                                                        <label for="hepaFltr">Is the A/C system HEPA filter enabled?</label>
@@ -217,7 +217,7 @@ SPDX-License-Identifier: Apache-2.0-->
                                                   </div>
                                                   <div class="form-group col-md-12">
                                                        <label for="eleCpct">Average capacity of lifts</label>
-                                                       <input class="form-control" type="number" name="eleCpct" id="eleCpct" min="0" value="5">
+                                                       <input class="form-control" type="number" name="eleCpct" id="eleCpct" min="3" value="5">
                                                   </div>
                                                   <div class="form-group col-md-12">
                                                        <label for="nEleDinf">Number of times a day each lift is disinfected</label>
@@ -274,7 +274,7 @@ SPDX-License-Identifier: Apache-2.0-->
                                                   </div>
                                                   <div class="form-group col-md-6">
                                                        <label for="nShifts">Number of <b>shifts</b></label>
-                                                       <input class="form-control" type="number" name="nShifts" id="nShifts" min="0" value="1">
+                                                       <input class="form-control" type="number" name="nShifts" id="nShifts" min="1" value="1">
                                                   </div>
                                                   <div class="form-group col-md-6">
                                                        <label for="tGapShift">Time gap between shifts (hours)</label>
@@ -308,7 +308,7 @@ SPDX-License-Identifier: Apache-2.0-->
                                              <div class="form-row">
                                                   <div class="form-group col-md-6">
                                                        <label for="n29">Between 15-29</label>
-                                                       <input class="form-control" type="number" name="n29" id="n29" min="0" value="0">
+                                                       <input class="form-control" type="number" name="n29" id="n29" min="0" value="30">
                                                   </div>
                                                   <div class="form-group col-md-6">
                                                        <label for="n49">Between 30-49</label>
@@ -852,7 +852,7 @@ SPDX-License-Identifier: Apache-2.0-->
                                                   </div>
                                                   <div class="form-group col-md-12">
                                                        <label for="mxCntnPpl">Maximum number permitted at each time.</label>
-                                                       <input class="form-control" type="number" name="mxCntnPpl" id="mxCntnPpl" min="0" value="2">
+                                                       <input class="form-control" type="number" name="mxCntnPpl" id="mxCntnPpl" min="1" value="2">
                                                   </div>
                                                   <div class="form-group col-md-12">
                                                        <label for="nWS">Number of water dispensing stations</label>
@@ -886,7 +886,7 @@ SPDX-License-Identifier: Apache-2.0-->
                                                        <input class="form-control" type="number" name="tClnFreq" id="tClnFreq" min="0" value="1">
                                                   </div>
                                                   <div class="form-group col-md-12">
-                                                       <label for="spPrsnt_flag">Is soap dispensed in each of the toilets and each of the wash basings?</label>
+                                                       <label for="spPrsnt_flag">Is soap dispensed in each of the toilets and each of the wash basins?</label>
                                                        <div class="form-check">
                                                        <input class="form-check-input" type="radio" name="spPrsnt" id="spPrsnt_0" value="0">
                                                        <label class="form-check-label" for="spPrsnt_0">No</label>
@@ -1085,7 +1085,7 @@ SPDX-License-Identifier: Apache-2.0-->
                                                        </div>
                                                   </div>
                                                   <div class="form-group col-md-12">
-                                                       <label for="hsLbb_flag">Is there hand sanitiser available at the Lobby?</label>
+                                                       <label for="hsLbb_flag">Is there hand sanitiser available at the lobby?</label>
                                                        <div class="form-check">
                                                        <input class="form-check-input" type="radio" name="hsLbb" id="hsLbb_0" value="0">
                                                        <label class="form-check-label" for="hsLbb_0">No</label>

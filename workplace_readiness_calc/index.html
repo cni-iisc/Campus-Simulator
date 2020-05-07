@@ -75,11 +75,15 @@ SPDX-License-Identifier: Apache-2.0-->
                                              <div class="form-row">
                                                   <div class="form-group col-md-6">
                                                        <select id="NOE" name="NOE">
-                                                            <option value="1">IT/ITES/Backoffice</option>
-                                                            <option value="2">Manufacturing</option>
-                                                            <option value="3">Bank/financial</option>
-                                                            <option value="4">Automobile sales and service</option>
-                                                            <option value="5">Others</option>
+                                                            <option value="1">IT/ITES</option>
+                                                            <option value="2">Data/Call centre</option>
+                                                            <option value="3">Telecommunication/Internet service</option>
+                                                            <option value="4">Incubator</option>
+                                                            <option value="5">Manufacturing</option>
+                                                            <option value="6">Bank/financial</option>
+                                                            <option value="7">Automobile sales and service</option>
+                                                            <option value="8">Government office</option>
+                                                            <option value="9">Other</option>
                                                        </select>
                                                   </div>
                                              </div>
@@ -97,23 +101,21 @@ SPDX-License-Identifier: Apache-2.0-->
                                    <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordionExample">
                                         <div class="card-body">
                                              <div class="form-row">
-
-                                                  <div class="form-group col-md-6">
-                                                       <label for="tArea">Total area (sq.ft)</label>
+                                                  <div class="form-group col-md-12">
+                                                       <label for="nBldng">Total number of standalone buildings</label>
+                                                       <input class="form-control" type="number" name="nBldng" id="nBldng" min="0" value="1">
+                                                  </div>
+                                                  <div class="form-group col-md-12">
+                                                       <label for="tArea">Total built-up area (sq.ft) including common spaces</label>
                                                        <input class="form-control" type="number" name="tArea" id="tArea" min="0" value="4000">
                                                   </div>
-                                                  <!-- Ask professor about the definition of tArea -->
-                                                  <div class="form-group col-md-6">
-                                                       <label for="nFloors">Total number of floors</label>
+                                                  <div class="form-group col-md-12">
+                                                       <label for="nFloors">Total number of floors (across all buildings)</label>
                                                        <input class="form-control" type="number" name="nFloors" id="nFloors" min="0" value="2">
                                                   </div>
-                                                  <div class="form-group col-md-6">
-                                                       <label for="opnCubArea">Approximate area of open cubicle space (sq. ft)</label>
+                                                  <div class="form-group col-md-12">
+                                                       <label for="opnCubArea">Total approximate area of open and cubicle working space (sq. ft)</label>
                                                        <input class="form-control" type="number" name="opnCubArea" id="opnCubArea" min="0" value="2000">
-                                                  </div>
-                                                  <div class="form-group col-md-6">
-                                                       <label for="prtnArea">Remaining working space (sq. ft) </label>
-                                                       <input class="form-control" type="number" name="prtnArea" id="prtnArea" min="0" value="2000">
                                                   </div>
                                                   <div class="form-group col-md-12">
                                                        <label for="mntrCCTV">Do you have security staff monitoring CCTV footage during working hours?</label>
@@ -192,8 +194,19 @@ SPDX-License-Identifier: Apache-2.0-->
                                                        <input class="form-control" type="number" name="tempAC" id="tempAC" min="0" value="21">
                                                   </div>
                                                   <div class="form-group col-md-6">
-                                                       <label for="humAC">Relative humidity setting</label>
-                                                       <input class="form-control" type="number" name="humAC" id="humAC" min="0" value="30">
+                                                       <label for="hepaFltr">Is the A/C system HEPA filter enabled?</label>
+                                                       <div class="form-check">
+                                                       <input class="form-check-input" type="radio" name="hepaFltr" id="hepaFltr_0" value="0" checked>
+                                                       <label class="form-check-label" for="hepaFltr_0">No</label>
+                                                       </div>
+                                                       <div class="form-check">
+                                                       <input class="form-check-input" type="radio" name="hepaFltr" id="hepaFltr_1" value="1">
+                                                       <label class="form-check-label" for="hepaFltr_1">Yes</label>
+                                                       </div>
+                                                       <div class="form-check">
+                                                            <input class="form-check-input" type="radio" name="hepaFltr" id="hepaFltr_2" value="2">
+                                                            <label class="form-check-label" for="hepaFltr_2">Not applicable</label>
+                                                       </div>
                                                   </div>
                                              </div>
 
@@ -211,11 +224,11 @@ SPDX-License-Identifier: Apache-2.0-->
                                                        <input class="form-control" type="number" name="nEleDinf" id="nEleDinf" min="0" value="1">
                                                   </div>
                                                   <div class="form-group col-md-12">
-                                                       <label for="nStrCln">Number of times a day each stairway is cleaned</label>
+                                                       <label for="nStrCln">Number of times a day each stairway and each escalator is cleaned</label>
                                                        <input class="form-control" type="number" name="nStrCln" id="nStrCln" min="0" value="1">
                                                   </div>
                                                   <div class="form-group col-md-12">
-                                                       <label for="nStrHrDinf">Number of times a day stairway handrails are disinfected</label>
+                                                       <label for="nStrHrDinf">Number of times a day stairway and escalator handrails are disinfected</label>
                                                        <input class="form-control" type="number" name="nStrHrDinf" id="nStrHrDinf" min="0" value="1">
                                                   </div>
                                                   <div class="form-group col-md-12">
@@ -237,7 +250,7 @@ SPDX-License-Identifier: Apache-2.0-->
                                    <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
                                         <div class="card-body">
 
-                                             <p class="h5 mb-2 text-left">Number of Employees in a Shift (including security, casual labour)</p>
+                                             <p class="h5 mb-2 text-left">Number of Employees in a <b>Shift</b> (including security, casual labour)</p>
                                              <div class="form-row">
                                                   <div class="form-group col-md-4">
                                                        <label for="nM">Men</label>
@@ -256,15 +269,15 @@ SPDX-License-Identifier: Apache-2.0-->
                                                        <input class="form-control" type="number" name="rAddrKn" id="rAddrKn" min="0" value="65">
                                                   </div>
                                                   <div class="form-group col-md-6">
-                                                       <label for="pCS">Percentage of casual labour and security</label>
+                                                       <label for="pCS">Number of casual labourers and security staff</label>
                                                        <input class="form-control" type="number" name="pCS" id="pCS" min="0" max="100" value="2">
                                                   </div>
                                                   <div class="form-group col-md-6">
-                                                       <label for="nShifts">Number of shifts</label>
+                                                       <label for="nShifts">Number of <b>shifts</b></label>
                                                        <input class="form-control" type="number" name="nShifts" id="nShifts" min="0" value="1">
                                                   </div>
                                                   <div class="form-group col-md-6">
-                                                       <label for="tGapShift">Time gap between shift (Hours)</label>
+                                                       <label for="tGapShift">Time gap between shifts (hours)</label>
                                                        <input class="form-control" type="number" name="tGapShift" id="tGapShift" min="0" value="0">
                                                   </div>
                                                   <div class="form-group col-md-12">
@@ -291,52 +304,34 @@ SPDX-License-Identifier: Apache-2.0-->
                                                   </div>
                                              </div>
 
-                                             <p class="h5 mb-2 text-left">Age Distribution of Employees</p>
+                                             <p class="h5 mb-2 text-left">Age Distribution of Employees (company wide and across all shifts)</p>
                                              <div class="form-row">
-                                                  <div class="form-group col-md-4">
-                                                       <label for="n19">Between 15-19</label>
-                                                       <input class="form-control" type="number" name="n19" id="n19" min="0" value="0">
+                                                  <div class="form-group col-md-6">
+                                                       <label for="n29">Between 15-29</label>
+                                                       <input class="form-control" type="number" name="n29" id="n29" min="0" value="0">
                                                   </div>
-                                                  <div class="form-group col-md-4">
-                                                       <label for="n29">Between 20-29</label>
-                                                       <input class="form-control" type="number" name="n29" id="n29" min="0" value="40">
+                                                  <div class="form-group col-md-6">
+                                                       <label for="n49">Between 30-49</label>
+                                                       <input class="form-control" type="number" name="n49" id="n49" min="0" value="40">
                                                   </div>
-                                                  <div class="form-group col-md-4">
-                                                       <label for="n39">Between 30-39</label>
-                                                       <input class="form-control" type="number" name="n39" id="n39" min="0" value="15">
-                                                  </div>
-                                                  <div class="form-group col-md-4">
-                                                       <label for="n49">Between 40-49</label>
-                                                       <input class="form-control" type="number" name="n49" id="n49" min="0" value="10">
-                                                  </div>
-                                                  <div class="form-group col-md-4">
+                                                  <div class="form-group col-md-6">
                                                        <label for="n59">Between 50-59</label>
                                                        <input class="form-control" type="number" name="n59" id="n59" min="0" value="5">
                                                   </div>
-                                                  <div class="form-group col-md-4">
+                                                  <div class="form-group col-md-6">
                                                        <label for="n60plus">Older than 60</label>
                                                        <input class="form-control" type="number" name="n60plus" id="n60plus" min="0" value="0">
-                                                  </div>
-                                                  <div class="form-group col-md-6">
-                                                       <label for="nASapp">Total employees with Aarogya Setu App</label>
-                                                       <input class="form-control" type="number" name="nASapp" id="nASapp" min="0" value="30">
-                                                  </div>
-                                                  <div class="form-group col-md-6">
-                                                       <label for="nGCGapp">Total employees with GoCoronaGo App</label>
-                                                       <input class="form-control" type="number" name="nGCGapp" id="nGCGapp" min="0" value="10">
                                                   </div>
                                              </div>
                                         </div>
                                    </div>
                               </div>
 
-                              
-
                               <p style="margin-bottom:0.1cm;"> </p>
                               <div class="card"> 
                                    <div class="card-header" id="headingOne">
                                         <h2 class="mb-0">
-                                        <button type="button" class="btn" data-toggle="collapse" data-target="#collapseFour">4. Epidemic Related Precautions</button>									
+                                        <button type="button" class="btn" data-toggle="collapse" data-target="#collapseFour">4. Epidemic Related: Precautions</button>									
                                         </h2>
                                    </div>
                                    <div id="collapseFour" class="collapse" aria-labelledby="headingFour" data-parent="#accordionExample">
@@ -364,11 +359,55 @@ SPDX-License-Identifier: Apache-2.0-->
                                                   </div>
                                              </div>
                                              <div class="form-group col-md-12">
+                                                  <label for="adqFaceCover_flag">Are adequate number of face covers available for the employees?</label>
+                                                  <div class="form-check">
+                                                  <input class="form-check-input" type="radio" name="adqFaceCover" id="adqFaceCover_0" value="0">
+                                                  <label class="form-check-label" for="adqFaceCover_0">No</label>
+                                                  </div>
+                                                  <div class="form-check">
+                                                  <input class="form-check-input" type="radio" name="adqFaceCover" id="adqFaceCover_1" value="1" checked>
+                                                  <label class="form-check-label" for="adqFaceCover_1">Yes</label>
+                                                  </div>
+                                             </div>
+                                             <div class="form-group col-md-12">
+                                                  <label for="newShfts_flag">Have you introduced new shifts or staggered work timings to ensure social distancing?</label>
+                                                  <div class="form-check">
+                                                  <input class="form-check-input" type="radio" name="newShfts" id="newShfts_0" value="0">
+                                                  <label class="form-check-label" for="newShfts_0">No</label>
+                                                  </div>
+                                                  <div class="form-check">
+                                                  <input class="form-check-input" type="radio" name="newShfts" id="newShfts_1" value="1" checked>
+                                                  <label class="form-check-label" for="newShfts_1">Yes</label>
+                                                  </div>
+                                             </div>
+                                             <div class="form-group col-md-12">
+                                                  <label for="advAvdLPM_flag">Have employees been advised to avoid large physical meetings?</label>
+                                                  <div class="form-check">
+                                                  <input class="form-check-input" type="radio" name="advAvdLPM" id="advAvdLPM_0" value="0">
+                                                  <label class="form-check-label" for="advAvdLPM_0">No</label>
+                                                  </div>
+                                                  <div class="form-check">
+                                                  <input class="form-check-input" type="radio" name="advAvdLPM" id="advAvdLPM_1" value="1" checked>
+                                                  <label class="form-check-label" for="advAvdLPM_1">Yes</label>
+                                                  </div>
+                                             </div>
+                                             <div class="form-group col-md-12">
                                                   <label for="nHsS">Number of hand-sanitiser dispensing stations</label>
                                                   <input class="form-control" type="number" name="nHsS" id="nHsS" min="0" value="6">
                                              </div>
                                              <div class="form-group col-md-12">
-                                                  <label for="nDinf">Number of times disinfection activity is performed per day</label>
+                                                  <label for="tchFree_flag">Are they touchfree?</label>
+                                                  <div class="form-check">
+                                                  <input class="form-check-input" type="radio" name="tchFree" id="tchFree_0" value="0" checked>
+                                                  <label class="form-check-label" for="tchFree_0">No</label>
+                                                  </div>
+                                                  <div class="form-check">
+                                                  <input class="form-check-input" type="radio" name="tchFree" id="tchFree_1" value="1">
+                                                  <label class="form-check-label" for="tchFree_1">Yes</label>
+                                                  </div>
+                                             </div>
+                                             <div class="form-group col-md-12">
+                                                  <label for="nDinf">Number of times disinfection activity is performed per day (common facilities and points of human contact - door handles, knobs, biometric access points, etc.)</label>
                                                   <input class="form-control" type="number" name="nDinf" id="nDinf" min="0" value="1">
                                              </div>
                                              <div class="form-group col-md-12">
@@ -390,6 +429,10 @@ SPDX-License-Identifier: Apache-2.0-->
                                                   <label for="nWsB">Number of warning sign boards in common areas indicating "No spitting"</label>
                                                   <input class="form-control" type="number" name="nWsB" id="nWsB" min="0" value="5">
                                              </div>
+                                             <div class="form-group col-md-12">
+                                                  <label for="nASapp">Total employees with Aarogya Setu App</label>
+                                                  <input class="form-control" type="number" name="nASapp" id="nASapp" min="0" value="30">
+                                             </div>
                                         </div>
                                    </div>
                               </div>
@@ -398,7 +441,195 @@ SPDX-License-Identifier: Apache-2.0-->
                               <div class="card"> 
                                    <div class="card-header" id="headingOne">
                                         <h2 class="mb-0">
-                                        <button type="button" class="btn" data-toggle="collapse" data-target="#collapseFive">5. Employee Interactions</button>									
+                                        <button type="button" class="btn" data-toggle="collapse" data-target="#collapseNine">5. Epidemic Related: Medical History and Isolation Room</button>									
+                                        </h2>
+                                   </div>
+                                   <div id="collapseNine" class="collapse" aria-labelledby="headingNine" data-parent="#accordionExample">
+                                        <div class="card-body">
+                                             <p class="h5 mb-2 text-left">If an employee gets sick at work</p>
+                                             <div class="form-group col-md-12">
+                                                  <label for="hl_flag">Is there a company helpline?</label>
+                                                  <div class="form-check">
+                                                  <input class="form-check-input" type="radio" name="hl" id="hl_0" value="0">
+                                                  <label class="form-check-label" for="hl_0">No</label>
+                                                  </div>
+                                                  <div class="form-check">
+                                                  <input class="form-check-input" type="radio" name="hl" id="hl_1" value="1" checked>
+                                                  <label class="form-check-label" for="hl_1">Yes</label>
+                                                  </div>
+                                             </div>
+                                             <div class="form-group col-md-12">
+                                                  <label for="iQS_flag">Is there a designated space for immediate quarantine?</label>
+                                                  <div class="form-check">
+                                                  <input class="form-check-input" type="radio" name="iQS" id="iQS_0" value="0">
+                                                  <label class="form-check-label" for="iQS_0">No</label>
+                                                  </div>
+                                                  <div class="form-check">
+                                                  <input class="form-check-input" type="radio" name="iQS" id="iQS_1" value="1" checked>
+                                                  <label class="form-check-label" for="iQS_1">Yes</label>
+                                                  </div>
+                                             </div>
+                                             <div class="form-group col-md-12">
+                                                  <label for="amblnc_flag">Is there an ambulance facility?</label>
+                                                  <div class="form-check">
+                                                  <input class="form-check-input" type="radio" name="amblnc" id="amblnc_0" value="0">
+                                                  <label class="form-check-label" for="amblnc_0">No</label>
+                                                  </div>
+                                                  <div class="form-check">
+                                                  <input class="form-check-input" type="radio" name="amblnc" id="amblnc_1" value="1" checked>
+                                                  <label class="form-check-label" for="amblnc_1">Yes</label>
+                                                  </div>
+                                             </div>
+                                             <div class="form-group col-md-12">
+                                                  <label for="lHsptl_flag">Has a list of nearby hospitals, fever clinic, isolation centre been prepared?</label>
+                                                  <div class="form-check">
+                                                  <input class="form-check-input" type="radio" name="lHsptl" id="lHsptl_0" value="0">
+                                                  <label class="form-check-label" for="lHsptl_0">No</label>
+                                                  </div>
+                                                  <div class="form-check">
+                                                  <input class="form-check-input" type="radio" name="lHsptl" id="lHsptl_1" value="1" checked>
+                                                  <label class="form-check-label" for="lHsptl_1">Yes</label>
+                                                  </div>
+                                             </div>
+                                             <div class="form-group col-md-12">
+                                                  <label for="emrgncResp_flag">Has the transport department been given instructions on how to respond to a Covid-19 emergency?</label>
+                                                  <div class="form-check">
+                                                  <input class="form-check-input" type="radio" name="emrgncResp" id="emrgncResp_0" value="0">
+                                                  <label class="form-check-label" for="emrgncResp_0">No</label>
+                                                  </div>
+                                                  <div class="form-check">
+                                                  <input class="form-check-input" type="radio" name="emrgncResp" id="emrgncResp_1" value="1" checked>
+                                                  <label class="form-check-label" for="emrgncResp_1">Yes</label>
+                                                  </div>
+                                             </div>
+                                             <div class="form-group col-md-12">
+                                                  <label for="alrg_flag">Has each employee's medical history (diabetes, heart-condition/hypertension, allergies/asthma etc.) been updated for information to the hospital at the time of admission?</label>
+                                                  <div class="form-check">
+                                                  <input class="form-check-input" type="radio" name="alrg" id="alrg_0" value="0">
+                                                  <label class="form-check-label" for="alrg_0">No</label>
+                                                  </div>
+                                                  <div class="form-check">
+                                                  <input class="form-check-input" type="radio" name="alrg" id="alrg_1" value="1" checked>
+                                                  <label class="form-check-label" for="alrg_1">Yes</label>
+                                                  </div>
+                                             </div>
+                                             <div class="form-group col-md-12">
+                                                  <label for="lstUpdtTime">Number of days since this information was last updated</label>
+                                                  <input class="form-control" type="number" name="lstUpdtTime" id="lstUpdtTime" min="0" value="3">
+                                             </div>
+                                             <div class="form-group col-md-12">
+                                                  <label for="imdtFM_flag">Has a contact list of employee's immediate family members and caretakers been idenfied?</label>
+                                                  <div class="form-check">
+                                                  <input class="form-check-input" type="radio" name="imdtFM" id="imdtFM_0" value="0">
+                                                  <label class="form-check-label" for="imdtFM_0">No</label>
+                                                  </div>
+                                                  <div class="form-check">
+                                                  <input class="form-check-input" type="radio" name="imdtFM" id="imdtFM_1" value="1" checked>
+                                                  <label class="form-check-label" for="imdtFM_1">Yes</label>
+                                                  </div>
+                                             </div>
+                                        </div>
+                                   </div>
+                              </div>
+
+                              <p style="margin-bottom:0.1cm;"></p>
+                              <div class="card"> 
+                                   <div class="card-header" id="headingOne">
+                                        <h2 class="mb-0">
+                                        <button type="button" class="btn" data-toggle="collapse" data-target="#collapseTen">6. Epidemic Related: Advertisement and Outreach</button>									
+                                        </h2>
+                                   </div>
+                                   <div id="collapseTen" class="collapse" aria-labelledby="headingTen" data-parent="#accordionExample">
+                                        <div class="card-body">
+                                             <p class="h5 mb-2 text-left">Awareness</p>
+                                             <div class="form-row">
+                                                  <div class="form-group col-md-12">
+                                                       <label for="advSclDis_flag">Have employees been advised to practice social distancing in workplace and during transit?</label>
+                                                       <div class="form-check">
+                                                       <input class="form-check-input" type="radio" name="advSclDis" id="advSclDis_0" value="0">
+                                                       <label class="form-check-label" for="advSclDis_0">No</label>
+                                                       </div>
+                                                       <div class="form-check">
+                                                       <input class="form-check-input" type="radio" name="advSclDis" id="advSclDis_1" value="1" checked>
+                                                       <label class="form-check-label" for="advSclDis_1">Yes</label>
+                                                       </div>
+                                                  </div>
+                                                  <div class="form-group col-md-12">
+                                                       <label for="advWFHVul_flag">Have employees older than 65 years of age, those with medical conditions, pregnant women, and parents with children below the age of 10 been advised to work from home?</label>
+                                                       <div class="form-check">
+                                                       <input class="form-check-input" type="radio" name="advWFHVul" id="advWFHVul_0" value="0">
+                                                       <label class="form-check-label" for="advWFHVul_0">No</label>
+                                                       </div>
+                                                       <div class="form-check">
+                                                       <input class="form-check-input" type="radio" name="advWFHVul" id="advWFHVul_1" value="1" checked>
+                                                       <label class="form-check-label" for="advWFHVul_1">Yes</label>
+                                                       </div>
+                                                  </div>
+                                                  <div class="form-group col-md-7">
+                                                       <label for="covidPage_flag">Does your company have a COVID-19 awareness page?</label>
+                                                       <div class="form-check">
+                                                       <input class="form-check-input" type="radio" name="covidPage" id="covidPage_0" value="0">
+                                                       <label class="form-check-label" for="covidPage_0">No</label>
+                                                       </div>
+                                                       <div class="form-check">
+                                                       <input class="form-check-input" type="radio" name="covidPage" id="covidPage_1" value="1" checked>
+                                                       <label class="form-check-label" for="covidPage_1">Yes</label>
+                                                       </div>
+                                                  </div>
+                                                  <div class="form-group col-md-5">
+                                                       <label for="faq_flag">Is there a COVID-19 FAQ?</label>
+                                                       <div class="form-check">
+                                                       <input class="form-check-input" type="radio" name="faq" id="faq_0" value="0">
+                                                       <label class="form-check-label" for="faq_0">No</label>
+                                                       </div>
+                                                       <div class="form-check">
+                                                       <input class="form-check-input" type="radio" name="faq" id="faq_1" value="1" checked>
+                                                       <label class="form-check-label" for="faq_1">Yes</label>
+                                                       </div>
+                                                  </div>
+                                                  <div class="form-group col-md-12">
+                                                       <label for="sPers_flag">Is there a designated <b>champion</b> for hygiene, epidemic awareness, and safety? (This person is responsible for communicating preventive measures issued by the Ministry of Health and Family Welfare from time to time)</label>
+                                                       <div class="form-check">
+                                                       <input class="form-check-input" type="radio" name="sPers" id="sPers_0" value="0">
+                                                       <label class="form-check-label" for="sPers_0">No</label>
+                                                       </div>
+                                                       <div class="form-check">
+                                                       <input class="form-check-input" type="radio" name="sPers" id="sPers_1" value="1" checked>
+                                                       <label class="form-check-label" for="sPers_1">Yes</label>
+                                                       </div>
+                                                  </div>
+                                                  <div class="form-group col-md-12">
+                                                       <label for="sPrgm_flag">Have intensive awareness and training programs been organised to sensitise and train employees on COVID-19 precautions, social distancing, hygiene, etc.?</label>
+                                                       <div class="form-check">
+                                                       <input class="form-check-input" type="radio" name="sPrgm" id="sPrgm_0" value="0">
+                                                       <label class="form-check-label" for="sPrgm_0">No</label>
+                                                       </div>
+                                                       <div class="form-check">
+                                                       <input class="form-check-input" type="radio" name="sPrgm" id="sPrgm_1" value="1" checked>
+                                                       <label class="form-check-label" for="sPrgm_1">Yes</label>
+                                                       </div>
+                                                  </div>
+                                                  <div class="form-group col-md-12">
+                                                       <label for="pstrs_flag">Have posters on hand washing, face masks, social distancing been put up in common areas?</label>
+                                                       <div class="form-check">
+                                                       <input class="form-check-input" type="radio" name="pstrs" id="pstrs_0" value="0">
+                                                       <label class="form-check-label" for="pstrs_0">No</label>
+                                                       </div>
+                                                       <div class="form-check">
+                                                       <input class="form-check-input" type="radio" name="pstrs" id="pstrs_1" value="1" checked>
+                                                       <label class="form-check-label" for="pstrs_1">Yes</label>
+                                                       </div>
+                                                  </div>
+                                             </div>
+                                        </div>
+                                   </div>
+                              </div> 
+
+                              <p style="margin-bottom:0.1cm;"> </p>
+                              <div class="card"> 
+                                   <div class="card-header" id="headingOne">
+                                        <h2 class="mb-0">
+                                        <button type="button" class="btn" data-toggle="collapse" data-target="#collapseFive">7. Employee Interactions</button>									
                                         </h2>
                                    </div>
                                    <div id="collapseFive" class="collapse" aria-labelledby="headingFive" data-parent="#accordionExample">
@@ -471,7 +702,7 @@ SPDX-License-Identifier: Apache-2.0-->
                               <div class="card"> 
                                    <div class="card-header" id="headingOne">
                                         <h2 class="mb-0">
-                                        <button type="button" class="btn" data-toggle="collapse" data-target="#collapseSix">6. Cafeteria/Pantry</button>									
+                                        <button type="button" class="btn" data-toggle="collapse" data-target="#collapseSix">8. Cafeteria/Pantry</button>									
                                         </h2>
                                    </div>
                                    <div id="collapseSix" class="collapse" aria-labelledby="headingSix" data-parent="#accordionExample">
@@ -591,7 +822,7 @@ SPDX-License-Identifier: Apache-2.0-->
                               <div class="card"> 
                                    <div class="card-header" id="headingOne">
                                         <h2 class="mb-0">
-                                        <button type="button" class="btn" data-toggle="collapse" data-target="#collapseSeven">7. Hygiene and Sanitation</button>									
+                                        <button type="button" class="btn" data-toggle="collapse" data-target="#collapseSeven">9. Hygiene and Sanitation</button>									
                                         </h2>
                                    </div>
                                    <div id="collapseSeven" class="collapse" aria-labelledby="headingSeven" data-parent="#accordionExample">
@@ -637,7 +868,7 @@ SPDX-License-Identifier: Apache-2.0-->
                               <div class="card"> 
                                    <div class="card-header" id="headingOne">
                                         <h2 class="mb-0">
-                                        <button type="button" class="btn" data-toggle="collapse" data-target="#collapseEight">8. Transport</button>									
+                                        <button type="button" class="btn" data-toggle="collapse" data-target="#collapseEight">10. Transport</button>									
                                         </h2>
                                    </div>
                                    <div id="collapseEight" class="collapse" aria-labelledby="headingEight" data-parent="#accordionExample">
@@ -889,167 +1120,10 @@ SPDX-License-Identifier: Apache-2.0-->
                                                        <label for="trvlr15Kpluspub">Number travelling >15 km</label>
                                                        <input class="form-control" type="number" name="trvlr15Kpluspub" id="trvlr15Kpluspub" min="0" value="0">
                                                   </div> 
-
-                                                  
                                              </div>
                                         </div>
                                    </div>
                               </div>
-
-                              <p style="margin-bottom:0.1cm;"> </p>
-                              <div class="card"> 
-                                   <div class="card-header" id="headingOne">
-                                        <h2 class="mb-0">
-                                        <button type="button" class="btn" data-toggle="collapse" data-target="#collapseNine">9. Isolation Room</button>									
-                                        </h2>
-                                   </div>
-                                   <div id="collapseNine" class="collapse" aria-labelledby="headingNine" data-parent="#accordionExample">
-                                        <div class="card-body">
-                                             <p class="h5 mb-2 text-left">If an employee gets sick at work</p>
-                                             <div class="form-group col-md-12">
-                                                  <label for="hl_flag">Is there a company helpline?</label>
-                                                  <div class="form-check">
-                                                  <input class="form-check-input" type="radio" name="hl" id="hl_0" value="0">
-                                                  <label class="form-check-label" for="hl_0">No</label>
-                                                  </div>
-                                                  <div class="form-check">
-                                                  <input class="form-check-input" type="radio" name="hl" id="hl_1" value="1" checked>
-                                                  <label class="form-check-label" for="hl_1">Yes</label>
-                                                  </div>
-                                             </div>
-                                             <div class="form-group col-md-12">
-                                                  <label for="iQS_flag">Is there a designated space for immediate quarantine?</label>
-                                                  <div class="form-check">
-                                                  <input class="form-check-input" type="radio" name="iQS" id="iQS_0" value="0">
-                                                  <label class="form-check-label" for="iQS_0">No</label>
-                                                  </div>
-                                                  <div class="form-check">
-                                                  <input class="form-check-input" type="radio" name="iQS" id="iQS_1" value="1" checked>
-                                                  <label class="form-check-label" for="iQS_1">Yes</label>
-                                                  </div>
-                                             </div>
-                                             <div class="form-group col-md-12">
-                                                  <label for="amblnc_flag">Is there an ambulance facility?</label>
-                                                  <div class="form-check">
-                                                  <input class="form-check-input" type="radio" name="amblnc" id="amblnc_0" value="0">
-                                                  <label class="form-check-label" for="amblnc_0">No</label>
-                                                  </div>
-                                                  <div class="form-check">
-                                                  <input class="form-check-input" type="radio" name="amblnc" id="amblnc_1" value="1" checked>
-                                                  <label class="form-check-label" for="amblnc_1">Yes</label>
-                                                  </div>
-                                             </div>
-                                             <div class="form-group col-md-12">
-                                                  <label for="lHsptl_flag">Has a list of nearby hospitals, fever clinic, isolation centre been prepared?</label>
-                                                  <div class="form-check">
-                                                  <input class="form-check-input" type="radio" name="lHsptl" id="lHsptl_0" value="0">
-                                                  <label class="form-check-label" for="lHsptl_0">No</label>
-                                                  </div>
-                                                  <div class="form-check">
-                                                  <input class="form-check-input" type="radio" name="lHsptl" id="lHsptl_1" value="1" checked>
-                                                  <label class="form-check-label" for="lHsptl_1">Yes</label>
-                                                  </div>
-                                             </div>
-                                             <div class="form-group col-md-12">
-                                                  <label for="emrgncResp_flag">Has the transport department been given instructions on how to respond to a Covid-19 emergency?</label>
-                                                  <div class="form-check">
-                                                  <input class="form-check-input" type="radio" name="emrgncResp" id="emrgncResp_0" value="0">
-                                                  <label class="form-check-label" for="emrgncResp_0">No</label>
-                                                  </div>
-                                                  <div class="form-check">
-                                                  <input class="form-check-input" type="radio" name="emrgncResp" id="emrgncResp_1" value="1" checked>
-                                                  <label class="form-check-label" for="emrgncResp_1">Yes</label>
-                                                  </div>
-                                             </div>
-                                             <div class="form-group col-md-12">
-                                                  <label for="alrg_flag">Has each employee's medical history (diabetes, heart-condition/hypertension, allergies/asthma etc.) been updated for information to the hospital at the time of admission?</label>
-                                                  <div class="form-check">
-                                                  <input class="form-check-input" type="radio" name="alrg" id="alrg_0" value="0">
-                                                  <label class="form-check-label" for="alrg_0">No</label>
-                                                  </div>
-                                                  <div class="form-check">
-                                                  <input class="form-check-input" type="radio" name="alrg" id="alrg_1" value="1" checked>
-                                                  <label class="form-check-label" for="alrg_1">Yes</label>
-                                                  </div>
-                                             </div>
-                                             <div class="form-group col-md-12">
-                                                  <label for="lstUpdtTime">Number of days since this information was last updated</label>
-                                                  <input class="form-control" type="number" name="lstUpdtTime" id="lstUpdtTime" min="0" value="3">
-                                             </div>
-                                             <div class="form-group col-md-12">
-                                                  <label for="imdtFM_flag">Has a contact list of employee's immediate family members and caretakers been idenfied?</label>
-                                                  <div class="form-check">
-                                                  <input class="form-check-input" type="radio" name="imdtFM" id="imdtFM_0" value="0">
-                                                  <label class="form-check-label" for="imdtFM_0">No</label>
-                                                  </div>
-                                                  <div class="form-check">
-                                                  <input class="form-check-input" type="radio" name="imdtFM" id="imdtFM_1" value="1" checked>
-                                                  <label class="form-check-label" for="imdtFM_1">Yes</label>
-                                                  </div>
-                                             </div>
-                                        </div>
-                                   </div>
-                              </div>
-
-                              <p style="margin-bottom:0.1cm;"></p>
-                              <div class="card"> 
-                                   <div class="card-header" id="headingOne">
-                                        <h2 class="mb-0">
-                                        <button type="button" class="btn" data-toggle="collapse" data-target="#collapseTen">10. Advertisement and Outreach</button>									
-                                        </h2>
-                                   </div>
-                                   <div id="collapseTen" class="collapse" aria-labelledby="headingTen" data-parent="#accordionExample">
-                                        <div class="card-body">
-                                             <p class="h5 mb-2 text-left">Website</p>
-                                             <div class="form-row">
-                                                  <div class="form-group col-md-12">
-                                                       <label for="advSclDis_flag">Have employees been advised to practice social distancing?</label>
-                                                       <div class="form-check">
-                                                       <input class="form-check-input" type="radio" name="advSclDis" id="advSclDis_0" value="0">
-                                                       <label class="form-check-label" for="advSclDis_0">No</label>
-                                                       </div>
-                                                       <div class="form-check">
-                                                       <input class="form-check-input" type="radio" name="advSclDis" id="advSclDis_1" value="1" checked>
-                                                       <label class="form-check-label" for="advSclDis_1">Yes</label>
-                                                       </div>
-                                                  </div>
-                                                  <div class="form-group col-md-7">
-                                                       <label for="covidPage_flag">Does your company have a covid-awareness page?</label>
-                                                       <div class="form-check">
-                                                       <input class="form-check-input" type="radio" name="covidPage" id="covidPage_0" value="0">
-                                                       <label class="form-check-label" for="covidPage_0">No</label>
-                                                       </div>
-                                                       <div class="form-check">
-                                                       <input class="form-check-input" type="radio" name="covidPage" id="covidPage_1" value="1" checked>
-                                                       <label class="form-check-label" for="covidPage_1">Yes</label>
-                                                       </div>
-                                                  </div>
-                                                  <div class="form-group col-md-5">
-                                                       <label for="faq_flag">Is there an FAQ?</label>
-                                                       <div class="form-check">
-                                                       <input class="form-check-input" type="radio" name="faq" id="faq_0" value="0">
-                                                       <label class="form-check-label" for="faq_0">No</label>
-                                                       </div>
-                                                       <div class="form-check">
-                                                       <input class="form-check-input" type="radio" name="faq" id="faq_1" value="1" checked>
-                                                       <label class="form-check-label" for="faq_1">Yes</label>
-                                                       </div>
-                                                  </div>
-                                                  <div class="form-group col-md-12">
-                                                       <label for="sPers_flag">Is there a designated cleanliness, awareness, and safety person?</label>
-                                                       <div class="form-check">
-                                                       <input class="form-check-input" type="radio" name="sPers" id="sPers_0" value="0">
-                                                       <label class="form-check-label" for="sPers_0">No</label>
-                                                       </div>
-                                                       <div class="form-check">
-                                                       <input class="form-check-input" type="radio" name="sPers" id="sPers_1" value="1" checked>
-                                                       <label class="form-check-label" for="sPers_1">Yes</label>
-                                                       </div>
-                                                  </div>
-                                             </div>
-                                        </div>
-                                   </div>
-                              </div>  
                          </div>
                          <p style="margin-bottom:0.5cm;"> </p>
                          <button type="submit" class="sub-btn btn-primary btn-block">Submit</button>
@@ -1098,7 +1172,7 @@ SPDX-License-Identifier: Apache-2.0-->
         <div class="container">
           <div class="row">
 	        <h3>About</h3>
-	        <p>This is a COVID-19 workplace readiness calculator, developed with inputs from Karnataka State Disaster Management Authority, to help establishments assess their readiness for re-opening their premises after shutdown.</p>
+	        <p>This is a COVID-19 workplace readiness calculator, developed by the Centre for Networked Intelligence, Indian Institute of Science, and Karnataka Disaster Management Authority to help establishments assess their readiness for re-opening their premises after shutdown.</p>
           </div>
         </div>
 	    </div> 

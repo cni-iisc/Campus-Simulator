@@ -37,20 +37,16 @@ function getValues(){
   dict["tGapShift"] = parseFloat(document.getElementById("tGapShift").value); // Time gap between shifts in hours
   dict["informCZEmp"] = parseInt(document.querySelector('input[name="informCZEmp"]:checked').value); // Inform containment zone employee not to come
   dict["informWFH"] = parseInt(document.querySelector('input[name="informWFH"]:checked').value); // Encourage work from home 
-  dict["n19"] = parseInt(document.getElementById("n19").value); // Number of employees with age betwwen 15 and 19
-  dict["n29"] = parseInt(document.getElementById("n29").value); // Number of employees with age betwwen 20 and 29
-  dict["n39"] = parseInt(document.getElementById("n39").value); // Number of employees with age betwwen 30 and 39
-  dict["n49"] = parseInt(document.getElementById("n49").value); // Number of employees with age betwwen 40 and 49
+  dict["n29"] = parseInt(document.getElementById("n29").value); // Number of employees with age betwwen 15 and 29
+  dict["n49"] = parseInt(document.getElementById("n49").value); // Number of employees with age betwwen 30 and 49
   dict["n59"] = parseInt(document.getElementById("n59").value); // Number of employees with age betwwen 50 and 59
   dict["n60plus"] = parseInt(document.getElementById("n60plus").value); // Number of employees with age more than 60
-  dict["nASapp"] = parseInt(document.getElementById("nASapp").value); // Number of employees with Aarogya Setu app
-  dict["nGCGapp"] = parseInt(document.getElementById("nGCGapp").value); // Fraction of employees with Go Corona Go app
 
   // Office Infrastructure Information
+  dict["nBldng"] = parseInt(document.getElementById("nBldng").value); // Number of buildings 
   dict["tArea"] = parseInt(document.getElementById("tArea").value); // Total office area in sq.ft
   dict["nFloors"] = parseInt(document.getElementById("nFloors").value); // Number of floors in office
   dict["opnCubArea"] = parseInt(document.getElementById("opnCubArea").value); // Total open cubicle area in sq.ft
-  dict["prtnArea"] = parseInt(document.getElementById("prtnArea").value); // Remaining working area in sq. ft
   dict["mntrCCTV"] = parseInt(document.querySelector('input[name="mntrCCTV"]:checked').value); // CCTV monitoring
   dict["acsCntrl"] = parseInt(document.querySelector('input[name="acsCntrl"]:checked').value); // Access controlled
   dict["baDoor"] = parseInt(document.getElementById("baDoor").value); // Number of biometric based access doors
@@ -66,7 +62,7 @@ function getValues(){
   dict["nRem"] = parseInt(document.getElementById("nRem").value); // Number of remaining office seats
   dict["percAc"] = parseInt(document.getElementById("percAC").value); // Percentage of air conditioned premise
   dict["tempAC"] = parseInt(document.getElementById("tempAC").value); // Temperature setting
-  dict["humAC"] = parseInt(document.getElementById("humAC").value); // Relative humidity setting
+  dict["hepaFltr"] = parseInt(document.querySelector('input[name="hepaFltr"]:checked').value); // HEPA filter
 
   // Common Usage Area
   dict["nEle"] = parseInt(document.getElementById("nEle").value); // Number of Elevetors
@@ -81,16 +77,39 @@ function getValues(){
   // Epidemic related precautions
   dict["tempScreening"] = parseInt(document.querySelector('input[name="tempScreening"]:checked').value); // Temperature screening of employee
   dict["faceCover"] = parseInt(document.querySelector('input[name="faceCover"]:checked').value); // Face is covered with mask
+  dict["adqFaceCover"] = parseInt(document.querySelector('input[name="adqFaceCover"]:checked').value); // Adequate Facecover quantity
+  dict["newShfts"] = parseInt(document.querySelector('input[name="newShfts"]:checked').value); // New shifts/staggered work timings
+  dict["advAvdLPM"] = parseInt(document.querySelector('input[name="advAvdLPM"]:checked').value); // Avoid large physical meetings
   dict["nHsS"] = parseInt(document.getElementById("nHsS").value); // Number of hand-sanitiser stations
+  dict["tchFree"] = parseInt(document.querySelector('input[name="tchFree"]:checked').value); // Hand sanitisers touch free
   dict["nDinf"] = parseInt(document.getElementById("nDinf").value); // Number of disinfection activity per day
   dict["smkZS"] = parseInt(document.querySelector('input[name="smkZS"]:checked').value); // Smoking zone sealed
   dict["nPGT"] = parseInt(document.getElementById("nPGT").value); // Number of employees consuming Pan masala, gutkha, tobacco 
   dict["nWsB"] = parseInt(document.getElementById("nWsB").value); // Number of warning sign boards
+  dict["nASapp"] = parseInt(document.getElementById("nASapp").value); // Number of employees with Aarogya Setu app
+
+  // Isolation room
+  dict["hl"] = parseInt(document.querySelector('input[name="hl"]:checked').value); // Company helpline
+  dict["iQS"] = parseInt(document.querySelector('input[name="iQS"]:checked').value); // Immediate quarantine space
+  dict["amblnc"] = parseInt(document.querySelector('input[name="amblnc"]:checked').value); // Ambulance facility
+  dict["lHsptl"] = parseInt(document.querySelector('input[name="lHsptl"]:checked').value); // List of nearby hospitals etc.
+  dict["emrgncResp"] = parseInt(document.querySelector('input[name="emrgncResp"]:checked').value); // Emergency Response
+  dict["alrg"] = parseInt(document.querySelector('input[name="alrg"]:checked').value); // Employee allergy list
+  dict["imdtFM"] = parseInt(document.querySelector('input[name="imdtFM"]:checked').value); // Immediate family members list
+  dict["lstUpdtTime"] = parseInt(document.getElementById("lstUpdtTime").value); // Last information update time
+
+  // Advertisement and Outreach
+  dict["covidPage"] = parseInt(document.querySelector('input[name="covidPage"]:checked').value); // Covid Awareness Page
+  dict["faq"] = parseInt(document.querySelector('input[name="faq"]:checked').value); // FAQ Page
+  dict["sPers"] = parseInt(document.querySelector('input[name="sPers"]:checked').value); // Cleaniness and safety person
+  dict["advSclDis"] = parseInt(document.querySelector('input[name="advSclDis"]:checked').value); // Advised social distancing
+  dict["advWFHVul"] = parseInt(document.querySelector('input[name="advWFHVul"]:checked').value); // Advised work from home to elderly and women
+  dict["sPrgm"] = parseInt(document.querySelector('input[name="sPrgm"]:checked').value); // Special program on COVID-19
+  dict["pstrs"] = parseInt(document.querySelector('input[name="pstrs"]:checked').value); // Prosters on hygiene and social distancing
 
   // Employee Interactions
   dict["nVstrs"] = parseInt(document.getElementById("nVstrs").value); // Number of visitors
   dict["nEmpCstmr"] = parseInt(document.getElementById("nEmpCstmr").value); // Number of employees that meet with customer
-  // dict["avgExt"] = parseInt(document.getElementById("avgExt").value); // Average number of external contacts with employees
   dict["nDlvrHndlng"] = parseInt(document.getElementById("nDlvrHndlng").value); // Number of employees handling deliveries 
   dict["msk"] = parseInt(document.querySelector('input[name="msk"]:checked').value); // Employees wear mask
   dict["glvs"] = parseInt(document.querySelector('input[name="glvs"]:checked').value); // Employess wear mask and gloves
@@ -103,7 +122,6 @@ function getValues(){
   
   // Cafeteria/Pantry
   dict["cntn"] = parseInt(document.querySelector('input[name="cntn"]:checked').value); // Canteen/pantry
-  //dict["cntnAC"] = parseInt(document.querySelector('input[name="cntnAC"]:checked').value); // Canteen/pantry air condition
   dict["cntnACOp"] = parseInt(document.querySelector('input[name="cntnACOp"]:checked').value); // Canteen/pantry air condition operational
   dict["nBrkfst"] = parseInt(document.getElementById("nBrkfst").value); // Number of employees having breakfast in canteen
   dict["nLnch"] = parseInt(document.getElementById("nLnch").value); // Number of employees having lunch in canteen
@@ -136,7 +154,6 @@ function getValues(){
   dict["svCpctCur"] = parseInt(document.getElementById("svCpctCur").value); // Current SUV capacity 
   dict["crCpctAct"] = parseInt(document.getElementById("crCpctAct").value); // Actual Car capacity
   dict["crCpctCur"] = parseInt(document.getElementById("crCpctCur").value); // Current Car capacity
-  dict["crwdnss"] = 0;// document.getElementById("crwdnss").value); // Crowdness extent
   dict["mskMndt"] = parseInt(document.querySelector('input[name="mskMndt"]:checked').value); // Mask mandate
   dict["hsVhcl"] = parseInt(document.querySelector('input[name="hsVhcl"]:checked').value); // Hand sanitiser in vehicle
   dict["noACVhcl"] = parseInt(document.querySelector('input[name="noACVhcl"]:checked').value); // No AC use in vehicle
@@ -175,36 +192,10 @@ function getValues(){
   dict["n60Min"] = parseInt(document.getElementById("n60Min").value); // Number of employees taking 30-60 minutes
   dict["n60plusMin"] = parseInt(document.getElementById("n60plusMin").value); // Number of employees taking >60 minutes
 
-  // Isolation room
-  dict["hl"] = parseInt(document.querySelector('input[name="hl"]:checked').value); // Company helpline
-  dict["iQS"] = parseInt(document.querySelector('input[name="iQS"]:checked').value); // Immediate quarantine space
-  dict["amblnc"] = parseInt(document.querySelector('input[name="amblnc"]:checked').value); // Ambulance facility
-  dict["lHsptl"] = parseInt(document.querySelector('input[name="lHsptl"]:checked').value); // List of nearby hospitals etc.
-  dict["emrgncResp"] = parseInt(document.querySelector('input[name="emrgncResp"]:checked').value); // Emergency Response
-  dict["alrg"] = parseInt(document.querySelector('input[name="alrg"]:checked').value); // Employee allergy list
-  dict["imdtFM"] = parseInt(document.querySelector('input[name="imdtFM"]:checked').value); // Immediate family members list
-  dict["lstUpdtTime"] = parseInt(document.getElementById("lstUpdtTime").value); // Last information update time
-
-  // Advertisement and Outreach
-  dict["covidPage"] = parseInt(document.querySelector('input[name="covidPage"]:checked').value); // Covid Awareness Page
-  dict["faq"] = parseInt(document.querySelector('input[name="faq"]:checked').value); // FAQ Page
-  dict["sPers"] = parseInt(document.querySelector('input[name="sPers"]:checked').value); // Cleaniness and safety person
-  dict["advSclDis"] = parseInt(document.querySelector('input[name="advSclDis"]:checked').value); // Advised social distancing
-
   return dict;
 }
 
 function clipAndRound_bounds (score) {
-  /*
-  if (isNan (score) ) {
-    console.log ("Score is NaN, pls check");
-    return -1;
-  }
-  else if (score == "N.A.") {
-    return score;
-  }
-  */
-
   var score_out = Math.round(score/10);
   if (score_out < 0 ) {
     score_out = 0;
@@ -221,8 +212,7 @@ function calcScore () {
   // Office Infrastructure
   var nEmp = inputs["nM"] + inputs["nF"] + inputs["nOth"];
   var nMeets = 4;
-  var aOpen = inputs["tArea"] - inputs["nSOfcRm"]*150 - inputs["n2pOfcRm"]*200 - inputs["n2pPlusOfcRm"]*240;
-  var cFactor = Math.max( ((inputs["nCub"] + inputs["nRem"])*40 / aOpen), 1 ); 
+  var cFactor = Math.max( ((inputs["nCub"] + inputs["nRem"])*40 / inputs["opnCubArea"]), 1 ); 
   var crowding = 2*inputs["n2pOfcRm"] * nMeets + 3*inputs["n2pPlusOfcRm"] * nMeets * 1.2 +
       (inputs["nCub"] + inputs["nRem"] * 1.2)* nMeets * cFactor;
   var stairsElev = 0.5 * inputs["nFloors"] * (1 + inputs["eleCpct"]/2 * (1-0.1*inputs["advSclDis"]))/2 * 4 * Math.max( (1 - 0.1*Math.min( inputs["nStrCln"], inputs["nEleDinf"] )), 0.5);
@@ -239,7 +229,7 @@ function calcScore () {
   var sg_office_infra = "Well done!"
   if (score_office_infra<70){
     sg_office_infra = "Consider encouraging more employees to work from home or shifts";
-  } else if (inputs["nEleDinf"]<2) {
+  } else if (score_office_infra<70 && inputs["nEleDinf"]<2) {
     sg_office_infra = "Consider cleaning the lifts more often";
   }
 
@@ -341,7 +331,6 @@ function calcScore () {
 
   // Outside contacts
   var score_outside = 1000;
-  // TODO: check if NA is to be introduced
   var sg_outside = "";
   if (inputs["nVstrs"] && inputs["nEmpCstmr"]){
     score_outside =  100*nEmp/(inputs["nVstrs"] * Math.pow(inputs["nEmpCstmr"], 0.1) * (1-0.4*inputs["msk"]) * (1-0.1*inputs["glvs"]));
@@ -352,24 +341,32 @@ function calcScore () {
       sg_outside = "Consider using masks while meeting visitors";
     } else if (!inputs["glvs"]){
       sg_outside = "Consider wearing gloves while meeting visitors";
+    } else if (score_outside<700) {
+      sg_outside = "Consider reducing the number of employees that meet outsiders";
     }
   }
-  else {
-    score_outside = "N.A."
+  else{
+    sg_outside = "No outside interactions";
   }
   score_outside = clipAndRound_bounds(score_outside);
 
-
   // Epidemic related precautions
-  var score_epidemic = 100*(inputs["tempScreening"]*2 + inputs["faceCover"]*2 +
-                                ((inputs["nHsS"] > (inputs["tArea"]/1000)) ? 1 : 0)*2 +
-                                Math.min(inputs["nDinf"], 2) + Math.min(1, inputs["smkZS"]*((inputs["nPGT"]>0) ? 0 : 1)) + 
-                                ((inputs["nWsB"] > (inputs["nFloors"]*2) ? 1 : 0)) );                              
+  var meets_shift_requirement = 1;
+  if (0<inputs["NOE"] && inputs["NOE"]<=4){
+    meets_shift_requirement = ((inputs["n29"]+inputs["n49"]+inputs["n59"]+inputs["n60plus"])*0.33>=nEmp) ? 1:0; 
+  }
+
+  var score_epidemic = 100*(inputs["tempScreening"] + inputs["faceCover"] + inputs["adqFaceCover"] + inputs["newShfts"] +
+                                (inputs["tchFree"]? 1:0.5)*((inputs["nHsS"] > (inputs["tArea"]/1000)) ? 1 : 0) + 
+                                Math.min(inputs["nDinf"], 2)/2 + Math.min(1, inputs["smkZS"]*((inputs["nPGT"]>0) ? 0 : 1))/2 + meets_shift_requirement + 
+                                ((inputs["nWsB"] > (inputs["nFloors"]*2) ? 1 : 0))/2 + inputs["nASapp"]/nEmp + inputs["advAvdLPM"]);                              
   
   score_epidemic = clipAndRound_bounds(score_epidemic);
                                 
   var sg_epidemic = "Well done!";
-  if (!inputs["tempScreening"]){
+  if (!meets_shift_requirement){
+    sg_epidemic = "Does not meet the 33% requirement";
+  } else if (!inputs["tempScreening"]){
     sg_epidemic = "Consider temperature screening of all employees on entry and exit";
   } else if (!inputs["faceCover"]){
     sg_epidemic = "Consider mandating face cover inside the office premise";
@@ -386,7 +383,7 @@ function calcScore () {
   }
 
   // Advertisement and outreach
-  var score_adv_outrch = (inputs["covidPage"] + inputs["faq"] + inputs["sPers"] + (inputs["nWsB"] > (inputs["nFloors"]*2) ? 1 : 0))*1000/4 ;
+  var score_adv_outrch = (inputs["covidPage"] + inputs["faq"] + inputs["sPers"]*2 + inputs["advSclDis"] + inputs["advWFHVul"] + inputs["sPrgm"]*2 + inputs["pstrs"] + (inputs["nWsB"] > (inputs["nFloors"]*2) ? 1 : 0))*1000/10 ;
   score_adv_outrch = clipAndRound_bounds(score_adv_outrch);
 
   var sg_adv_outrch = "Well done!";
@@ -452,17 +449,17 @@ function calcScore () {
 	var resTable = "";
 	resTable += "<table class='table table-bordered'><thead class='bg-dark'>";
 	resTable += "<th>Category</th><th>Score</th>";
-	resTable += "<th>Suggestions for improvements</th></thead>";
-  resTable += "<tr><td>Mobility in office</td><td>" + score_mobility + "</td><td>"+ sg_mobility +"</td></tr>"
-  resTable += "<tr><td>Meeting space in office</td><td>" + score_meetings + "</td><td>" + sg_meetings + "</td></tr>"
-  resTable += "<tr><td>Outside contacts in office</td><td>" + score_outside + "</td><td>" + sg_outside + "</td></tr>"
+  resTable += "<th>Suggestions for improvements</th></thead>";
+  resTable += "<tr><td>Office infrastructure</td><td>" + score_office_infra + "</td><td>" + sg_office_infra + "</td></tr>"
+  resTable += "<tr><td>Epidemic related: Precautions</td><td>" + score_epidemic + "</td><td>" + sg_epidemic + "</td></tr>"
+  resTable += "<tr><td>Epidemic related: Awareness and readiness</td><td>" + score_isolation + "</td><td>" + sg_isolation + "</td></tr>"
+  resTable += "<tr><td>Epidemic related: Advertisement and outreach</td><td>" + score_adv_outrch + "</td><td>" + sg_adv_outrch + "</td></tr>"
+  resTable += "<tr><td>Employee interactions: Mobility</td><td>" + score_mobility + "</td><td>"+ sg_mobility +"</td></tr>"
+  resTable += "<tr><td>Employee interactions: Meetings</td><td>" + score_meetings + "</td><td>" + sg_meetings + "</td></tr>"
+  resTable += "<tr><td>Employee interactions: Outside contacts</td><td>" + score_outside + "</td><td>" + sg_outside + "</td></tr>"
   resTable += "<tr><td>Cafeteria/pantry</td><td>" + score_cafeteria_scaled + "</td><td>" + sg_cafeteria + "</td></tr>"
-  resTable += "<tr><td>Epidemic related precautions</td><td>" + score_epidemic + "</td><td>" + sg_epidemic + "</td></tr>"
-  resTable += "<tr><td>Transportation</td><td>" + score_total_transport_scaled + "</td><td>" + sg_transport + "</td></tr>"
-	resTable += "<tr><td>Office infrastructure</td><td>" + score_office_infra + "</td><td>" + sg_office_infra + "</td></tr>"
 	resTable += "<tr><td>Hygiene and sanitation</td><td>" + score_sanitation + "</td><td>" + sg_sanitation + "</td></tr>"
-	resTable += "<tr><td>Awareness and readiness</td><td>" + score_isolation + "</td><td>" + sg_isolation + "</td></tr>"
-  resTable += "<tr><td>Advertisement and outreach</td><td>" + score_adv_outrch + "</td><td>" + sg_adv_outrch + "</td></tr>"
+  resTable += "<tr><td>Transportation</td><td>" + score_total_transport_scaled + "</td><td>" + sg_transport + "</td></tr>"
   resTable += "</table>";
 	document.getElementById("scoreTable").innerHTML = resTable;
 }

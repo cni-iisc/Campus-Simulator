@@ -193,6 +193,14 @@ function getValues(){
 }
 
 function clipAndRound_bounds (score) {
+  if (isNan (score) ) {
+    console.log ("Score is NaN, pls check");
+    return -1;
+  }
+  else if (score == "N.A.") {
+    return score;
+  }
+
   var score_out = Math.round(score/10);
   if (score_out < 0 ) {
     score_out = 0;
@@ -327,17 +335,24 @@ function calcScore () {
 
   // Outside contacts
   var score_outside = 1000;
+  // TODO: check if NA is to be introduced
+  var sg_outside = "";
   if (inputs["nVstrs"] && inputs["nEmpCstmr"]){
     score_outside =  100*nEmp/(inputs["nVstrs"] * Math.pow(inputs["nEmpCstmr"], 0.1) * (1-0.4*inputs["msk"]) * (1-0.1*inputs["glvs"]));
+    if (score_outside >= 900) {
+     sg_outside = "Well done!";
+    }
+    else if (!inputs["msk"]){
+      sg_outside = "Consider using masks while meeting visitors";
+    } else if (!inputs["glvs"]){
+      sg_outside = "Consider wearing gloves while meeting visitors";
+    }
+  }
+  else {
+    score_outside = "N.A."
   }
   score_outside = clipAndRound_bounds(score_outside);
 
-  var sg_outside = "Well done!";
-  if (!inputs["msk"]){
-    sg_outside = "Consider using masks while meeting visitors";
-  } else if (!inputs["glvs"]){
-    sg_outside = "Consider wearing gloves while meeting visitors";
-  }
 
   // Epidemic related precautions
   var score_epidemic = 100*(inputs["tempScreening"]*2 + inputs["faceCover"]*2 +

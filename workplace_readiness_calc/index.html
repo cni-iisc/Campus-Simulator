@@ -91,7 +91,147 @@ SPDX-License-Identifier: Apache-2.0-->
                               <div class="card"> 
                                    <div class="card-header" id="headingOne">
                                         <h2 class="mb-0">
-                                        <button type="button" class="btn" data-toggle="collapse" data-target="#collapseTwo">2. Employee Information</button>									
+                                        <button type="button" class="btn" data-toggle="collapse" data-target="#collapseThree">2. Office Infrastructure Information</button>									
+                                        </h2>
+                                   </div>
+                                   <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordionExample">
+                                        <div class="card-body">
+                                             <div class="form-row">
+
+                                                  <div class="form-group col-md-6">
+                                                       <label for="tArea">Total area (sq.ft)</label>
+                                                       <input class="form-control" type="number" name="tArea" id="tArea" min="0" value="4000">
+                                                  </div>
+                                                  <!-- Ask professor about the definition of tArea -->
+                                                  <div class="form-group col-md-6">
+                                                       <label for="nFloors">Total number of floors</label>
+                                                       <input class="form-control" type="number" name="nFloors" id="nFloors" min="0" value="2">
+                                                  </div>
+                                                  <div class="form-group col-md-6">
+                                                       <label for="opnCubArea">Approximate area of open cubicle space (sq. ft)</label>
+                                                       <input class="form-control" type="number" name="opnCubArea" id="opnCubArea" min="0" value="2000">
+                                                  </div>
+                                                  <div class="form-group col-md-6">
+                                                       <label for="prtnArea">Remaining working space (sq. ft) </label>
+                                                       <input class="form-control" type="number" name="prtnArea" id="prtnArea" min="0" value="2000">
+                                                  </div>
+                                                  <div class="form-group col-md-12">
+                                                       <label for="mntrCCTV">Do you have security staff monitoring CCTV footage during working hours?</label>
+                                                       <div class="form-check">
+                                                       <input class="form-check-input" type="radio" name="mntrCCTV" id="mntrCCTV_0" value="0">
+                                                       <label class="form-check-label" for="mntrCCTV_0">No</label>
+                                                       </div>
+                                                       <div class="form-check">
+                                                       <input class="form-check-input" type="radio" name="mntrCCTV" id="mntrCCTV_1" value="1" checked>
+                                                       <label class="form-check-label" for="mntrCCTV_1">Yes</label>
+                                                       </div>
+                                                  </div>
+                                                  <div class="form-group col-md-12">
+                                                       <label for="acsCntrl">Is the premises access controlled?</label>
+                                                       <div class="form-check">
+                                                       <input class="form-check-input" type="radio" name="acsCntrl" id="acsCntrl_0" value="0" >
+                                                       <label class="form-check-label" for="acsCntrl_0">No</label>
+                                                       </div>
+                                                       <div class="form-check">
+                                                       <input class="form-check-input" type="radio" name="acsCntrl" id="acsCntrl_1" value="1" checked>
+                                                       <label class="form-check-label" for="acsCntrl_1">Yes</label>
+                                                       </div>
+                                                  </div>
+                                                  <div class="form-group col-md-6">
+                                                       <label for="baDoor">Number of biometric based access doors</label>
+                                                       <input class="form-control" type="number" name="baDoor" id="baDoor" min="0" value="4">
+                                                  </div>
+                                                  <div class="form-group col-md-6">
+                                                       <label for="rfidDoor">Number of RFID tag based doors </label>
+                                                       <input class="form-control" type="number" name="rfidDoor" id="rfidDoor" min="0" value="4">
+                                                  </div>
+                                                  <div class="form-group col-md-12">
+                                                       <label for="sntBio">If biometric based, is sanitiser available at biometric location?</label>
+                                                       <div class="form-check">
+                                                       <input class="form-check-input" type="radio" name="sntBio" id="sntBio_0" value="0">
+                                                       <label class="form-check-label" for="sntBio_0">No</label>
+                                                       </div>
+                                                       <div class="form-check">
+                                                       <input class="form-check-input" type="radio" name="sntBio" id="sntBio_1" value="1" checked>
+                                                       <label class="form-check-label" for="sntBio_1">Yes</label>
+                                                       </div>
+                                                  </div>
+                                                  <div class="form-group col-md-12">
+                                                       <label for="nCW">Number of companies sharing office space, if co-work space, including your company</label>
+                                                       <input class="form-control" type="number" name="nCW" id="nCW" min="0" value="1">
+                                                  </div>
+
+                                             <p class="h5 mb-2 text-left">Office Composition</p>
+                                             <div class="form-row">
+                                                  <div class="form-group col-md-6">
+                                                       <label for="nSOfcRm">Number of single occupancy cabins</label>
+                                                       <input class="form-control" type="number" name="nSOfcRm" id="nSOfcRm" min="0" value="1">
+                                                  </div>
+                                                  <div class="form-group col-md-6">
+                                                       <label for="n2pOfcRm">Number of dual occupancy cabins</label>
+                                                       <input class="form-control" type="number" name="n2pOfcRm" id="n2pOfcRm" min="0" value="1">
+                                                  </div>
+                                                  <div class="form-group col-md-12">
+                                                       <label for="n2pPlusOfcRm">Number of cabins shared by 3 employees or more</label>
+                                                       <input class="form-control" type="number" name="n2pPlusOfcRm" id="n2pPlusOfcRm" min="0" value="9">
+                                                  </div>
+                                                  <div class="form-group col-md-6">
+                                                       <label for="nCub">Number of open cubicle office desks</label>
+                                                       <input class="form-control" type="number" name="nCub" id="nCub" min="0" value="40">
+                                                  </div>
+                                                  <div class="form-group col-md-6">
+                                                       <label for="nRem">Number of remaining office spaces/seats</label>
+                                                       <input class="form-control" type="number" name="nRem" id="nRem" min="0" value="30">
+                                                  </div>
+                                                  <div class="form-group col-md-12">
+                                                       <label for="percAC">Percentage of the premises with air conditioning</label>
+                                                       <input class="form-control" type="number" name="percAC" id="percAC" min="0" max="100" value="100">
+                                                  </div>
+                                                  <div class="form-group col-md-6">
+                                                       <label for="tempAC">Temperature setting</label>
+                                                       <input class="form-control" type="number" name="tempAC" id="tempAC" min="0" value="21">
+                                                  </div>
+                                                  <div class="form-group col-md-6">
+                                                       <label for="humAC">Relative humidity setting</label>
+                                                       <input class="form-control" type="number" name="humAC" id="humAC" min="0" value="30">
+                                                  </div>
+                                             </div>
+
+                                                  <p class="h5 mb-2 text-left">Common Usage Areas</p>
+                                                  <div class="form-group col-md-12">
+                                                       <label for="nEle">Number of lifts</label>
+                                                       <input class="form-control" type="number" name="nEle" id="nEle" min="0" value="1">
+                                                  </div>
+                                                  <div class="form-group col-md-12">
+                                                       <label for="eleCpct">Average capacity of lifts</label>
+                                                       <input class="form-control" type="number" name="eleCpct" id="eleCpct" min="0" value="5">
+                                                  </div>
+                                                  <div class="form-group col-md-12">
+                                                       <label for="nEleDinf">Number of times a day each lift is disinfected</label>
+                                                       <input class="form-control" type="number" name="nEleDinf" id="nEleDinf" min="0" value="1">
+                                                  </div>
+                                                  <div class="form-group col-md-12">
+                                                       <label for="nStrCln">Number of times a day each stairway is cleaned</label>
+                                                       <input class="form-control" type="number" name="nStrCln" id="nStrCln" min="0" value="1">
+                                                  </div>
+                                                  <div class="form-group col-md-12">
+                                                       <label for="nStrHrDinf">Number of times a day stairway handrails are disinfected</label>
+                                                       <input class="form-control" type="number" name="nStrHrDinf" id="nStrHrDinf" min="0" value="1">
+                                                  </div>
+                                                  <div class="form-group col-md-12">
+                                                       <label for="oMtngSpts">Number of other meeting spaces (gym, lockers and storage, ATMs, on-premise shops, libraries, lounges, meeting rooms, halls, etc.)</label>
+                                                       <input class="form-control" type="number" name="oMtngSpts" id="oMtngSpts" min="0" value="4">
+                                                  </div>
+                                             </div>
+                                        </div>
+                                   </div>
+                              </div>
+
+                              <p style="margin-bottom:0.1cm;"> </p>
+                              <div class="card"> 
+                                   <div class="card-header" id="headingOne">
+                                        <h2 class="mb-0">
+                                        <button type="button" class="btn" data-toggle="collapse" data-target="#collapseTwo">3. Employee Information</button>									
                                         </h2>
                                    </div>
                                    <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
@@ -190,132 +330,7 @@ SPDX-License-Identifier: Apache-2.0-->
                                    </div>
                               </div>
 
-                              <p style="margin-bottom:0.1cm;"> </p>
-                              <div class="card"> 
-                                   <div class="card-header" id="headingOne">
-                                        <h2 class="mb-0">
-                                        <button type="button" class="btn" data-toggle="collapse" data-target="#collapseThree">3. Office Infrastructure Information</button>									
-                                        </h2>
-                                   </div>
-                                   <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordionExample">
-                                        <div class="card-body">
-                                             <div class="form-row">
-
-                                                  <div class="form-group col-md-6">
-                                                       <label for="tArea">Total area (sq.ft)</label>
-                                                       <input class="form-control" type="number" name="tArea" id="tArea" min="0" value="4000">
-                                                  </div>
-                                                  <div class="form-group col-md-6">
-                                                       <label for="nFloors">Total number of floors</label>
-                                                       <input class="form-control" type="number" name="nFloors" id="nFloors" min="0" value="2">
-                                                  </div>
-                                                  <div class="form-group col-md-12">
-                                                       <label for="mntrCCTV">Do you have security staff monitoring CCTV footage during working hours?</label>
-                                                       <div class="form-check">
-                                                       <input class="form-check-input" type="radio" name="mntrCCTV" id="mntrCCTV_0" value="0">
-                                                       <label class="form-check-label" for="mntrCCTV_0">No</label>
-                                                       </div>
-                                                       <div class="form-check">
-                                                       <input class="form-check-input" type="radio" name="mntrCCTV" id="mntrCCTV_1" value="1" checked>
-                                                       <label class="form-check-label" for="mntrCCTV_1">Yes</label>
-                                                       </div>
-                                                  </div>
-                                                  <div class="form-group col-md-12">
-                                                       <label for="acsCntrl">Is the premises access controlled?</label>
-                                                       <div class="form-check">
-                                                       <input class="form-check-input" type="radio" name="acsCntrl" id="acsCntrl_0" value="0" >
-                                                       <label class="form-check-label" for="acsCntrl_0">No</label>
-                                                       </div>
-                                                       <div class="form-check">
-                                                       <input class="form-check-input" type="radio" name="acsCntrl" id="acsCntrl_1" value="1" checked>
-                                                       <label class="form-check-label" for="acsCntrl_1">Yes</label>
-                                                       </div>
-                                                  </div>
-                                                  <div class="form-group col-md-6">
-                                                       <label for="baDoor">Number of biometric based access doors</label>
-                                                       <input class="form-control" type="number" name="baDoor" id="baDoor" min="0" value="4">
-                                                  </div>
-                                                  <div class="form-group col-md-6">
-                                                       <label for="rfidDoor">Number of RFID tag based doors </label>
-                                                       <input class="form-control" type="number" name="rfidDoor" id="rfidDoor" min="0" value="4">
-                                                  </div>
-                                                  <div class="form-group col-md-12">
-                                                       <label for="sntBio">If biometric based, is sanitiser available at biometric location?</label>
-                                                       <div class="form-check">
-                                                       <input class="form-check-input" type="radio" name="sntBio" id="sntBio_0" value="0">
-                                                       <label class="form-check-label" for="sntBio_0">No</label>
-                                                       </div>
-                                                       <div class="form-check">
-                                                       <input class="form-check-input" type="radio" name="sntBio" id="sntBio_1" value="1" checked>
-                                                       <label class="form-check-label" for="sntBio_1">Yes</label>
-                                                       </div>
-                                                  </div>
-                                                  <div class="form-group col-md-12">
-                                                       <label for="nCW">Number of companies sharing office space, if co-work space, including your company</label>
-                                                       <input class="form-control" type="number" name="nCW" id="nCW" min="0" value="1">
-                                                  </div>
-
-                                             <p class="h5 mb-2 text-left">Office Composition</p>
-                                             <div class="form-row">
-                                                  <div class="form-group col-md-6">
-                                                       <label for="nSOfcRm">Number of single office rooms</label>
-                                                       <input class="form-control" type="number" name="nSOfcRm" id="nSOfcRm" min="0" value="1">
-                                                  </div>
-                                                  <div class="form-group col-md-6">
-                                                       <label for="n2pOfcRm">Number of office rooms with 2 people</label>
-                                                       <input class="form-control" type="number" name="n2pOfcRm" id="n2pOfcRm" min="0" value="1">
-                                                  </div>
-                                                  <div class="form-group col-md-12">
-                                                       <label for="n2pPlusOfcRm">Number of office rooms shared by more than 2 people</label>
-                                                       <input class="form-control" type="number" name="n2pPlusOfcRm" id="n2pPlusOfcRm" min="0" value="9">
-                                                  </div>
-                                                  <div class="form-group col-md-6">
-                                                       <label for="nCub">Number of office spaces/seats with cubicle separation</label>
-                                                       <input class="form-control" type="number" name="nCub" id="nCub" min="0" value="40">
-                                                  </div>
-                                                  <div class="form-group col-md-6">
-                                                       <label for="nRem">Number of remaining office <br>spaces/seats</label>
-                                                       <input class="form-control" type="number" name="nRem" id="nRem" min="0" value="30">
-                                                  </div>
-                                                  <div class="form-group col-md-12">
-                                                       <label for="percAC">Percentage of the premises with air conditioning</label>
-                                                       <input class="form-control" type="number" name="percAC" id="percAC" min="0" max="100" value="100">
-                                                  </div>
-                                                  <div class="form-group col-md-6">
-                                                       <label for="tempAC">Temperature setting</label>
-                                                       <input class="form-control" type="number" name="tempAC" id="tempAC" min="0" value="21">
-                                                  </div>
-                                                  <div class="form-group col-md-6">
-                                                       <label for="humAC">Relative humidity setting</label>
-                                                       <input class="form-control" type="number" name="humAC" id="humAC" min="0" value="30">
-                                                  </div>
-                                             </div>
-
-                                                  <p class="h5 mb-2 text-left">Common Usage Areas</p>
-                                                  <div class="form-group col-md-12">
-                                                       <label for="nEle">Number of lifts</label>
-                                                       <input class="form-control" type="number" name="nEle" id="nEle" min="0" value="1">
-                                                  </div>
-                                                  <div class="form-group col-md-12">
-                                                       <label for="eleCpct">Average capacity of lifts</label>
-                                                       <input class="form-control" type="number" name="eleCpct" id="eleCpct" min="0" value="5">
-                                                  </div>
-                                                  <div class="form-group col-md-12">
-                                                       <label for="nEleDinf">Number of times a day each lift is disinfected</label>
-                                                       <input class="form-control" type="number" name="nEleDinf" id="nEleDinf" min="0" value="1">
-                                                  </div>
-                                                  <div class="form-group col-md-12">
-                                                       <label for="nStrCln">Number of times a day each stairway is cleaned</label>
-                                                       <input class="form-control" type="number" name="nStrCln" id="nStrCln" min="0" value="1">
-                                                  </div>
-                                                  <div class="form-group col-md-12">
-                                                       <label for="nStrHrDinf">Number of times a day stairway handrails are disinfected</label>
-                                                       <input class="form-control" type="number" name="nStrHrDinf" id="nStrHrDinf" min="0" value="1">
-                                                  </div>
-                                             </div>
-                                        </div>
-                                   </div>
-                              </div>
+                              
 
                               <p style="margin-bottom:0.1cm;"> </p>
                               <div class="card"> 
@@ -456,14 +471,13 @@ SPDX-License-Identifier: Apache-2.0-->
                               <div class="card"> 
                                    <div class="card-header" id="headingOne">
                                         <h2 class="mb-0">
-                                        <button type="button" class="btn" data-toggle="collapse" data-target="#collapseSix">6. Interaction Spaces</button>									
+                                        <button type="button" class="btn" data-toggle="collapse" data-target="#collapseSix">6. Cafeteria/Pantry</button>									
                                         </h2>
                                    </div>
                                    <div id="collapseSix" class="collapse" aria-labelledby="headingSix" data-parent="#accordionExample">
                                         <div class="card-body">
-                                             <p class="h5 mb-2 text-left">Canteen/Pantry</p>
                                              <div class="form-row">
-                                                  <div class="form-group col-md-6">
+                                                  <div class="form-group col-md-12">
                                                        <label for="cntn_flag">Will canteen/pantry be functional?</label>
                                                        <div class="form-check">
                                                        <input class="form-check-input" type="radio" name="cntn" id="cntn_0" value="0">
@@ -568,18 +582,6 @@ SPDX-License-Identifier: Apache-2.0-->
                                                        <label for="nWS">Number of water dispensing stations</label>
                                                        <input class="form-control" type="number" name="nWS" id="nWS" min="0" value="2">
                                                   </div>
-                                                  <div class="form-group col-md-12">
-                                                       <label for="oMtngSpts">Number of other meeting spaces (gym, lockers and storage, ATMs, on-premise shops, libraries, lounges, meeting rooms, halls, etc.)</label>
-                                                       <input class="form-control" type="number" name="oMtngSpts" id="oMtngSpts" min="0" value="4">
-                                                  </div>
-                                                  <div class="form-group col-md-12">
-                                                       <label for="freqCln">Number of times house-keeping staff clean the premises in a day</label>
-                                                       <input class="form-control" type="number" name="freqCln" id="freqCln" min="0" value="1">
-                                                  </div>
-                                                  <div class="form-group col-md-12">
-                                                       <label for="nHskpngStff">Number of house-keeping staff</label>
-                                                       <input class="form-control" type="number" name="nHskpngStff" id="nHskpngStff" min="0" value="2">
-                                                  </div>
                                              </div>
                                         </div>
                                    </div>
@@ -617,6 +619,14 @@ SPDX-License-Identifier: Apache-2.0-->
                                                        <input class="form-check-input" type="radio" name="spPrsnt" id="spPrsnt_1" value="1" checked>
                                                        <label class="form-check-label" for="spPrsnt_1">Yes</label>
                                                        </div>
+                                                  </div>
+                                                  <div class="form-group col-md-12">
+                                                       <label for="freqCln">Number of times house-keeping staff clean the premises in a day</label>
+                                                       <input class="form-control" type="number" name="freqCln" id="freqCln" min="0" value="1">
+                                                  </div>
+                                                  <div class="form-group col-md-12">
+                                                       <label for="nHskpngStff">Number of house-keeping staff</label>
+                                                       <input class="form-control" type="number" name="nHskpngStff" id="nHskpngStff" min="0" value="2">
                                                   </div>
                                              </div>
                                         </div>
@@ -952,7 +962,7 @@ SPDX-License-Identifier: Apache-2.0-->
                                                   </div>
                                              </div>
                                              <div class="form-group col-md-12">
-                                                  <label for="alrg_flag">Has each employee's allergy list been identified for information to the hospital at the time of admission?</label>
+                                                  <label for="alrg_flag">Has each employee's medical history (diabetes, heart-condition/hypertension, allergies/asthma etc.) been updated for information to the hospital at the time of admission?</label>
                                                   <div class="form-check">
                                                   <input class="form-check-input" type="radio" name="alrg" id="alrg_0" value="0">
                                                   <label class="form-check-label" for="alrg_0">No</label>
@@ -961,6 +971,10 @@ SPDX-License-Identifier: Apache-2.0-->
                                                   <input class="form-check-input" type="radio" name="alrg" id="alrg_1" value="1" checked>
                                                   <label class="form-check-label" for="alrg_1">Yes</label>
                                                   </div>
+                                             </div>
+                                             <div class="form-group col-md-12">
+                                                  <label for="lstUpdtTime">Number of days since this information was last updated</label>
+                                                  <input class="form-control" type="number" name="lstUpdtTime" id="lstUpdtTime" min="0" value="3">
                                              </div>
                                              <div class="form-group col-md-12">
                                                   <label for="imdtFM_flag">Has a contact list of employee's immediate family members and caretakers been idenfied?</label>
@@ -972,10 +986,6 @@ SPDX-License-Identifier: Apache-2.0-->
                                                   <input class="form-check-input" type="radio" name="imdtFM" id="imdtFM_1" value="1" checked>
                                                   <label class="form-check-label" for="imdtFM_1">Yes</label>
                                                   </div>
-                                             </div>
-                                             <div class="form-group col-md-12">
-                                                  <label for="lstUpdtTime">How many days back was this information updated last?</label>
-                                                  <input class="form-control" type="number" name="lstUpdtTime" id="lstUpdtTime" min="0" value="3">
                                              </div>
                                         </div>
                                    </div>

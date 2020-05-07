@@ -49,6 +49,8 @@ function getValues(){
   // Office Infrastructure Information
   dict["tArea"] = parseInt(document.getElementById("tArea").value); // Total office area in sq.ft
   dict["nFloors"] = parseInt(document.getElementById("nFloors").value); // Number of floors in office
+  dict["opnCubArea"] = parseInt(document.getElementById("opnCubArea").value); // Total open cubicle area in sq.ft
+  dict["prtnArea"] = parseInt(document.getElementById("prtnArea").value); // Remaining working area in sq. ft
   dict["mntrCCTV"] = parseInt(document.querySelector('input[name="mntrCCTV"]:checked').value); // CCTV monitoring
   dict["acsCntrl"] = parseInt(document.querySelector('input[name="acsCntrl"]:checked').value); // Access controlled
   dict["baDoor"] = parseInt(document.getElementById("baDoor").value); // Number of biometric based access doors
@@ -72,7 +74,10 @@ function getValues(){
   dict["nEleDinf"] = parseInt(document.getElementById("nEleDinf").value); // Frequency of elevetor disinfection process
   dict["nStrCln"] = parseInt(document.getElementById("nStrCln").value); // Frequency of stairway cleaning
   dict["nStrHrDinf"] = parseInt(document.getElementById("nStrHrDinf").value); // Frequency of stairway handrails disinfection process
-  
+  dict["oMtngSpts"] = parseInt(document.getElementById("oMtngSpts").value); // Other meeting spaces
+  dict["freqCln"] = parseInt(document.getElementById("freqCln").value); // Frequency of cleaning
+  dict["nHskpngStff"] = parseInt(document.getElementById("nHskpngStff").value); // Number of housekeeping staff
+
   // Epidemic related precautions
   dict["tempScreening"] = parseInt(document.querySelector('input[name="tempScreening"]:checked').value); // Temperature screening of employee
   dict["faceCover"] = parseInt(document.querySelector('input[name="faceCover"]:checked').value); // Face is covered with mask
@@ -96,7 +101,7 @@ function getValues(){
   dict["nMPD"] = parseFloat(document.getElementById("nMPD").value); // Meetings per day
   dict["avgMS"] = parseFloat(document.getElementById("avgMS").value); // Average number of members in the meeting
   
-  // Interaction Spaces
+  // Cafeteria/Pantry
   dict["cntn"] = parseInt(document.querySelector('input[name="cntn"]:checked').value); // Canteen/pantry
   //dict["cntnAC"] = parseInt(document.querySelector('input[name="cntnAC"]:checked').value); // Canteen/pantry air condition
   dict["cntnACOp"] = parseInt(document.querySelector('input[name="cntnACOp"]:checked').value); // Canteen/pantry air condition operational
@@ -112,10 +117,7 @@ function getValues(){
   dict["cntnArea"] = parseInt(document.getElementById("cntnArea").value); // Canteen area in sq.ft
   dict["mxCntnPpl"] = parseInt(document.getElementById("mxCntnPpl").value); // Maximum number of employees allowed in canteen at a time
   dict["nWS"] = parseInt(document.getElementById("nWS").value); // Number of water stations
-  dict["oMtngSpts"] = parseInt(document.getElementById("oMtngSpts").value); // Other meeting spaces
-  dict["freqCln"] = parseInt(document.getElementById("freqCln").value); // Frequency of cleaning
-  dict["nHskpngStff"] = parseInt(document.getElementById("nHskpngStff").value); // Number of housekeeping staff
-
+  
   // Washroom Information
   dict["nGntsT"] = parseInt(document.getElementById("nGntsT").value); // Number of gents toilet
   dict["nLdsT"] = parseInt(document.getElementById("nLdsT").value); // Number of ladies toilet
@@ -193,6 +195,7 @@ function getValues(){
 }
 
 function clipAndRound_bounds (score) {
+  /*
   if (isNan (score) ) {
     console.log ("Score is NaN, pls check");
     return -1;
@@ -200,6 +203,7 @@ function clipAndRound_bounds (score) {
   else if (score == "N.A.") {
     return score;
   }
+  */
 
   var score_out = Math.round(score/10);
   if (score_out < 0 ) {
@@ -260,8 +264,8 @@ function calcScore () {
   }
 
   // Sick Rooms/Isolation Ward
-  var score_sickRoom = 100*(inputs["iQS"]*2 + inputs["amblnc"]*2 + inputs["lHsptl"]*2 + inputs["emrgncResp"] + inputs["hl"] + 
-                            inputs["imdtFM"] * Math.max( 0, (1.0 - inputs["lstUpdtTime"]/30))*2);
+  var score_sickRoom = 100*(inputs["iQS"]*2 + inputs["amblnc"] + inputs["lHsptl"]*2 + inputs["emrgncResp"] + inputs["hl"] + 
+                            inputs["imdtFM"] + inputs["alrg"] * Math.max( 0, (1.0 - inputs["lstUpdtTime"]/60))*2);
   var score_isolation = clipAndRound_bounds(score_sickRoom);
   var sg_isolation = "Well done!";
   if (!inputs["iQS"]){
@@ -274,8 +278,8 @@ function calcScore () {
     sg_isolation = "Give instructions to transport department on COVID-19 emergency";
   } else if (!inputs["hl"]) {
     sg_isolation = "Consider having a dedicated COVID-19 helpline";
-  } else if (Math.max( 0, (1.0 - inputs["lstUpdtTime"]/30)) < 0.5 ) {
-    sg_isolation = "Update contact list of employees and immediate family members";
+  } else if (Math.max( 0, (1.0 - inputs["lstUpdtTime"]/60)) < 0.5 ) {
+    sg_isolation = "Update medical history of employees";
   }
 
   // Interactions spaces
@@ -286,22 +290,24 @@ function calcScore () {
   var num_wtr_sought = 5;
   var prsnl_area = 28; // In sq. feet: Approx. 3 feet radius
   var pvtl_hrs = 4;
-  var nCftr = inputs["nBrkfst"] + inputs["nLnch"] + inputs["nSnck"];
-  var anncmnt = 1;
+  var nOutside = nEmp - inputs["nLnch"] - inputs["nEmpHL"];
 
   var mtng_brkfst = (inputs["nBrkfst"] * time_brkfst * prsnl_area) / (inputs["cntnArea"] * 60);
   var mtng_lnch = (inputs["nLnch"] * time_lnch * prsnl_area) / (inputs["cntnArea"] * 90);
   var mntg_snck = (inputs["nSnck"] * time_snck * prsnl_area) / (inputs["cntnArea"] * 60);
   var mntg_wtr = (nEmp * time_wtr * num_wtr_sought * prsnl_area) / (inputs["nWS"] * inputs["cntnArea"] * pvtl_hrs *  60);
   
-  var score_cafeteria = (mtng_brkfst + mtng_lnch + mntg_snck + mntg_wtr + (inputs["nEmpHL"]*mtng_lnch/(nCftr*2))) / nEmp;
-  score_cafeteria = score_cafeteria * Math.max((1 - 0.1*( anncmnt + inputs["freqCln"] - inputs["utnslShrd"])), 1/2);
-  
-  var score_cafeteria_scaled = 800*0.015/score_cafeteria;
+  var score_cafeteria = (mtng_brkfst*(inputs["nBrkfst"]/nEmp) + mtng_lnch*(inputs["nLnch"]/nEmp) + mntg_snck*(inputs["nSnck"]/nEmp) + mntg_wtr + (inputs["nEmpHL"]*0.25/nEmp) + (nOutside*2/nEmp));
+  score_cafeteria = score_cafeteria * Math.max((1 - 0.1*( inputs["mlStggrd"] + inputs["freqCln"] - inputs["utnslShrd"])), 1/2);
+
+  // We prefer the score_cafeteria to be less than 2
+  var score_cafeteria_scaled = 700*2/score_cafeteria;
   var score_cafeteria_scaled = clipAndRound_bounds(score_cafeteria_scaled);
   var sg_cafeteria = "Well done!";
-  if (score_cafeteria_scaled<700){
+  if (score_cafeteria_scaled<70){
     sg_cafeteria = "Increase the cafeteria area to accomodate more people or encourage work from home";
+  } else if (nOutside/nEmp > 0.5 && score_cafeteria_scaled<60){
+    sg_cafeteria = "Encourage bringing lunch from home or provide lunch on premise"
   }
 
   // Mobility
@@ -428,7 +434,7 @@ function calcScore () {
   }
   var score_total_transport = (score_company_transport + score_self_transport + score_walk + score_public_transport)/
                               (inputs["cmpnTrnsprtUsrs"] + inputs["slfTrnsprtUsrs"] + inputs["nWlk"] + inputs["nPubTrvl"]);
-  // Possible to use max instead of the above formula.
+  // Average is more appropriate for large companies.
   var score_total_transport_scaled = 800*3.5/score_total_transport;
   score_total_transport_scaled = clipAndRound_bounds(score_total_transport_scaled);
 
@@ -450,7 +456,7 @@ function calcScore () {
   resTable += "<tr><td>Mobility in office</td><td>" + score_mobility + "</td><td>"+ sg_mobility +"</td></tr>"
   resTable += "<tr><td>Meeting space in office</td><td>" + score_meetings + "</td><td>" + sg_meetings + "</td></tr>"
   resTable += "<tr><td>Outside contacts in office</td><td>" + score_outside + "</td><td>" + sg_outside + "</td></tr>"
-  resTable += "<tr><td>Interaction spaces</td><td>" + score_cafeteria_scaled + "</td><td>" + sg_cafeteria + "</td></tr>"
+  resTable += "<tr><td>Cafeteria/pantry</td><td>" + score_cafeteria_scaled + "</td><td>" + sg_cafeteria + "</td></tr>"
   resTable += "<tr><td>Epidemic related precautions</td><td>" + score_epidemic + "</td><td>" + sg_epidemic + "</td></tr>"
   resTable += "<tr><td>Transportation</td><td>" + score_total_transport_scaled + "</td><td>" + sg_transport + "</td></tr>"
 	resTable += "<tr><td>Office infrastructure</td><td>" + score_office_infra + "</td><td>" + sg_office_infra + "</td></tr>"

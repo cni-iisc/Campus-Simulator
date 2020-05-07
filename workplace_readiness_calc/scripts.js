@@ -28,12 +28,14 @@ function getValues(){
   dict["NOE"] = parseInt(document.getElementById("NOE").value); // Nature of Establishment
   
   // Employee Information
-  dict["nM"] = parseInt(document.getElementById("nM").value); // Number of male employees
-  dict["nF"] = parseInt(document.getElementById("nF").value); // Number of female employees
-  dict["nOth"] = parseInt(document.getElementById("nOth").value); // Number of other employees
-  //dict["rAddrKn"] = parseInt(document.getElementById("rAddrKn").value); // Number of employees with address records
-  dict["pCS"] = parseInt(document.getElementById("pCS").value); // Percentage of casual labour and security
   dict["nShifts"] = parseInt(document.getElementById("nShifts").value); // Number of shifts
+  for (var i=0; i<dict["nShifts"]; ++i){
+    dict["nM_"+(i+1).toString()] = parseInt(document.getElementById("nM_"+(i+1).toString()).value); // Number of male employees in shift i
+    dict["nF_"+(i+1).toString()] = parseInt(document.getElementById("nF_"+(i+1).toString()).value); // Number of female employees in shift i
+    dict["nOth_"+(i+1).toString()] = parseInt(document.getElementById("nOth_"+(i+1).toString()).value); // Number of other employees in shift i
+    dict["pCS_"+(i+1).toString()] = parseInt(document.getElementById("pCS_"+(i+1).toString()).value); // Percentage of casual labour and security in shift i
+  }
+
   dict["tGapShift"] = parseFloat(document.getElementById("tGapShift").value); // Time gap between shifts in hours
   dict["informCZEmp"] = parseInt(document.querySelector('input[name="informCZEmp"]:checked').value); // Inform containment zone employee not to come
   dict["informWFH"] = parseInt(document.querySelector('input[name="informWFH"]:checked').value); // Encourage work from home 
@@ -211,7 +213,7 @@ function calcScore () {
   console.log(inputs);
 
   // Office Infrastructure
-  var nEmp = inputs["nM"] + inputs["nF"] + inputs["nOth"];
+  var nEmp = inputs["nM_1"] + inputs["nF_1"] + inputs["nOth_1"];
   var nMeets = 4;
   var cFactor = Math.max( ((inputs["nCub"] + inputs["nRem"])*40 / inputs["opnCubArea"]), 1 ); 
   var crowding = 2*inputs["n2pOfcRm"] * nMeets + 3*inputs["n2pPlusOfcRm"] * nMeets * 1.2 +
@@ -235,8 +237,8 @@ function calcScore () {
   }
 
   // Toilet scores
-  var nGntsTlt = inputs["nM"] + inputs["nOth"]/2.0; 
-  var nLdsTlt = inputs["nF"] + inputs["nOth"]/2.0; 
+  var nGntsTlt = inputs["nM_1"] + inputs["nOth_1"]/2.0; 
+  var nLdsTlt = inputs["nF_1"] + inputs["nOth_1"]/2.0; 
   var avgTltVstsPrDy = 5; 
   var avgTltDrtn = 4;
   var tltCnctrtnHrs = 4; 
@@ -439,7 +441,7 @@ function calcScore () {
       sg_transport = "Consider more use of hand sanitiser etc.";
   }
 
-  onSuccess("Check you workplace ratings!");
+  onSuccess("Successfully generated workplace readiness score!");
 
 	var resTable = "";
 	resTable += "<table class='table table-bordered'><thead class='bg-dark'>";

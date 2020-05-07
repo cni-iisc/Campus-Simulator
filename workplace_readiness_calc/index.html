@@ -341,7 +341,7 @@ SPDX-License-Identifier: Apache-2.0-->
                                              <div class="form-row">
                                                   <div class="form-group col-md-4">
                                                        <label for="nShifts">Number of <b>shifts</b></label>
-                                                       <input class="form-control" type="number" name="nShifts" id="nShifts" min="1" value="1">
+                                                       <input class="form-control" type="number" name="nShifts" id="nShifts" min="1" max="5" value="1">
                                                   </div>
                                                   <div class="form-group col-md-8">
                                                        <label for="tGapShift">Minimum time gap between shifts (hours)</label>
@@ -350,6 +350,7 @@ SPDX-License-Identifier: Apache-2.0-->
                                              </div>
                                              <p class="h6 mb-2 text-left">Number of employees in a <b>shift</b> (including security, casual labour)</p>
                                              <div class="form-row">
+                                                  <!--
                                                   <div class="form-group col-md-4">
                                                        <label for="nM">Men</label>
                                                        <input class="form-control" type="number" name="nM" id="nM" min="0" value="50">
@@ -366,6 +367,28 @@ SPDX-License-Identifier: Apache-2.0-->
                                                        <label for="pCS">Number of casual labourers and security staff</label>
                                                        <input class="form-control" type="number" name="pCS" id="pCS" min="0" max="100" value="2">
                                                   </div>
+                                                  -->
+
+                                                  <table style="width: 100%;" id="shiftsTable">
+                                                       <thead>
+                                                       <tr>
+                                                            <th></th>
+                                                            <th class="px-1" style="text-align: center; width:23%">Men</th>
+                                                            <th class="px-1" style="text-align: center; width:23%">Women</th>
+                                                            <th class="px-1" style="text-align: center; width:23%">Others</th>
+                                                            <th class="px-1" style="text-align: center; width:23%">Casual Labourers / Security</th>
+                                                       </tr>
+                                                       </thead>
+                                                       <tbody>
+                                                       <tr>
+                                                            <td>Shift 1</td>
+                                                            <td class="px-1"><input class="form-control" type="number" id="nM_1" min="0" value="20"></td>
+                                                            <td class="px-1"><input class="form-control" type="number" id="nF_1" min="0" value="60"></td>
+                                                            <td class="px-1"><input class="form-control" type="number" id="nOth_1" min="0" value="60"></td>
+                                                            <td class="px-1"><input class="form-control" type="number" id="pCS_1" min="0" value="5"></td>
+                                                       </tr>
+                                                       </tbody>
+                                                  </table>
                                              </div>
                                         </div>
                                    </div>
@@ -1268,6 +1291,23 @@ SPDX-License-Identifier: Apache-2.0-->
      <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
      <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+     <script>
+          $(document).ready(function(){
+               $("#nShifts").on("input", function() {
+                    var count_cal = $("#nShifts").val();
+                    $("#shiftsTable tbody").remove();
+                    var markup = "<tbody> </tbody>";
+                    $("#shiftsTable").append(markup);
+                    count_cal = Math.min(count_cal, $('#nShifts').attr('max'));
+                    $("#nShifts").val(count_cal);
+                    for (i = 0; i < count_cal; i++) {
+                         console.log(i);
+                         markup = "<tr><td>Shift "+(i+1)+"</td><td class='px-1'><input class='form-control' type='number' id='nM_"+(i+1)+"' min='0' value='20'></td><td class='px-1'><input class='form-control' type='number' id='nF_"+(i+1)+"' min='0' value='60'></td><td class='px-1'><input class='form-control' type='number' id='nOth_"+(i+1)+"' min='0' value='60'></td><td class='px-1'><input class='form-control' type='number' id='pCS_"+(i+1)+"' min='0' value='5'></td></tr>";
+                         $("#shiftsTable tbody").append(markup);
+                    }
+               });
+          }); 
+     </script>
   </body>
 </html>
 

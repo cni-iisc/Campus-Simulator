@@ -31,7 +31,7 @@ function getValues(){
   dict["nM"] = parseInt(document.getElementById("nM").value); // Number of male employees
   dict["nF"] = parseInt(document.getElementById("nF").value); // Number of female employees
   dict["nOth"] = parseInt(document.getElementById("nOth").value); // Number of other employees
-  dict["rAddrKn"] = parseInt(document.getElementById("rAddrKn").value); // Number of employees with address records
+  //dict["rAddrKn"] = parseInt(document.getElementById("rAddrKn").value); // Number of employees with address records
   dict["pCS"] = parseInt(document.getElementById("pCS").value); // Percentage of casual labour and security
   dict["nShifts"] = parseInt(document.getElementById("nShifts").value); // Number of shifts
   dict["tGapShift"] = parseFloat(document.getElementById("tGapShift").value); // Time gap between shifts in hours
@@ -39,8 +39,8 @@ function getValues(){
   dict["informWFH"] = parseInt(document.querySelector('input[name="informWFH"]:checked').value); // Encourage work from home 
   dict["n29"] = parseInt(document.getElementById("n29").value); // Number of employees with age betwwen 15 and 29
   dict["n49"] = parseInt(document.getElementById("n49").value); // Number of employees with age betwwen 30 and 49
-  dict["n59"] = parseInt(document.getElementById("n59").value); // Number of employees with age betwwen 50 and 59
-  dict["n60plus"] = parseInt(document.getElementById("n60plus").value); // Number of employees with age more than 60
+  dict["n64"] = parseInt(document.getElementById("n64").value); // Number of employees with age betwwen 50 and 64
+  dict["n65plus"] = parseInt(document.getElementById("n65plus").value); // Number of employees with age more than 65
 
   // Office Infrastructure Information
   dict["nBldng"] = parseInt(document.getElementById("nBldng").value); // Number of buildings 
@@ -61,6 +61,7 @@ function getValues(){
   dict["nCub"] = parseInt(document.getElementById("nCub").value); // Number of office seats with cubicle separation
   dict["nRem"] = parseInt(document.getElementById("nRem").value); // Number of remaining office seats
   dict["percAc"] = parseInt(document.getElementById("percAC").value); // Percentage of air conditioned premise
+  dict["centralAC"] = parseInt(document.querySelector('input[name="centralAC"]:checked').value); // centralised A/C
   dict["tempAC"] = parseInt(document.getElementById("tempAC").value); // Temperature setting
   dict["hepaFltr"] = parseInt(document.querySelector('input[name="hepaFltr"]:checked').value); // HEPA filter
 
@@ -97,6 +98,7 @@ function getValues(){
   dict["alrg"] = parseInt(document.querySelector('input[name="alrg"]:checked').value); // Employee allergy list
   dict["imdtFM"] = parseInt(document.querySelector('input[name="imdtFM"]:checked').value); // Immediate family members list
   dict["lstUpdtTime"] = parseInt(document.getElementById("lstUpdtTime").value); // Last information update time
+  dict["medInsurance"] = parseInt(document.querySelector('input[name="medInsurance"]:checked').value); // Do all employees have medical insurance
 
   // Advertisement and Outreach
   dict["covidPage"] = parseInt(document.querySelector('input[name="covidPage"]:checked').value); // Covid Awareness Page
@@ -147,6 +149,7 @@ function getValues(){
   dict["nLdsT"] = parseInt(document.getElementById("nLdsT").value); // Number of ladies toilet
   dict["tClnFreq"] = parseInt(document.getElementById("tClnFreq").value); // Frequency of toilet cleaning
   dict["spPrsnt"] = parseInt(document.querySelector('input[name="spPrsnt"]:checked').value); // Soap dispensed in toilet
+  dict["typeSanitation"] = parseInt(document.querySelector('input[name="typeSanitation"]:checked').value); //  Type of sanitation
 
   // Company Provided Transport
   dict["cmpnTrnsprtUsrs"] = parseInt(document.getElementById("cmpnTrnsprtUsrs").value); // Company transport users
@@ -192,8 +195,9 @@ function getValues(){
   dict["trvlr10Kpluspub"] = parseInt(document.getElementById("trvlr10Kpluspub").value); // Numbers travelling >10 km private vehicle
 
   // Time to reach office
+  dict["n30Min"] = parseInt(document.getElementById("n30Min").value); // Number of employees taking 0-30 minutes
   dict["n60Min"] = parseInt(document.getElementById("n60Min").value); // Number of employees taking 30-60 minutes
-  dict["n60plusMin"] = parseInt(document.getElementById("n60plusMin").value); // Number of employees taking >60 minutes
+  //dict["n60plusMin"] = parseInt(document.getElementById("n60plusMin").value); // Number of employees taking >60 minutes
 
   return dict;
 }
@@ -356,7 +360,7 @@ function calcScore () {
   // Epidemic related precautions
   var meets_shift_requirement = 1;
   if (0<inputs["NOE"] && inputs["NOE"]<=4){
-    meets_shift_requirement = ((inputs["n29"]+inputs["n49"]+inputs["n59"]+inputs["n60plus"])*0.33>=nEmp) ? 1:0; 
+    meets_shift_requirement = ((inputs["n29"]+inputs["n49"]+inputs["n64"]+inputs["n65plus"])*0.33>=nEmp) ? 1:0; 
   }
 
   var score_epidemic = 100*(inputs["tempScreening"] + inputs["faceCover"] + inputs["adqFaceCover"] + inputs["newShfts"] +

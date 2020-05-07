@@ -4,11 +4,12 @@
 #include <algorithm>
 #include <map>
 #include <string>
-using namespace std;
 #include "models.h"
 #include "initializers.h"
 #include "updates.h"
 #include "simulator.h"
+
+using std::vector;
 
 #if defined DEBUG || defined TIMING
 #include <iostream>

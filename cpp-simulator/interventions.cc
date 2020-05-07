@@ -566,11 +566,6 @@ struct intervention_decription {
 
 void get_kappa_custom_modular(vector<agent>& nodes, vector<house>& homes, const int cur_time,
 							  const intervention_decription& intv){
-
-  if(intv.home_quarantine){
-    reset_home_quarantines(homes);
-    mark_and_isolate_quarantined_homes(nodes, homes, cur_time);
-  }
 #pragma omp parallel for default(none) shared(nodes, intv)
   for (count_type count = 0; count < nodes.size(); ++count){
     //choose base kappas
@@ -597,6 +592,10 @@ void get_kappa_custom_modular(vector<agent>& nodes, vector<house>& homes, const 
         modify_kappa_case_isolate_node(nodes[count]);
       }
     }
+  }
+  if(intv.home_quarantine){
+    reset_home_quarantines(homes);
+    mark_and_isolate_quarantined_homes(nodes, homes, cur_time);
   }
 }
 

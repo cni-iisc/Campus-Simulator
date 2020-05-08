@@ -26,21 +26,21 @@ SPDX-License-Identifier: Apache-2.0-->
 
     <body>
       <section id="header">
-      <div class="d-flex bg-dark justify-content-between align-items-center">
-            <div class="d-flex p-1 text-white">
+      <div class="d-flex bg-dark py-1 justify-content-between align-items-center">
+            <div class="d-flex px-3 text-white">
               <!-- <div class="d-flex flex-column px-3 py-1">
               <a target="_blank" href="https://www.iisc.ac.in"><img src="images/iisc_1.png" alt="IISc logo" width="70px"></a>
 	      </div> -->
-        <div class="flex-column justify-content-center">
-              <div class="d-flex px-3 py-0 justify-content-center">
+        <div class="d-flex flex-column align-items-center">
+              <div class="flex-row pl-3 py-0 justify-content-center">
               <a target="_blank" href="https://www.iisc.ac.in"><img src="images/iisc_1.png" alt="IISc logo" width="70px"></a>
               </div>
-              <div class="d-flex px-3 py-1 justify-content-center">
-                <a target="_blank" href="https://www.cisco.com/c/en_in/about/csr.html"><img src="images/cisco-logo.png" alt="Cisco CSR logo" width="130px"></a>
+              <div class="flex-row pl-3 py-0 justify-content-center">
+                <a target="_blank" href="https://www.cisco.com/c/en_in/about/csr.html"><img src="images/cisco-csr.png" alt="Cisco CSR logo" width="130px"></a>
               </div>
         </div>
 
-              <div class="header-wide">
+              <div class="d-flex px-2 header-wide align-items-center">
                 <div class="flex-shrink-1 flex-column">
                   <div class="d-flex"><a target="_blank" href="https://cni.iisc.ac.in" style="color:#ffff99">Centre for Networked Intelligence</a></div>
                   <div class="d-flex"><a target="blank" href="https://cps.iisc.ac.in" style="color:#ffff99">Robert Bosch Centre for CPS</a></div>
@@ -48,14 +48,22 @@ SPDX-License-Identifier: Apache-2.0-->
                 </div>
               </div>
             </div>
-            <div class="d-flex p-2 text-white">
+            <div class="d-flex p-1 text-white">
               <h5>COVID-19 Workplace Readiness Index</h5>
             </div>
-            <div class="d-flex p-2 text-white">
+        <div class="d-flex flex-column align-items-center">
+            <div class="d-flex p-0 text-white">
                 <div class="d-flex px-3 py-1">
                   <a target="_blank" href="https://www.karnataka.gov.in"><img src="images/karnataka-logo.jpg" alt="Karnataka logo" width="70px"></a>
                 </div>
             </div>
+            <div class="d-flex p-0 text-white">
+                <div class="d-flex px-3 py-1">
+                  <a target="_blank" href="https://www.karnataka.gov.in"><img src="images/KSDMA.png" alt="Karnataka logo" width="70px"></a>
+                </div>
+            </div>
+
+        </div>
       </div>
       </section>
 
@@ -494,7 +502,7 @@ SPDX-License-Identifier: Apache-2.0-->
                                    </div>
                                    <div id="collapseNine" class="collapse" aria-labelledby="headingNine" data-parent="#accordionExample">
                                         <div class="card-body">
-                                             <p class="h5 mb-2 text-left">If an employee gets sick at work</p>
+                                             <p class="h5 sh5 mb-2 text-left">If an employee gets sick at work</p>
                                              <div class="form-group col-md-12">
                                                   <label for="hl_flag">Is there a company helpline?</label>
                                                   <div class="form-check">
@@ -600,7 +608,7 @@ SPDX-License-Identifier: Apache-2.0-->
                                    </div>
                                    <div id="collapseTen" class="collapse" aria-labelledby="headingTen" data-parent="#accordionExample">
                                         <div class="card-body">
-                                             <p class="h5 mb-2 text-left">Awareness</p>
+                                             <p class="h5 sh5 mb-2 text-left">Awareness</p>
                                              <div class="form-row">
                                                   <div class="form-group col-md-12">
                                                        <label for="sPers_flag">Is there a designated <b>champion</b> for hygiene, epidemic awareness, and safety? (This person is responsible for communicating preventive measures issued by the Ministry of Health and Family Welfare from time to time)</label>
@@ -750,7 +758,7 @@ SPDX-License-Identifier: Apache-2.0-->
                                                   </div>
                                              </div>
 
-                                             <p class="h5 mb-2 text-left">Mobility Within Premises</p>
+                                             <p class="h5 sh5 mb-2 text-left">Mobility Within Premises</p>
                                              <div class="form-group col-md-12">
                                                   <label for="nHM">Number of employees that are more than 2 hrs away from assigned work area during the day (high mobility)</label>
                                                   <input class="form-control" type="number" name="nHM" id="nHM" min="0" value="2">
@@ -760,7 +768,7 @@ SPDX-License-Identifier: Apache-2.0-->
                                                   <input class="form-control" type="number" name="nMM" id="nMM" min="0" value="2">
                                              </div>
                                              
-                                             <p class="h5 mb-2 text-left">Work Related Interactions</p>
+                                             <p class="h5 sh5 mb-2 text-left">Work Related Interactions</p>
                                              <div class="form-group col-md-12">
                                                   <label for="nMPD">Number of in-person meetings per day</label>
                                                   <input class="form-control" type="number" name="nMPD" id="nMPD" min="0" value="50">
@@ -928,7 +936,7 @@ SPDX-License-Identifier: Apache-2.0-->
                                                     <label for="nHskpngStff">Number of house-keeping staff cleaning the <b>entire premises</b> each day</label>
                                                        <input class="form-control" type="number" name="nHskpngStff" id="nHskpngStff" min="0" value="2">
                                                   </div>
-                                                    <p class="h5"> Type of Cleaning</p>
+                                                    <p class="h5 sh5"> Type of Cleaning</p>
                                                   <div class="form-group col-md-12">
                                                     <!-- <label for="typeSanitation">Type of cleaning</label> -->
                                                        <div class="form-check">
@@ -1174,7 +1182,7 @@ SPDX-License-Identifier: Apache-2.0-->
                                                        </div>
                                                   </div>
 
-                                                  <p class="h5 mb-2 text-left">Employees that walk to work</p>
+                                                  <p class="h5 sh5 mb-2 text-left">Employees that walk to work</p>
                                                   <div class="form-group col-md-12">
                                                        <label for="mskWlk_flag">Do they wear face covers?</label>
                                                        <div class="form-check">
@@ -1187,7 +1195,7 @@ SPDX-License-Identifier: Apache-2.0-->
                                                        </div>
                                                   </div>
 
-                                                  <p class="h5 mb-2 text-left">Employees traveling in public/ride-share vehicles</p>
+                                                  <p class="h5 sh5 mb-2 text-left">Employees traveling in public/ride-share vehicles</p>
                                                   <div class="form-group col-md-12">
                                                        <label for="mskPub_flag">Do they wear face covers?</label>
                                                        <div class="form-check">

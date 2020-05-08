@@ -263,11 +263,11 @@ double updated_travel_fraction(const vector<agent>& nodes, const int cur_time){
 	  ++usual_travellers;
 	}
 	if(nodes[i].travels()){
-		double mask_factor = 1.0;
-		if(mask_active(cur_time) && nodes[i].compliant){
-			mask_factor = MASK_FACTOR;
-		}
-	  ++actual_travellers ;
+	  double mask_factor = 1.0;
+	  if(mask_active(cur_time) && nodes[i].compliant){
+		mask_factor = MASK_FACTOR;
+	  }
+	  ++actual_travellers;
 	  total_distance += nodes[i].commute_distance;
 	  if(nodes[i].infective){
 		infected_distance += nodes[i].commute_distance * mask_factor;
@@ -346,10 +346,10 @@ double updated_lambda_c_local(const vector<agent>& nodes, const community& commu
 }
 
 void update_lambda_c_global(vector<community>& communities, const matrix<double>& community_distance_matrix){
-  for (count_type c1 = 0; c1 < communities.size(); ++c1){
+  const auto SIZE = communities.size();
+  for (count_type c1 = 0; c1 < SIZE; ++c1){
 	double num = 0;
 	double denom = 0;
-	const auto SIZE = communities.size();
 
 #pragma omp parallel for default(none) shared(communities, community_distance_matrix, c1) \
   reduction(+: num, denom)
@@ -388,15 +388,12 @@ casualty_stats get_infected_community(const vector<agent>& nodes, const communit
 
   const auto SIZE = community.individuals.size(); 
 
-#pragma omp parallel for default(none) shared(nodes, community) \
-  reduction(+: infected, hd_area_infected, \
-  affected, hd_area_affected, \
-  symptomatic, hd_area_symptomatic, \
-  hospitalised, hd_area_hospitalised, \
-  critical, hd_area_critical, \
-  dead, hd_area_dead, \
-  exposed, hd_area_exposed, \
-  recovered, hd_area_recovered)
+#pragma omp parallel for default(none) shared(nodes, community)			\
+  reduction(+: infected, hd_area_infected, affected, hd_area_affected,	\
+			symptomatic, hd_area_symptomatic,							\
+			hospitalised, hd_area_hospitalised,							\
+			critical, hd_area_critical, dead, hd_area_dead,				\
+			exposed, hd_area_exposed, recovered, hd_area_recovered)
   for (count_type i=0; i<SIZE; ++i){
 	bool hd_area_resident = nodes[community.individuals[i]].hd_area_resident;
 	auto infection_status = nodes[community.individuals[i]].infection_status;

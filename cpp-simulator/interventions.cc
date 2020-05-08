@@ -152,7 +152,8 @@ void get_kappa_no_intervention(vector<agent>& nodes, const vector<house>& homes,
 }
 
 void get_kappa_case_isolation(vector<agent>& nodes, const vector<house>& homes, const vector<workplace>& workplaces, const vector<community>& communities, const int cur_time){
-#pragma omp parallel for default(none) shared(nodes, GLOBAL)
+  const auto SIM_STEPS_PER_DAY = GLOBAL.SIM_STEPS_PER_DAY;
+#pragma omp parallel for default(none) shared(nodes)
   for (count_type count = 0; count < nodes.size(); ++count){
 	double time_since_symptoms = cur_time
 	  - (nodes[count].time_of_infection
@@ -168,9 +169,9 @@ void get_kappa_case_isolation(vector<agent>& nodes, const vector<house>& homes, 
 	nodes[count].kappa_C_incoming = 1;
 
 	if((nodes[count].compliant) &&
-	   (time_since_symptoms > NUM_DAYS_TO_RECOG_SYMPTOMS*GLOBAL.SIM_STEPS_PER_DAY) &&
+	   (time_since_symptoms > NUM_DAYS_TO_RECOG_SYMPTOMS * SIM_STEPS_PER_DAY) &&
 	   (time_since_symptoms
-		<= (NUM_DAYS_TO_RECOG_SYMPTOMS + SELF_ISOLATION_DAYS) * GLOBAL.SIM_STEPS_PER_DAY)){
+		<= (NUM_DAYS_TO_RECOG_SYMPTOMS + SELF_ISOLATION_DAYS) * SIM_STEPS_PER_DAY)){
 	  nodes[count].quarantined = true;
       nodes[count].kappa_H = 0.75;
 	  nodes[count].kappa_W = 0;
@@ -183,7 +184,8 @@ void get_kappa_case_isolation(vector<agent>& nodes, const vector<house>& homes, 
 }
 
 void get_kappa_SC(vector<agent>& nodes, const vector<house>& homes, const vector<workplace>& workplaces, const vector<community>& communities, const int cur_time){
-#pragma omp parallel for default(none) shared(nodes, GLOBAL)
+  const auto SIM_STEPS_PER_DAY = GLOBAL.SIM_STEPS_PER_DAY;
+#pragma omp parallel for default(none) shared(nodes)
   for (count_type count = 0; count < nodes.size(); ++count){
 	double time_since_symptoms = cur_time
 	  - (nodes[count].time_of_infection
@@ -199,9 +201,9 @@ void get_kappa_SC(vector<agent>& nodes, const vector<house>& homes, const vector
 	nodes[count].kappa_C_incoming = 1;
 
 	if((nodes[count].compliant) &&
-	   (time_since_symptoms > NUM_DAYS_TO_RECOG_SYMPTOMS*GLOBAL.SIM_STEPS_PER_DAY) &&
+	   (time_since_symptoms > NUM_DAYS_TO_RECOG_SYMPTOMS * SIM_STEPS_PER_DAY) &&
 	   (time_since_symptoms
-		<= (NUM_DAYS_TO_RECOG_SYMPTOMS + SELF_ISOLATION_DAYS) * GLOBAL.SIM_STEPS_PER_DAY)){
+		<= (NUM_DAYS_TO_RECOG_SYMPTOMS + SELF_ISOLATION_DAYS) * SIM_STEPS_PER_DAY)){
 	  nodes[count].quarantined = true;
       nodes[count].kappa_H = 0.75;
 	  nodes[count].kappa_W = 0;
@@ -628,7 +630,9 @@ void get_kappa_custom(vector<agent>& nodes, vector<house>& homes,
 	}
   }
 
-#pragma omp parallel for default(none) shared(nodes, GLOBAL, homes)
+  const auto SIM_STEPS_PER_DAY = GLOBAL.SIM_STEPS_PER_DAY;
+
+#pragma omp parallel for default(none) shared(nodes, homes)
   for (count_type count = 0; count < nodes.size(); ++count){
 	//homes SHOULD NOT BE MODIFIED IN THIS LOOP, ONLY READ
 	double time_since_symptoms = cur_time
@@ -693,9 +697,9 @@ void get_kappa_custom(vector<agent>& nodes, vector<house>& homes,
   	}
 
 	if((nodes[count].compliant) && ((case_isolation && !home_quarantine) || (case_isolation && lockdown)) &&
-	   (time_since_symptoms > NUM_DAYS_TO_RECOG_SYMPTOMS*GLOBAL.SIM_STEPS_PER_DAY) &&
+	   (time_since_symptoms > NUM_DAYS_TO_RECOG_SYMPTOMS * SIM_STEPS_PER_DAY) &&
 	   (time_since_symptoms
-		<= (NUM_DAYS_TO_RECOG_SYMPTOMS + SELF_ISOLATION_DAYS) * GLOBAL.SIM_STEPS_PER_DAY)){
+		<= (NUM_DAYS_TO_RECOG_SYMPTOMS + SELF_ISOLATION_DAYS) * SIM_STEPS_PER_DAY)){
 	  nodes[count].quarantined = true;
       nodes[count].kappa_H = 0.75;
 	  nodes[count].kappa_W = 0;

@@ -131,6 +131,10 @@ a:link, .nav a, .nav a:visited {
   z-index: 10;
 }
 
+.sh5 {
+  color: #ffff00
+}
+
 @media screen and (max-width: 1200px) {
    .header-wide {
     display: none;

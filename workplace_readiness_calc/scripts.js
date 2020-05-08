@@ -461,7 +461,7 @@ function calcScore () {
 
   var sg_transport = "Well done!";
   if (cmpnTrnsprtUsrs + slfTrnsprtUsrs + inputs["nWlk"] + pubTrnsprtUsrs == 0){
-    sg_transport = "No transport related information provided";
+    sg_transport = "High score. But do you really have no one traveling to your workplace?";
   } else if ((inputs["mskMndt"]+inputs["mskCar"]+inputs["mskWlk"]+inputs["mskPub"])<3){
     sg_transport = "Consider using mask while travelling";
   } else if (F>0.5){

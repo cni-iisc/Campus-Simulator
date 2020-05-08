@@ -180,6 +180,7 @@ SPDX-License-Identifier: Apache-2.0-->
                                                        <label for="nCW">Number of companies sharing office space, if co-work space, including your company</label>
                                                        <input class="form-control" type="number" name="nCW" id="nCW" min="1" value="1">
                                                   </div>
+                                             </div>
 
                                              <p class="h5 sh5 mb-2 text-left pt-2">Office Composition</p>
                                              <div class="form-row">
@@ -213,7 +214,7 @@ SPDX-License-Identifier: Apache-2.0-->
                                                        </tr>
                                                        </tbody>
                                                   </table>
-
+                                                  
                                                   <p class="h5 sh5 mb-2 text-left px-2 pt-4">Air-conditioning</p>
                                                   <div class="form-group col-md-12">
                                                        <label for="percAC">Percentage of the premises with air-conditioning</label>
@@ -251,12 +252,13 @@ SPDX-License-Identifier: Apache-2.0-->
                                                   </div>
                                              </div>
 
-                                                  <p class="h5 sh5 mb-2 text-left">Common Usage Areas</p>
-                                                  <div class="form-group col-md-12">
+                                             <p class="h5 sh5 mb-2 text-left">Common Usage Areas</p>
+                                             <div class="form-row">
+                                                  <div class="form-group col-md-6">
                                                        <label for="nEle">Number of lifts</label>
                                                        <input class="form-control" type="number" name="nEle" id="nEle" min="0" value="1">
                                                   </div>
-                                                  <div class="form-group col-md-12">
+                                                  <div class="form-group col-md-6">
                                                        <label for="eleCpct">Average capacity of lifts</label>
                                                        <input class="form-control" type="number" name="eleCpct" id="eleCpct" min="3" value="8">
                                                   </div>
@@ -1320,6 +1322,16 @@ SPDX-License-Identifier: Apache-2.0-->
                          console.log(i);
                          markup = "<tr><td>Shift "+(i+1)+"</td><td class='px-1'><input class='form-control' type='number' id='nM_"+(i+1)+"' min='0' value='40'></td><td class='px-1'><input class='form-control' type='number' id='nF_"+(i+1)+"' min='0' value='25'></td><td class='px-1'><input class='form-control' type='number' id='nOth_"+(i+1)+"' min='0' value='3'></td><td class='px-1'><input class='form-control' type='number' id='pCS_"+(i+1)+"' min='0' value='2'></td></tr>";
                          $("#shiftsTable tbody").append(markup);
+                    }
+               });
+
+               $("#nEle").on("input", function() {
+                    var elevator_counts = $("#nEle").val();
+                    if (elevator_counts==0){
+                         $('#eleCpct').attr('min', 0);
+                    }
+                    else{
+                         $('#eleCpct').attr('min', 3);
                     }
                });
           }); 

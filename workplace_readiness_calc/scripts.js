@@ -435,7 +435,7 @@ function calcScore () {
   count = 0;
   if (!meets_shift_requirement){
     count += number_of_suggestions;
-    sg_epidemic = "Does not meet the maximum 33% attendance requirement.";
+    sg_epidemic = "For your establishment, there is a maximum 33% attendance requirement which is not met. Hence the score is 0. You must comply with this requirement to get a positive score.";
   }
   if (!inputs["tempScreening"] && count<number_of_suggestions){
     count += 1;

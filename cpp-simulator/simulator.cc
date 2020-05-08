@@ -9,8 +9,6 @@
 #include "updates.h"
 #include "simulator.h"
 
-using std::vector;
-
 #if defined DEBUG || defined TIMING
 #include <iostream>
 #include <cstdlib>
@@ -134,7 +132,7 @@ plot_data_struct run_simulation(){
   //Total number of individuals who have become infected via transmission so far
   //This does not included the initially seeded infections
 
-  vector<long double> infections_by_new_infectives(GLOBAL.NUM_TIMESTEPS, 0);
+  std::vector<long double> infections_by_new_infectives(GLOBAL.NUM_TIMESTEPS, 0);
   //For keeping track of infections ascribed to agents that became infective at
   //each time
 

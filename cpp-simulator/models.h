@@ -294,6 +294,80 @@ enum class OfficeType{
 //Default workplace value for homebound individuals.
 const int WORKPLACE_HOME = -1;
 
+struct lambda_incoming_data {
+  double home = 0;
+  double work = 0;
+  double community = 0;
+  double travel = 0;
+
+  void set_zero(){
+	home = 0;
+	work = 0;
+	community = 0;
+	travel = 0;
+  }
+
+  double sum() const {
+	return home + work + community + travel;
+  }
+
+  lambda_incoming_data operator/(long double d) const {
+	lambda_incoming_data temp(*this);
+	temp /= d;
+	return temp;
+  }
+
+  lambda_incoming_data operator*(long double d) const {
+	lambda_incoming_data temp(*this);
+	temp *= d;
+	return temp;
+  }
+
+  lambda_incoming_data operator-(const lambda_incoming_data& rhs) const {
+	lambda_incoming_data temp(*this);
+	temp -= rhs;
+	return temp;
+  }
+
+  lambda_incoming_data operator+(const lambda_incoming_data& rhs) const {
+	lambda_incoming_data temp(*this);
+	temp += rhs;
+	return temp;
+  }
+
+  lambda_incoming_data& operator/=(long double d){
+	home /= d;
+	work /= d;
+	community /= d;
+	travel /= d;
+	return *this;
+  }
+
+  lambda_incoming_data& operator*=(long double d){
+	home *= d;
+	work *= d;
+	community *= d;
+	travel *= d;
+	return *this;
+  }
+
+  lambda_incoming_data& operator+=(const lambda_incoming_data& rhs){
+	home += rhs.home;
+	work += rhs.work;
+	community += rhs.community;
+	travel += rhs.travel;
+	return *this;
+  }
+
+  lambda_incoming_data& operator-=(const lambda_incoming_data& rhs){
+	home -= rhs.home;
+	work -= rhs.work;
+	community -= rhs.community;
+	travel -= rhs.travel;
+	return *this;
+  }
+};
+
 struct agent{
   location loc;
   int age;
@@ -332,7 +406,7 @@ struct agent{
   //one of school, office, or home
   OfficeType office_type = OfficeType::other;
   
-  std::vector<double> lambda_incoming;
+  lambda_incoming_data lambda_incoming;
   //infectiousness from home, workplace, community, travel as seen by
   //individual
 

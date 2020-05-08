@@ -123,9 +123,9 @@ plot_data_struct run_simulation(){
   cerr << "simulator: starting simulation\n";
   start_time = std::chrono::high_resolution_clock::now();
 #endif
-  vector<double> total_lambda_fraction_data(AGENT_INCOMING_LAMBDA_COMPONENTS);
-  vector<double> mean_lambda_fraction_data(AGENT_INCOMING_LAMBDA_COMPONENTS);
-  vector<double> cumulative_mean_lambda_fraction_data(AGENT_INCOMING_LAMBDA_COMPONENTS, 0);
+  lambda_incoming_data total_lambda_fraction_data;
+  lambda_incoming_data mean_lambda_fraction_data;
+  lambda_incoming_data cumulative_mean_lambda_fraction_data;
   count_type num_cases = 0; // Total number of agents who have progessed to symptomatic so far
   count_type num_cumulative_hospitalizations = 0; //Total number of agents who have had to go to the hospital so far
   count_type num_cumulative_infective = 0; //Total number of people who have progressed to the infective state so far
@@ -140,10 +140,8 @@ plot_data_struct run_simulation(){
 
   for(count_type time_step = 0; time_step < GLOBAL.NUM_TIMESTEPS; ++time_step){
 
-	std::fill(total_lambda_fraction_data.begin(),
-			  total_lambda_fraction_data.end(), 0);
-	std::fill(mean_lambda_fraction_data.begin(),
-			  mean_lambda_fraction_data.end(), 0);
+	total_lambda_fraction_data.set_zero();
+	mean_lambda_fraction_data.set_zero();
 
 	count_type num_new_infections = 0;
 
@@ -169,18 +167,18 @@ plot_data_struct run_simulation(){
 	  if(node_update_status.new_infection){
 		++num_new_infections;
 		++num_total_infections;
-		for(count_type pos = 0; pos < AGENT_INCOMING_LAMBDA_COMPONENTS; ++pos){
-		  total_lambda_fraction_data[pos] += nodes[j].lambda_incoming[pos];
-		  auto normalized_lambda = (nodes[j].lambda_incoming[pos] / nodes[j].lambda);
 		  
-		  mean_lambda_fraction_data[pos]
-			+= (normalized_lambda - mean_lambda_fraction_data[pos]) / num_new_infections;
+		// update the mean fractions with the new data point normalized_lambda
 		  
-		  cumulative_mean_lambda_fraction_data[pos]
-			+= (normalized_lambda - cumulative_mean_lambda_fraction_data[pos]) / num_total_infections;
-		  
-		  // update the mean fractions with the new data point normalized_lambda
-		  
+		{
+		  total_lambda_fraction_data += nodes[j].lambda_incoming;
+		  auto normalized_lambda = (nodes[j].lambda_incoming / nodes[j].lambda);
+		  mean_lambda_fraction_data +=
+			(normalized_lambda - mean_lambda_fraction_data)
+			/ num_new_infections;
+		  cumulative_mean_lambda_fraction_data +=
+			(normalized_lambda - cumulative_mean_lambda_fraction_data)
+			/ num_total_infections;
 		}
 	  }
 	  if(node_update_status.new_symptomatic){
@@ -255,10 +253,10 @@ plot_data_struct run_simulation(){
 	  update_lambdas(nodes[j], homes, workplaces, communities, travel_fraction, time_step);
 	  if(nodes[j].infection_status == Progression::susceptible){
 		susceptible_lambda += nodes[j].lambda;
-		susceptible_lambda_H += nodes[j].lambda_incoming[0];
-		susceptible_lambda_W += nodes[j].lambda_incoming[1];
-		susceptible_lambda_C += nodes[j].lambda_incoming[2];
-		susceptible_lambda_T += nodes[j].lambda_incoming[3];
+		susceptible_lambda_H += nodes[j].lambda_incoming.home;
+		susceptible_lambda_W += nodes[j].lambda_incoming.work;
+		susceptible_lambda_C += nodes[j].lambda_incoming.community;
+		susceptible_lambda_T += nodes[j].lambda_incoming.travel;
 	  }
 	}
 	
@@ -339,31 +337,29 @@ plot_data_struct run_simulation(){
 	plot_data.susceptible_lambdas["susceptible_lambda_C"].push_back({time_step, {susceptible_lambda_C}});
 	plot_data.susceptible_lambdas["susceptible_lambda_T"].push_back({time_step, {susceptible_lambda_T}});
 
-	double total_lambda_fraction_data_sum
-	  = std::accumulate(total_lambda_fraction_data.begin(),
-						total_lambda_fraction_data.end(), 0);
 	//Convert to fraction
-	for (auto& num: total_lambda_fraction_data){
-	  num /= total_lambda_fraction_data_sum;
-	}
-	plot_data.total_lambda_fractions["total_fraction_lambda_H"].push_back({time_step, {total_lambda_fraction_data[0]}});
-	plot_data.total_lambda_fractions["total_fraction_lambda_W"].push_back({time_step, {total_lambda_fraction_data[1]}});
-	plot_data.total_lambda_fractions["total_fraction_lambda_C"].push_back({time_step, {total_lambda_fraction_data[2]}});
-	plot_data.total_lambda_fractions["total_fraction_lambda_T"].push_back({time_step, {total_lambda_fraction_data[3]}});
+	auto total_lambda_fraction_data_sum = total_lambda_fraction_data.sum();
+	total_lambda_fraction_data /= total_lambda_fraction_data_sum;
 
-	plot_data.mean_lambda_fractions["mean_fraction_lambda_H"].push_back({time_step, {mean_lambda_fraction_data[0]}});
-	plot_data.mean_lambda_fractions["mean_fraction_lambda_W"].push_back({time_step, {mean_lambda_fraction_data[1]}});
-	plot_data.mean_lambda_fractions["mean_fraction_lambda_C"].push_back({time_step, {mean_lambda_fraction_data[2]}});
-	plot_data.mean_lambda_fractions["mean_fraction_lambda_T"].push_back({time_step, {mean_lambda_fraction_data[3]}});
+
+	plot_data.total_lambda_fractions["total_fraction_lambda_H"].push_back({time_step, {total_lambda_fraction_data.home}});
+	plot_data.total_lambda_fractions["total_fraction_lambda_W"].push_back({time_step, {total_lambda_fraction_data.work}});
+	plot_data.total_lambda_fractions["total_fraction_lambda_C"].push_back({time_step, {total_lambda_fraction_data.community}});
+	plot_data.total_lambda_fractions["total_fraction_lambda_T"].push_back({time_step, {total_lambda_fraction_data.travel}});
+
+	plot_data.mean_lambda_fractions["mean_fraction_lambda_H"].push_back({time_step, {mean_lambda_fraction_data.home}});
+	plot_data.mean_lambda_fractions["mean_fraction_lambda_W"].push_back({time_step, {mean_lambda_fraction_data.work}});
+	plot_data.mean_lambda_fractions["mean_fraction_lambda_C"].push_back({time_step, {mean_lambda_fraction_data.community}});
+	plot_data.mean_lambda_fractions["mean_fraction_lambda_T"].push_back({time_step, {mean_lambda_fraction_data.travel}});
 
 	plot_data.cumulative_mean_lambda_fractions["cumulative_mean_fraction_lambda_H"].push_back({time_step,
-																							   {cumulative_mean_lambda_fraction_data[0]}});
+																							   {cumulative_mean_lambda_fraction_data.home}});
 	plot_data.cumulative_mean_lambda_fractions["cumulative_mean_fraction_lambda_W"].push_back({time_step,
-																							   {cumulative_mean_lambda_fraction_data[1]}});
+																							   {cumulative_mean_lambda_fraction_data.work}});
 	plot_data.cumulative_mean_lambda_fractions["cumulative_mean_fraction_lambda_C"].push_back({time_step,
-																							   {cumulative_mean_lambda_fraction_data[2]}});
+																							   {cumulative_mean_lambda_fraction_data.community}});
 	plot_data.cumulative_mean_lambda_fractions["cumulative_mean_fraction_lambda_T"].push_back({time_step,
-																							   {cumulative_mean_lambda_fraction_data[3]}});
+																							   {cumulative_mean_lambda_fraction_data.travel}});
 
 	
   }

@@ -279,18 +279,18 @@ double updated_travel_fraction(const vector<agent>& nodes, int cur_time){
 
 
 void update_lambdas(agent&node, const vector<house>& homes, const vector<workplace>& workplaces, const vector<community>& communities, double travel_fraction, int cur_time){
-  node.lambda_incoming={0,0,0,0};
+  node.lambda_incoming.set_zero();
   //Contributions from home, workplace, community, and travel
 
   //No null check for home as every agent has a home
-  node.lambda_incoming[0] = node.kappa_H_incoming
+  node.lambda_incoming.home = node.kappa_H_incoming
 	* homes[node.home].age_independent_mixing
 	* node.hd_area_factor;
   //If the agent lives in a high population density area, eg, a slum
   
   //FEATURE_PROPOSAL: make the mixing dependent on node.age_group;
   if(node.workplace != WORKPLACE_HOME) {
-	node.lambda_incoming[1] = (node.attending?1.0:GLOBAL.ATTENDANCE_LEAKAGE)*node.kappa_W_incoming
+	node.lambda_incoming.work = (node.attending?1.0:GLOBAL.ATTENDANCE_LEAKAGE)*node.kappa_W_incoming
 	  * workplaces[node.workplace].age_independent_mixing;
 	//FEATURE_PROPOSAL: make the mixing dependent on node.age_group;
   }
@@ -300,7 +300,7 @@ void update_lambdas(agent&node, const vector<house>& homes, const vector<workpla
   //
   // For all communities add the community lambda with a distance
   // related scaling factor
-  node.lambda_incoming[2] = node.kappa_C_incoming
+  node.lambda_incoming.community = node.kappa_C_incoming
 	* node.zeta_a
 	* node.funct_d_ck
 	* communities[node.community].lambda_community_global
@@ -311,21 +311,19 @@ void update_lambdas(agent&node, const vector<house>& homes, const vector<workpla
   
   //Travel only happens at "odd" times, twice a day
   if((cur_time % 2) && node.travels()){
-	node.lambda_incoming[3] = GLOBAL.BETA_TRAVEL
+	node.lambda_incoming.travel = GLOBAL.BETA_TRAVEL
 	  * node.commute_distance
 	  * travel_fraction;
   }
 	 
   if(mask_active(cur_time) && node.compliant){
-	   node.lambda_incoming[1] = node.lambda_incoming[1]*GLOBAL.MASK_FACTOR;
-	   node.lambda_incoming[2] = node.lambda_incoming[2]*GLOBAL.MASK_FACTOR;
-	   node.lambda_incoming[3] = node.lambda_incoming[3]*GLOBAL.MASK_FACTOR;
+	   node.lambda_incoming.work *= GLOBAL.MASK_FACTOR;
+	   node.lambda_incoming.community *= GLOBAL.MASK_FACTOR;
+	   node.lambda_incoming.travel *= GLOBAL.MASK_FACTOR;
    }
 
-  node.lambda = node.lambda_incoming[0]
-	+ node.lambda_incoming[1]
-	+ node.lambda_incoming[2]
-	+ node.lambda_incoming[3];
+  node.lambda = node.lambda_incoming.sum();
+
 }
 
 

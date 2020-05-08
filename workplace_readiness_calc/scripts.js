@@ -215,9 +215,12 @@ function calcScore () {
   // Office Infrastructure
   var nEmp = inputs["nM_1"] + inputs["nF_1"] + inputs["nOth_1"];
   var nMeets = 4;
-  var cFactor = Math.max( ((inputs["nCub"] + inputs["nRem"])*40 / inputs["opnCubArea"]), 1 ); 
+  var cFactor = 1;
+  if(inputs["opnCubArea"]>0){
+    cFactor = Math.max( ((inputs["nCub"] + inputs["nRem"])*40 / inputs["opnCubArea"]), 1 ); 
+  }
   var crowding = 2*inputs["n2pOfcRm"] * nMeets + 3*inputs["n2pPlusOfcRm"] * nMeets * 1.2 +
-      (inputs["nCub"] + inputs["nRem"] * 1.2)* nMeets * cFactor;
+      (inputs["nCub"] + inputs["nRem"] * 1.2) * nMeets * cFactor;
   var stairsElev = 0.5 * inputs["nFloors"] * (1 + inputs["eleCpct"]/2 * (1-0.1*inputs["advSclDis"]))/2 * 4 * Math.max( (1 - 0.1*Math.min( inputs["nStrCln"], inputs["nEleDinf"] )), 0.5);
   var bmFlag = ((inputs["baDoor"] >= 1) ? 1 : 0);
   var accessContacts = 4 * ( 1 - 0.1*((bmFlag * inputs["sntBio"]) + inputs["mntrCCTV"]) ) * bmFlag;

@@ -307,35 +307,35 @@ struct lambda_incoming_data {
 	travel = 0;
   }
 
-  double sum() const {
+  inline double sum() const {
 	return home + work + community + travel;
   }
 
-  lambda_incoming_data operator/(long double d) const {
+  inline lambda_incoming_data operator/(long double d) const {
 	lambda_incoming_data temp(*this);
 	temp /= d;
 	return temp;
   }
 
-  lambda_incoming_data operator*(long double d) const {
+  inline lambda_incoming_data operator*(long double d) const {
 	lambda_incoming_data temp(*this);
 	temp *= d;
 	return temp;
   }
 
-  lambda_incoming_data operator-(const lambda_incoming_data& rhs) const {
+  inline lambda_incoming_data operator-(const lambda_incoming_data& rhs) const {
 	lambda_incoming_data temp(*this);
 	temp -= rhs;
 	return temp;
   }
 
-  lambda_incoming_data operator+(const lambda_incoming_data& rhs) const {
+  inline lambda_incoming_data operator+(const lambda_incoming_data& rhs) const {
 	lambda_incoming_data temp(*this);
 	temp += rhs;
 	return temp;
   }
 
-  lambda_incoming_data& operator/=(long double d){
+  inline lambda_incoming_data& operator/=(long double d){
 	home /= d;
 	work /= d;
 	community /= d;
@@ -343,7 +343,7 @@ struct lambda_incoming_data {
 	return *this;
   }
 
-  lambda_incoming_data& operator*=(long double d){
+  inline lambda_incoming_data& operator*=(long double d){
 	home *= d;
 	work *= d;
 	community *= d;
@@ -351,7 +351,7 @@ struct lambda_incoming_data {
 	return *this;
   }
 
-  lambda_incoming_data& operator+=(const lambda_incoming_data& rhs){
+  inline lambda_incoming_data& operator+=(const lambda_incoming_data& rhs){
 	home += rhs.home;
 	work += rhs.work;
 	community += rhs.community;
@@ -359,7 +359,7 @@ struct lambda_incoming_data {
 	return *this;
   }
 
-  lambda_incoming_data& operator-=(const lambda_incoming_data& rhs){
+  inline lambda_incoming_data& operator-=(const lambda_incoming_data& rhs){
 	home -= rhs.home;
 	work -= rhs.work;
 	community -= rhs.community;
@@ -367,7 +367,7 @@ struct lambda_incoming_data {
 	return *this;
   }
 
-  void mean_update(const lambda_incoming_data& update, count_type num){
+  inline void mean_update(const lambda_incoming_data& update, count_type num){
 	home += (update.home - home)/num;
 	work += (update.work - work)/num;
 	community += (update.community - community)/num;

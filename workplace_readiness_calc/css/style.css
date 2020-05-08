@@ -27,8 +27,20 @@ body, html {
   height: 50px;
 }
 
+.prnt-btn{
+  font-size: 20px;
+  background-color: #0086b3;
+  border: none;
+  border-radius: 10px;
+  height: 50px;
+}
+
 .sub-btn:hover{
   background-color: #134611;
+}
+
+.prnt-btn:hover{
+  background-color: #006080;
 }
 
 .adj-btn{
@@ -123,7 +135,7 @@ a:link, .nav a, .nav a:visited {
 #footer {
   font-family: serif;
   font-size: max(0.9em, 12px);
-  bottom: 2px;
+  bottom: 0px;
   border-top: 0px solid #eceefb;
   box-shadow: 2px -5px 10px #999;
   position: sticky;
@@ -132,7 +144,7 @@ a:link, .nav a, .nav a:visited {
 }
 
 .sh5 {
-  color: #ffff00
+  color: #ffff00;
 }
 
 @media screen and (max-width: 1200px) {
@@ -142,5 +154,13 @@ a:link, .nav a, .nav a:visited {
    .footer-wide {
     display: none;
   }
+}
+
+.overall_report{
+  font-size: 18px;
+  background-color: #009999;
+  border: none;
+  border-radius: 10px;
+  /* height: 70px; */
 }
 

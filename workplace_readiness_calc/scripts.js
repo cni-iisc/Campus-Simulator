@@ -208,9 +208,19 @@ function clipAndRound_bounds (score) {
   return score_out;
 }
 
+function sg_update(msg_count, current_sg, msg){
+  msg_count += 1;
+  current_sg = (current_sg=="") ? "" : current_sg + "<br>";
+  current_sg += msg;
+  return ([msg_count, current_sg])
+}
+
 function calcScore () {
   inputs = getValues(); //Read values from html page...
   console.log(inputs);
+
+  var number_of_suggestions = 3;
+  var suggestion = "";
 
   // Office Infrastructure
   var nEmp = inputs["nM_1"] + inputs["nF_1"] + inputs["nOth_1"];
@@ -252,15 +262,18 @@ function calcScore () {
   var nominal_raw_aggrToiletSc = 800;
   var nominal_scaled_aggrToiletSc = 1;
 
+  var aggrToiletSc = 1000;
+  if (inputs["nGntsT"] || inputs["nLdsT"]){
   var cRateGentsToilet = nGntsTlt * avgTltVstsPrDy * avgTltDrtn * (Math.max(0.5, (1.0 - 0.1*inputs["tClnFreq"]))) * (1.0 - 0.1*inputs["spPrsnt"]) / (tltCnctrtnHrs*60*inputs["nGntsT"]);
   var cRateLadiesToilet = nLdsTlt * avgTltVstsPrDy * avgTltDrtn * (Math.max(0.5, (1.0 - 0.1*inputs["tClnFreq"]))) * (1.0 - 0.1*inputs["spPrsnt"]) / (tltCnctrtnHrs*60*inputs["nLdsT"]);
-  var aggrToiletSc = nominal_raw_aggrToiletSc*nominal_scaled_aggrToiletSc/(Math.max(cRateLadiesToilet, cRateGentsToilet)+0.001);
+  aggrToiletSc = nominal_raw_aggrToiletSc*nominal_scaled_aggrToiletSc/(Math.max(cRateLadiesToilet, cRateGentsToilet)+0.001);
+  }
   var score_sanitation = clipAndRound_bounds(aggrToiletSc);
 
   var sg_sanitation = "Well done!";
-
-  //score_sanitation = Math.round(Math.min( 100, 70.0/(cRateGentsToilet + cRateLadiesToilet) )) * 10;
-  if (score_sanitation < 70) {
+  if (!inputs["nGntsT"] && !inputs["nLdsT"]){
+    sg_sanitation = "High score. But do you really have no toilets in your workplace?";
+  } else if (score_sanitation < 70) {
       sg_sanitation = "Disinfect toilets more often or consider reducing the employees per shift";
   }
 
@@ -268,19 +281,49 @@ function calcScore () {
   var score_sickRoom = 100*(inputs["iQS"]*2 + inputs["amblnc"] + inputs["lHsptl"]*2 + inputs["emrgncResp"] + inputs["hl"] + 
                             inputs["imdtFM"] + inputs["alrg"] * Math.max( 0, (1.0 - inputs["lstUpdtTime"]/60))*2);
   var score_isolation = clipAndRound_bounds(score_sickRoom);
-  var sg_isolation = "Well done!";
+  var count = 0;
+  var sg_isolation = "";
   if (!inputs["iQS"]){
-    sg_isolation = "Designate place for immediate quarantine";
-  } else if (!inputs["lHsptl"]){
-    sg_isolation = "Prepare a list of COVID-19 ready hospitals";
-  } else if (!inputs["amblnc"]){
-    sg_isolation = "Keep an ambulance on stand-by";
-  } else if (!inputs["emrgncResp"]) {
-    sg_isolation = "Give instructions to transport department on COVID-19 emergency";
-  } else if (!inputs["hl"]) {
-    sg_isolation = "Consider having a dedicated COVID-19 helpline";
-  } else if (Math.max( 0, (1.0 - inputs["lstUpdtTime"]/60)) < 0.5 ) {
-    sg_isolation = "Update medical history of employees";
+    count += 1;
+    sg_isolation = (sg_isolation=="") ? "" : sg_isolation + "<br>";
+    sg_isolation += "Designate a well-ventilated place for immediate quarantine.";
+  }
+  if (!inputs["lHsptl"] && count<number_of_suggestions){
+    count += 1;
+    sg_isolation = (sg_isolation=="") ? "" : sg_isolation + "<br>";
+    sg_isolation += "Prepare a list of COVID-19 ready hospitals.";
+  } 
+  if (!inputs["amblnc"] && count<number_of_suggestions){
+    count += 1;
+    sg_isolation = (sg_isolation=="") ? "" : sg_isolation + "<br>";
+    sg_isolation += "Keep an ambulance on stand-by.";
+  } 
+  if (!inputs["emrgncResp"] && count<number_of_suggestions) {
+    count += 1;
+    sg_isolation = (sg_isolation=="") ? "" : sg_isolation + "<br>";
+    sg_isolation += "Give instructions to transport department on COVID-19 emergency.";
+  }
+  if (!inputs["hl"] && count<number_of_suggestions) {
+    count += 1;
+    sg_isolation = (sg_isolation=="") ? "" : sg_isolation + "<br>";
+    sg_isolation += "Consider having a dedicated COVID-19 helpline.";
+  }
+  if (Math.max( 0, (1.0 - inputs["lstUpdtTime"]/60)) < 0.5 && count <number_of_suggestions) {
+      count += 1;
+      sg_isolation = (sg_isolation=="") ? "" : sg_isolation + "<br>";
+      sg_isolation += "Update medical history of employees.";
+  }
+  if (!inputs["imdtFM"] && count<number_of_suggestions){
+    count += 1;
+    sg_isolation = (sg_isolation=="") ? "" : sg_isolation + "<br>";
+    sg_isolation += "Consider preparing a list of immediate family members and caretakers of employees.";
+  }
+  if (!inputs["alrg"] && count<number_of_suggestions){
+    sg_isolation = (sg_isolation=="") ? "" : sg_isolation + "<br>";
+    sg_isolation += "Consider preparing a list of employees' medical history.";
+  }
+  if (sg_isolation==""){
+    sg_isolation = "Well done!";
   }
 
   // Cafeteria/Pantry
@@ -373,49 +416,139 @@ function calcScore () {
 
   // Epidemic related precautions
   var meets_shift_requirement = 1;
+  // Uncomment this in the production code.
+  /*
   if (0<inputs["NOE"] && inputs["NOE"]<=4){
     meets_shift_requirement = ((inputs["n29"]+inputs["n49"]+inputs["n64"]+inputs["n65plus"])*0.33>=nEmp) ? 1:0; 
   }
+  */
 
-  var score_epidemic = 100*(inputs["tempScreening"] + inputs["faceCover"] + inputs["adqFaceCover"] + inputs["newShfts"] +
-                                (inputs["tchFree"]? 1:0.5)*((inputs["nHsS"] > (inputs["tArea"]/1000)) ? 1 : 0) + 
-                                Math.min(inputs["nDinf"], 2)/2 + Math.min(1, inputs["smkZS"]*((inputs["nPGT"]>0) ? 0 : 1))/2 + meets_shift_requirement + 
-                                ((inputs["nWsB"] > (inputs["nFloors"]*2) ? 1 : 0))/2 + inputs["nASapp"]/nEmp + inputs["advAvdLPM"]);                              
-  
+  var score_epidemic = 0;
+  if (meets_shift_requirement){
+  score_epidemic = 100*(inputs["tempScreening"] + inputs["faceCover"] + inputs["adqFaceCover"] + inputs["newShfts"] +
+                        (inputs["tchFree"]? 1:0.5)*((inputs["nHsS"] > (inputs["tArea"]/1000)) ? 1 : 0) + 
+                        Math.min(inputs["nDinf"], 2)/2 + Math.min(1, inputs["smkZS"]*((inputs["nPGT"]>0) ? 0 : 1))/2 + meets_shift_requirement + 
+                        ((inputs["nWsB"] > (inputs["nFloors"]*2) ? 1 : 0))/2 + inputs["nASapp"]/nEmp + inputs["advAvdLPM"]);                              
+  }
   score_epidemic = clipAndRound_bounds(score_epidemic);
                                 
-  var sg_epidemic = "Well done!";
+  var sg_epidemic = "";
+  count = 0;
   if (!meets_shift_requirement){
-    sg_epidemic = "Does not meet the 33% requirement";
-  } else if (!inputs["tempScreening"]){
-    sg_epidemic = "Consider temperature screening of all employees on entry and exit";
-  } else if (!inputs["faceCover"]){
-    sg_epidemic = "Consider mandating face cover inside the office premise";
-  } else if (!(inputs["nHsS"] > (inputs["tArea"]/1000)) ? 1 : 0){
-    sg_epidemic = "Consider increasing hand sanitiser stations";
-  } else if (inputs["nDinf"]<2){
-    sg_epidemic = "Consider disinfecting the office at least 2 times a day";
-  } else if (!inputs["smkZS"]){
-    sg_epidemic = "Consider sealing smoking zones";
-  } else if (!(inputs["nPGT"]>0) ? 0 : 1){
-    sg_epidemic = "Consider banning pan-masala, gutkha and tobaccon on premise";
-  } else if (!(inputs["nWsB"] > (inputs["nFloors"]*2) ? 1 : 0)){
-    sg_epidemic = "Consider having more warning sign boards for \'no spitting\'";
+    count += number_of_suggestions;
+    sg_epidemic = "Does not meet the maximum 33% attendance requirement.";
+  }
+  if (!inputs["tempScreening"] && count<number_of_suggestions){
+    count += 1;
+    sg_epidemic = (sg_epidemic=="") ? "" : sg_epidemic + "<br>";
+    sg_epidemic += "Consider temperature screening of all employees on entry and exit.";
+  }
+  if (!inputs["faceCover"] && count<number_of_suggestions){
+    count += 1;
+    sg_epidemic = (sg_epidemic=="") ? "" : sg_epidemic + "<br>";
+    sg_epidemic += "Consider mandating face cover inside the office premises.";
+  }
+  if (!inputs["adqFaceCover"] && count<number_of_suggestions){
+    count += 1;
+    sg_epidemic = (sg_epidemic=="") ? "" : sg_epidemic + "<br>";
+    sg_epidemic += "Consider procuring adequate number of facecovers for employees.";
+  }
+  if (!inputs["newShfts"] && count<number_of_suggestions){
+    count += 1;
+    sg_epidemic = (sg_epidemic=="") ? "" : sg_epidemic + "<br>";
+    sg_epidemic += "Consider dividing the work timings into more shifts.";
+  }
+  if (!((inputs["nHsS"] > (inputs["tArea"]/1000)) ? 1 : 0)  && count<number_of_suggestions){
+    count += 1;
+    sg_epidemic = (sg_epidemic=="") ? "" : sg_epidemic + "<br>";
+    sg_epidemic += "Consider increasing hand sanitiser dispensing stations.";
+  }
+  if (inputs["nDinf"]<2 && count<number_of_suggestions){
+    count += 1;
+    sg_epidemic = (sg_epidemic=="") ? "" : sg_epidemic + "<br>";
+    sg_epidemic += "Consider disinfecting the office at least 2 times a day.";
+  }
+  if (!inputs["smkZS"] && count<number_of_suggestions){
+    count += 1;
+    sg_epidemic = (sg_epidemic=="") ? "" : sg_epidemic + "<br>";
+    sg_epidemic += "Consider sealing smoking zones.";
+  }
+  if (!((inputs["nPGT"]>0) ? 0 : 1) && count <number_of_suggestions){
+    count += 1;
+    sg_epidemic = (sg_epidemic=="") ? "" : sg_epidemic + "<br>";
+    sg_epidemic += "Consider banning pan-masala, gutkha and tobacco on the premises.";
+  }
+  if (!(inputs["nWsB"] > (inputs["nFloors"]*2) ? 1 : 0) && count <number_of_suggestions){
+    count += 1;
+    sg_epidemic = (sg_epidemic=="") ? "" : sg_epidemic + "<br>";
+    sg_epidemic += "Consider having more warning sign boards for \'no spitting\'.";
+  }
+  if (!inputs["advAvdLPM"] && count <number_of_suggestions){
+    count += 1;
+    sg_epidemic = (sg_epidemic=="") ? "" : sg_epidemic + "<br>";
+    sg_epidemic += "Consider avoiding large physical meetings.";
+  }
+  if (sg_epidemic==""){
+    sg_epidemic = "Well done!";
   }
 
   // Advertisement and outreach
   var score_adv_outrch = 100*(inputs["covidPage"] + inputs["faq"] + inputs["sPers"] + inputs["hkTrn"] + inputs["advSclDis"] + inputs["advWFHVul"] + inputs["snzCvr"] + inputs["sPrgm"] + inputs["pstrs"] + (inputs["nWsB"] > (inputs["nFloors"]*2) ? 1 : 0));
   score_adv_outrch = clipAndRound_bounds(score_adv_outrch);
 
-  var sg_adv_outrch = "Well done!";
+  var sg_adv_outrch = "";
+  count = 0;
   if (!inputs["covidPage"]){
-    sg_adv_outrch = "Prepare a COVID-19 awareness page";
-  } else if (!inputs["faq"]){
-    sg_adv_outrch = "Provide access to COVID-19 FAQ to the employees";
-  } else if (!inputs["sPers"]){
-    sg_adv_outrch = "Designate a cleanliness, awareness and safety person";
-  } else if (!(inputs["nWsB"] > (inputs["nFloors"]*2) ? 1 : 0)){
-    sg_adv_outrch = "Consider having more warning sign boards for \'no spitting\'";
+    count += 1;
+    sg_adv_outrch += "Prepare a COVID-19 awareness page.";
+  }
+  if (!inputs["faq"] && count<number_of_suggestions){    
+    count += 1;
+    sg_adv_outrch = (sg_adv_outrch=="") ? "" : sg_adv_outrch + "<br>";
+    sg_adv_outrch += "Provide access to COVID-19 FAQ to the employees.";
+  }
+  if (!inputs["sPers"] && count<number_of_suggestions){
+    count += 1;
+    sg_adv_outrch = (sg_adv_outrch=="") ? "" : sg_adv_outrch + "<br>";
+    sg_adv_outrch += "Designate a cleanliness, awareness and safety champion.";
+  }
+  if (!inputs["hkTrn"] && count<number_of_suggestions){
+    count += 1;
+    sg_adv_outrch = (sg_adv_outrch=="") ? "" : sg_adv_outrch + "<br>";
+    sg_adv_outrch += "Conduct intensive training of house-keeping staff for COVID-19 related precautions.";
+  }
+  if (!inputs["advSclDis"] && count<number_of_suggestions){
+    count += 1;
+    sg_adv_outrch = (sg_adv_outrch=="") ? "" : sg_adv_outrch + "<br>";
+    sg_adv_outrch += "Advise employees to maintain social distance.";
+  }
+  if (!inputs["advWFHVul"] && count<number_of_suggestions){
+    count += 1;
+    sg_adv_outrch = (sg_adv_outrch=="") ? "" : sg_adv_outrch + "<br>";
+    sg_adv_outrch += "Advise vulnerable employees to work from home.";
+  }
+  if (!inputs["snzCvr"] && count<number_of_suggestions){
+    count += 1;
+    sg_adv_outrch = (sg_adv_outrch=="") ? "" : sg_adv_outrch + "<br>";
+    sg_adv_outrch += "Advise employees to cover their sneezes and coughs.";
+  }
+  if (!inputs["sPrgm"] && count<number_of_suggestions){
+    count += 1;
+    sg_adv_outrch = (sg_adv_outrch=="") ? "" : sg_adv_outrch + "<br>";
+    sg_adv_outrch += "Organise special programmes to sensitise employees on COVID-19 epidemic.";
+  }
+  if (!inputs["pstrs"] && count<number_of_suggestions){
+    count += 1;
+    sg_adv_outrch = (sg_adv_outrch=="") ? "" : sg_adv_outrch + "<br>";
+    sg_adv_outrch += "Put up posters on hygiene in common places.";
+  }
+  if (!(inputs["nWsB"] > (inputs["nFloors"]*2) ? 1 : 0) && count<number_of_suggestions){
+    count += 1;
+    sg_adv_outrch = (sg_adv_outrch=="") ? "" : sg_adv_outrch + "<br>";
+    sg_adv_outrch += "Have more warning sign boards for \'no spitting\'.";
+  }
+  if (sg_adv_outrch==""){
+    sg_adv_outrch = "Well done!";
   }
 
   // Company Transport

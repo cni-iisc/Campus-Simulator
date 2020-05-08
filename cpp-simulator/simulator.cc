@@ -136,6 +136,8 @@ plot_data_struct run_simulation(){
   //For keeping track of infections ascribed to agents that became infective at
   //each time
 
+  const auto NUM_PEOPLE = GLOBAL.num_people;
+
   for(count_type time_step = 0; time_step < GLOBAL.NUM_TIMESTEPS; ++time_step){
 
 	total_lambda_fraction_data.set_zero();
@@ -158,7 +160,7 @@ plot_data_struct run_simulation(){
 	// global state, parallelizing this loop is not straightforward.
 	// Puttting the generator in a critical section can keep it
 	// correct, but slows down the code too much.
-	for(count_type j = 0; j < GLOBAL.num_people; ++j){
+	for(count_type j = 0; j < NUM_PEOPLE; ++j){
 	  auto node_update_status = update_infection(nodes[j], time_step);
 	  nodes[j].psi_T = psi_T(nodes[j], time_step);
 
@@ -236,24 +238,13 @@ plot_data_struct run_simulation(){
 
 	travel_fraction = updated_travel_fraction(nodes,time_step);
 
-	double susceptible_lambda = 0,
-	  susceptible_lambda_H = 0,
-	  susceptible_lambda_W = 0,
-	  susceptible_lambda_C = 0,
-	  susceptible_lambda_T = 0;
-	
-#pragma omp parallel for reduction (+:susceptible_lambda, susceptible_lambda_H, susceptible_lambda_W, susceptible_lambda_C, susceptible_lambda_T)
-	for (count_type j = 0; j < GLOBAL.num_people; ++j){
+	// Update lambdas for the next step
+#pragma omp parallel for default(none)									\
+  shared(travel_fraction, time_step, homes, workplaces, communities, nodes)
+	for (count_type j = 0; j < NUM_PEOPLE; ++j){
 	  update_lambdas(nodes[j], homes, workplaces, communities, travel_fraction, time_step);
-	  if(nodes[j].infection_status == Progression::susceptible){
-		susceptible_lambda += nodes[j].lambda;
-		susceptible_lambda_H += nodes[j].lambda_incoming.home;
-		susceptible_lambda_W += nodes[j].lambda_incoming.work;
-		susceptible_lambda_C += nodes[j].lambda_incoming.community;
-		susceptible_lambda_T += nodes[j].lambda_incoming.travel;
-	  }
 	}
-	
+
 	//Get data for this simulation step
 	count_type n_infected = 0,
 	  n_exposed = 0,
@@ -265,9 +256,28 @@ plot_data_struct run_simulation(){
 	  n_affected = 0,
 	  n_infective = 0;
 	
-#pragma omp parallel for default(none) shared(nodes,GLOBAL) reduction (+:n_infected,n_exposed,n_hospitalised,n_symptomatic,n_critical,n_fatalities,n_recovered,n_affected,n_infective)
-	for(count_type j = 0; j < GLOBAL.num_people; ++j){
+	double susceptible_lambda = 0,
+	  susceptible_lambda_H = 0,
+	  susceptible_lambda_W = 0,
+	  susceptible_lambda_C = 0,
+	  susceptible_lambda_T = 0;
+
+#pragma omp parallel for default(none) shared(nodes)					\
+  reduction(+: n_infected, n_exposed,									\
+			n_hospitalised, n_symptomatic,								\
+			n_critical, n_fatalities,									\
+			n_recovered, n_affected, n_infective,						\
+			susceptible_lambda, susceptible_lambda_H,					\
+			susceptible_lambda_W, susceptible_lambda_C, susceptible_lambda_T)
+	for(count_type j = 0; j < NUM_PEOPLE; ++j){
 	  auto infection_status = nodes[j].infection_status;
+	  if(infection_status == Progression::susceptible){
+		susceptible_lambda += nodes[j].lambda;
+		susceptible_lambda_H += nodes[j].lambda_incoming.home;
+		susceptible_lambda_W += nodes[j].lambda_incoming.work;
+		susceptible_lambda_C += nodes[j].lambda_incoming.community;
+		susceptible_lambda_T += nodes[j].lambda_incoming.travel;
+	  }
 	  if(infection_status == Progression::infective
 		 || infection_status == Progression::symptomatic
 		 || infection_status == Progression::hospitalised

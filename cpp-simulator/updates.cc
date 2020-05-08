@@ -284,7 +284,7 @@ double updated_travel_fraction(const vector<agent>& nodes, const int cur_time){
 }
 
 
-void update_lambdas(agent&node, const vector<house>& homes, const vector<workplace>& workplaces, const vector<community>& communities, double travel_fraction, int cur_time){
+void update_lambdas(agent&node, const vector<house>& homes, const vector<workplace>& workplaces, const vector<community>& communities, const double travel_fraction, const int cur_time){
   node.lambda_incoming.set_zero();
   //Contributions from home, workplace, community, and travel
 

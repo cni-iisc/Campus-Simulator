@@ -545,6 +545,7 @@ function printPage(){
   $(".prnt-btn").hide()
   $("#footer").hide()
   $(".tabcontent").css('color','black');
+  $("#Scores").css('background-color','white');
   window.print()
   $("#header").show()
   $(".tablink").show()
@@ -552,5 +553,6 @@ function printPage(){
   $(".prnt-btn").show()
   $("#footer").show()
   $(".tabcontent").css('color','white');
+  $("#Scores").css('background-color','#26734d');
 }
 

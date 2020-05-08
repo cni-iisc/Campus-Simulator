@@ -249,22 +249,28 @@ double updated_lambda_h_age_independent(const vector<agent>& nodes, const house&
   // Populate it afterwards...
 }
 
-double updated_travel_fraction(const vector<agent>& nodes, int cur_time){
+double updated_travel_fraction(const vector<agent>& nodes, const int cur_time){
   double infected_distance = 0, total_distance = 0;
   count_type actual_travellers = 0, usual_travellers = 0;
-  for(const auto& node: nodes){
-	if(node.has_to_travel){
+
+  const auto SIZE = nodes.size();
+  const auto MASK_FACTOR = GLOBAL.MASK_FACTOR;
+#pragma omp parallel for default(none) shared(nodes) \
+  reduction (+: usual_travellers, actual_travellers,  \
+			 infected_distance, total_distance)
+  for(count_type i = 0; i < SIZE; ++i){
+	if(nodes[i].has_to_travel){
 	  ++usual_travellers;
 	}
-	if(node.travels()){
+	if(nodes[i].travels()){
 		double mask_factor = 1.0;
-		if(mask_active(cur_time) && node.compliant){
-			mask_factor = GLOBAL.MASK_FACTOR;
+		if(mask_active(cur_time) && nodes[i].compliant){
+			mask_factor = MASK_FACTOR;
 		}
 	  ++actual_travellers ;
-	  total_distance += node.commute_distance;
-	  if(node.infective){
-		infected_distance += node.commute_distance * mask_factor;
+	  total_distance += nodes[i].commute_distance;
+	  if(nodes[i].infective){
+		infected_distance += nodes[i].commute_distance * mask_factor;
 	  }
 	}
   }

@@ -356,65 +356,107 @@ void update_lambda_c_global(vector<community>& communities, const matrix<double>
 
 
 casualty_stats get_infected_community(const vector<agent>& nodes, const community& community){
-  casualty_stats stat;
+  count_type infected = 0;
+  count_type hd_area_infected = 0;
+  count_type affected = 0;
+  count_type hd_area_affected = 0;
+  count_type symptomatic = 0;
+  count_type hd_area_symptomatic = 0;
+  count_type hospitalised = 0;
+  count_type hd_area_hospitalised = 0;
+  count_type critical = 0;
+  count_type hd_area_critical = 0;
+  count_type dead = 0;
+  count_type hd_area_dead = 0;
+  count_type exposed = 0;
+  count_type hd_area_exposed = 0;
+  count_type recovered = 0;
+  count_type hd_area_recovered = 0;
 
-  for (count_type i=0; i<community.individuals.size(); ++i){
+  const auto SIZE = community.individuals.size(); 
+
+#pragma omp parallel for default(none) shared(nodes, community) \
+  reduction(+: infected, hd_area_infected, \
+  affected, hd_area_affected, \
+  symptomatic, hd_area_symptomatic, \
+  hospitalised, hd_area_hospitalised, \
+  critical, hd_area_critical, \
+  dead, hd_area_dead, \
+  exposed, hd_area_exposed, \
+  recovered, hd_area_recovered)
+  for (count_type i=0; i<SIZE; ++i){
 	bool hd_area_resident = nodes[community.individuals[i]].hd_area_resident;
-	if (nodes[community.individuals[i]].infection_status==Progression::exposed) {
-	  stat.exposed +=1;
+	auto infection_status = nodes[community.individuals[i]].infection_status;
+	if (infection_status == Progression::exposed) {
+	  exposed +=1;
 	  if(hd_area_resident){
-        stat.hd_area_affected += 1;
-        stat.hd_area_exposed += 1;
+        hd_area_affected += 1;
+        hd_area_exposed += 1;
       }
 	}
-	if (nodes[community.individuals[i]].infection_status==Progression::symptomatic) {
-	  stat.symptomatic += 1;
+	if (infection_status == Progression::symptomatic) {
+	  symptomatic += 1;
       if(hd_area_resident){
-        stat.hd_area_symptomatic += 1;
+        hd_area_symptomatic += 1;
       }
 	}
-	if (nodes[community.individuals[i]].infection_status==Progression::recovered) {
-	  stat.recovered += 1;
+	if (infection_status == Progression::recovered) {
+	  recovered += 1;
 	  if(hd_area_resident){
-        stat.hd_area_affected += 1;
-        stat.hd_area_recovered += 1;
+        hd_area_affected += 1;
+        hd_area_recovered += 1;
       }
 	}
-	if (nodes[community.individuals[i]].infection_status==Progression::hospitalised) {
-	  stat.hospitalised += 1;
+	if (infection_status == Progression::hospitalised) {
+	  hospitalised += 1;
       if(hd_area_resident){
-        stat.hd_area_hospitalised += 1;
+        hd_area_hospitalised += 1;
       }
 	}
-	if (nodes[community.individuals[i]].infection_status==Progression::critical) {
-	  stat.critical += 1;
+	if (infection_status == Progression::critical) {
+	  critical += 1;
       if(hd_area_resident){
-        stat.hd_area_critical += 1;
+        hd_area_critical += 1;
       }
 	}
-	if (nodes[community.individuals[i]].infection_status==Progression::dead) {
-	  stat.dead += 1;
+	if (infection_status == Progression::dead) {
+	  dead += 1;
 	  if(hd_area_resident){
-        stat.hd_area_affected += 1;
-        stat.hd_area_dead += 1;
+        hd_area_affected += 1;
+        hd_area_dead += 1;
       }
 	}
-	
-
-	if (nodes[community.individuals[i]].infection_status==Progression::infective ||
-		nodes[community.individuals[i]].infection_status==Progression::symptomatic ||
-		nodes[community.individuals[i]].infection_status==Progression::hospitalised ||
-		nodes[community.individuals[i]].infection_status==Progression::critical) {
-	  stat.infected += 1;
+	if (infection_status == Progression::infective ||
+		infection_status == Progression::symptomatic ||
+		infection_status == Progression::hospitalised ||
+		infection_status == Progression::critical) {
+	  infected += 1;
 	  if(hd_area_resident){
-        stat.hd_area_affected += 1;
-        stat.hd_area_infected += 1;
+        hd_area_affected += 1;
+        hd_area_infected += 1;
       }
 	}
   }
-  stat.affected = stat.exposed + stat.infected + stat.recovered + stat.dead;
-  
-  //return [infected_stat,affected_stat,hospitalised_stat,critical_stat,dead_stat,hd_area_affected];
+  affected = exposed + infected + recovered + dead;
+
+  casualty_stats stat;
+  stat.infected = infected;
+  stat.hd_area_infected = hd_area_infected;
+  stat.affected = affected;
+  stat.hd_area_affected = hd_area_affected;
+  stat.symptomatic = symptomatic;
+  stat.hd_area_symptomatic = hd_area_symptomatic;
+  stat.hospitalised = hospitalised;
+  stat.hd_area_hospitalised = hd_area_hospitalised;
+  stat.critical = critical;
+  stat.hd_area_critical = hd_area_critical;
+  stat.dead = dead;
+  stat.hd_area_dead = hd_area_dead;
+  stat.exposed = exposed;
+  stat.hd_area_exposed = hd_area_exposed;
+  stat.recovered = recovered;
+  stat.hd_area_recovered = hd_area_recovered;
+
   return stat;
   // Populate it afterwards...
 }

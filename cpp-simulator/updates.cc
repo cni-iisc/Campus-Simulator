@@ -335,7 +335,10 @@ void update_lambdas(agent&node, const vector<house>& homes, const vector<workpla
 
 double updated_lambda_c_local(const vector<agent>& nodes, const community& community){
   double sum_value = 0;
-  for(count_type i = 0; i < community.individuals.size(); ++i){
+  const auto SIZE = community.individuals.size();
+
+#pragma omp parallel for default(none) shared(nodes, community) reduction (+: sum_value)
+  for(count_type i = 0; i < SIZE; ++i){
 	sum_value += nodes[community.individuals[i]].lambda_c;
   }
 
@@ -346,7 +349,11 @@ void update_lambda_c_global(vector<community>& communities, const matrix<double>
   for (count_type c1 = 0; c1 < communities.size(); ++c1){
 	double num = 0;
 	double denom = 0;
-	for (count_type c2 = 0; c2 < communities.size(); ++c2){
+	const auto SIZE = communities.size();
+
+#pragma omp parallel for default(none) shared(communities, community_distance_matrix, c1) \
+  reduction(+: num, denom)
+	for (count_type c2 = 0; c2 < SIZE; ++c2){
 	  num += f_kernel(community_distance_matrix[c1][c2])
 		* communities[c2].lambda_community;
 	  denom += f_kernel(community_distance_matrix[c1][c2]);

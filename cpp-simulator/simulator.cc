@@ -171,12 +171,8 @@ plot_data_struct run_simulation(){
 		{
 		  total_lambda_fraction_data += nodes[j].lambda_incoming;
 		  auto normalized_lambda = (nodes[j].lambda_incoming / nodes[j].lambda);
-		  mean_lambda_fraction_data +=
-			(normalized_lambda - mean_lambda_fraction_data)
-			/ num_new_infections;
-		  cumulative_mean_lambda_fraction_data +=
-			(normalized_lambda - cumulative_mean_lambda_fraction_data)
-			/ num_total_infections;
+		  mean_lambda_fraction_data.mean_update(normalized_lambda, num_new_infections);
+		  cumulative_mean_lambda_fraction_data.mean_update(normalized_lambda, num_total_infections);
 		}
 	  }
 	  if(node_update_status.new_symptomatic){

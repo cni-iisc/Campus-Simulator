@@ -366,6 +366,13 @@ struct lambda_incoming_data {
 	travel -= rhs.travel;
 	return *this;
   }
+
+  void mean_update(const lambda_incoming_data& update, count_type num){
+	home += (update.home - home)/num;
+	work += (update.work - work)/num;
+	community += (update.community - community)/num;
+	travel += (update.travel - travel)/num;
+  }
 };
 
 struct agent{

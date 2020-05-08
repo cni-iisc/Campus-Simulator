@@ -235,21 +235,28 @@ function calcScore () {
   var bmFlag = ((inputs["baDoor"] >= 1) ? 1 : 0);
   var accessContacts = 4 * ( 1 - 0.1*((bmFlag * inputs["sntBio"]) + inputs["mntrCCTV"]) ) * bmFlag;
   var shiftDelta = ( (inputs["tGapShift"] > 8) ? 0 : (8 - inputs["tGapShift"]));
-  var premisesContacts = (accessContacts + stairsElev + crowding/ nEmp ) * (1 + (shiftDelta/8.0)) * (1-0.4*inputs["msk"]);
+  var premisesContacts = 0;
+  if (nEmp>0){
+    premisesContacts = (accessContacts + stairsElev + crowding / nEmp ) * (1 + (shiftDelta/8.0)) * (1-0.4*inputs["msk"]);
+  }
 
   var nominal_office_infra_raw_score = 31;
   var nominal_office_infra_scaled_score = 800;
 
   // Other meeting spaces
   var score_other_spaces = 0.5 * inputs["oMtngSpts"] * Math.max(1-0.1*(inputs["freqCln"]*Math.min(1, inputs["nHskpngStff"])), 0.5) * (1-0.4*inputs["msk"]);
-  console.log([premisesContacts, score_other_spaces]);
-  var score_office_infra = nominal_office_infra_raw_score*nominal_office_infra_scaled_score/(premisesContacts + score_other_spaces);
+  var score_office_infra = 0;
+  if (premisesContacts+score_other_spaces>0 && !isNaN(premisesContacts+score_other_spaces)){
+    score_office_infra = nominal_office_infra_raw_score*nominal_office_infra_scaled_score/(premisesContacts + score_other_spaces);
+  }
   score_office_infra = clipAndRound_bounds(score_office_infra);
 
   var sg_office_infra = "Well done!"
-  if (score_office_infra<70){
+  if (nEmp==0){
+    sg_office_infra = "You have entered the total number of employees in a shift to be zero. This is invalid. Please go back and re-enter the correct number of employees for each shift.";
+  } else if (score_office_infra<70){
     sg_office_infra = "Consider encouraging more employees to work from home or shifts";
-  } else if (score_office_infra<70 && inputs["nEleDinf"]<2) {
+  } else if (inputs["nEleDinf"]<2) {
     sg_office_infra = "Consider cleaning the lifts more often";
   }
 
@@ -335,32 +342,52 @@ function calcScore () {
   var num_wtr_sought = 5;
   var prsnl_area = 28; // In sq. feet: Approx. 3 feet radius
   var pvtl_hrs = 4;
-  var nOutside = nEmp - inputs["nLnch"] - inputs["nEmpHL"];
+  var nOutside = 0;
 
   var score_cafeteria_scaled = 1000;
   var nominal_raw_cafeteria_score = 2;
   var nominal_scaled_cafeteria_score = 700;
 
-  if (inputs["cntnArea"]>0){
-    var mtng_brkfst = (inputs["nBrkfst"] * time_brkfst * prsnl_area) / (inputs["cntnArea"] * (inputs["dBrkfst"] ? inputs["dBrkfst"] : 60));
-    var mtng_lnch = (inputs["nLnch"] * time_lnch * prsnl_area) / (inputs["cntnArea"] * (inputs["dLnch"] ? inputs["dLnch"] : 90));
-    var mntg_snck = (inputs["nSnck"] * time_snck * prsnl_area) / (inputs["cntnArea"] * (inputs["dSnck"] ? inputs["dSnck"] : 60));
-    var mntg_wtr = (nEmp * time_wtr * num_wtr_sought * prsnl_area) / (inputs["nWS"] * inputs["cntnArea"] * pvtl_hrs *  60);
+  var mtng_brkfst = 0;
+  var mtng_lnch = 0;
+  var mntg_snck = 0;
+  var mntg_wtr = 0;
 
+  if (inputs["cntnArea"]>0 && inputs["cntn"]){
+    nOutside = nEmp - inputs["nLnch"] - inputs["nEmpHL"];
+    mtng_brkfst = (inputs["nBrkfst"] * time_brkfst * prsnl_area) / (inputs["cntnArea"] * (inputs["dBrkfst"] ? inputs["dBrkfst"] : 60));
+    mtng_lnch = (inputs["nLnch"] * time_lnch * prsnl_area) / (inputs["cntnArea"] * (inputs["dLnch"] ? inputs["dLnch"] : 90));
+    mntg_snck = (inputs["nSnck"] * time_snck * prsnl_area) / (inputs["cntnArea"] * (inputs["dSnck"] ? inputs["dSnck"] : 60));
+    if (inputs["nWS"]>0){
+      mntg_wtr = (nEmp * time_wtr * num_wtr_sought * prsnl_area) / (inputs["nWS"] * inputs["cntnArea"] * pvtl_hrs *  60);
+    }
+  } else {
+    nOutside = nEmp - inputs["nEmpHL"];
+    if (inputs["nWS"]>0){
+      mntg_wtr = (nEmp * time_wtr * num_wtr_sought * prsnl_area) / (inputs["nWS"] * 144 * pvtl_hrs *  60);
+    }
+  }
+
+  var score_cafeteria_scaled = 0;
+  if (nEmp>0){
     var score_cafeteria = (mtng_brkfst*(inputs["nBrkfst"]/nEmp) + mtng_lnch*(inputs["nLnch"]/nEmp) + mntg_snck*(inputs["nSnck"]/nEmp) + mntg_wtr + (inputs["nEmpHL"]*0.25/nEmp) + (nOutside*2/nEmp) + (nOutside*0.5*(inputs["extFSP"])/nEmp));
     score_cafeteria = score_cafeteria * Math.max((1 - 0.1*( inputs["mlStggrd"] + inputs["freqCln"] - inputs["utnslShrd"])), 1/2);
-    // We prefer the score_cafeteria to be less than 2
     score_cafeteria_scaled = nominal_scaled_cafeteria_score*nominal_raw_cafeteria_score/score_cafeteria;
+    // We prefer the score_cafeteria to be less than 2
   }
 
   var score_cafeteria_scaled = clipAndRound_bounds(score_cafeteria_scaled);
-  var sg_cafeteria = "Well done!";
-  if (inputs["cntnArea"]==0){
-    sg_cafeteria = "No cafeteria/pantry/kitchen area on premises";
+  var sg_cafeteria = "";
+  if ((!inputs["cntnArea"]>0 || !inputs["cntn"]) && nEmp>0){
+    sg_cafeteria = "No cafeteria/pantry/kitchen area are not functional. <br>Score is based on interaction during the following activities: <br>Using water dispenser, having lunch from outside and lunch brought from home.";
+  } else if (nEmp==0){
+    sg_cafeteria = "You have entered the total number of employees in a shift to be zero. This is invalid.";
   } else if (score_cafeteria_scaled<70){
     sg_cafeteria = "You have overcrowding in your cafeteria/pantry. <br>Consider staggered cafeteria/pantry timings. <br>Encourage employees to work from home.";
   } else if (nOutside/nEmp > 0.5 && score_cafeteria_scaled<60){
     sg_cafeteria = "You have too many outside contacts during lunch time. Encourage employees to bring lunch from home or provide lunch on premises."
+  } else {
+    sg_cafeteria = "Well done!";
   }
 
   // Mobility

@@ -832,7 +832,7 @@ SPDX-License-Identifier: Apache-2.0-->
                                                        <thead>
                                                        <tr>
                                                             <th class="px-1" style="width: 20%;">Meal</th>
-                                                            <th class="px-1" style="text-align: center; width:40%">Number of employees availing the facility</th>
+                                                            <th class="px-1" style="text-align: center; width:40%">Number of employees availing the facility </th>
                                                             <th class="px-1" style="text-align: center; width:40%">Duration for which cafeteria is open (minutes)</th>
                                                        </tr>
                                                        </thead>
@@ -1311,6 +1311,7 @@ SPDX-License-Identifier: Apache-2.0-->
      <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
      <script>
           $(document).ready(function(){
+               // Dynamic gender table for shifts...
                $("#nShifts").on("input", function() {
                     var count_cal = $("#nShifts").val();
                     $("#shiftsTable tbody").remove();
@@ -1325,13 +1326,50 @@ SPDX-License-Identifier: Apache-2.0-->
                     }
                });
 
+               // If elevator flag = false, disable elevetor capacity input.
                $("#nEle").on("input", function() {
                     var elevator_counts = $("#nEle").val();
                     if (elevator_counts==0){
-                         $('#eleCpct').attr('min', 0);
+                         $("#eleCpct").val(0);
+                         $('#eleCpct').prop("readonly", true);
                     }
                     else{
-                         $('#eleCpct').attr('min', 3);
+                         $("#eleCpct").val(8);
+                         $('#eleCpct').prop("readonly", false);
+                    }
+               });
+
+               // If canteen flag = false, disable breakfast, lunch and coffee/snacks inputs.
+               $('input[name=cntn]').on("change", function() {
+                    var selected_value = $("input[name='cntn']:checked").val();
+                    console.log(selected_value);
+                    if (selected_value==0) {
+                         $("#nBrkfst").val(0);
+                         $("#nLnch").val(0);
+                         $("#nSnck").val(0);
+                         $("#dBrkfst").val(0);
+                         $("#dLnch").val(0);
+                         $("#dSnck").val(0);
+                         $("#nBrkfst").prop("readonly", true);
+                         $("#nLnch").prop("readonly", true);
+                         $("#dSnck").prop("readonly", true);
+                         $("#dBrkfst").prop("readonly", true);
+                         $("#dLnch").prop("readonly", true);
+                         $("#dSnck").prop("readonly", true);
+                    }
+                    else {
+                         $("#nBrkfst").val(20);
+                         $("#nLnch").val(25);
+                         $("#nSnck").val(15);
+                         $("#dBrkfst").val(60);
+                         $("#dLnch").val(90);
+                         $("#dSnck").val(60);
+                         $("#nBrkfst").prop("readonly", false);
+                         $("#nLnch").prop("readonly", false);
+                         $("#dSnck").prop("readonly", false);
+                         $("#dBrkfst").prop("readonly", false);
+                         $("#dLnch").prop("readonly", false);
+                         $("#dSnck").prop("readonly", false);
                     }
                });
           }); 

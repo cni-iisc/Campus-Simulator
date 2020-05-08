@@ -193,11 +193,11 @@ SPDX-License-Identifier: Apache-2.0-->
                                                        <tbody>
                                                        <tr>
                                                             <td>Single occupancy cabins</td>
-                                                            <td class="px-1"><input class="form-control" type="number" id="nSOfcRm" min="0" value="1"></td>
+                                                            <td class="px-1"><input class="form-control" type="number" id="nSOfcRm" min="0" value="55"></td>
                                                        </tr>
                                                        <tr>
                                                             <td>Dual occupancy cabins</td>
-                                                            <td class="px-1"><input class="form-control" type="number" id="n2pOfcRm" min="0" value="1"></td>
+                                                            <td class="px-1"><input class="form-control" type="number" id="n2pOfcRm" min="0" value="4"></td>
                                                        </tr>
                                                        <tr>
                                                             <td>Cabins shared by 3 employees or more</td>
@@ -205,11 +205,11 @@ SPDX-License-Identifier: Apache-2.0-->
                                                        </tr>
                                                        <tr>
                                                             <td>open cubicle office desks</td>
-                                                            <td class="px-1"><input class="form-control" type="number" id="nCub" min="0" value="1"></td>
+                                                            <td class="px-1"><input class="form-control" type="number" id="nCub" min="0" value="0"></td>
                                                        </tr>
                                                        <tr>
                                                             <td>Remaining office spaces/seats</td>
-                                                            <td class="px-1"><input class="form-control" type="number" id="nRem" min="0" value="1"></td>
+                                                            <td class="px-1"><input class="form-control" type="number" id="nRem" min="0" value="0"></td>
                                                        </tr>
                                                        </tbody>
                                                   </table>
@@ -329,19 +329,19 @@ SPDX-License-Identifier: Apache-2.0-->
                                                        <tbody>
                                                        <tr>
                                                             <td>Between 15-29 years</td>
-                                                            <td class="px-1"><input class="form-control" type="number" id="n29" min="0" value="1"></td>
+                                                            <td class="px-1"><input class="form-control" type="number" id="n29" min="0" value="40"></td>
                                                        </tr>
                                                        <tr>
                                                             <td>Between 30-49 years</td>
-                                                            <td class="px-1"><input class="form-control" type="number" id="n49" min="0" value="1"></td>
+                                                            <td class="px-1"><input class="form-control" type="number" id="n49" min="0" value="25"></td>
                                                        </tr>
                                                        <tr>
                                                             <td>Between 50-64 years</td>
-                                                            <td class="px-1"><input class="form-control" type="number" id="n64" min="0" value="1"></td>
+                                                            <td class="px-1"><input class="form-control" type="number" id="n64" min="0" value="5"></td>
                                                        </tr>
                                                        <tr>
                                                             <td>65 years and older</td>
-                                                            <td class="px-1"><input class="form-control" type="number" id="n65plus" min="0" value="1"></td>
+                                                            <td class="px-1"><input class="form-control" type="number" id="n65plus" min="0" value="0"></td>
                                                        </tr>
                                                        </tbody>
                                                   </table>
@@ -373,10 +373,10 @@ SPDX-License-Identifier: Apache-2.0-->
                                                        <tbody>
                                                        <tr>
                                                             <td>Shift 1</td>
-                                                            <td class="px-1"><input class="form-control" type="number" id="nM_1" min="0" value="20"></td>
-                                                            <td class="px-1"><input class="form-control" type="number" id="nF_1" min="0" value="60"></td>
-                                                            <td class="px-1"><input class="form-control" type="number" id="nOth_1" min="0" value="60"></td>
-                                                            <td class="px-1"><input class="form-control" type="number" id="pCS_1" min="0" value="5"></td>
+                                                            <td class="px-1"><input class="form-control" type="number" id="nM_1" min="0" value="40"></td>
+                                                            <td class="px-1"><input class="form-control" type="number" id="nF_1" min="0" value="25"></td>
+                                                            <td class="px-1"><input class="form-control" type="number" id="nOth_1" min="0" value="3"></td>
+                                                            <td class="px-1"><input class="form-control" type="number" id="pCS_1" min="0" value="2"></td>
                                                        </tr>
                                                        </tbody>
                                                   </table>
@@ -1238,6 +1238,20 @@ SPDX-License-Identifier: Apache-2.0-->
                          <button type="submit" class="sub-btn btn-primary btn-block" onclick="reEnter()">Revise inputs and recalculate</button>
                          <button type="submit" class="prnt-btn btn-primary btn-block" onclick="printPage()">Print report</button>
                          </p>
+
+                         <p><br><b>General suggestions:<br>Read WHO’s guidelines for workplace readiness. Some excerpts from the <a href="https://www.who.int/docs/default-source/coronaviruse/advice-for-workplace-clean-19-03-2020.pdf">WHO guidelines</a> are given below.</b></p>
+                         <ol>
+                              <li><b>Make sure your workplaces are clean and hygienic. Wipe surfaces (desks and tables) and objects (telephones, keyboards) regularly with disinfectant.</b></li>
+                              <li><b>Promote regular and thorough hand-washing by employees, contractors and customers.</b></li>
+                              <li><b>Promote good respiratory hygiene in the workplace.</b></li>
+                              <li><b>Communicate regularly with your employees about COVID-19 readiness.</li>
+                              <li><b>Inform employees, contractors, and customers that anyone with even a mild cough or a low grade fever (37.3 C or more) needs to stay at home. They should also stay home if they have taken simple medications (paracetamol/acetaminophen, ibuprofen, or aspirin) which may mask symptoms of infection.</b></li>
+                              <li><b>Organisers should carefully think about meetings. Develop and agree a preparedness plan to prevent infection at your meeting. Have a response plan if someone falls ill with symptoms. Maintain names of all attendees.</b></li>
+                              <li><b>Develop a plan for what to do if someone becomes ill.</b></li>
+                              <li><b>Promote regular teleworking across your organisation.</b></li>
+                              <li><b>Develop a contingency and business continuity plan for an outbreak where your business operates.</b></li>
+                              <li><b>Develop partnerships and plans with your local health providers in advance of any emergency.</b></li>
+                         </ol>
                     </div>
               </div>
           </div>
@@ -1304,7 +1318,7 @@ SPDX-License-Identifier: Apache-2.0-->
                     $("#nShifts").val(count_cal);
                     for (i = 0; i < count_cal; i++) {
                          console.log(i);
-                         markup = "<tr><td>Shift "+(i+1)+"</td><td class='px-1'><input class='form-control' type='number' id='nM_"+(i+1)+"' min='0' value='20'></td><td class='px-1'><input class='form-control' type='number' id='nF_"+(i+1)+"' min='0' value='60'></td><td class='px-1'><input class='form-control' type='number' id='nOth_"+(i+1)+"' min='0' value='60'></td><td class='px-1'><input class='form-control' type='number' id='pCS_"+(i+1)+"' min='0' value='5'></td></tr>";
+                         markup = "<tr><td>Shift "+(i+1)+"</td><td class='px-1'><input class='form-control' type='number' id='nM_"+(i+1)+"' min='0' value='40'></td><td class='px-1'><input class='form-control' type='number' id='nF_"+(i+1)+"' min='0' value='25'></td><td class='px-1'><input class='form-control' type='number' id='nOth_"+(i+1)+"' min='0' value='3'></td><td class='px-1'><input class='form-control' type='number' id='pCS_"+(i+1)+"' min='0' value='2'></td></tr>";
                          $("#shiftsTable tbody").append(markup);
                     }
                });

@@ -224,9 +224,12 @@ function calcScore () {
   var shiftDelta = ( (inputs["tGapShift"] > 8) ? 0 : (8 - inputs["tGapShift"]));
   var premisesContacts = (accessContacts + stairsElev + crowding/ nEmp ) * (1 + (shiftDelta/8.0)) * (1-0.4*inputs["msk"]);
 
+  var nominal_office_infra_raw_score = 31;
+  var nominal_office_infra_scaled_score = 800;
+
   // Other meeting spaces
   var score_other_spaces = 0.5 * inputs["oMtngSpts"] * Math.max(1-0.1*(inputs["freqCln"]*Math.min(1, inputs["nHskpngStff"])), 0.5) * (1-0.4*inputs["msk"]);
-  var score_office_infra = 800*31/(premisesContacts + score_other_spaces);
+  var score_office_infra = nominal_office_infra_raw_score*nominal_office_infra_scaled_score/(premisesContacts + score_other_spaces);
   score_office_infra = clipAndRound_bounds(score_office_infra);
 
   var sg_office_infra = "Well done!"
@@ -243,10 +246,12 @@ function calcScore () {
   var avgTltDrtn = 4;
   var tltCnctrtnHrs = 4; 
 
+  var nominal_raw_aggrToiletSc = 800;
+  var nominal_scaled_aggrToiletSc = 1;
+
   var cRateGentsToilet = nGntsTlt * avgTltVstsPrDy * avgTltDrtn * (Math.max(0.5, (1.0 - 0.1*inputs["tClnFreq"]))) * (1.0 - 0.1*inputs["spPrsnt"]) / (tltCnctrtnHrs*60*inputs["nGntsT"]);
   var cRateLadiesToilet = nLdsTlt * avgTltVstsPrDy * avgTltDrtn * (Math.max(0.5, (1.0 - 0.1*inputs["tClnFreq"]))) * (1.0 - 0.1*inputs["spPrsnt"]) / (tltCnctrtnHrs*60*inputs["nLdsT"]);
-  //var aggrToiletSc = 800*nEmp/(cRateLadiesToilet + cRateGentsToilet);
-  var aggrToiletSc = 800/(Math.max(cRateLadiesToilet, cRateGentsToilet)+0.001);
+  var aggrToiletSc = nominal_raw_aggrToiletSc*nominal_scaled_aggrToiletSc/(Math.max(cRateLadiesToilet, cRateGentsToilet)+0.001);
   var score_sanitation = clipAndRound_bounds(aggrToiletSc);
 
   var sg_sanitation = "Well done!";
@@ -285,19 +290,27 @@ function calcScore () {
   var pvtl_hrs = 4;
   var nOutside = nEmp - inputs["nLnch"] - inputs["nEmpHL"];
 
-  var mtng_brkfst = (inputs["nBrkfst"] * time_brkfst * prsnl_area) / (inputs["cntnArea"] * (inputs["dBrkfst"] ? inputs["dBrkfst"] : 60));
-  var mtng_lnch = (inputs["nLnch"] * time_lnch * prsnl_area) / (inputs["cntnArea"] * (inputs["dLnch"] ? inputs["dLnch"] : 90));
-  var mntg_snck = (inputs["nSnck"] * time_snck * prsnl_area) / (inputs["cntnArea"] * (inputs["dSnck"] ? inputs["dSnck"] : 60));
-  var mntg_wtr = (nEmp * time_wtr * num_wtr_sought * prsnl_area) / (inputs["nWS"] * inputs["cntnArea"] * pvtl_hrs *  60);
-  
-  var score_cafeteria = (mtng_brkfst*(inputs["nBrkfst"]/nEmp) + mtng_lnch*(inputs["nLnch"]/nEmp) + mntg_snck*(inputs["nSnck"]/nEmp) + mntg_wtr + (inputs["nEmpHL"]*0.25/nEmp) + (nOutside*2/nEmp) + (nOutside*0.5*(inputs["extFSP"])/nEmp));
-  score_cafeteria = score_cafeteria * Math.max((1 - 0.1*( inputs["mlStggrd"] + inputs["freqCln"] - inputs["utnslShrd"])), 1/2);
+  var score_cafeteria_scaled = 1000;
+  var nominal_raw_cafeteria_score = 2;
+  var nominal_scaled_cafeteria_score = 700;
 
-  // We prefer the score_cafeteria to be less than 2
-  var score_cafeteria_scaled = 700*2/score_cafeteria;
+  if (inputs["cntnArea"]>0){
+    var mtng_brkfst = (inputs["nBrkfst"] * time_brkfst * prsnl_area) / (inputs["cntnArea"] * (inputs["dBrkfst"] ? inputs["dBrkfst"] : 60));
+    var mtng_lnch = (inputs["nLnch"] * time_lnch * prsnl_area) / (inputs["cntnArea"] * (inputs["dLnch"] ? inputs["dLnch"] : 90));
+    var mntg_snck = (inputs["nSnck"] * time_snck * prsnl_area) / (inputs["cntnArea"] * (inputs["dSnck"] ? inputs["dSnck"] : 60));
+    var mntg_wtr = (nEmp * time_wtr * num_wtr_sought * prsnl_area) / (inputs["nWS"] * inputs["cntnArea"] * pvtl_hrs *  60);
+
+    var score_cafeteria = (mtng_brkfst*(inputs["nBrkfst"]/nEmp) + mtng_lnch*(inputs["nLnch"]/nEmp) + mntg_snck*(inputs["nSnck"]/nEmp) + mntg_wtr + (inputs["nEmpHL"]*0.25/nEmp) + (nOutside*2/nEmp) + (nOutside*0.5*(inputs["extFSP"])/nEmp));
+    score_cafeteria = score_cafeteria * Math.max((1 - 0.1*( inputs["mlStggrd"] + inputs["freqCln"] - inputs["utnslShrd"])), 1/2);
+    // We prefer the score_cafeteria to be less than 2
+    score_cafeteria_scaled = nominal_scaled_cafeteria_score*nominal_raw_cafeteria_score/score_cafeteria;
+  }
+
   var score_cafeteria_scaled = clipAndRound_bounds(score_cafeteria_scaled);
   var sg_cafeteria = "Well done!";
-  if (score_cafeteria_scaled<70){
+  if (inputs["cntnArea"]==0){
+    sg_cafeteria = "No cafeteria/pantry/kitchen area on premises";
+  } else if (score_cafeteria_scaled<70){
     sg_cafeteria = "Increase the cafeteria area to accomodate more people or encourage work from home";
   } else if (nOutside/nEmp > 0.5 && score_cafeteria_scaled<60){
     sg_cafeteria = "Encourage bringing lunch from home or provide lunch on premise"
@@ -306,7 +319,9 @@ function calcScore () {
   // Mobility
   var nLM = nEmp - inputs["nHM"] - inputs["nMM"]
   var score_mobility = ((0.25*nLM + 0.5*inputs["nMM"] + inputs["nHM"])/(nLM+inputs["nMM"]+inputs["nHM"])) * (1-0.4*inputs["msk"]);
-  score_mobility = (1-score_mobility)*1000/0.85;
+  var nominal_raw_score_mobility = 0.85;
+  var nominal_scaled_score_mobility = 1000;
+  score_mobility = (1-score_mobility)*nominal_scaled_score_mobility/nominal_raw_score_mobility;
   score_mobility = clipAndRound_bounds(score_mobility);
 
   var sg_mobility = "Well done!";
@@ -386,7 +401,7 @@ function calcScore () {
   }
 
   // Advertisement and outreach
-  var score_adv_outrch = (inputs["covidPage"] + inputs["faq"] + inputs["sPers"] + inputs["hkTrn"] + inputs["advSclDis"] + inputs["advWFHVul"] + inputs["snzCvr"] + inputs["sPrgm"] + inputs["pstrs"] + (inputs["nWsB"] > (inputs["nFloors"]*2) ? 1 : 0))*1000/10 ;
+  var score_adv_outrch = 100*(inputs["covidPage"] + inputs["faq"] + inputs["sPers"] + inputs["hkTrn"] + inputs["advSclDis"] + inputs["advWFHVul"] + inputs["snzCvr"] + inputs["sPrgm"] + inputs["pstrs"] + (inputs["nWsB"] > (inputs["nFloors"]*2) ? 1 : 0));
   score_adv_outrch = clipAndRound_bounds(score_adv_outrch);
 
   var sg_adv_outrch = "Well done!";
@@ -426,14 +441,25 @@ function calcScore () {
   
   var score_public_transport = (1-0.1*inputs["hsLbb"]) * (1-0.4*inputs["mskPub"]) *
                                  (inputs["trvlr5Kpub"]*5 + inputs["trvlr10Kpub"]*(10/1.25) + inputs["trvlr10Kpluspub"]*(15/1.5));
-  var score_total_transport = (score_company_transport + score_self_transport + score_walk + score_public_transport)/
-                              (cmpnTrnsprtUsrs + slfTrnsprtUsrs + inputs["nWlk"] + pubTrnsprtUsrs);
-  // Average is more appropriate for large companies.
-  var score_total_transport_scaled = 800*3.5/score_total_transport;
+  
+  var score_total_transport = 1;
+  var score_total_transport_scaled = 1000;
+  var nominal_scaled_score_total_transport = 800;
+  var nominal_raw_score_total_transport = 3.5;
+
+  if (cmpnTrnsprtUsrs + slfTrnsprtUsrs + inputs["nWlk"] + pubTrnsprtUsrs > 0){
+    score_total_transport = (score_company_transport + score_self_transport + score_walk + score_public_transport)/
+                            (cmpnTrnsprtUsrs + slfTrnsprtUsrs + inputs["nWlk"] + pubTrnsprtUsrs);
+
+    score_total_transport_scaled = nominal_scaled_score_total_transport*nominal_raw_score_total_transport/score_total_transport;
+  }
+  
   score_total_transport_scaled = clipAndRound_bounds(score_total_transport_scaled);
 
   var sg_transport = "Well done!";
-  if ((inputs["mskMndt"]+inputs["mskCar"]+inputs["mskWlk"]+inputs["mskPub"])<3){
+  if (cmpnTrnsprtUsrs + slfTrnsprtUsrs + inputs["nWlk"] + pubTrnsprtUsrs == 0){
+    sg_transport = "No transport related information provided";
+  } else if ((inputs["mskMndt"]+inputs["mskCar"]+inputs["mskWlk"]+inputs["mskPub"])<3){
     sg_transport = "Consider using mask while travelling";
   } else if (F>0.5){
     sg_transport = "Consider reducing numbers per journey";

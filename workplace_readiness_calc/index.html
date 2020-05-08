@@ -904,6 +904,7 @@ SPDX-License-Identifier: Apache-2.0-->
                                    </div>
                                    <div id="collapseSeven" class="collapse" aria-labelledby="headingSeven" data-parent="#accordionExample">
                                         <div class="card-body">
+                                             <p class="h5 sh5">Toilets</p>
                                              <div class="form-row">
                                                   <div class="form-group col-md-6">
                                                        <label for="nGntsT">Number of gents toilets</label>
@@ -928,6 +929,7 @@ SPDX-License-Identifier: Apache-2.0-->
                                                        <label class="form-check-label" for="spPrsnt_1">Yes</label>
                                                        </div>
                                                   </div>
+                                                  <p class="h5 sh5">House-keeping of premises</p>
                                                   <div class="form-group col-md-12">
                                                     <label for="freqCln">Number of times house-keeping staff clean the <b>entire premises</b> in a day</label>
                                                        <input class="form-control" type="number" name="freqCln" id="freqCln" min="0" value="1">
@@ -936,9 +938,8 @@ SPDX-License-Identifier: Apache-2.0-->
                                                     <label for="nHskpngStff">Number of house-keeping staff cleaning the <b>entire premises</b> each day</label>
                                                        <input class="form-control" type="number" name="nHskpngStff" id="nHskpngStff" min="0" value="2">
                                                   </div>
-                                                    <p class="h5 sh5"> Type of Cleaning</p>
                                                   <div class="form-group col-md-12">
-                                                    <!-- <label for="typeSanitation">Type of cleaning</label> -->
+                                                       <label for="typeSanitation">Type of cleaning</label>
                                                        <div class="form-check">
                                                        <input class="form-check-input" type="radio" name="typeSanitation" id="typeSanitation_0" value="0" checked>
                                                        <label class="form-check-label" for="typeSanitation_0">Sweep / Vacuum cleaning</label>
@@ -1258,8 +1259,17 @@ SPDX-License-Identifier: Apache-2.0-->
 	    <div id="About" class="tabcontent">
         <div class="container">
           <div class="row">
-	        <h3>About</h3>
-	        <p>This is a COVID-19 workplace readiness calculator, developed by the Centre for Networked Intelligence, Indian Institute of Science, and Karnataka Disaster Management Authority to help establishments assess their readiness for re-opening their premises after shutdown.</p>
+             <h3>About</h3>
+             <p>Lockdown restricts all activity assuming they all have equal epidemiological risk. However, many activities with <b>low epidemiological risk</b> could continue, if suitable precautions are taken. For e.g., IT and IT enabled services that have limited direct contact between employees, employees and customers, could continue to operate with appropriate precautions.</p>
+             <p>However, there is <b>information asymmetry</b>. Firms and agents are more aware of the nature of their activities while the social planner has a broader perspective of the epidemic state, economy, and the associated public health and economic risks.</p>
+             <p>We propose a <b>soft-touch approach</b> that could help us in the emergence from the lockdown. It keeps the best interests of the firms and agents in mind while balancing the broader social objectives of public health and livelihoods.</p>
+             <ol>
+               <li>The social planner, taking the broad epidemic factors and social objectives into account, and suggests, at the simplest level, a simple <b>readiness threshold</b>. If agents and firms operate within this threshold, the epidemic could be better handled by the healthcare providers.</li>
+               <li>Agents and firms then respond to this threshold by identifying their best mix (shifts, precautions, advisories, etc.) so that they can continue to operate as long as they meet the readiness threshold.</li>
+             </ol>
+             <p>Such an approach is likely to have <b>greater acceptance</b> among the stake holders, because agents have the power to decide for themselves how best to maximise their productivity, given the specified epidemic-readiness threshold. It also gives the social planner a means to <b>respond to an emergency</b> or a waning public health threat, by adaptively raising or lowering the threshold readiness level.</p>
+             <p>The specific readiness indices that we have designed depend on the specific readiness category. Some are weighted combinations of various precautions and awareness actions taken by firms. Others are roughly proportional to the doubling rate of a hypothetical infection, if contacts were to take place at rates deduced from the input data.</p>
+             <p>This is a COVID-19 workplace readiness calculator, developed by the Centre for Networked Intelligence, Indian Institute of Science, and the Karnataka Disaster Management Authority. It is to help establishments assess their readiness for re-opening their premises after shutdown due to COVID-19.</p>
           </div>
         </div>
 	    </div> 

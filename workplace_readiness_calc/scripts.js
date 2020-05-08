@@ -314,9 +314,9 @@ function calcScore () {
   if (inputs["cntnArea"]==0){
     sg_cafeteria = "No cafeteria/pantry/kitchen area on premises";
   } else if (score_cafeteria_scaled<70){
-    sg_cafeteria = "Increase the cafeteria area to accomodate more people or encourage work from home";
+    sg_cafeteria = "You have overcrowding in your cafeteria/pantry. <br>Consider staggered cafeteria/pantry timings. <br>Encourage employees to work from home.";
   } else if (nOutside/nEmp > 0.5 && score_cafeteria_scaled<60){
-    sg_cafeteria = "Encourage bringing lunch from home or provide lunch on premise"
+    sg_cafeteria = "You have too many outside contacts during lunch time. Encourage employees to bring lunch from home or provide lunch on premises."
   }
 
   // Mobility

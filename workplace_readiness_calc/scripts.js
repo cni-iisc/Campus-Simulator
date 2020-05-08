@@ -677,7 +677,7 @@ function printPage(){
   $("#footer").hide()
   $(".tabcontent").css('color','black');
   $("#Scores").css('background-color','white');
-  $(".th").css('background-color','white');
+  /* $(".bg-dark").css('background-color','white'); */
   window.print()
   $("#header").show()
   $(".tablink").show()
@@ -686,6 +686,6 @@ function printPage(){
   $("#footer").show()
   $(".tabcontent").css('color','white');
   $("#Scores").css('background-color','#26734d');
-  /* $(".th").css('background-color','#212529'); */
+  /* $(".bg-dark").css('background-color','#212529'); */
 }
 

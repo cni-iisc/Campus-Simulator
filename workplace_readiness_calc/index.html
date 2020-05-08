@@ -125,7 +125,7 @@ SPDX-License-Identifier: Apache-2.0-->
                                                   </div>
                                                   <div class="form-group col-md-12">
                                                        <label for="tArea">Total built-up area (sq.ft) including common spaces</label>
-                                                       <input class="form-control" type="number" name="tArea" id="tArea" min="0" value="4000">
+                                                       <input class="form-control" type="number" name="tArea" id="tArea" min="0" value="5000">
                                                   </div>
                                                   <div class="form-group col-md-12">
                                                        <label for="nFloors">Total number of floors (across all buildings)</label>
@@ -138,11 +138,11 @@ SPDX-License-Identifier: Apache-2.0-->
                                                   <div class="form-group col-md-12">
                                                        <label for="mntrCCTV">Do you have security staff monitoring CCTV footage during working hours?</label>
                                                        <div class="form-check">
-                                                       <input class="form-check-input" type="radio" name="mntrCCTV" id="mntrCCTV_0" value="0">
+                                                       <input class="form-check-input" type="radio" name="mntrCCTV" id="mntrCCTV_0" value="0" checked>
                                                        <label class="form-check-label" for="mntrCCTV_0">No</label>
                                                        </div>
                                                        <div class="form-check">
-                                                       <input class="form-check-input" type="radio" name="mntrCCTV" id="mntrCCTV_1" value="1" checked>
+                                                       <input class="form-check-input" type="radio" name="mntrCCTV" id="mntrCCTV_1" value="1">
                                                        <label class="form-check-label" for="mntrCCTV_1">Yes</label>
                                                        </div>
                                                   </div>
@@ -159,20 +159,20 @@ SPDX-License-Identifier: Apache-2.0-->
                                                   </div>
                                                   <div class="form-group col-md-6">
                                                        <label for="baDoor">Number of biometric based access doors</label>
-                                                       <input class="form-control" type="number" name="baDoor" id="baDoor" min="0" value="4">
+                                                       <input class="form-control" type="number" name="baDoor" id="baDoor" min="0" value="3">
                                                   </div>
                                                   <div class="form-group col-md-6">
                                                        <label for="rfidDoor">Number of RFID tag based doors </label>
-                                                       <input class="form-control" type="number" name="rfidDoor" id="rfidDoor" min="0" value="4">
+                                                       <input class="form-control" type="number" name="rfidDoor" id="rfidDoor" min="0" value="3">
                                                   </div>
                                                   <div class="form-group col-md-12">
                                                        <label for="sntBio">If biometric based, is sanitiser available at biometric location?</label>
                                                        <div class="form-check">
-                                                       <input class="form-check-input" type="radio" name="sntBio" id="sntBio_0" value="0">
+                                                       <input class="form-check-input" type="radio" name="sntBio" id="sntBio_0" value="0" checked>
                                                        <label class="form-check-label" for="sntBio_0">No</label>
                                                        </div>
                                                        <div class="form-check">
-                                                       <input class="form-check-input" type="radio" name="sntBio" id="sntBio_1" value="1" checked>
+                                                       <input class="form-check-input" type="radio" name="sntBio" id="sntBio_1" value="1">
                                                        <label class="form-check-label" for="sntBio_1">Yes</label>
                                                        </div>
                                                   </div>
@@ -193,7 +193,7 @@ SPDX-License-Identifier: Apache-2.0-->
                                                        <tbody>
                                                        <tr>
                                                             <td>Single occupancy cabins</td>
-                                                            <td class="px-1"><input class="form-control" type="number" id="nSOfcRm" min="0" value="55"></td>
+                                                            <td class="px-1"><input class="form-control" type="number" id="nSOfcRm" min="0" value="0"></td>
                                                        </tr>
                                                        <tr>
                                                             <td>Dual occupancy cabins</td>
@@ -201,15 +201,15 @@ SPDX-License-Identifier: Apache-2.0-->
                                                        </tr>
                                                        <tr>
                                                             <td>Cabins shared by 3 employees or more</td>
-                                                            <td class="px-1"><input class="form-control" type="number" id="n2pPlusOfcRm" min="0" value="1"></td>
+                                                            <td class="px-1"><input class="form-control" type="number" id="n2pPlusOfcRm" min="0" value="9"></td>
                                                        </tr>
                                                        <tr>
                                                             <td>open cubicle office desks</td>
-                                                            <td class="px-1"><input class="form-control" type="number" id="nCub" min="0" value="0"></td>
+                                                            <td class="px-1"><input class="form-control" type="number" id="nCub" min="0" value="40"></td>
                                                        </tr>
                                                        <tr>
                                                             <td>Remaining office spaces/seats</td>
-                                                            <td class="px-1"><input class="form-control" type="number" id="nRem" min="0" value="0"></td>
+                                                            <td class="px-1"><input class="form-control" type="number" id="nRem" min="0" value="30"></td>
                                                        </tr>
                                                        </tbody>
                                                   </table>
@@ -222,11 +222,11 @@ SPDX-License-Identifier: Apache-2.0-->
                                                   <div class="form-group col-md-6">
                                                        <label for="centralAC">Is the air-conditioning centralised?</label>
                                                        <div class="form-check">
-                                                       <input class="form-check-input" type="radio" name="centralAC" id="centralAC_0" value="0" checked>
+                                                       <input class="form-check-input" type="radio" name="centralAC" id="centralAC_0" value="0">
                                                        <label class="form-check-label" for="centralAC_0">No</label>
                                                        </div>
                                                        <div class="form-check">
-                                                       <input class="form-check-input" type="radio" name="centralAC" id="centralAC_1" value="1">
+                                                       <input class="form-check-input" type="radio" name="centralAC" id="centralAC_1" value="1" checked>
                                                        <label class="form-check-label" for="centralAC_1">Yes</label>
                                                        </div>
                                                   </div>
@@ -258,11 +258,11 @@ SPDX-License-Identifier: Apache-2.0-->
                                                   </div>
                                                   <div class="form-group col-md-12">
                                                        <label for="eleCpct">Average capacity of lifts</label>
-                                                       <input class="form-control" type="number" name="eleCpct" id="eleCpct" min="3" value="5">
+                                                       <input class="form-control" type="number" name="eleCpct" id="eleCpct" min="3" value="8">
                                                   </div>
                                                   <div class="form-group col-md-12">
                                                        <label for="nEleDinf">Number of times a day each lift is disinfected</label>
-                                                       <input class="form-control" type="number" name="nEleDinf" id="nEleDinf" min="0" value="1">
+                                                       <input class="form-control" type="number" name="nEleDinf" id="nEleDinf" min="0" value="0">
                                                   </div>
                                                   <div class="form-group col-md-12">
                                                        <label for="nStrCln">Number of times a day each stairway and each escalator is cleaned</label>
@@ -270,11 +270,11 @@ SPDX-License-Identifier: Apache-2.0-->
                                                   </div>
                                                   <div class="form-group col-md-12">
                                                        <label for="nStrHrDinf">Number of times a day stairway and escalator handrails are disinfected</label>
-                                                       <input class="form-control" type="number" name="nStrHrDinf" id="nStrHrDinf" min="0" value="1">
+                                                       <input class="form-control" type="number" name="nStrHrDinf" id="nStrHrDinf" min="0" value="0">
                                                   </div>
                                                   <div class="form-group col-md-12">
                                                        <label for="oMtngSpts">Number of other meeting spaces (gym, lockers and storage, ATMs, on-premise shops, libraries, lounges, meeting rooms, halls, etc.)</label>
-                                                       <input class="form-control" type="number" name="oMtngSpts" id="oMtngSpts" min="0" value="4">
+                                                       <input class="form-control" type="number" name="oMtngSpts" id="oMtngSpts" min="0" value="5">
                                                   </div>
                                              </div>
                                         </div>
@@ -296,11 +296,11 @@ SPDX-License-Identifier: Apache-2.0-->
                                                   <div class="form-group col-md-12">
                                                        <label for="informCZEmp">Has the organisation informed those in containment zones not to come to office?</label>
                                                        <div class="form-check">
-                                                            <input class="form-check-input" type="radio" name="informCZEmp" id="informCZEmp_0" value="0">
+                                                            <input class="form-check-input" type="radio" name="informCZEmp" id="informCZEmp_0" value="0" checked>
                                                             <label class="form-check-label" for="informCZEmp_0">No</label>
                                                        </div>
                                                        <div class="form-check">
-                                                            <input class="form-check-input" type="radio" name="informCZEmp" id="informCZEmp_1" value="1" checked>
+                                                            <input class="form-check-input" type="radio" name="informCZEmp" id="informCZEmp_1" value="1">
                                                             <label class="form-check-label" for="informCZEmp_1">Yes</label>
                                                        </div>
                                                   </div>
@@ -329,15 +329,15 @@ SPDX-License-Identifier: Apache-2.0-->
                                                        <tbody>
                                                        <tr>
                                                             <td>Between 15-29 years</td>
-                                                            <td class="px-1"><input class="form-control" type="number" id="n29" min="0" value="40"></td>
+                                                            <td class="px-1"><input class="form-control" type="number" id="n29" min="0" value="14"></td>
                                                        </tr>
                                                        <tr>
                                                             <td>Between 30-49 years</td>
-                                                            <td class="px-1"><input class="form-control" type="number" id="n49" min="0" value="25"></td>
+                                                            <td class="px-1"><input class="form-control" type="number" id="n49" min="0" value="20"></td>
                                                        </tr>
                                                        <tr>
                                                             <td>Between 50-64 years</td>
-                                                            <td class="px-1"><input class="form-control" type="number" id="n64" min="0" value="5"></td>
+                                                            <td class="px-1"><input class="form-control" type="number" id="n64" min="0" value="7"></td>
                                                        </tr>
                                                        <tr>
                                                             <td>65 years and older</td>
@@ -373,10 +373,10 @@ SPDX-License-Identifier: Apache-2.0-->
                                                        <tbody>
                                                        <tr>
                                                             <td>Shift 1</td>
-                                                            <td class="px-1"><input class="form-control" type="number" id="nM_1" min="0" value="40"></td>
-                                                            <td class="px-1"><input class="form-control" type="number" id="nF_1" min="0" value="25"></td>
-                                                            <td class="px-1"><input class="form-control" type="number" id="nOth_1" min="0" value="3"></td>
-                                                            <td class="px-1"><input class="form-control" type="number" id="pCS_1" min="0" value="2"></td>
+                                                            <td class="px-1"><input class="form-control" type="number" id="nM_1" min="0" value="34"></td>
+                                                            <td class="px-1"><input class="form-control" type="number" id="nF_1" min="0" value="6"></td>
+                                                            <td class="px-1"><input class="form-control" type="number" id="nOth_1" min="0" value="0"></td>
+                                                            <td class="px-1"><input class="form-control" type="number" id="pCS_1" min="0" value="1"></td>
                                                        </tr>
                                                        </tbody>
                                                   </table>
@@ -731,7 +731,7 @@ SPDX-License-Identifier: Apache-2.0-->
                                              </div>
                                              <div class="form-group col-md-12">
                                                   <label for="nEmpCstmr">Number of employees that meet these customers</label>
-                                                  <input class="form-control" type="number" name="nEmpCstmr" id="nEmpCstmr" min="0" value="20">
+                                                  <input class="form-control" type="number" name="nEmpCstmr" id="nEmpCstmr" min="0" value="3">
                                              </div>
                                              <div class="form-group col-md-12">
                                                   <label for="nDlvrHndlng">Number of employees handling deliveries and receipts</label>
@@ -1239,7 +1239,7 @@ SPDX-License-Identifier: Apache-2.0-->
                          <button type="submit" class="prnt-btn btn-primary btn-block" onclick="printPage()">Print report</button>
                          </p>
 
-                         <p><br><b>General suggestions:<br>Read WHO’s guidelines for workplace readiness. Some excerpts from the <a href="https://www.who.int/docs/default-source/coronaviruse/advice-for-workplace-clean-19-03-2020.pdf">WHO guidelines</a> are given below.</b></p>
+                         <p><br><b>General suggestions:<br>Read WHO’s guidelines for workplace readiness. Some excerpts from the <a style="text-decoration: underline;" href="https://www.who.int/docs/default-source/coronaviruse/advice-for-workplace-clean-19-03-2020.pdf">WHO guidelines</a> are given below.</b></p>
                          <ol>
                               <li><b>Make sure your workplaces are clean and hygienic. Wipe surfaces (desks and tables) and objects (telephones, keyboards) regularly with disinfectant.</b></li>
                               <li><b>Promote regular and thorough hand-washing by employees, contractors and customers.</b></li>

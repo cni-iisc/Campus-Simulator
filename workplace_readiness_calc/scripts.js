@@ -242,6 +242,7 @@ function calcScore () {
 
   // Other meeting spaces
   var score_other_spaces = 0.5 * inputs["oMtngSpts"] * Math.max(1-0.1*(inputs["freqCln"]*Math.min(1, inputs["nHskpngStff"])), 0.5) * (1-0.4*inputs["msk"]);
+  console.log([premisesContacts, score_other_spaces]);
   var score_office_infra = nominal_office_infra_raw_score*nominal_office_infra_scaled_score/(premisesContacts + score_other_spaces);
   score_office_infra = clipAndRound_bounds(score_office_infra);
 
@@ -417,11 +418,9 @@ function calcScore () {
   // Epidemic related precautions
   var meets_shift_requirement = 1;
   // Uncomment this in the production code.
-  /*
   if (0<inputs["NOE"] && inputs["NOE"]<=4){
     meets_shift_requirement = ((inputs["n29"]+inputs["n49"]+inputs["n64"]+inputs["n65plus"])*0.33>=nEmp) ? 1:0; 
   }
-  */
 
   var score_epidemic = 0;
   if (meets_shift_requirement){

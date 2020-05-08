@@ -539,16 +539,18 @@ function reEnter() {
 }
 
 function printPage(){
- $("#header").hide()
- $(".tablink").hide()
- $(".sub-btn").hide()
- $(".prnt-btn").hide()
- $("#footer").hide()
- window.print()
- $("#header").show()
- $(".tablink").show()
- $(".sub-btn").show()
- $(".prnt-btn").show()
- $("#footer").show()
+  $("#header").hide()
+  $(".tablink").hide()
+  $(".sub-btn").hide()
+  $(".prnt-btn").hide()
+  $("#footer").hide()
+  $(".tabcontent").css('color','black');
+  window.print()
+  $("#header").show()
+  $(".tablink").show()
+  $(".sub-btn").show()
+  $(".prnt-btn").show()
+  $("#footer").show()
+  $(".tabcontent").css('color','white');
 }
 

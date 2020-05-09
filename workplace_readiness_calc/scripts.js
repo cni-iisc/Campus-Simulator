@@ -25,6 +25,8 @@ function getValues(){
   var dict = new Object();
   
   // Nature of Establishment
+  dict["cmpName"] = document.getElementById("cmpName").value; // Company Name
+  dict["emailAddr"] = document.getElementById("emailAddr").value; // Company Address
   dict["NOE"] = parseInt(document.getElementById("NOE").value); // Nature of Establishment
   
   // Employee Information
@@ -672,7 +674,7 @@ function calcScore () {
   outputs["Total"] = score_total;
   
   log_json = JSON.stringify({'inputs': inputs, 'outputs': outputs});
-  //console.log(log_json);
+  console.log(log_json);
 }
     
 function openPage(pageName, elmnt, color) {

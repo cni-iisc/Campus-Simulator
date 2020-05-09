@@ -90,8 +90,18 @@ SPDX-License-Identifier: Apache-2.0-->
                                    <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
                                         <div class="card-body">
                                              <div class="form-row">
-                                                  <div class="form-group col-md-10">
-                                                       <select id="NOE" name="NOE">
+                                                  <div class="form-group col-md-12">
+                                                       <label for="cmpName">Company Name:</label>
+                                                       <input type="text" class="form-control" name="cmpName" id="cmpName" minlength="4" maxlength="60" placeholder="Company Name">
+                                                  </div>
+                                                  <div class="form-group col-md-12">
+                                                       <label for="emailAddr">Email Address:</label>
+                                                       <input type="email" class="form-control" name="emailAddr" id="emailAddr" minlength="4"  maxlength="60" placeholder="Email Address">
+                                                  </div>
+
+                                                  <p class="h6 mb-2 text-left">Nature of Establishment</p>
+                                                  <div class="form-group col-md-12">
+                                                       <select class="col-md-12" id="NOE" name="NOE">
                                                             <option value="1">IT / ITES / Software park</option>
                                                             <option value="2">Data / Call centre</option>
                                                             <option value="3">Telecommunication / Internet service</option>

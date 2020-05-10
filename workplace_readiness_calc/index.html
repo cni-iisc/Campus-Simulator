@@ -87,9 +87,8 @@ SPDX-License-Identifier: Apache-2.0-->
 	<div id="Qn" class="tabcontent">
         <div class="container">
             <div class="row">
-                <div class="col-8 col-md-12 col-lg-8">
+                <div class="w-100">
                     <form id="myForm" onsubmit="handleFormSubmit(this)">
-
                          <div class="accordion" id="accordionExample">
                               <div class="card">   
                                    <div class="card-header" id="headingOne">
@@ -97,7 +96,7 @@ SPDX-License-Identifier: Apache-2.0-->
                                         <button type="button" class="btn" data-toggle="collapse" data-target="#collapseOne">1. Nature of Establishment</button>									
                                         </h2>
                                    </div>
-                                   <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
+                                   <div id="collapseOne" class="collapse w-100" aria-labelledby="headingOne" data-parent="#accordionExample">
                                         <div class="card-body">
                                              <div class="form-row">
                                                   <div class="form-group col-md-12">
@@ -110,7 +109,7 @@ SPDX-License-Identifier: Apache-2.0-->
                                                   </div>
 
                                                   <p class="h6 mb-2 text-left">Nature of Establishment</p>
-                                                  <div class="form-group col-md-12">
+                                                  <div class="form-group col-md-12 mb-3">
                                                        <select class="col-md-12" id="NOE" name="NOE">
                                                             <option value="1">IT / ITES / Software park</option>
                                                             <option value="2">Data / Call centre</option>
@@ -380,7 +379,7 @@ SPDX-License-Identifier: Apache-2.0-->
                                                        <input class="form-control" type="number" name="tGapShift" id="tGapShift" min="0" value="0">
                                                   </div>
                                              </div>
-                                             <p class="h6 mb-2 text-left">Number of employees in a <b>shift</b> (including security, casual labour)</p>
+                                             <p class="h6 mb-2 text-left">Number of employees in a <b>shift</b> (including security, casual labourer). Also indicate the number of casual labourer / security separately.</p>
                                              <div class="form-row">
                                                   <table style="width: 100%;" id="shiftsTable">
                                                        <thead>
@@ -1381,6 +1380,11 @@ SPDX-License-Identifier: Apache-2.0-->
      <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
      <script>
           $(document).ready(function(){
+               // Alert user only in portrait mode on mobile browser...
+               if(window.innerHeight > window.innerWidth){ 
+                    alert("Please use this website in landscape mode for better experience or use a computer to fill the form.");
+               }
+
                // Dynamic gender table for shifts...
                $("#nShifts").on("input", function() {
                     var count_cal = $("#nShifts").val();

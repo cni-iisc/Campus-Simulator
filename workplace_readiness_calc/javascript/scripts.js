@@ -222,8 +222,24 @@ function calcScore () {
   var number_of_suggestions = 3;
   var suggestion = "";
 
-  // Office Infrastructure
+  var nM = inputs["nM_1"];
+  var nF = inputs["nF_1"];
+  var nOth = inputs["nOth_1"];
+  var pCS = inputs["pCS_1"];
+  
   var nEmp = inputs["nM_1"] + inputs["nF_1"] + inputs["nOth_1"];
+
+  for (var i=2; i<inputs["nShifts"]; ++i){
+    if (inputs["nM_"+(i).toString()]+inputs["nF_"+(i).toString()]+inputs["nOth_"+(i).toString()] > nEmp){
+      nM = inputs["nM_"+(i).toString()];
+      nF = inputs["nF_"+(i).toString()];
+      nOth = inputs["nOth_"+(i).toString()];
+      pCS = inputs["pCS_"+(i).toString()];
+      nEmp = inputs["nM_"+(i).toString()]+inputs["nF_"+(i).toString()]+inputs["nOth_"+(i).toString()];
+    }
+  }
+
+  // Office Infrastructure
   var nMeets = 4;
   var cFactor = 1;
   if(inputs["opnCubArea"]>0){
@@ -261,8 +277,8 @@ function calcScore () {
   }
 
   // Toilet scores
-  var nGntsTlt = inputs["nM_1"] + inputs["nOth_1"]/2.0; 
-  var nLdsTlt = inputs["nF_1"] + inputs["nOth_1"]/2.0; 
+  var nGntsTlt = nM + nOth/2.0; 
+  var nLdsTlt = nF + nOth/2.0; 
   var avgTltVstsPrDy = 5; 
   var avgTltDrtn = 4;
   var tltCnctrtnHrs = 4; 
@@ -642,7 +658,6 @@ function calcScore () {
   overall_report +=  score_total/10;
   overall_report += "</div><br><br>"
 
-
 	var resTable = "";
 	resTable += "<table class='table table-bordered'><thead class='bg-dark'>";
 	resTable += "<th>Readiness category</th><th>Score</th>";
@@ -657,10 +672,14 @@ function calcScore () {
   resTable += "<tr><td>Cafeteria/pantry</td><td>" + score_cafeteria_scaled + "</td><td>" + sg_cafeteria + "</td></tr>"
 	resTable += "<tr><td>Hygiene and sanitation</td><td>" + score_sanitation + "</td><td>" + sg_sanitation + "</td></tr>"
   resTable += "<tr><td>Transportation</td><td>" + score_total_transport_scaled + "</td><td>" + sg_transport + "</td></tr>"
-  resTable += "<tr><td>Total</td><td>" + score_total + "</td><td>" + sg_total + "</td></tr>"
+  //resTable += "<tr><td>Total <br>(Max. score: 1000)</td><td>" + score_total + "</td><td>" + sg_total + "</td></tr>"
   resTable += "</table>";
-  document.getElementById("scoreTable").innerHTML = greeting + overall_report + resTable;
-  
+  if (inputs["cmpName"]!=""){
+    document.getElementById("scoreTable").innerHTML = greeting + overall_report + resTable;
+  } else {
+    document.getElementById("scoreTable").innerHTML = overall_report + resTable;
+  }
+
   var outputs = new Object();
   outputs["Infrastructure"] = score_office_infra;
   outputs["Epidemic related: Precautions"] = score_epidemic;

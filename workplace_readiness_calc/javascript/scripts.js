@@ -653,7 +653,7 @@ function calcScore () {
   
   var greeting = "<b>Company name:  " + inputs['cmpName'] + "</b><br><br>"; 
   var overall_report = "<div class='overall_report p-3'><b>Your overall COVID-19 readiness score is ";
-  overall_report += score_total  
+  overall_report += score_total  + " / 1000"
   overall_report += "<br>Your percentile score among your type of establishment is "
   overall_report +=  score_total/10;
   overall_report += "</div><br><br>"

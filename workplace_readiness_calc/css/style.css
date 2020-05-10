@@ -155,6 +155,10 @@ a:link, .nav a, .nav a:visited {
     display: none;
   }
 }
+@media screen and (min-width: 1199px) {
+  .header-narrow {
+   display: none;
+ }
 
 .overall_report{
   font-size: 18px;

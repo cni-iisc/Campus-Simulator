@@ -8,7 +8,7 @@ body, html {
 /* Style tab links */
 .btn{
   text-align: left;
-  font-size: 20px;
+  font-size: 18px;
   background-color: Transparent;
   background-repeat:no-repeat;
   color: white;
@@ -164,3 +164,6 @@ a:link, .nav a, .nav a:visited {
   /* height: 70px; */
 }
 
+.card-header {
+    width: 100%;
+}

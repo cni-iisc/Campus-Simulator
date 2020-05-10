@@ -24,7 +24,7 @@ body, html {
   background-color: #3e8914;
   border: none;
   border-radius: 10px;
-  height: 50px;
+  /*height: 50px; */
 }
 
 .prnt-btn{
@@ -32,7 +32,6 @@ body, html {
   background-color: #0086b3;
   border: none;
   border-radius: 10px;
-  height: 50px;
 }
 
 .sub-btn:hover{
@@ -165,7 +164,6 @@ a:link, .nav a, .nav a:visited {
   background-color: #0086b3;
   border: none;
   border-radius: 10px;
-  /* height: 70px; */
 }
 
 .card-header {

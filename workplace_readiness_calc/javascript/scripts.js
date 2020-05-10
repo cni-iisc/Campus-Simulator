@@ -660,7 +660,7 @@ function calcScore () {
 
 	var resTable = "";
 	resTable += "<table class='table table-bordered'><thead class='bg-dark'>";
-	resTable += "<th>Readiness category</th><th>Score</th>";
+	resTable += "<th>Readiness category</th><th>Score (Max. 100)</th>";
   resTable += "<th>Specific suggestions for each readiness category</th></thead>";
   resTable += "<tr><td>Infrastructure</td><td>" + score_office_infra + "</td><td>" + sg_office_infra + "</td></tr>"
   resTable += "<tr><td>Epidemic related: Precautions</td><td>" + score_epidemic + "</td><td>" + sg_epidemic + "</td></tr>"

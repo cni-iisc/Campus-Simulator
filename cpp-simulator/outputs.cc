@@ -72,6 +72,9 @@ string intervention_rep(Intervention i){
   case Intervention::intv_ward_containment:
 	return "intv_ward_containment";
 	break;
+  case Intervention::intv_file_read:
+	return "intv_file_read";
+	break;
   default:
 	assert(false);
 	break;

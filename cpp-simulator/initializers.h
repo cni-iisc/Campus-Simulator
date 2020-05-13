@@ -13,6 +13,7 @@ std::vector<workplace> init_workplaces();
 std::vector<community> init_community();
 std::vector<agent> init_nodes();
 std::vector<std::vector<nbr_cell>> init_nbr_cells();
+std::vector<intervention_params> init_intervention_params();
 
 matrix<double> compute_community_distances(const std::vector<community>& communities);
 

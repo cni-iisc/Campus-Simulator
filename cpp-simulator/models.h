@@ -24,7 +24,8 @@ enum class Intervention {
    intv_NYC=12,
    intv_Mum=13,
    intv_nbr_containment=14,
-   intv_ward_containment=15
+   intv_ward_containment=15,
+   intv_file_read=16
 };
 
 struct location{
@@ -76,7 +77,20 @@ const double STATE_TRAN[][3] =
    {0.2730000,   0.7090000,   0.5000000}
   };
 
-
+struct intervention_params{
+    count_type num_days = 0;
+    double compliance = 0.9;
+    bool case_isolation = false;
+    bool home_quarantine = false;
+    bool lockdown = false;
+    bool social_dist_elderly = false; 
+    bool school_closed = false;
+    bool workplace_odd_even = false;
+    double SC_factor = 0;
+    double community_factor = 1;
+    bool neighbourhood_containment = false;
+    bool ward_containment = false;
+};
 //These are parameters associated with the disease progression
 const double NUM_DAYS_TO_RECOG_SYMPTOMS = 1;
 const bool SEED_INFECTION_FROM_FILE = false;
@@ -218,7 +232,7 @@ struct global_params{
   double NBR_CELL_SIZE = 1; //in km
   bool ENABLE_CONTAINMENT = false;
 
-  
+  std::string intervention_params_filename = "intervention_params.json";
 };
 extern global_params GLOBAL;
 

@@ -155,6 +155,81 @@ vector<vector<nbr_cell>> init_nbr_cells() {
   return nbr_cells;
 }
 
+void print_intervention_params(const int index, const intervention_params intv_params){
+	std::cout<<std::endl<<"Index : "<<index<<". num_days = "<<	intv_params.num_days;
+	std::cout<<". Case Isolation : " << intv_params.case_isolation;
+	std::cout<<". Home Quarantine : " << intv_params.home_quarantine;
+	std::cout<<". Lockdown : " << intv_params.lockdown;
+	std::cout<<". SDO : " << intv_params.social_dist_elderly;
+	std::cout<<". School Closed : " << intv_params.school_closed;
+	std::cout<<". workplace_odd_even : " << intv_params.workplace_odd_even;
+	std::cout<<". SC_factor : " << intv_params.SC_factor;
+	std::cout<<". community_factor : " << intv_params.community_factor;
+	std::cout<<". neighbourhood_containment : " << intv_params.neighbourhood_containment;
+	std::cout<<". ward_containment : " << intv_params.ward_containment;
+	std::cout<<". compliance : " << intv_params.compliance;
+}
+
+vector<intervention_params> init_intervention_params(){
+	vector<intervention_params> intv_params;
+	if(GLOBAL.INTERVENTION==Intervention::intv_file_read){
+		std::cout<<std::endl<<"Inside init_intervention_params";	
+		auto intvJSON = readJSONFile(GLOBAL.input_base + GLOBAL.intervention_params_filename);
+		//auto num_intervention_periods = intvJSON.GetArray().Size();
+		//intv_params.resize(num_intervention_periods);
+		
+		int index = 0;
+		for (auto &elem: intvJSON.GetArray()){
+			intervention_params temp;
+			if((elem.HasMember("num_days")) && (elem["num_days"].GetInt() > 0)){
+				temp.num_days = elem["num_days"].GetInt();
+				if(elem.HasMember("compliance")){
+					temp.compliance = elem["compliance"].GetDouble();
+				} else{
+					temp.compliance = GLOBAL.COMPLIANCE_PROBABILITY;
+				}		
+					
+				if(elem.HasMember("case_isolation")){
+					temp.case_isolation = elem["case_isolation"]["active"].GetBool();
+				}
+				if(elem.HasMember("home_quarantine")){
+					temp.home_quarantine = elem["home_quarantine"]["active"].GetBool();
+				}
+				if(elem.HasMember("lockdown")){
+					temp.lockdown = elem["lockdown"]["active"].GetBool();
+				}
+				if(elem.HasMember("social_dist_elderly")){
+					temp.social_dist_elderly = elem["social_dist_elderly"]["active"].GetBool();
+				}
+				if(elem.HasMember("school_closure")){
+					temp.school_closed = elem["school_closure"]["active"].GetBool();
+					if(elem["school_closure"].HasMember("SC_factor")){
+						temp.SC_factor = elem["school_closure"]["SC_factor"].GetDouble();
+					}
+					
+				}
+				if(elem.HasMember("community_factor")){
+					temp.community_factor = elem["community_factor"].GetDouble();
+				}
+				if(elem.HasMember("neighbourhood_containment")){
+					temp.neighbourhood_containment = elem["neighbourhood_containment"]["active"].GetBool();
+				}
+				if(elem.HasMember("ward_containment")){
+					temp.ward_containment = elem["ward_containment"]["active"].GetBool();
+				}
+			print_intervention_params(index, temp);
+			intv_params.push_back(temp);
+			++index;
+			}else{
+				std::cout<<std::endl<<"num_days not specified or less than 1. Skipping current index.";
+				assert(false);
+			}		
+		}
+	}
+	std::cout<<std::endl<<"Intervention params size = "<<intv_params.size();
+	return intv_params;
+}
+
 
 
 vector<double> compute_prob_infection_given_community(double infection_probability, bool set_uniform){

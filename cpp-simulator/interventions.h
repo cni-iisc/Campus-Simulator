@@ -39,11 +39,13 @@ void get_kappa_intv_fper_intv_sper_intv_tper(std::vector<agent>& nodes, std::vec
 
 void get_kappa_NYC(std::vector<agent>& nodes, std::vector<house>& homes, const std::vector<workplace>& workplaces, std::vector<community>& communities, std::vector<std::vector<nbr_cell>>& nbr_cells, int cur_time);
 
-void get_kappa_custom(std::vector<agent>& nodes, std::vector<house>& homes, const std::vector<workplace>& workplaces, std::vector<community>& communities, std::vector<std::vector<nbr_cell>>& nbr_cells, int cur_time, bool case_isolation, bool home_quarantine, bool lockdown, bool social_dist_elderly, bool school_closed, bool workplace_odd_even, double SC_factor , double community_factor ,bool neighbourhood_containment, bool ward_containment);
+void get_kappa_custom(std::vector<agent>& nodes, std::vector<house>& homes, const std::vector<workplace>& workplaces, std::vector<community>& communities, std::vector<std::vector<nbr_cell>>& nbr_cells, int cur_time, intervention_params intv_params);
 
 void get_kappa_containment(std::vector<agent>& nodes, std::vector<house>& homes, const std::vector<workplace>& workplaces, std::vector<community>& communities, std::vector<std::vector<nbr_cell>>& nbr_cells, int cur_time, double FIRST_PERIOD, Intervention intv);
 
 void get_kappa_Mumbai(std::vector<agent>& nodes, std::vector<house>& homes, const std::vector<workplace>& workplaces, std::vector<community>& communities, std::vector<std::vector<nbr_cell>>& nbr_cells, int cur_time, double FIRST_PERIOD, double SECOND_PERIOD);
+
+void get_kappa_file_read(std::vector<agent>& nodes, std::vector<house>& homes, const std::vector<workplace>& workplaces, std::vector<community>& communities, std::vector<std::vector<nbr_cell>>& nbr_cells, std::vector<intervention_params>& intv_params_vector, int cur_time);
 
 #endif
 

@@ -174,7 +174,7 @@ vector<intervention_params> init_intervention_params(){
 	vector<intervention_params> intv_params;
 	if(GLOBAL.INTERVENTION==Intervention::intv_file_read){
 		std::cout<<std::endl<<"Inside init_intervention_params";	
-		auto intvJSON = readJSONFile(GLOBAL.input_base + GLOBAL.intervention_params_filename);
+		auto intvJSON = readJSONFile(GLOBAL.input_base + GLOBAL.intervention_filename);
 		//auto num_intervention_periods = intvJSON.GetArray().Size();
 		//intv_params.resize(num_intervention_periods);
 		
@@ -201,12 +201,14 @@ vector<intervention_params> init_intervention_params(){
 				if(elem.HasMember("social_dist_elderly")){
 					temp.social_dist_elderly = elem["social_dist_elderly"]["active"].GetBool();
 				}
-				if(elem.HasMember("school_closure")){
-					temp.school_closed = elem["school_closure"]["active"].GetBool();
-					if(elem["school_closure"].HasMember("SC_factor")){
-						temp.SC_factor = elem["school_closure"]["SC_factor"].GetDouble();
-					}
-					
+				if(elem.HasMember("school_closed")){
+					temp.school_closed = elem["school_closed"]["active"].GetBool();
+					if(elem["school_closed"].HasMember("SC_factor")){
+						temp.SC_factor = elem["school_closed"]["SC_factor"].GetDouble();
+					}					
+				}
+				if(elem.HasMember("workplace_odd_even")){
+					temp.workplace_odd_even = elem["workplace_odd_even"]["active"].GetBool();
 				}
 				if(elem.HasMember("community_factor")){
 					temp.community_factor = elem["community_factor"].GetDouble();

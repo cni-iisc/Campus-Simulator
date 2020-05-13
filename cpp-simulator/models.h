@@ -232,7 +232,7 @@ struct global_params{
   double NBR_CELL_SIZE = 1; //in km
   bool ENABLE_CONTAINMENT = false;
 
-  std::string intervention_params_filename = "intervention_params.json";
+  std::string intervention_filename = "intervention_params.json";
 };
 extern global_params GLOBAL;
 

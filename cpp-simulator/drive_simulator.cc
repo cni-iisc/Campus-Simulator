@@ -115,6 +115,8 @@ int main(int argc, char** argv){
      cxxopts::value<double>()->default_value(DEFAULTS.NBR_CELL_SIZE))
      ("ENABLE_CONTAINMENT", "Enable containment",
      cxxopts::value<bool>()->default_value(DEFAULTS.ENABLE_CONTAINMENT))
+     ("intervention_filename", "intervention json filename",
+	 cxxopts::value<std::string>()->default_value(DEFAULTS.intervention_params_filename))
      ;
 
   auto optvals = options.parse(argc, argv);
@@ -202,6 +204,8 @@ int main(int argc, char** argv){
   GLOBAL.NBR_CELL_SIZE = optvals["NBR_CELL_SIZE"].as<double>();
   GLOBAL.ENABLE_CONTAINMENT = optvals["ENABLE_CONTAINMENT"].count();
   GLOBAL.WARD_CONTAINMENT_THRESHOLD = optvals["WARD_CONTAINMENT_THRESHOLD"].as<count_type>();
+
+  GLOBAL.intervention_filename = optvals["intervention_filename"].as<std::string>();
 
 
 

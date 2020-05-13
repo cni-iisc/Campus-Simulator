@@ -51,6 +51,7 @@ struct defaults{
   std::string NBR_CELL_SIZE = "0.178"; // in km
   std::string ENABLE_CONTAINMENT = "false";
   std::string WARD_CONTAINMENT_THRESHOLD  = "1";
+  std::string intervention_params_filename = "intervention_params.json";
 } DEFAULTS;
 
 #endif

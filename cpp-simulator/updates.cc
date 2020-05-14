@@ -1,15 +1,14 @@
 //Copyright [2020] [Indian Institute of Science, Bangalore & Tata Institute of Fundamental Research, Mumbai]
 //SPDX-License-Identifier: Apache-2.0
+#include <algorithm>
+#include <cassert>
+#include <cstdlib>
+#include <iostream>
+
 #include "updates.h"
 #include "interventions.h"
 
-#ifdef DEBUG
-#include <iostream>
-#include <cstdlib>
-#include <algorithm>
 using std::cerr;
-#endif
-
 using std::vector;
 
 bool mask_active(int cur_time){
@@ -97,6 +96,7 @@ node_update_status update_infection(agent& node, int cur_time){
 	  update_status.new_symptomatic = true;
 	}
 	else {
+	  node.state_before_recovery = node.infection_status;
 	  node.infection_status = Progression::recovered; //move to recovered
 	  node.infective = false;
 	}
@@ -116,6 +116,7 @@ node_update_status update_infection(agent& node, int cur_time){
 	  update_status.new_hospitalization = true;
 	}
 	else {
+	  node.state_before_recovery = node.infection_status;
 	  node.infection_status = Progression::recovered; //move to recovered
 	  node.infective = false;
 	}
@@ -135,6 +136,7 @@ node_update_status update_infection(agent& node, int cur_time){
 	  node.infective = false;
 	}
 	else {
+	  node.state_before_recovery = node.infection_status;
 	  node.infection_status = Progression::recovered; //move to recovered
 	  node.infective = false;
 	}
@@ -155,6 +157,7 @@ node_update_status update_infection(agent& node, int cur_time){
 	  node.infective = false;
 	}
 	else {
+	  node.state_before_recovery = node.infection_status;
 	  node.infection_status = Progression::recovered;//move to recovered
 	  node.infective = false;
 	}
@@ -369,10 +372,14 @@ void update_lambda_c_global(vector<community>& communities, const matrix<double>
 
 
 casualty_stats get_infected_community(const vector<agent>& nodes, const community& community){
-  count_type infected = 0;
-  count_type hd_area_infected = 0;
   count_type affected = 0;
   count_type hd_area_affected = 0;
+  count_type susceptible = 0;
+  count_type hd_area_susceptible = 0;
+  count_type exposed = 0;
+  count_type hd_area_exposed = 0;
+  count_type infective = 0;
+  count_type hd_area_infective = 0;
   count_type symptomatic = 0;
   count_type hd_area_symptomatic = 0;
   count_type hospitalised = 0;
@@ -381,27 +388,56 @@ casualty_stats get_infected_community(const vector<agent>& nodes, const communit
   count_type hd_area_critical = 0;
   count_type dead = 0;
   count_type hd_area_dead = 0;
-  count_type exposed = 0;
-  count_type hd_area_exposed = 0;
   count_type recovered = 0;
   count_type hd_area_recovered = 0;
+  count_type recovered_from_infective = 0;
+  count_type recovered_from_symptomatic = 0;
+  count_type recovered_from_hospitalised = 0;
+  count_type recovered_from_critical = 0;
+  count_type hd_area_recovered_from_infective = 0;
+  count_type hd_area_recovered_from_symptomatic = 0;
+  count_type hd_area_recovered_from_hospitalised = 0;
+  count_type hd_area_recovered_from_critical = 0;
 
+  count_type errors = 0;
+  
   const auto SIZE = community.individuals.size(); 
 
 #pragma omp parallel for default(none) shared(nodes, community)			\
-  reduction(+: infected, hd_area_infected, affected, hd_area_affected,	\
+  reduction(+: errors,													\
+			susceptible, hd_area_susceptible,							\
+			exposed, hd_area_exposed,									\
+			infective, hd_area_infective,								\
 			symptomatic, hd_area_symptomatic,							\
 			hospitalised, hd_area_hospitalised,							\
-			critical, hd_area_critical, dead, hd_area_dead,				\
-			exposed, hd_area_exposed, recovered, hd_area_recovered)
+			critical, hd_area_critical,									\
+			dead, hd_area_dead,											\
+			recovered, hd_area_recovered,								\
+			recovered_from_infective, recovered_from_symptomatic,		\
+			recovered_from_hospitalised, recovered_from_critical,		\
+			hd_area_recovered_from_infective,							\
+			hd_area_recovered_from_symptomatic,							\
+			hd_area_recovered_from_hospitalised,						\
+			hd_area_recovered_from_critical)
   for (count_type i=0; i<SIZE; ++i){
 	bool hd_area_resident = nodes[community.individuals[i]].hd_area_resident;
 	auto infection_status = nodes[community.individuals[i]].infection_status;
+	if (infection_status == Progression::susceptible){
+	  susceptible += 1;
+	  if(hd_area_resident){
+		hd_area_susceptible += 1;
+	  }
+	}
 	if (infection_status == Progression::exposed) {
 	  exposed +=1;
 	  if(hd_area_resident){
-        hd_area_affected += 1;
         hd_area_exposed += 1;
+      }
+	}
+	if (infection_status == Progression::infective) {
+	  infective +=1;
+	  if(hd_area_resident){
+        hd_area_infective += 1;
       }
 	}
 	if (infection_status == Progression::symptomatic) {
@@ -413,9 +449,39 @@ casualty_stats get_infected_community(const vector<agent>& nodes, const communit
 	if (infection_status == Progression::recovered) {
 	  recovered += 1;
 	  if(hd_area_resident){
-        hd_area_affected += 1;
         hd_area_recovered += 1;
       }
+	  auto state_before_recovery
+		= nodes[community.individuals[i]].state_before_recovery;
+	  switch(state_before_recovery){
+	  case Progression::infective:
+		recovered_from_infective += 1;
+		if(hd_area_resident){
+		  hd_area_recovered_from_infective += 1;
+		}
+		break;
+	  case Progression::symptomatic:
+		recovered_from_symptomatic += 1;
+		if(hd_area_resident){
+		  hd_area_recovered_from_symptomatic += 1;
+		}
+		break;
+	  case Progression::hospitalised:
+		recovered_from_hospitalised += 1;
+		if(hd_area_resident){
+		  hd_area_recovered_from_hospitalised += 1;
+		}
+		break;
+	  case Progression::critical:
+		recovered_from_critical += 1;
+		if(hd_area_resident){
+		  hd_area_recovered_from_critical += 1;
+		}
+		break;
+	  default:
+		errors += 1; //errors state_before_recovery
+		break;
+	  }
 	}
 	if (infection_status == Progression::hospitalised) {
 	  hospitalised += 1;
@@ -432,28 +498,33 @@ casualty_stats get_infected_community(const vector<agent>& nodes, const communit
 	if (infection_status == Progression::dead) {
 	  dead += 1;
 	  if(hd_area_resident){
-        hd_area_affected += 1;
         hd_area_dead += 1;
       }
 	}
-	if (infection_status == Progression::infective ||
-		infection_status == Progression::symptomatic ||
-		infection_status == Progression::hospitalised ||
-		infection_status == Progression::critical) {
-	  infected += 1;
-	  if(hd_area_resident){
-        hd_area_affected += 1;
-        hd_area_infected += 1;
-      }
-	}
   }
-  affected = exposed + infected + recovered + dead;
+  if(errors){
+	cerr << "erroneous state_before_recovery found\n";
+	assert(false);
+  }
+  
+  affected = exposed + infective + symptomatic
+	+ hospitalised + critical
+	+ recovered + dead;
 
+  hd_area_affected = hd_area_exposed + hd_area_infective + hd_area_symptomatic
+	+ hd_area_hospitalised + hd_area_critical
+	+ hd_area_recovered + hd_area_dead;
+
+  
   casualty_stats stat;
-  stat.infected = infected;
-  stat.hd_area_infected = hd_area_infected;
   stat.affected = affected;
   stat.hd_area_affected = hd_area_affected;
+  stat.susceptible = susceptible;
+  stat.hd_area_susceptible = hd_area_susceptible;
+  stat.exposed = exposed;
+  stat.hd_area_exposed = hd_area_exposed;
+  stat.infective = infective;
+  stat.hd_area_infective = hd_area_infective;
   stat.symptomatic = symptomatic;
   stat.hd_area_symptomatic = hd_area_symptomatic;
   stat.hospitalised = hospitalised;
@@ -462,10 +533,16 @@ casualty_stats get_infected_community(const vector<agent>& nodes, const communit
   stat.hd_area_critical = hd_area_critical;
   stat.dead = dead;
   stat.hd_area_dead = hd_area_dead;
-  stat.exposed = exposed;
-  stat.hd_area_exposed = hd_area_exposed;
   stat.recovered = recovered;
   stat.hd_area_recovered = hd_area_recovered;
+  stat.recovered_from_infective = recovered_from_infective;
+  stat.recovered_from_symptomatic = recovered_from_symptomatic;
+  stat.recovered_from_hospitalised = recovered_from_hospitalised;
+  stat.recovered_from_critical = recovered_from_critical;
+  stat.hd_area_recovered_from_infective = hd_area_recovered_from_infective;
+  stat.hd_area_recovered_from_symptomatic = hd_area_recovered_from_symptomatic;
+  stat.hd_area_recovered_from_hospitalised = hd_area_recovered_from_hospitalised;
+  stat.hd_area_recovered_from_critical = hd_area_recovered_from_critical;
 
   return stat;
   // Populate it afterwards...

@@ -394,6 +394,9 @@ struct agent{
 
   Progression infection_status = Progression::susceptible;
 
+  // for recovered nodes, what was the last stage before recovery?
+  Progression state_before_recovery = Progression::recovered;
+
   bool infective = false;
   count_type time_became_infective = 0;
 

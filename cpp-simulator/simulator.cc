@@ -205,18 +205,32 @@ plot_data_struct run_simulation(){
 	  //let row = [time_step/SIM_STEPS_PER_DAY,c,temp_stats[0],temp_stats[1],temp_stats[2],temp_stats[3],temp_stats[4]].join(",");
 	  plot_data.nums["csvContent"].push_back({time_step, {
 		  c,
-		  temp_stats.infected,
 		  temp_stats.affected,
+		  temp_stats.susceptible,
+		  temp_stats.exposed,
+		  temp_stats.infective,
 		  temp_stats.symptomatic,
 		  temp_stats.hospitalised,
 		  temp_stats.critical,
 		  temp_stats.dead,
-          temp_stats.hd_area_infected,
+		  temp_stats.recovered,
+		  temp_stats.recovered_from_infective,
+		  temp_stats.recovered_from_symptomatic,
+		  temp_stats.recovered_from_hospitalised,
+		  temp_stats.recovered_from_critical,
 		  temp_stats.hd_area_affected,
+		  temp_stats.hd_area_susceptible,
+		  temp_stats.hd_area_exposed,
+          temp_stats.hd_area_infective,
 		  temp_stats.hd_area_symptomatic,
           temp_stats.hd_area_hospitalised,
           temp_stats.hd_area_critical,
-          temp_stats.hd_area_dead
+          temp_stats.hd_area_dead,
+		  temp_stats.hd_area_recovered,
+		  temp_stats.hd_area_recovered_from_infective,
+		  temp_stats.hd_area_recovered_from_symptomatic,
+		  temp_stats.hd_area_recovered_from_hospitalised,
+		  temp_stats.hd_area_recovered_from_critical,
 		  }});
 
       //Update w_c value for this community, followed by update of lambdas

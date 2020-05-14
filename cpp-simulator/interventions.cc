@@ -119,15 +119,16 @@ bool should_be_isolated_node(const agent& node, const int cur_time){
    (time_since_symptoms <= (NUM_DAYS_TO_RECOG_SYMPTOMS+HOME_QUARANTINE_DAYS)*GLOBAL.SIM_STEPS_PER_DAY));
 }
 
-void mark_and_isolate_quarantined_homes(vector<agent>& nodes, vector<house>& homes, const int cur_time){
+void mark_homes_for_quarantine(const vector<agent>& nodes, vector<house>& homes, const int cur_time){
   //mark all homes for quarantine
   for (count_type count = 0; count < nodes.size(); ++count){
     if(should_be_isolated_node(nodes[count],cur_time)){
        homes[nodes[count].home].quarantined = true;
      }
   }
+}
 
-  //isolate all members in quarantined homes
+void isolate_quarantined_residents(vector<agent>& nodes, const vector<house>& homes, const int cur_time){
   for (count_type count = 0; count < homes.size(); ++count){
     if(homes[count].quarantined){
       for(count_type resident = 0; resident < homes[count].individuals.size(); ++resident){
@@ -566,6 +567,12 @@ struct intervention_decription {
 
 void get_kappa_custom_modular(vector<agent>& nodes, vector<house>& homes, const int cur_time,
 							  const intervention_decription& intv){
+  if(intv.home_quarantine){
+    reset_home_quarantines(homes);
+    mark_homes_for_quarantine(nodes, homes,cur_time);
+    //Don't isolate them yet; have to assign base kappas first.
+    //These members will be isolated at the end.
+  }
 #pragma omp parallel for default(none) shared(nodes, intv)
   for (count_type count = 0; count < nodes.size(); ++count){
     //choose base kappas
@@ -594,8 +601,7 @@ void get_kappa_custom_modular(vector<agent>& nodes, vector<house>& homes, const 
     }
   }
   if(intv.home_quarantine){
-    reset_home_quarantines(homes);
-    mark_and_isolate_quarantined_homes(nodes, homes, cur_time);
+    isolate_quarantined_residents(nodes, homes, cur_time);
   }
 }
 

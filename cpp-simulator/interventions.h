@@ -21,7 +21,7 @@ void reset_home_quarantines(std::vector<house>& homes);
 
 void modify_kappa_case_isolate_node(agent& node);
 
-bool should_be_isolated_node(const agent& node, int cur_time);
+bool should_be_isolated_node(const agent& node, const int cur_time, const int quarantine_days);
 
 void mark_and_isolate_quarantined_homes(std::vector<agent>& nodes, std::vector<house>& homes, int cur_time);
 

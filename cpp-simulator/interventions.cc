@@ -109,20 +109,20 @@ void modify_kappa_case_isolate_node(agent& node){
   node.kappa_C_incoming = min(0.1, node.kappa_C_incoming);
 }
 
-bool should_be_isolated_node(const agent& node, const int cur_time){
+bool should_be_isolated_node(const agent& node, const int cur_time, const int quarantine_days){
   double time_since_symptoms = cur_time
                               - (node.time_of_infection
                               + node.incubation_period
                               + node.asymptomatic_period);
   return ((node.compliant && node.entered_symptomatic_state) &&
    (time_since_symptoms > NUM_DAYS_TO_RECOG_SYMPTOMS*GLOBAL.SIM_STEPS_PER_DAY) &&
-   (time_since_symptoms <= (NUM_DAYS_TO_RECOG_SYMPTOMS+HOME_QUARANTINE_DAYS)*GLOBAL.SIM_STEPS_PER_DAY));
+   (time_since_symptoms <= (NUM_DAYS_TO_RECOG_SYMPTOMS + quarantine_days)*GLOBAL.SIM_STEPS_PER_DAY));
 }
 
 void mark_homes_for_quarantine(const vector<agent>& nodes, vector<house>& homes, const int cur_time){
   //mark all homes for quarantine
   for (count_type count = 0; count < nodes.size(); ++count){
-    if(should_be_isolated_node(nodes[count],cur_time)){
+    if(should_be_isolated_node(nodes[count],cur_time, HOME_QUARANTINE_DAYS)){
        homes[nodes[count].home].quarantined = true;
      }
   }
@@ -570,7 +570,7 @@ void get_kappa_custom_modular(vector<agent>& nodes, vector<house>& homes, const 
 							  const intervention_decription& intv){
   if(intv.home_quarantine){
     reset_home_quarantines(homes);
-    mark_homes_for_quarantine(nodes, homes,cur_time);
+    mark_homes_for_quarantine(nodes, homes, cur_time);
     //Don't isolate them yet; have to assign base kappas first.
     //These members will be isolated at the end.
   }
@@ -596,7 +596,7 @@ void get_kappa_custom_modular(vector<agent>& nodes, vector<house>& homes, const 
       modify_kappa_SC_node(nodes[count], intv.SC_factor);
     }
     if(intv.case_isolation){
-      if(should_be_isolated_node(nodes[count],cur_time)){
+      if(should_be_isolated_node(nodes[count], cur_time, SELF_ISOLATION_DAYS)){
         modify_kappa_case_isolate_node(nodes[count]);
       }
     }

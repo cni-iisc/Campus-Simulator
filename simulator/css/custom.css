@@ -21,21 +21,17 @@ body {
   display: flex;
 }
 
-.logos.foruth {
-  width: 44%;
-  padding-right: 0%;
-}
 .logos.third {
-  width: 20%;
-  padding-right: 3%;
+  width:20%;
+  padding-right: 0.5%;
 }
 .logos.second {
-  width: 44%;
-  padding-right: 3%;
+  width: 40%;
+  padding-right: 0.5%;
 }
 .logos.first {
-  width: 38%;
-  padding-right: 3%;
+  width: 40%;
+  padding-right: 0.1%;
 }
 .navbar-header > div {
   display: flex;
@@ -43,7 +39,7 @@ body {
 }
 .main-title {
   text-align: center;
-}
+} 
 .main-title h4 {
   font-size: 24px;
   font-weight: bold;

@@ -393,6 +393,8 @@ struct agent{
   // time_of_infection is initialized to zero before seeding
 
   Progression infection_status = Progression::susceptible;
+  bool entered_symptomatic_state = false;
+  bool entered_hospitalised_state = false;
 
   // for recovered nodes, what was the last stage before recovery?
   Progression state_before_recovery = Progression::recovered;

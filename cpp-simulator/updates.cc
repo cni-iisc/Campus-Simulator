@@ -94,6 +94,7 @@ node_update_status update_infection(agent& node, int cur_time){
 	  node.infection_status = Progression::symptomatic; //move to symptomatic
 	  node.infective = true;
 	  update_status.new_symptomatic = true;
+	  node.entered_symptomatic_state = true;
 	}
 	else {
 	  node.state_before_recovery = node.infection_status;
@@ -114,6 +115,7 @@ node_update_status update_infection(agent& node, int cur_time){
 	  node.infection_status = Progression::hospitalised; //move to hospitalisation
 	  node.infective = false;
 	  update_status.new_hospitalization = true;
+	  node.entered_hospitalised_state = true;
 	}
 	else {
 	  node.state_before_recovery = node.infection_status;

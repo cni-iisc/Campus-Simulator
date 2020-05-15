@@ -114,7 +114,7 @@ bool should_be_isolated_node(const agent& node, const int cur_time){
                               - (node.time_of_infection
                               + node.incubation_period
                               + node.asymptomatic_period);
-  return ((node.compliant) &&
+  return ((node.compliant && node.entered_symptomatic_state) &&
    (time_since_symptoms > NUM_DAYS_TO_RECOG_SYMPTOMS*GLOBAL.SIM_STEPS_PER_DAY) &&
    (time_since_symptoms <= (NUM_DAYS_TO_RECOG_SYMPTOMS+HOME_QUARANTINE_DAYS)*GLOBAL.SIM_STEPS_PER_DAY));
 }
@@ -168,8 +168,8 @@ void get_kappa_case_isolation(vector<agent>& nodes, const vector<house>& homes, 
 	nodes[count].kappa_W_incoming = 1;
 	nodes[count].kappa_C_incoming = 1;
 
-	if((nodes[count].compliant) &&
-	   (time_since_symptoms > NUM_DAYS_TO_RECOG_SYMPTOMS * SIM_STEPS_PER_DAY) &&
+	if((nodes[count].compliant && nodes[count].entered_symptomatic_state) &&
+	   (time_since_symptoms > NUM_DAYS_TO_RECOG_SYMPTOMS*SIM_STEPS_PER_DAY) &&
 	   (time_since_symptoms
 		<= (NUM_DAYS_TO_RECOG_SYMPTOMS + SELF_ISOLATION_DAYS) * SIM_STEPS_PER_DAY)){
 	  nodes[count].quarantined = true;
@@ -200,7 +200,7 @@ void get_kappa_SC(vector<agent>& nodes, const vector<house>& homes, const vector
 	nodes[count].kappa_W_incoming = 1;
 	nodes[count].kappa_C_incoming = 1;
 
-	if((nodes[count].compliant) &&
+	if((nodes[count].compliant && nodes[count].entered_symptomatic_state) &&
 	   (time_since_symptoms > NUM_DAYS_TO_RECOG_SYMPTOMS * SIM_STEPS_PER_DAY) &&
 	   (time_since_symptoms
 		<= (NUM_DAYS_TO_RECOG_SYMPTOMS + SELF_ISOLATION_DAYS) * SIM_STEPS_PER_DAY)){
@@ -230,7 +230,7 @@ void get_kappa_home_quarantine(vector<agent>& nodes, vector<house>& homes, const
 	  - (nodes[count].time_of_infection
 		 + nodes[count].incubation_period
 		 + nodes[count].asymptomatic_period);
-	if((nodes[count].compliant) &&
+	if((nodes[count].compliant && nodes[count].entered_symptomatic_state) &&
 	   (time_since_symptoms > NUM_DAYS_TO_RECOG_SYMPTOMS*GLOBAL.SIM_STEPS_PER_DAY) &&
 	   (time_since_symptoms
 		<= (NUM_DAYS_TO_RECOG_SYMPTOMS+HOME_QUARANTINE_DAYS)*GLOBAL.SIM_STEPS_PER_DAY)){
@@ -310,7 +310,7 @@ void get_kappa_CI_HQ(vector<agent>& nodes, vector<house>& homes, const vector<wo
 	  - (nodes[count].time_of_infection
 		 + nodes[count].incubation_period
 		 + nodes[count].asymptomatic_period);
-	if((nodes[count].compliant) &&
+	if((nodes[count].compliant && nodes[count].entered_symptomatic_state) &&
 	   (time_since_symptoms > NUM_DAYS_TO_RECOG_SYMPTOMS*GLOBAL.SIM_STEPS_PER_DAY)
 	   && (time_since_symptoms <= (NUM_DAYS_TO_RECOG_SYMPTOMS + HOME_QUARANTINE_DAYS) *GLOBAL.SIM_STEPS_PER_DAY)){
 	  homes[nodes[count].home].quarantined = true;
@@ -353,7 +353,7 @@ void get_kappa_CI_HQ_65P(vector<agent>& nodes, vector<house>& homes, const vecto
 	  - (nodes[count].time_of_infection
 		 + nodes[count].incubation_period
 		 + nodes[count].asymptomatic_period);
-	if((nodes[count].compliant) &&
+	if((nodes[count].compliant && nodes[count].entered_symptomatic_state) &&
 	   (time_since_symptoms > NUM_DAYS_TO_RECOG_SYMPTOMS*GLOBAL.SIM_STEPS_PER_DAY) &&
 	   (time_since_symptoms <= (NUM_DAYS_TO_RECOG_SYMPTOMS+HOME_QUARANTINE_DAYS)*GLOBAL.SIM_STEPS_PER_DAY)){
 	  homes[nodes[count].home].quarantined = true;
@@ -419,7 +419,7 @@ void get_kappa_CI_HQ_65P_SC(vector<agent>& nodes, vector<house>& homes, const ve
 	  - (nodes[count].time_of_infection
 		 + nodes[count].incubation_period
 		 + nodes[count].asymptomatic_period);
-	if((nodes[count].compliant) &&
+	if((nodes[count].compliant && nodes[count].entered_symptomatic_state) &&
 	   (time_since_symptoms > NUM_DAYS_TO_RECOG_SYMPTOMS*GLOBAL.SIM_STEPS_PER_DAY) &&
 	   (time_since_symptoms <= (NUM_DAYS_TO_RECOG_SYMPTOMS+HOME_QUARANTINE_DAYS)*GLOBAL.SIM_STEPS_PER_DAY)){
 	  homes[nodes[count].home].quarantined = true;
@@ -472,7 +472,7 @@ void get_kappa_CI_HQ_65P_SC_OE(vector<agent>& nodes, vector<house>& homes, const
 	  - (nodes[count].time_of_infection
 		 + nodes[count].incubation_period
 		 + nodes[count].asymptomatic_period);
-	if((nodes[count].compliant) &&
+	if((nodes[count].compliant && nodes[count].entered_symptomatic_state) &&
 	   (time_since_symptoms > NUM_DAYS_TO_RECOG_SYMPTOMS*GLOBAL.SIM_STEPS_PER_DAY) &&
 	   (time_since_symptoms <= (NUM_DAYS_TO_RECOG_SYMPTOMS+HOME_QUARANTINE_DAYS)*GLOBAL.SIM_STEPS_PER_DAY)){
 	  homes[nodes[count].home].quarantined = true;
@@ -496,6 +496,16 @@ void get_kappa_CI_HQ_65P_SC_OE(vector<agent>& nodes, vector<house>& homes, const
 	  nodes[count].kappa_C_incoming = 0.25;
 	}
 
+	if(nodes[count].workplace_type==WorkplaceType::office){
+		//odd-even rule for workplaces. 50% interactions for workplaces.
+		nodes[count].kappa_W = 0.5;
+		nodes[count].kappa_W_incoming = 0.5;
+	} else {
+		//school and colleges are closed
+		nodes[count].kappa_W = 0;
+		nodes[count].kappa_W_incoming = 0;
+	}
+
 	//homes SHOULD NOT BE MODIFIED IN THIS LOOP, ONLY READ
 	if(homes[nodes[count].home].quarantined){
 	  nodes[count].quarantined = true;
@@ -505,15 +515,6 @@ void get_kappa_CI_HQ_65P_SC_OE(vector<agent>& nodes, vector<house>& homes, const
       nodes[count].kappa_H_incoming = 0.75;
 	  nodes[count].kappa_W_incoming = 0;
 	  nodes[count].kappa_C_incoming = 0.1;
-	}
-	if(nodes[count].workplace_type==WorkplaceType::office){
-		//odd-even rule for workplaces. 50% interactions for workplaces.
-		nodes[count].kappa_W = 0.5;
-		nodes[count].kappa_W_incoming = 0.5;
-	} else {
-		//school and colleges are closed
-		nodes[count].kappa_W = 0;
-		nodes[count].kappa_W_incoming = 0;
 	}
   }
 }
@@ -621,7 +622,7 @@ void get_kappa_custom(vector<agent>& nodes, vector<house>& homes,
 		- (nodes[count].time_of_infection
 		   + nodes[count].incubation_period
 		   + nodes[count].asymptomatic_period);
-	  if((nodes[count].compliant) &&
+	  if((nodes[count].compliant && nodes[count].entered_symptomatic_state) &&
 		 (time_since_symptoms > NUM_DAYS_TO_RECOG_SYMPTOMS*GLOBAL.SIM_STEPS_PER_DAY) &&
 		 (time_since_symptoms <= (NUM_DAYS_TO_RECOG_SYMPTOMS+HOME_QUARANTINE_DAYS)*GLOBAL.SIM_STEPS_PER_DAY)){
 		homes[nodes[count].home].quarantined = true;
@@ -695,7 +696,7 @@ void get_kappa_custom(vector<agent>& nodes, vector<house>& homes,
 		}
   	}
 
-	if((nodes[count].compliant) && ((case_isolation && !home_quarantine) || (case_isolation && lockdown)) &&
+	if((nodes[count].compliant && nodes[count].entered_symptomatic_state) && ((case_isolation && !home_quarantine) || (case_isolation && lockdown)) &&
 	   (time_since_symptoms > NUM_DAYS_TO_RECOG_SYMPTOMS * SIM_STEPS_PER_DAY) &&
 	   (time_since_symptoms
 		<= (NUM_DAYS_TO_RECOG_SYMPTOMS + SELF_ISOLATION_DAYS) * SIM_STEPS_PER_DAY)){

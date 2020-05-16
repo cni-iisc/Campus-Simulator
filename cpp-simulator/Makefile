@@ -12,7 +12,7 @@ random = -DMERSENNE_TWISTER
 
 #Get the git commit ID
 GIT_HASH = $(shell git rev-parse HEAD)
-GIT_TREE_STATE=$(shell (git status --untracked-files=no --porcelain  | grep -q .) && echo dirty || echo clean)
+GIT_TREE_STATE=$(shell (git status --untracked-files=no --porcelain | grep -q .) && echo dirty || echo clean)
 
 include_paths = -Ilibs/ -Ilibs/cxxopts-2.2.0/include/
 obj = initializers.o models.o interventions.o updates.o simulator.o outputs.o drive_simulator.o
@@ -44,8 +44,8 @@ clean:
 
 .PHONY: check
 check:
-	ifeq ($(GIT_TREE_STATE), dirty)
-		$(error git state is not clean)
-	endif
+ifeq ($(GIT_TREE_STATE),dirty)
+	$(error git state is not clean)
+endif
 
 include $(wildcard $(DEPFILES))

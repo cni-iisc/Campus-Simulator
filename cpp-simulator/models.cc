@@ -15,14 +15,15 @@ void SEED_RNG(){
 #ifdef MERSENNE_TWISTER
   //TODO: Use better seeding.  This just seeds with a 32 bit integer.
   std::random_device rd;
-  GENERATOR.seed(rd());
+  GLOBAL.RNG_SEED = rd();
+  GENERATOR.seed(GLOBAL.RNG_SEED);
 #endif
 }
 
 void SEED_RNG_PROVIDED_SEED(count_type seed){
 #ifdef MERSENNE_TWISTER
-  //TODO: Use better seeding.  This just seeds with a 32 bit integer.
-  GENERATOR.seed(seed);
+  GLOBAL.RNG_SEED = seed;
+  GENERATOR.seed(GLOBAL.RNG_SEED);
 #endif
 }
 

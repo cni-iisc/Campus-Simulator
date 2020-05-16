@@ -115,6 +115,8 @@ void output_global_params(const string& output_dir){
   std::ofstream fout(output_dir + "/global_params.txt", std::ios::out);
   check_stream(fout, global_params_path);
 
+  fout << "RNG_SEED: " << GLOBAL.RNG_SEED << ";" << endl;
+
   fout << "COMPLIANCE_PROBABILITY: " << GLOBAL.COMPLIANCE_PROBABILITY << ";" << endl; 
   
   fout << "num_homes: " << GLOBAL.num_homes << ";" << endl; 

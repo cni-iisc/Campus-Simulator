@@ -11,7 +11,8 @@ debug =
 random = -DMERSENNE_TWISTER
 
 #Get the git commit ID
-commit = $(shell git rev-parse HEAD)
+GIT_HASH = $(shell git rev-parse HEAD)
+GIT_TREE_STATE=$(shell (git status --porcelain | grep -q .) && echo dirty || echo clean)
 
 include_paths = -Ilibs/ -Ilibs/cxxopts-2.2.0/include/
 obj = initializers.o models.o interventions.o updates.o simulator.o outputs.o drive_simulator.o
@@ -19,9 +20,7 @@ obj = initializers.o models.o interventions.o updates.o simulator.o outputs.o dr
 DEPFLAGS = -MMD -MP -MF $*.d
 
 CXX = g++
-CPPFLAGS = -Wall --std=c++14 -O3 $(DEPFLAGS) $(include_paths) $(parallel) $(timing) $(debug) $(random) -D GITHASH='"$(commit)"'
-
-
+CPPFLAGS = -Wall --std=c++14 -O3 $(DEPFLAGS) $(include_paths) $(parallel) $(timing) $(debug) $(random) -D GIT_HASH='"$(GIT_HASH)"' -D GIT_TREE_STATE='"$(GIT_TREE_STATE)"'
 
 all: drive_simulator
 

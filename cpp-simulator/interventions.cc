@@ -1,5 +1,7 @@
 //Copyright [2020] [Indian Institute of Science, Bangalore & Tata Institute of Fundamental Research, Mumbai]
 //SPDX-License-Identifier: Apache-2.0
+#include <cassert>
+
 #include "models.h"
 #include "interventions.h"
 
@@ -714,15 +716,22 @@ void get_kappa_containment(vector<agent>& nodes, vector<house>& homes, const vec
 
 void get_kappa_file_read(vector<agent>& nodes, vector<house>& homes, const vector<workplace>& workplaces, vector<community>& communities, vector<vector<nbr_cell>>& nbr_cells, vector<intervention_params>& intv_params_vector, int cur_time){
   count_type time_threshold = GLOBAL.NUM_DAYS_BEFORE_INTERVENTIONS;
-  double cur_day = cur_time/GLOBAL.SIM_STEPS_PER_DAY; //get current day. Division to avoid multiplication inside for loop.
-  uint intv_index = 0;
-  for (uint count = 0; count < intv_params_vector.size()-1; ++count){
-	  time_threshold+=intv_params_vector[count].num_days;
-	  if(cur_day >= time_threshold){
-		  intv_index++;
-	  }	  
+  count_type cur_day = cur_time/GLOBAL.SIM_STEPS_PER_DAY; //get current day. Division to avoid multiplication inside for loop.
+  const auto SIZE = intv_params_vector.size();
+
+  assert(SIZE > 0);
+  assert(cur_day > time_threshold);
+  count_type intv_index = 0;
+
+  for (count_type count = 0; count < SIZE - 1; ++count){
+	time_threshold += intv_params_vector[count].num_days;
+	if(cur_day >= time_threshold){
+	  ++intv_index;
+	} else {
+	  break;
+	}
   }
-  //assert((intv_index >= 0 && intv_index < intv_params_vector.size())); //need to include assert.h
+
   set_compliance(nodes,homes,intv_params_vector[intv_index].compliance);
   get_kappa_custom(nodes, homes, workplaces, communities, nbr_cells, cur_time, intv_params_vector[intv_index]);
 }

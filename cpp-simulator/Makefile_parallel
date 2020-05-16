@@ -44,8 +44,8 @@ clean:
 
 .PHONY: check
 check:
-	ifeq ($(GIT_TREE_STATE), dirty)
-		$(error git state is not clean)
-	endif
+ifeq ($(GIT_TREE_STATE),dirty)
+	$(error git state is not clean)
+endif
 
 include $(wildcard $(DEPFILES))

@@ -44,20 +44,35 @@ std::vector<double> updated_lambda_c_local_age_dependent(const std::vector<agent
 void update_lambda_c_global(std::vector<community>& communities, const matrix<double>& community_distance_matrix);
 
 struct casualty_stats{
-  count_type infected = 0;
-  count_type hd_area_infected = 0;
   count_type affected = 0;
   count_type hd_area_affected = 0;
+
+  count_type susceptible = 0;
+  count_type hd_area_susceptible = 0;
+  count_type exposed = 0;
+  count_type hd_area_exposed = 0;
+  count_type infective = 0;
+  count_type hd_area_infective = 0;
+  count_type symptomatic = 0;
+  count_type hd_area_symptomatic = 0;
   count_type hospitalised = 0;
   count_type hd_area_hospitalised = 0;
   count_type critical = 0;
   count_type hd_area_critical = 0;
   count_type dead = 0;
   count_type hd_area_dead = 0;
-  count_type exposed = 0;
-  count_type hd_area_exposed = 0;
   count_type recovered = 0;
   count_type hd_area_recovered = 0;
+
+  count_type recovered_from_infective = 0;
+  count_type recovered_from_symptomatic = 0;
+  count_type recovered_from_hospitalised = 0;
+  count_type recovered_from_critical = 0;
+  count_type hd_area_recovered_from_infective = 0;
+  count_type hd_area_recovered_from_symptomatic = 0;
+  count_type hd_area_recovered_from_hospitalised = 0;
+  count_type hd_area_recovered_from_critical = 0;
+
 };
 
 casualty_stats get_infected_community(const std::vector<agent>& nodes, const community& community);

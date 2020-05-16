@@ -321,6 +321,9 @@ struct agent{
   bool entered_symptomatic_state = false;
   bool entered_hospitalised_state = false;
 
+  // for recovered nodes, what was the last stage before recovery?
+  Progression state_before_recovery = Progression::recovered;
+
   bool infective = false;
 
   double lambda_h = 0;

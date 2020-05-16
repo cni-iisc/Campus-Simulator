@@ -112,7 +112,8 @@ void output_global_params(const string& output_dir){
   std::ofstream fout(output_dir + "/global_params.txt", std::ios::out);
   check_stream(fout, global_params_path);
 
-  fout << "GIT COMMIT HASH: " << GITHASH << ";" << endl;
+  fout << "GIT COMMIT HASH: " << GIT_HASH << ";" << endl;
+  fout << "GIT TREE STATE: " << GIT_TREE_STATE << ";" << endl;
 
   fout << "RNG_SEED: " << GLOBAL.RNG_SEED << ";" << endl;
 

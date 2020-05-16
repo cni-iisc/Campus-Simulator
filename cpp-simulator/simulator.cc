@@ -242,12 +242,12 @@ plot_data_struct run_simulation(){
         }
 
         for (count_type w = 0; w < GLOBAL.num_schools + GLOBAL.num_workplaces; ++w){
-          if(nodes[workplaces[w].individuals[0]].workplace_type == WorkplaceType::school){
-            workplaces[w].age_dependent_mixing = updated_lambda_w_age_dependent(nodes, workplaces[w], school_tx_u, school_tx_sigma, school_tx_vT);
-          }
-          else{
-            workplaces[w].age_dependent_mixing = updated_lambda_w_age_dependent(nodes, workplaces[w], workplace_tx_u, workplace_tx_sigma, workplace_tx_vT);
-          }
+			if(workplaces[w].workplace_type == WorkplaceType::school){
+				workplaces[w].age_dependent_mixing = updated_lambda_w_age_dependent(nodes, workplaces[w], school_tx_u, school_tx_sigma, school_tx_vT);
+			}
+			else{
+				workplaces[w].age_dependent_mixing = updated_lambda_w_age_dependent(nodes, workplaces[w], workplace_tx_u, workplace_tx_sigma, workplace_tx_vT);
+			}			
         }
 
         for (count_type c = 0; c < GLOBAL.num_communities; ++c){

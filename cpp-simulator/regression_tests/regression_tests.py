@@ -25,7 +25,7 @@ default_options['--HD_AREA_FACTOR'] =1.0
 default_options['--HD_AREA_EXPONENT'] =1.0
 default_options['--INTERVENTION'] =0
 default_options['--output_directory'] ="./output_files/"
-default_options['--input_directory'] ="../../../markov_simuls/staticInst/data/web_input_files/mumbai-new-100K/"
+default_options['--input_directory'] ="../../../markov_simuls/staticInst/data/web_input_files/bengaluru/"
 default_options['--CALIBRATION_DELAY'] =1
 default_options['--DAYS_BEFORE_LOCKDOWN'] =2
 default_options['--FIRST_PERIOD'] =3
@@ -105,7 +105,7 @@ current_test={}
 test_id = 'test_001'
 test_options = default_options.copy() #IMPORTANT to use the copy method.
 test_options['--output_directory'] += test_id
-test_flags = default_flags
+test_flags = default_flags.copy()
 
 current_test['test_id'] = test_id
 current_test['test_options'] = test_options
@@ -114,13 +114,13 @@ current_test['test_flags'] = test_flags
 regression_tests.append(current_test)
 
 # 2 Test all interventions
-for intervention in range(15):	
+for intervention in range(16):	
 	current_test={}
 	test_id = 'intervention_'+str(intervention)
 	test_options = default_options.copy()
 	test_options['--output_directory'] += test_id
 	test_options['--INTERVENTION'] = intervention
-	test_flags = default_flags
+	test_flags = default_flags.copy()
 
 	current_test['test_id'] = test_id
 	current_test['test_options'] = test_options
@@ -128,7 +128,36 @@ for intervention in range(15):
 
 	regression_tests.append(current_test)
 
+current_test={}
+test_id = 'intervention_14_enabled'
+test_options = default_options.copy()
+test_options['--output_directory'] += test_id
+test_options['--INTERVENTION'] = 14
+test_options['--WARD_CONTAINMENT_THRESHOLD'] = 0
+test_flags = default_flags.copy()
+test_flags['--ENABLE_CONTAINMENT'] = True
 
+current_test['test_id'] = test_id
+current_test['test_options'] = test_options
+current_test['test_flags'] = test_flags
+
+regression_tests.append(current_test)
+
+
+current_test={}
+test_id = 'intervention_15_enabled'
+test_options = default_options.copy()
+test_options['--output_directory'] += test_id
+test_options['--INTERVENTION'] = 15
+test_options['--WARD_CONTAINMENT_THRESHOLD'] = 0
+test_flags = default_flags.copy()
+test_flags['--ENABLE_CONTAINMENT'] = True
+
+current_test['test_id'] = test_id
+current_test['test_options'] = test_options
+current_test['test_flags'] = test_flags
+
+regression_tests.append(current_test)
 
 
 # Launch all regresstion tests

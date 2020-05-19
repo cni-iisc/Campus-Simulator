@@ -76,7 +76,7 @@ const double STATE_TRAN[][3] =
    {0.2430000,   0.4320000,   0.5000000},
    {0.2730000,   0.7090000,   0.5000000}
   };
-
+/*
 struct intervention_params{
     count_type num_days = 0;
     double compliance = 0.9;
@@ -91,6 +91,56 @@ struct intervention_params{
     bool neighbourhood_containment = false;
     bool ward_containment = false;
 };
+*/
+struct intervention_params {
+  count_type num_days = 0;
+  double compliance = 0.9;
+  bool case_isolation = false;
+  bool home_quarantine = false;
+  bool lockdown = false;
+  bool social_dist_elderly = false; 
+  bool school_closed = false;
+  bool workplace_odd_even = false;
+  double SC_factor = 0;
+  double community_factor = 1;
+  bool neighbourhood_containment = false;
+  bool ward_containment = false;
+
+  intervention_params& set_case_isolation(bool c){
+	this->case_isolation = c;
+	return *this;
+  }
+  intervention_params& set_home_quarantine(bool c){
+	this->home_quarantine = c;
+	return *this;
+  }
+  intervention_params& set_lockdown(bool c){
+	this->lockdown = c;
+	return *this;
+  }
+  intervention_params& set_social_dist_elderly(bool c){
+	this->social_dist_elderly = c;
+	return *this;
+  }
+  intervention_params& set_school_closed(bool c){
+	this->school_closed = c;
+	return *this;
+  }
+  intervention_params& set_workplace_odd_even(bool c){
+	this->workplace_odd_even = c;
+	return *this;
+  }
+  intervention_params& set_SC_factor(double c){
+	this->SC_factor = c;
+	return *this;
+  }
+  intervention_params& set_community_factor(double c){
+	this->community_factor = c;
+	return *this;
+  }
+};
+
+
 //These are parameters associated with the disease progression
 const double NUM_DAYS_TO_RECOG_SYMPTOMS = 1;
 const bool SEED_INFECTION_FROM_FILE = false;

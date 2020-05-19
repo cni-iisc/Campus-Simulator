@@ -171,28 +171,44 @@ node_update_status update_infection(agent& node, int cur_time){
 }
 
 void update_all_kappa(vector<agent>& nodes, vector<house>& homes, vector<workplace>& workplaces, vector<community>& communities, vector<vector<nbr_cell>>& nbr_cells, vector<intervention_params>& intv_params, int cur_time){
+  intervention_params intv_params_local;
   if(cur_time < GLOBAL.NUM_DAYS_BEFORE_INTERVENTIONS*GLOBAL.SIM_STEPS_PER_DAY){
-    get_kappa_no_intervention(nodes, homes, workplaces, communities,cur_time);
+    //get_kappa_no_intervention(nodes, homes, workplaces, communities,cur_time);
+    get_kappa_custom_modular(nodes, homes, workplaces, communities, nbr_cells, cur_time, intv_params_local);
   }
   else{
     switch(GLOBAL.INTERVENTION){
     case Intervention::no_intervention:
-      get_kappa_no_intervention(nodes, homes, workplaces, communities, cur_time);
+      //get_kappa_no_intervention(nodes, homes, workplaces, communities, cur_time);
+      get_kappa_custom_modular(nodes, homes, workplaces, communities, nbr_cells, cur_time, intv_params_local);
       break;
     case Intervention::case_isolation:
-      get_kappa_case_isolation(nodes, homes, workplaces, communities, cur_time);
+      intv_params_local.case_isolation = true;
+      //get_kappa_case_isolation(nodes, homes, workplaces, communities, cur_time);
+      get_kappa_custom_modular(nodes, homes, workplaces, communities, nbr_cells, cur_time, intv_params_local);
       break;
     case Intervention::home_quarantine:
-      get_kappa_home_quarantine(nodes, homes, workplaces, communities, cur_time);
+      //get_kappa_home_quarantine(nodes, homes, workplaces, communities, cur_time);
+      intv_params_local.home_quarantine = true;
+      get_kappa_custom_modular(nodes, homes, workplaces, communities, nbr_cells, cur_time, intv_params_local);
       break;
     case Intervention::lockdown:
-      get_kappa_lockdown(nodes, homes, workplaces, communities, cur_time);
+      //get_kappa_lockdown(nodes, homes, workplaces, communities, cur_time);
+      intv_params_local.lockdown = true;
+      get_kappa_custom_modular(nodes, homes, workplaces, communities, nbr_cells, cur_time, intv_params_local);
       break;
     case Intervention::case_isolation_and_home_quarantine:
-      get_kappa_CI_HQ(nodes, homes, workplaces, communities, cur_time);
+      //get_kappa_CI_HQ(nodes, homes, workplaces, communities, cur_time);
+      intv_params_local.case_isolation = true;
+      intv_params_local.home_quarantine = true;
+      get_kappa_custom_modular(nodes, homes, workplaces, communities, nbr_cells, cur_time, intv_params_local);
       break;
     case Intervention::case_isolation_and_home_quarantine_sd_65_plus:
-      get_kappa_CI_HQ_65P(nodes, homes, workplaces, communities, cur_time);
+      //get_kappa_CI_HQ_65P(nodes, homes, workplaces, communities, cur_time);
+      intv_params_local.case_isolation = true;
+      intv_params_local.home_quarantine = true;
+      intv_params_local.social_dist_elderly = true;
+      get_kappa_custom_modular(nodes, homes, workplaces, communities, nbr_cells, cur_time, intv_params_local);
       break;
     case Intervention::lockdown_fper_ci_hq_sd_65_plus_sper_ci:
       get_kappa_LOCKDOWN_fper_CI_HQ_SD_65_PLUS_sper_CI(nodes, homes, workplaces, communities, cur_time,
@@ -218,7 +234,7 @@ void update_all_kappa(vector<agent>& nodes, vector<house>& homes, vector<workpla
                                                    GLOBAL.FIRST_PERIOD, GLOBAL.SECOND_PERIOD, GLOBAL.THIRD_PERIOD);
       break;
     case Intervention::intv_NYC:
-      get_kappa_NYC(nodes, homes, workplaces, communities, nbr_cells, cur_time);
+      get_kappa_NYC(nodes, homes, workplaces, communities, cur_time);
       break;
     case Intervention::intv_Mum:
       get_kappa_Mumbai(nodes, homes, workplaces, communities, nbr_cells, cur_time,
@@ -234,7 +250,8 @@ void update_all_kappa(vector<agent>& nodes, vector<house>& homes, vector<workpla
       get_kappa_file_read(nodes, homes, workplaces, communities, nbr_cells, intv_params, cur_time);
       break;
     default:
-      get_kappa_no_intervention(nodes, homes, workplaces, communities, cur_time);
+      //get_kappa_no_intervention(nodes, homes, workplaces, communities, cur_time);
+      get_kappa_custom_modular(nodes, homes, workplaces, communities, nbr_cells, cur_time, intv_params_local);
       break;
     }
   }

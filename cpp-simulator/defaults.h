@@ -50,7 +50,7 @@ struct defaults{
   std::string CITY_NE_LON = "77.78405146";
   std::string NBR_CELL_SIZE = "0.178"; // in km
   std::string ENABLE_CONTAINMENT = "false";
-  std::string WARD_CONTAINMENT_THRESHOLD  = "1";
+  std::string WARD_CONTAINMENT_THRESHOLD  = "0";
   std::string intervention_params_filename = "intervention_params.json";
 } DEFAULTS;
 

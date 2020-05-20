@@ -39,6 +39,7 @@ plot_data_struct run_simulation(){
   auto nodes = init_nodes();
 
   auto community_dist_matrix = compute_community_distances(communities);
+  auto community_fk_matrix = compute_community_distances_fkernel(community_dist_matrix);
 
 #ifdef TIMING
     auto end_time = std::chrono::high_resolution_clock::now();
@@ -247,7 +248,7 @@ plot_data_struct run_simulation(){
 
 	}
 
-	update_lambda_c_global(communities, community_dist_matrix);
+	update_lambda_c_global(communities, community_fk_matrix);
 
 
 	travel_fraction = updated_travel_fraction(nodes,time_step);

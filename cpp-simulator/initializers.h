@@ -14,6 +14,7 @@ std::vector<community> init_community();
 std::vector<agent> init_nodes();
 
 matrix<double> compute_community_distances(const std::vector<community>& communities);
+matrix<double> compute_community_distances_fkernel(const matrix<double>& community_distances);
 
 //Assign individuals to homes, workplace, community
 void assign_individual_home_community(std::vector<agent>& nodes, std::vector<house>& homes, std::vector<workplace>& workplaces, std::vector<community>& communities);

@@ -332,6 +332,19 @@ matrix<double> compute_community_distances(const vector<community>& communities)
   return dist_matrix;
 }
 
+matrix<double> compute_community_distances_fkernel(const matrix<double>& community_distances){
+  auto size = community_distances.size();
+  matrix<double> fk_matrix(size, vector<double>(size));
+  for(count_type i = 0; i < size; ++i){
+	fk_matrix[i][i] = 0;
+	for(count_type j = i + 1; j < size; ++j){
+	  fk_matrix[i][j] = f_kernel(community_distances[i][j]);
+	  fk_matrix[j][i] = fk_matrix[i][j];
+	}
+  }
+  return fk_matrix;
+}
+
 void assign_individual_home_community(vector<agent>& nodes, vector<house>& homes, vector<workplace>& workplaces, vector<community>& communities){
   //Assign individuals to homes, workplace, community
   for(count_type i = 0; i < nodes.size(); ++i){

@@ -356,8 +356,6 @@ void update_lambda_c_global(vector<community>& communities, const matrix<double>
 	double num = 0;
 	double denom = 0;
 
-#pragma omp parallel for default(none) shared(communities, community_distance_matrix, c1) \
-  reduction(+: num, denom)
 	for (count_type c2 = 0; c2 < SIZE; ++c2){
 	  num += f_kernel(community_distance_matrix[c1][c2])
 		* communities[c2].lambda_community;

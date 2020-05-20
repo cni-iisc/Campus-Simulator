@@ -25,8 +25,6 @@ auto duration(const std::chrono::time_point<T>& start, const std::chrono::time_p
 #endif
 
 
-constexpr count_type AGENT_INCOMING_LAMBDA_COMPONENTS = 4;
-
 plot_data_struct run_simulation(){
 #ifdef TIMING
   cerr << "simulator: starting JSON read\n";

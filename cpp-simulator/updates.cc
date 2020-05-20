@@ -357,9 +357,9 @@ void update_lambda_c_global(vector<community>& communities, const matrix<double>
 	double denom = 0;
 
 	for (count_type c2 = 0; c2 < SIZE; ++c2){
-	  num += f_kernel(community_distance_matrix[c1][c2])
-		* communities[c2].lambda_community;
-	  denom += f_kernel(community_distance_matrix[c1][c2]);
+	  double fk_val = f_kernel(community_distance_matrix[c1][c2]);
+	  num += fk_val * communities[c2].lambda_community;
+	  denom += fk_val;
 	}
 	if(denom==0){		
 		communities[c1].lambda_community_global = 0;

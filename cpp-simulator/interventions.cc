@@ -1028,7 +1028,7 @@ void get_kappa_file_read(vector<agent>& nodes, vector<house>& homes, const vecto
   const auto SIZE = intv_params_vector.size();
 
   assert(SIZE > 0);
-  assert(cur_day > time_threshold);
+  assert(cur_day >= time_threshold);
   count_type intv_index = 0;
 
   for (count_type count = 0; count < SIZE - 1; ++count){

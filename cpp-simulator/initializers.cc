@@ -214,10 +214,16 @@ vector<intervention_params> init_intervention_params(){
 					temp.community_factor = elem["community_factor"].GetDouble();
 				}
 				if(elem.HasMember("neighbourhood_containment")){
-					temp.neighbourhood_containment = elem["neighbourhood_containment"]["active"].GetBool();
+					temp.neighbourhood_containment = elem["neighbourhood_containment"]["active"].GetBool() && GLOBAL.ENABLE_CONTAINMENT;
+					if(!GLOBAL.ENABLE_CONTAINMENT){
+						std::cout<<std::endl<<"To enable containment strategies, add  --ENABLE_CONTAINMENT to argument list. Ignoring neighbourhood containment.";
+					}
 				}
 				if(elem.HasMember("ward_containment")){
-					temp.ward_containment = elem["ward_containment"]["active"].GetBool();
+					temp.ward_containment = elem["ward_containment"]["active"].GetBool() && GLOBAL.ENABLE_CONTAINMENT;
+					if(!GLOBAL.ENABLE_CONTAINMENT){
+						std::cout<<std::endl<<"To enable containment strategies, add  --ENABLE_CONTAINMENT to argument list. Ignoring ward containment.";
+					}
 				}
 			print_intervention_params(index, temp);
 			intv_params.push_back(temp);

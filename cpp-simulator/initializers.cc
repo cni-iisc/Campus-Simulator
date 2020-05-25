@@ -62,8 +62,10 @@ vector<house> init_homes(){
 		set_nbr_cell(homes[index]);
 	}
 
-    homes[index].age_independent_mixing.resize(GLOBAL.NUM_AGE_GROUPS, 0);
-    homes[index].age_dependent_mixing.resize(GLOBAL.NUM_AGE_GROUPS, 0);
+    homes[index].age_independent_mixing = 0;
+	if(GLOBAL.USE_AGE_DEPENDENT_MIXING){
+	  homes[index].age_dependent_mixing.resize(GLOBAL.NUM_AGE_GROUPS, 0);
+	}
 	++index;
   }
   return homes;
@@ -89,8 +91,10 @@ vector<workplace> init_workplaces() {
 				   elem["lon"].GetDouble(),
 				   WorkplaceType::school);
     
-    wps[index].age_independent_mixing.resize(GLOBAL.NUM_AGE_GROUPS, 0);
-    wps[index].age_dependent_mixing.resize(GLOBAL.NUM_AGE_GROUPS, 0);
+    wps[index].age_independent_mixing = 0;
+	if(GLOBAL.USE_AGE_DEPENDENT_MIXING){
+	  wps[index].age_dependent_mixing.resize(GLOBAL.NUM_AGE_GROUPS, 0);
+	}
     ++index;
   }
   assert(index == GLOBAL.num_schools);
@@ -100,9 +104,10 @@ vector<workplace> init_workplaces() {
 				   WorkplaceType::office);
 
     wps[index].office_type = static_cast<OfficeType>(elem["officeType"].GetInt());
-    wps[index].age_independent_mixing.resize(GLOBAL.NUM_AGE_GROUPS, 0);
-    wps[index].age_dependent_mixing.resize(GLOBAL.NUM_AGE_GROUPS, 0);
-
+    wps[index].age_independent_mixing = 0;
+	if(GLOBAL.USE_AGE_DEPENDENT_MIXING){
+	  wps[index].age_dependent_mixing.resize(GLOBAL.NUM_AGE_GROUPS, 0);
+	}
     ++index;
   }
   assert(index == GLOBAL.num_schools + GLOBAL.num_workplaces);

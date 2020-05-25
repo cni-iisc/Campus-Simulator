@@ -262,26 +262,21 @@ void update_all_kappa(vector<agent>& nodes, vector<house>& homes, vector<workpla
   }
 }
 
-vector<double> updated_lambda_w_age_independent(const vector<agent>& nodes, const workplace& workplace){
+double updated_lambda_w_age_independent(const vector<agent>& nodes, const workplace& workplace){
   double sum_value = 0;
   vector<double> lambda_age_group(GLOBAL.NUM_AGE_GROUPS);
   for (count_type i=0; i < workplace.individuals.size(); ++i){
 	sum_value += nodes[workplace.individuals[i]].lambda_w;
   }
-  std::fill(lambda_age_group.begin(), lambda_age_group.end(), workplace.scale*sum_value);
-  return lambda_age_group;
-  // Populate it afterwards...
+  return workplace.scale*sum_value;
 }
 
-vector<double> updated_lambda_h_age_independent(const vector<agent>& nodes, const house& home){
+double updated_lambda_h_age_independent(const vector<agent>& nodes, const house& home){
   double sum_value = 0;
-  vector<double> lambda_age_group(GLOBAL.NUM_AGE_GROUPS);
   for (count_type i=0; i<home.individuals.size(); ++i){
 	sum_value += nodes[home.individuals[i]].lambda_h;
   }
-  std::fill(lambda_age_group.begin(), lambda_age_group.end(), home.scale*sum_value);
-  return lambda_age_group;
-  // Populate it afterwards...
+  return  home.scale*sum_value;
 }
 
 vector<double> updated_lambda_h_age_dependent(const vector<agent>& nodes, const house& home, const matrix<double>& home_tx_u, const vector<double>& home_tx_sigma, const matrix<double>& home_tx_vT){
@@ -428,14 +423,14 @@ void update_lambdas(agent&node, const vector<house>& homes, const vector<workpla
   else {
 	//No null check for home as every agent has a home
 	node.lambda_incoming.home = node.kappa_H_incoming
-	  * homes[node.home].age_independent_mixing[0]
+	  * homes[node.home].age_independent_mixing
 	  * node.hd_area_factor;
 	//If the agent lives in a high population density area, eg, a slum
 
 	//FEATURE_PROPOSAL: make the mixing dependent on node.age_group;
 	if(node.workplace != WORKPLACE_HOME) {
 	  node.lambda_incoming.work = (node.attending?1.0:GLOBAL.ATTENDANCE_LEAKAGE)*node.kappa_W_incoming
-		* workplaces[node.workplace].age_independent_mixing[0];
+		* workplaces[node.workplace].age_independent_mixing;
 	  //FEATURE_PROPOSAL: make the mixing dependent on node.age_group;
 	}
 

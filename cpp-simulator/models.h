@@ -582,7 +582,7 @@ struct house{
   bool compliant;
   double non_compliance_metric = 0; //0 - compliant, 1 - non-compliant
   bool quarantined = false;
-  std::vector<double> age_independent_mixing;
+  double age_independent_mixing;
   std::vector<double> age_dependent_mixing;
 
   //age_dependent_mixing not added yet, since it is unused
@@ -607,7 +607,7 @@ struct workplace {
   WorkplaceType workplace_type;
   OfficeType office_type = OfficeType::other;
   bool quarantined = false;
-  std::vector<double> age_independent_mixing;
+  double age_independent_mixing;
   std::vector<double> age_dependent_mixing;
 
   //age_dependent_mixing not added yet, since it is unused

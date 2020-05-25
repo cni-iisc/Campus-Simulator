@@ -526,7 +526,7 @@ matrix<double> compute_community_distances_fkernel(const matrix<double>& communi
   auto size = community_distances.size();
   matrix<double> fk_matrix(size, vector<double>(size));
   for(count_type i = 0; i < size; ++i){
-	fk_matrix[i][i] = 0;
+	fk_matrix[i][i] = f_kernel(community_distances[i][i]);
 	for(count_type j = i + 1; j < size; ++j){
 	  fk_matrix[i][j] = f_kernel(community_distances[i][j]);
 	  fk_matrix[j][i] = fk_matrix[i][j];

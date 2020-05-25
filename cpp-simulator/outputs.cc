@@ -69,6 +69,15 @@ string intervention_rep(Intervention i){
   case Intervention::intv_Mum_cyclic:
 	return "intv_Mum_cyclic";
 	break;
+  case Intervention::intv_nbr_containment:
+	return "intv_nbr_containment";
+	break;
+  case Intervention::intv_ward_containment:
+	return "intv_ward_containment";
+	break;
+  case Intervention::intv_file_read:
+	return "intv_file_read";
+	break;
   default:
 	assert(false);
 	break;
@@ -201,6 +210,9 @@ void output_global_params(const string& output_dir){
   fout << "MASK_ACTIVE: " << GLOBAL.MASK_ACTIVE << ";" << endl;
   fout << "MASK_FACTOR: " << GLOBAL.MASK_FACTOR << ";" << endl;
   fout << "MASK_START_DATE: " << GLOBAL.MASK_START_DATE << ";" << endl;
+
+  fout << "WARD_CONTAINMENT_THRESHOLD:" <<GLOBAL.WARD_CONTAINMENT_THRESHOLD << ";"<< endl;
+  fout << "ENABLE_CONTAINMENT:" <<GLOBAL.ENABLE_CONTAINMENT << ";"<< endl;
   
   fout.close();
 }
@@ -334,5 +346,24 @@ void output_csv_files(const std::string& output_directory,
 					 csvfile_path,
 					 elem.second);
 	gnuplot.plot_data(elem.first);
+  }
+  
+  for(const auto& elem: plot_data.quarantined_stats){
+    std::string csvfile_name = elem.first + ".csv";
+    std::string csvfile_path = output_directory + "/" + csvfile_name;
+    //This file contains quarantine_stats
+    output_timed_csv({"quarantined_individuals",
+            "quarantined_infectious",
+            "quarantined_cases"},
+    csvfile_path, elem.second);
+  }
+
+  for(const auto& elem: plot_data.curtailment_stats){
+    std::string csvfile_name = elem.first + ".csv";
+    std::string csvfile_path = output_directory + "/" + csvfile_name;
+    //This file contains quarantine_stats
+    output_timed_csv({"normal_interactions",
+            "curtailed_interactions"},
+    csvfile_path, elem.second);
   }
 }

@@ -182,3 +182,21 @@ void set_compliance(std::vector<agent> & nodes, std::vector<house> & homes,
 	node.compliant = homes[home].compliant;
   }
 }
+
+void set_nbr_cell(house &home){
+  if(!GLOBAL.ENABLE_CONTAINMENT) {
+    return;
+  }
+
+  location loc_temp;
+
+  loc_temp.lon = home.loc.lon;
+  loc_temp.lat = GLOBAL.city_SW.lat;  
+  home.neighbourhood.cell_x
+	= count_type(floor(earth_distance(loc_temp,GLOBAL.city_SW)/GLOBAL.NBR_CELL_SIZE));
+
+  loc_temp.lat = home.loc.lat;
+  loc_temp.lon = GLOBAL.city_SW.lon;
+  home.neighbourhood.cell_y
+	= count_type(floor(earth_distance(loc_temp,GLOBAL.city_SW)/GLOBAL.NBR_CELL_SIZE));
+}

@@ -1,7 +1,10 @@
 //Copyright [2020] [Indian Institute of Science, Bangalore & Tata Institute of Fundamental Research, Mumbai]
 //SPDX-License-Identifier: Apache-2.0
+#include <cassert>
+
 #include "models.h"
 #include "interventions.h"
+
 const int UPPER_AGE = 65;
 using std::vector;
 using std::min;
@@ -109,6 +112,16 @@ void modify_kappa_case_isolate_node(agent& node){
   node.kappa_C_incoming = min(0.1, node.kappa_C_incoming);
 }
 
+void modify_kappa_ward_containment(agent& node){
+  node.quarantined = true;
+  node.kappa_H = min(0.75, node.kappa_H);
+  node.kappa_W = min(0.25, node.kappa_W);
+  node.kappa_C = min(0.25, node.kappa_C);
+  node.kappa_H_incoming = min(0.75, node.kappa_H_incoming);
+  node.kappa_W_incoming = min(0.25, node.kappa_W_incoming);
+  node.kappa_C_incoming = min(0.25, node.kappa_C_incoming);
+}
+
 bool should_be_isolated_node(const agent& node, const int cur_time, const int quarantine_days){
   double time_since_symptoms = cur_time
                               - (node.time_of_infection
@@ -128,6 +141,29 @@ void mark_homes_for_quarantine(const vector<agent>& nodes, vector<house>& homes,
   }
 }
 
+void mark_neighbourhood_homes_for_quarantine(const vector<agent>& nodes, vector<house>& homes,
+												const vector<vector<nbr_cell>>& nbr_cells, const int cur_time){
+	for (count_type count = 0; count < nodes.size(); ++count){
+		double time_since_hospitalised = cur_time
+		- (nodes[count].time_of_infection
+			+ nodes[count].incubation_period
+			+ nodes[count].asymptomatic_period
+			+ nodes[count].symptomatic_period);
+		if(((nodes[count].entered_hospitalised_state) &&
+		(time_since_hospitalised <= (HOME_QUARANTINE_DAYS)*GLOBAL.SIM_STEPS_PER_DAY)) ){
+			homes[nodes[count].home].quarantined = true;		
+			//TODO: Need to check if the nbr_cell's quarantined flag needs to be set.
+			grid_cell my_nbr_grid_cell = homes[nodes[count].home].neighbourhood;
+			nbr_cell my_nbr_cell = 	nbr_cells[my_nbr_grid_cell.cell_x][my_nbr_grid_cell.cell_y];	
+			count_type num_homes_in_cell = my_nbr_cell.houses_list.size();
+			for(count_type nbr_count = 0; nbr_count < num_homes_in_cell; ++nbr_count){
+				count_type neighbour = my_nbr_cell.houses_list[nbr_count];
+				homes[neighbour].quarantined = true;
+			}		
+		}
+	}
+
+}
 void isolate_quarantined_residents(vector<agent>& nodes, const vector<house>& homes, const int cur_time){
   for (count_type count = 0; count < homes.size(); ++count){
     if(homes[count].quarantined){
@@ -276,9 +312,11 @@ void get_kappa_lockdown(vector<agent>& nodes, const vector<house>& homes, const 
 	  nodes[count].kappa_C_incoming = 0.25;
 	  if(nodes[count].workplace_type==WorkplaceType::office){
 		nodes[count].kappa_W = 0.25;
+		nodes[count].kappa_W_incoming = 0.25;
 	  }
 	  else{
 		nodes[count].kappa_W = 0;
+		nodes[count].kappa_W_incoming = 0;
 	  }
 	}
 	else{ //non-compliant
@@ -392,20 +430,36 @@ void get_kappa_CI_HQ_65P(vector<agent>& nodes, vector<house>& homes, const vecto
 }
 
 void get_kappa_LOCKDOWN_fper_CI_HQ_SD_65_PLUS_sper_CI(vector<agent>& nodes, vector<house>& homes, const vector<workplace>& workplaces, const vector<community>& communities, const int cur_time, double FIRST_PERIOD, double SECOND_PERIOD){
+	intervention_params intv_params;
+	vector<vector<nbr_cell>> nbr_cells; //dummy variable  just to enable get_kappa_custom_modular function call.
 	if(cur_time < (GLOBAL.NUM_DAYS_BEFORE_INTERVENTIONS+FIRST_PERIOD)*GLOBAL.SIM_STEPS_PER_DAY){
-	  get_kappa_lockdown(nodes, homes, workplaces, communities, cur_time);
+	  intv_params.lockdown = true;
+      get_kappa_custom_modular(nodes, homes, workplaces, communities, nbr_cells, cur_time, intv_params);
+	  //get_kappa_lockdown(nodes, homes, workplaces, communities, cur_time);
 	} else if(cur_time < (GLOBAL.NUM_DAYS_BEFORE_INTERVENTIONS+FIRST_PERIOD+SECOND_PERIOD)*GLOBAL.SIM_STEPS_PER_DAY){
-	  get_kappa_CI_HQ_65P(nodes, homes, workplaces, communities, cur_time);
+	  //get_kappa_CI_HQ_65P(nodes, homes, workplaces, communities, cur_time);
+	  intv_params.case_isolation = true;
+	  intv_params.home_quarantine=true;
+	  intv_params.social_dist_elderly=true;
+      get_kappa_custom_modular(nodes, homes, workplaces, communities, nbr_cells, cur_time, intv_params);
 	}else{
-	  get_kappa_case_isolation(nodes, homes, workplaces, communities, cur_time);
+	  //get_kappa_case_isolation(nodes, homes, workplaces, communities, cur_time);
+	  intv_params.case_isolation=true;
+      get_kappa_custom_modular(nodes, homes, workplaces, communities, nbr_cells, cur_time, intv_params);
 	}
 }
 
 void get_kappa_LOCKDOWN_fper(vector<agent>& nodes, vector<house>& homes, const vector<workplace>& workplaces, const vector<community>& communities, const int cur_time, double FIRST_PERIOD){
+  intervention_params intv_params;
+  vector<vector<nbr_cell>> nbr_cells; //dummy variable  just to enable get_kappa_custom_modular function call.
   if(cur_time < (GLOBAL.NUM_DAYS_BEFORE_INTERVENTIONS+FIRST_PERIOD)*GLOBAL.SIM_STEPS_PER_DAY){
-	get_kappa_lockdown(nodes, homes, workplaces, communities, cur_time);
+	//get_kappa_lockdown(nodes, homes, workplaces, communities, cur_time);
+	intv_params.lockdown = true;
+	get_kappa_custom_modular(nodes, homes, workplaces, communities, nbr_cells, cur_time, intv_params);
   }else{
-	get_kappa_case_isolation(nodes, homes, workplaces, communities, cur_time);
+	//get_kappa_case_isolation(nodes, homes, workplaces, communities, cur_time);
+	intv_params.case_isolation = true;
+	get_kappa_custom_modular(nodes, homes, workplaces, communities, nbr_cells, cur_time, intv_params);
   }
 }
 
@@ -496,7 +550,7 @@ void get_kappa_CI_HQ_65P_SC_OE(vector<agent>& nodes, vector<house>& homes, const
 	  nodes[count].kappa_W_incoming = 0.25;
 	  nodes[count].kappa_C_incoming = 0.25;
 	}
-
+	
 	if(nodes[count].workplace_type==WorkplaceType::office){
 		//odd-even rule for workplaces. 50% interactions for workplaces.
 		nodes[count].kappa_W = 0.5;
@@ -507,6 +561,15 @@ void get_kappa_CI_HQ_65P_SC_OE(vector<agent>& nodes, vector<house>& homes, const
 		nodes[count].kappa_W_incoming = 0;
 	}
 
+	if(nodes[count].workplace_type==WorkplaceType::office){
+		//odd-even rule for workplaces. 50% interactions for workplaces.
+		nodes[count].kappa_W = 0.5;
+		nodes[count].kappa_W_incoming = 0.5;
+	} else {
+		//school and colleges are closed
+		nodes[count].kappa_W = 0;
+		nodes[count].kappa_W_incoming = 0;
+	}
 	//homes SHOULD NOT BE MODIFIED IN THIS LOOP, ONLY READ
 	if(homes[nodes[count].home].quarantined){
 	  nodes[count].quarantined = true;
@@ -519,6 +582,86 @@ void get_kappa_CI_HQ_65P_SC_OE(vector<agent>& nodes, vector<house>& homes, const
 	}
   }
 }
+
+void reset_community_containment(vector<community>& communities){
+	for(count_type count = 0; count<communities.size(); ++count){
+		//reset all wards as non-quarantined. The status will be updated depending on the household individuals.
+		communities[count].quarantined = false;
+	}
+}
+
+void mark_communities_for_containment(const vector<agent>& nodes, vector<community>& communities,const int cur_time){
+	vector<count_type> num_ward_hospitalised(communities.size(),0);
+	for (count_type count = 0; count < nodes.size(); ++count){
+		double time_since_hospitalised = cur_time
+		- (nodes[count].time_of_infection
+			+ nodes[count].incubation_period
+			+ nodes[count].asymptomatic_period
+			+ nodes[count].symptomatic_period);
+		if(((nodes[count].entered_hospitalised_state) &&
+		(time_since_hospitalised <= (HOME_QUARANTINE_DAYS)*GLOBAL.SIM_STEPS_PER_DAY)) ){
+			++num_ward_hospitalised[nodes[count].community];
+		}
+	}
+	for (count_type count = 0; count < communities.size(); ++count){
+		if(num_ward_hospitalised[count] > GLOBAL.WARD_CONTAINMENT_THRESHOLD){
+			communities[count].quarantined = true;
+		}
+	}
+}
+
+void get_kappa_custom_modular(std::vector<agent>& nodes, std::vector<house>& homes, const std::vector<workplace>& workplaces, std::vector<community>& communities, std::vector<std::vector<nbr_cell>>& nbr_cells, const int cur_time, const intervention_params intv_params){
+  if(intv_params.home_quarantine || intv_params.neighbourhood_containment){
+    reset_home_quarantines(homes);
+  }
+  if(intv_params.home_quarantine ){
+    mark_homes_for_quarantine(nodes, homes, cur_time);
+    //Don't isolate them yet; have to assign base kappas first.
+    //These members will be isolated at the end.
+  }
+  if(intv_params.neighbourhood_containment){
+	mark_neighbourhood_homes_for_quarantine(nodes, homes, nbr_cells, cur_time);
+  }
+
+  if(intv_params.ward_containment){
+	reset_community_containment(communities);
+	mark_communities_for_containment(nodes, communities,cur_time);
+  }
+
+#pragma omp parallel for default(none) shared(nodes, homes, communities)
+  for (count_type count = 0; count < nodes.size(); ++count){
+    //choose base kappas
+    if(intv_params.lockdown){
+      set_kappa_lockdown_node(nodes[count], cur_time);
+    }else{
+      set_kappa_base_node(nodes[count], intv_params.community_factor, cur_time);
+    }
+
+    //modifiers begin
+    if(intv_params.social_dist_elderly){
+      modify_kappa_SDE_node(nodes[count]);
+    }
+    if(intv_params.workplace_odd_even){
+	  //This is only for the old attendance implementation.  Now odd even should
+	  //be implemented in the attendance file.
+      modify_kappa_OE_node(nodes[count]);
+    }
+    if(intv_params.school_closed){
+      modify_kappa_SC_node(nodes[count], intv_params.SC_factor);
+    }
+    if(intv_params.case_isolation){
+      if(nodes[count].compliant && should_be_isolated_node(nodes[count], cur_time, SELF_ISOLATION_DAYS)){
+        modify_kappa_case_isolate_node(nodes[count]);
+      }
+    }
+	if(homes[nodes[count].home].quarantined
+	   && (intv_params.home_quarantine || (intv_params.neighbourhood_containment))){
+	    modify_kappa_case_isolate_node(nodes[count]);
+	}
+	if(nodes[count].compliant
+	   && communities[nodes[count].community].quarantined
+	   && intv_params.ward_containment){
+		   modify_kappa_ward_containment(nodes[count]);
 
 struct intervention_decription {
   bool case_isolation = false;
@@ -604,35 +747,80 @@ void get_kappa_custom_modular(vector<agent>& nodes, vector<house>& homes, const 
   if(intv.home_quarantine){
     isolate_quarantined_residents(nodes, homes, cur_time);
   }
+  /*
+  if(intv_params.home_quarantine){
+    isolate_quarantined_residents(nodes, homes, cur_time);
+  }
+  */
 }
 
-void get_kappa_custom(vector<agent>& nodes, vector<house>& homes,
-					  const vector<workplace>& workplaces,
-					  const vector<community>& communities, const int cur_time,
-					  const bool case_isolation = false,
-					  const bool home_quarantine = false,
-					  const bool lockdown = false,
-					  const bool social_dist_elderly = false,
-					  const bool school_closed = false,
-					  const bool workplace_odd_even = false,
-					  const double SC_factor = 0,
-					  const double community_factor = 1){
-
-  if(home_quarantine){
-	for(count_type count = 0; count<homes.size(); ++count){
-	  //reset all homes as non-quarantined. The status will be updated depending on the household individuals.
-	  homes[count].quarantined = false;
+void get_kappa_custom(vector<agent>& nodes, vector<house>& homes, const vector<workplace>& workplaces, vector<community>& communities, vector<vector<nbr_cell>>& nbr_cells, int cur_time, intervention_params intv_params){
+  
+  if(intv_params.home_quarantine || intv_params.neighbourhood_containment){
+	  for(count_type count = 0; count<homes.size(); ++count){
+		//reset all homes as non-quarantined. The status will be updated depending on the household individuals.
+		homes[count].quarantined = false;
   	}
+  }
+  
+  if(intv_params.home_quarantine){
+	
 	for (count_type count = 0; count < nodes.size(); ++count){
-	  double time_since_symptoms = cur_time
+		double time_since_symptoms = cur_time
 		- (nodes[count].time_of_infection
-		   + nodes[count].incubation_period
-		   + nodes[count].asymptomatic_period);
-	  if((nodes[count].compliant && nodes[count].entered_symptomatic_state) &&
-		 (time_since_symptoms > NUM_DAYS_TO_RECOG_SYMPTOMS*GLOBAL.SIM_STEPS_PER_DAY) &&
-		 (time_since_symptoms <= (NUM_DAYS_TO_RECOG_SYMPTOMS+HOME_QUARANTINE_DAYS)*GLOBAL.SIM_STEPS_PER_DAY)){
-		homes[nodes[count].home].quarantined = true;
-	  }
+			+ nodes[count].incubation_period
+			+ nodes[count].asymptomatic_period);
+		if((nodes[count].compliant) && (nodes[count].entered_symptomatic_state) &&
+		(time_since_symptoms > NUM_DAYS_TO_RECOG_SYMPTOMS*GLOBAL.SIM_STEPS_PER_DAY) &&
+		(time_since_symptoms <= (NUM_DAYS_TO_RECOG_SYMPTOMS+HOME_QUARANTINE_DAYS)*GLOBAL.SIM_STEPS_PER_DAY)){
+			homes[nodes[count].home].quarantined = true;
+		}
+	}
+  }
+
+  if(intv_params.neighbourhood_containment && GLOBAL.ENABLE_CONTAINMENT){	
+	for (count_type count = 0; count < nodes.size(); ++count){
+		double time_since_hospitalised = cur_time
+		- (nodes[count].time_of_infection
+			+ nodes[count].incubation_period
+			+ nodes[count].asymptomatic_period
+			+ nodes[count].symptomatic_period);
+		if(((nodes[count].entered_hospitalised_state) &&
+		(time_since_hospitalised <= (HOME_QUARANTINE_DAYS)*GLOBAL.SIM_STEPS_PER_DAY)) ){
+			homes[nodes[count].home].quarantined = true;		
+			//TODO: Need to check if the nbr_cell's quarantined flag needs to be set.
+			grid_cell my_nbr_grid_cell = homes[nodes[count].home].neighbourhood;
+			nbr_cell my_nbr_cell = 	nbr_cells[my_nbr_grid_cell.cell_x][my_nbr_grid_cell.cell_y];	
+			count_type num_homes_in_cell = my_nbr_cell.houses_list.size();
+			for(count_type nbr_count = 0; nbr_count < num_homes_in_cell; ++nbr_count){
+				count_type neighbour = my_nbr_cell.houses_list[nbr_count];
+				homes[neighbour].quarantined = true;
+			}		
+		}
+	}
+  }
+  
+  if(intv_params.ward_containment && GLOBAL.ENABLE_CONTAINMENT){
+	for(count_type count = 0; count<communities.size(); ++count){
+		//reset all wards as non-quarantined. The status will be updated depending on the household individuals.
+		communities[count].quarantined = false;
+	}
+	vector<count_type> num_ward_hospitalised(communities.size(),0);
+	for (count_type count = 0; count < nodes.size(); ++count){
+		double time_since_hospitalised = cur_time
+		- (nodes[count].time_of_infection
+			+ nodes[count].incubation_period
+			+ nodes[count].asymptomatic_period
+			+ nodes[count].symptomatic_period);
+		if(((nodes[count].entered_hospitalised_state) &&
+		(time_since_hospitalised <= (HOME_QUARANTINE_DAYS)*GLOBAL.SIM_STEPS_PER_DAY)) ){
+			++num_ward_hospitalised[nodes[count].community];
+		}
+	}
+	for (count_type count = 0; count < communities.size(); ++count){
+		if(num_ward_hospitalised[count] > GLOBAL.WARD_CONTAINMENT_THRESHOLD){
+			communities[count].quarantined = true;
+		}
 	}
   }
 
@@ -656,28 +844,44 @@ void get_kappa_custom(vector<agent>& nodes, vector<house>& homes,
 	nodes[count].kappa_C_incoming = 1;
 
 	if(nodes[count].compliant){
-		nodes[count].kappa_C = community_factor;
-		nodes[count].kappa_C_incoming = community_factor;
+		nodes[count].kappa_C = intv_params.community_factor;
+		nodes[count].kappa_C_incoming = intv_params.community_factor;
 	}
-
-	if(nodes[count].age>= UPPER_AGE && nodes[count].compliant && social_dist_elderly){
+	//ward containment
+	if(nodes[count].compliant
+	   && communities[nodes[count].community].quarantined
+	   && (intv_params.ward_containment && GLOBAL.ENABLE_CONTAINMENT)){
+	  nodes[count].quarantined = true;
+      nodes[count].kappa_H = 0.75;
+	  nodes[count].kappa_W = 0.25;
+	  nodes[count].kappa_C = 0.25;
+      nodes[count].kappa_H_incoming = 0.75;
 	  nodes[count].kappa_W_incoming = 0.25;
 	  nodes[count].kappa_C_incoming = 0.25;
 	}
 
-	if(nodes[count].workplace_type==WorkplaceType::office && workplace_odd_even){
+	//social distancing of elderly
+	if(nodes[count].age>= UPPER_AGE && nodes[count].compliant && intv_params.social_dist_elderly){
+	  nodes[count].kappa_W_incoming = 0.25;
+	  nodes[count].kappa_C_incoming = 0.25;
+	}
+
+	//workplace odd-even
+	if(nodes[count].workplace_type==WorkplaceType::office && intv_params.workplace_odd_even){
 		//odd-even rule for workplaces. 50% interactions for workplaces.
 		nodes[count].kappa_W = 0.5;
 		nodes[count].kappa_W_incoming = 0.5;
 	}
 
-	if (nodes[count].workplace_type==WorkplaceType::school && school_closed){
+	//school closure
+	if (nodes[count].workplace_type==WorkplaceType::school && intv_params.school_closed){
 		//school and colleges are closed
-		nodes[count].kappa_W = SC_factor;
-		nodes[count].kappa_W_incoming = SC_factor;
+		nodes[count].kappa_W = intv_params.SC_factor;
+		nodes[count].kappa_W_incoming = intv_params.SC_factor;
 	}
 
-	if(lockdown){
+	//lockdown
+	if(intv_params.lockdown){
 		if(nodes[count].compliant){
 			nodes[count].kappa_H = 2;
 			nodes[count].kappa_C = 0.25; //community value set above ignored.
@@ -702,8 +906,10 @@ void get_kappa_custom(vector<agent>& nodes, vector<house>& homes,
 		}
   	}
 
-	if((nodes[count].compliant && nodes[count].entered_symptomatic_state) && ((case_isolation && !home_quarantine) || (case_isolation && lockdown)) &&
-	   (time_since_symptoms > NUM_DAYS_TO_RECOG_SYMPTOMS * SIM_STEPS_PER_DAY) &&
+	//case isolation
+	if((nodes[count].compliant) && (nodes[count].entered_symptomatic_state)
+	   && ((intv_params.case_isolation && !intv_params.home_quarantine) || (intv_params.case_isolation && intv_params.lockdown)) &&
+	   (time_since_symptoms > NUM_DAYS_TO_RECOG_SYMPTOMS*GLOBAL.SIM_STEPS_PER_DAY) &&
 	   (time_since_symptoms
 		<= (NUM_DAYS_TO_RECOG_SYMPTOMS + SELF_ISOLATION_DAYS) * SIM_STEPS_PER_DAY)){
 	  nodes[count].quarantined = true;
@@ -716,7 +922,9 @@ void get_kappa_custom(vector<agent>& nodes, vector<house>& homes,
 	}
 
 	//homes SHOULD NOT BE MODIFIED IN THIS LOOP, ONLY READ
-	if(homes[nodes[count].home].quarantined && home_quarantine){
+	//home quarantine
+	if(homes[nodes[count].home].quarantined
+	   && (intv_params.home_quarantine || (intv_params.neighbourhood_containment && GLOBAL.ENABLE_CONTAINMENT))){
 	  nodes[count].quarantined = true;
       nodes[count].kappa_H = 0.75;
 	  nodes[count].kappa_W = 0;
@@ -731,46 +939,97 @@ void get_kappa_custom(vector<agent>& nodes, vector<house>& homes,
 
 
 void get_kappa_LD_fper_CI_HQ_SD65_SC_sper_SC_tper(vector<agent>& nodes, vector<house>& homes, const vector<workplace>& workplaces, const vector<community>& communities, const int cur_time, double FIRST_PERIOD, double SECOND_PERIOD, double THIRD_PERIOD){
+	intervention_params intv_params;
+	vector<vector<nbr_cell>> nbr_cells; //dummy variable  just to enable get_kappa_custom_modular function call.
 	if(cur_time < (GLOBAL.NUM_DAYS_BEFORE_INTERVENTIONS+FIRST_PERIOD)*GLOBAL.SIM_STEPS_PER_DAY){
-	  get_kappa_lockdown(nodes, homes, workplaces, communities, cur_time);
+	  //get_kappa_lockdown(nodes, homes, workplaces, communities, cur_time);
+	  intv_params.lockdown = true;
+	  get_kappa_custom_modular(nodes, homes, workplaces, communities, nbr_cells, cur_time, intv_params);
 	} else if(cur_time < (GLOBAL.NUM_DAYS_BEFORE_INTERVENTIONS+FIRST_PERIOD+SECOND_PERIOD)*GLOBAL.SIM_STEPS_PER_DAY){
-	  get_kappa_CI_HQ_65P_SC(nodes, homes, workplaces, communities, cur_time);
+	  //get_kappa_CI_HQ_65P_SC(nodes, homes, workplaces, communities, cur_time);
+	  intv_params.case_isolation = true;
+	  intv_params.home_quarantine = true;
+	  intv_params.social_dist_elderly = true;
+	  intv_params.school_closed = true;
+	  get_kappa_custom_modular(nodes, homes, workplaces, communities, nbr_cells, cur_time, intv_params);
 	} else if(cur_time < (GLOBAL.NUM_DAYS_BEFORE_INTERVENTIONS+FIRST_PERIOD+SECOND_PERIOD+THIRD_PERIOD)*GLOBAL.SIM_STEPS_PER_DAY){
-	  get_kappa_SC(nodes, homes, workplaces, communities, cur_time);
+	  //get_kappa_SC(nodes, homes, workplaces, communities, cur_time);
+	  intv_params.case_isolation = true;
+	  intv_params.school_closed = true;
+	  get_kappa_custom_modular(nodes, homes, workplaces, communities, nbr_cells, cur_time, intv_params);
 	}else{
-	  get_kappa_case_isolation(nodes, homes, workplaces, communities, cur_time);
+	  //get_kappa_case_isolation(nodes, homes, workplaces, communities, cur_time);
+	  intv_params.case_isolation = true;
+	  get_kappa_custom_modular(nodes, homes, workplaces, communities, nbr_cells, cur_time, intv_params);
 	}
 }
 
 void get_kappa_LD_fper_CI_HQ_SD65_SC_sper(vector<agent>& nodes, vector<house>& homes, const vector<workplace>& workplaces, const vector<community>& communities, const int cur_time, double FIRST_PERIOD, double SECOND_PERIOD){
+	intervention_params intv_params;
+	vector<vector<nbr_cell>> nbr_cells; //dummy variable  just to enable get_kappa_custom_modular function call.
 	if(cur_time < (GLOBAL.NUM_DAYS_BEFORE_INTERVENTIONS+FIRST_PERIOD)*GLOBAL.SIM_STEPS_PER_DAY){
-	  get_kappa_lockdown(nodes, homes, workplaces, communities, cur_time);
+	  //get_kappa_lockdown(nodes, homes, workplaces, communities, cur_time);
+	  intv_params.lockdown = true;
+	  get_kappa_custom_modular(nodes, homes, workplaces, communities, nbr_cells, cur_time, intv_params);
 	} else if(cur_time < (GLOBAL.NUM_DAYS_BEFORE_INTERVENTIONS+FIRST_PERIOD+SECOND_PERIOD)*GLOBAL.SIM_STEPS_PER_DAY){
-	  get_kappa_CI_HQ_65P_SC(nodes, homes, workplaces, communities, cur_time);
+	  //get_kappa_CI_HQ_65P_SC(nodes, homes, workplaces, communities, cur_time);
+	  intv_params.case_isolation = true;
+	  intv_params.home_quarantine = true;
+	  intv_params.social_dist_elderly = true;
+	  intv_params.school_closed = true;
+	  get_kappa_custom_modular(nodes, homes, workplaces, communities, nbr_cells, cur_time, intv_params);
 	} else{
-	  get_kappa_case_isolation(nodes, homes, workplaces, communities, cur_time);
+	  //get_kappa_case_isolation(nodes, homes, workplaces, communities, cur_time);
+	  intv_params.case_isolation = true;
+	  get_kappa_custom_modular(nodes, homes, workplaces, communities, nbr_cells, cur_time, intv_params);
 	}
 }
 
 void get_kappa_LD_fper_CI_HQ_SD65_SC_OE_sper(vector<agent>& nodes, vector<house>& homes, const vector<workplace>& workplaces, const vector<community>& communities, const int cur_time, double FIRST_PERIOD, double OE_SECOND_PERIOD){
+	intervention_params intv_params;
+	vector<vector<nbr_cell>> nbr_cells; //dummy variable  just to enable get_kappa_custom_modular function call.
 	if(cur_time < (GLOBAL.NUM_DAYS_BEFORE_INTERVENTIONS+FIRST_PERIOD)*GLOBAL.SIM_STEPS_PER_DAY){
-	  get_kappa_lockdown(nodes, homes, workplaces, communities, cur_time);
+	  //get_kappa_lockdown(nodes, homes, workplaces, communities, cur_time);
+	  intv_params.lockdown = true;
+	  get_kappa_custom_modular(nodes, homes, workplaces, communities, nbr_cells, cur_time, intv_params);
 	} else if(cur_time < (GLOBAL.NUM_DAYS_BEFORE_INTERVENTIONS+FIRST_PERIOD+OE_SECOND_PERIOD)*GLOBAL.SIM_STEPS_PER_DAY){
-	  get_kappa_CI_HQ_65P_SC_OE(nodes, homes, workplaces, communities, cur_time);
+	  //get_kappa_CI_HQ_65P_SC_OE(nodes, homes, workplaces, communities, cur_time);
+	  intv_params.case_isolation = true;
+	  intv_params.home_quarantine = true;
+	  intv_params.social_dist_elderly = true;
+	  intv_params.school_closed = true;
+	  intv_params.workplace_odd_even = true;
+	  get_kappa_custom_modular(nodes, homes, workplaces, communities, nbr_cells, cur_time, intv_params);
 	} else{
-	  get_kappa_case_isolation(nodes, homes, workplaces, communities, cur_time);
+	  //get_kappa_case_isolation(nodes, homes, workplaces, communities, cur_time);
+	  intv_params.case_isolation = true;
+	  get_kappa_custom_modular(nodes, homes, workplaces, communities, nbr_cells, cur_time, intv_params);
 	}
 }
 
 void get_kappa_intv_fper_intv_sper_intv_tper(vector<agent>& nodes, vector<house>& homes, const vector<workplace>& workplaces, const vector<community>& communities, const int cur_time, double FIRST_PERIOD, double SECOND_PERIOD, double THIRD_PERIOD){
+	intervention_params intv_params;
+	vector<vector<nbr_cell>> nbr_cells; //dummy variable  just to enable get_kappa_custom_modular function call.
 	if(cur_time < (GLOBAL.NUM_DAYS_BEFORE_INTERVENTIONS+FIRST_PERIOD)*GLOBAL.SIM_STEPS_PER_DAY){
-	  get_kappa_lockdown(nodes, homes, workplaces, communities, cur_time);
+	  //get_kappa_lockdown(nodes, homes, workplaces, communities, cur_time);
+	  intv_params.lockdown = true;
+	  get_kappa_custom_modular(nodes, homes, workplaces, communities, nbr_cells, cur_time, intv_params);
 	} else if(cur_time < (GLOBAL.NUM_DAYS_BEFORE_INTERVENTIONS+FIRST_PERIOD+SECOND_PERIOD)*GLOBAL.SIM_STEPS_PER_DAY){
-	  get_kappa_CI_HQ_65P_SC(nodes, homes, workplaces, communities, cur_time);
+	  //get_kappa_CI_HQ_65P_SC(nodes, homes, workplaces, communities, cur_time);
+	  intv_params.case_isolation = true;
+	  intv_params.home_quarantine = true;
+	  intv_params.social_dist_elderly = true;
+	  intv_params.school_closed = true;
+	  get_kappa_custom_modular(nodes, homes, workplaces, communities, nbr_cells, cur_time, intv_params);
 	} else if(cur_time < (GLOBAL.NUM_DAYS_BEFORE_INTERVENTIONS+FIRST_PERIOD+SECOND_PERIOD+THIRD_PERIOD)*GLOBAL.SIM_STEPS_PER_DAY){
-	  get_kappa_CI_HQ(nodes, homes, workplaces, communities, cur_time);
+	  //get_kappa_CI_HQ(nodes, homes, workplaces, communities, cur_time);
+	  intv_params.case_isolation = true;
+	  intv_params.home_quarantine = true;
+	  get_kappa_custom_modular(nodes, homes, workplaces, communities, nbr_cells, cur_time, intv_params);
 	}else{
-	  get_kappa_case_isolation(nodes, homes, workplaces, communities, cur_time);
+	  //get_kappa_case_isolation(nodes, homes, workplaces, communities, cur_time);
+	  intv_params.case_isolation = true;
+	  get_kappa_custom_modular(nodes, homes, workplaces, communities, nbr_cells, cur_time, intv_params);
 	}
 }
 
@@ -779,17 +1038,37 @@ void get_kappa_NYC(vector<agent>& nodes, vector<house>& homes, const vector<work
 	const double SECOND_PERIOD = 1;
 	const double THIRD_PERIOD = 3;
 	const double FOURTH_PERIOD = 5;
-
+	intervention_params intv_params;
+	vector<vector<nbr_cell>> nbr_cells; //dummy variable  just to enable get_kappa_custom_modular function call.
+	
 	if(cur_time < (GLOBAL.NUM_DAYS_BEFORE_INTERVENTIONS+FIRST_PERIOD)*GLOBAL.SIM_STEPS_PER_DAY){
-	  get_kappa_case_isolation(nodes, homes, workplaces, communities, cur_time);
+	  //get_kappa_case_isolation(nodes, homes, workplaces, communities, cur_time);
+	  intv_params.case_isolation = true;
+	  get_kappa_custom_modular(nodes, homes, workplaces, communities, nbr_cells, cur_time, intv_params);
 	} else if(cur_time < (GLOBAL.NUM_DAYS_BEFORE_INTERVENTIONS+FIRST_PERIOD+SECOND_PERIOD)*GLOBAL.SIM_STEPS_PER_DAY){
-	  get_kappa_custom(nodes, homes, workplaces, communities, cur_time, true, false, false, false, true, false, 0.75, 1);
+		intervention_params intv_params;
+		intv_params.case_isolation = true;
+		intv_params.school_closed = true;
+		intv_params.SC_factor = 0.75;
+	  get_kappa_custom_modular(nodes, homes, workplaces, communities, nbr_cells, cur_time, intv_params);
 	} else if(cur_time < (GLOBAL.NUM_DAYS_BEFORE_INTERVENTIONS+FIRST_PERIOD+SECOND_PERIOD+THIRD_PERIOD)*GLOBAL.SIM_STEPS_PER_DAY){
-	  get_kappa_custom(nodes, homes, workplaces, communities, cur_time, true, false, false, false, true, false, 0.75, 0.75);
+		intervention_params intv_params;
+		intv_params.case_isolation = true;
+		intv_params.school_closed = true;
+		intv_params.SC_factor = 0.75;
+		intv_params.community_factor = 0.75;
+	  get_kappa_custom_modular(nodes, homes, workplaces, communities, nbr_cells, cur_time, intv_params);
 	} else if(cur_time < (GLOBAL.NUM_DAYS_BEFORE_INTERVENTIONS+FIRST_PERIOD+SECOND_PERIOD+THIRD_PERIOD+FOURTH_PERIOD)*GLOBAL.SIM_STEPS_PER_DAY){
-	  get_kappa_custom(nodes, homes, workplaces, communities, cur_time, true, false, false, false, true, false, 0, 0.75);
+		intervention_params intv_params;
+		intv_params.case_isolation = true;
+		intv_params.school_closed = true;
+		intv_params.SC_factor = 0;
+		intv_params.community_factor = 0.75;
+	  get_kappa_custom_modular(nodes, homes, workplaces, communities, nbr_cells, cur_time, intv_params);
 	}else{
-	  get_kappa_lockdown(nodes, homes, workplaces, communities, cur_time);
+	  //get_kappa_lockdown(nodes, homes, workplaces, communities, cur_time);
+	  intv_params.lockdown = true;
+	  get_kappa_custom_modular(nodes, homes, workplaces, communities, nbr_cells, cur_time, intv_params);
 	}
 }
 
@@ -832,7 +1111,7 @@ void get_kappa_Mumbai_cyclic(vector<agent>& nodes, vector<house>& homes, const v
 	//Update global travel parameters
 	GLOBAL.TRAINS_RUNNING = false;
 	GLOBAL.KAPPA_TRAVEL = 0.0;
-  } else{
+  } else {
 	set_compliance(nodes, homes,
 				   USUAL_COMPLIANCE_PROBABILITY,
 				   HD_AREA_COMPLIANCE_PROBABILITY);
@@ -858,3 +1137,82 @@ void get_kappa_Mumbai_cyclic(vector<agent>& nodes, vector<house>& homes, const v
 	GLOBAL.KAPPA_TRAVEL = 1.0;
   }
 }
+
+//The version below is an older version, based on a different generic implementation
+void get_kappa_Mumbai_alternative_version(vector<agent>& nodes, vector<house>& homes, const vector<workplace>& workplaces, vector<community>& communities, vector<vector<nbr_cell>>& nbr_cells, int cur_time, double FIRST_PERIOD, double SECOND_PERIOD){
+	intervention_params intv_params;
+	//vector<vector<nbr_cell>> nbr_cells; //dummy variable  just to enable get_kappa_custom_modular function call.
+	if(cur_time < (GLOBAL.NUM_DAYS_BEFORE_INTERVENTIONS+FIRST_PERIOD)*GLOBAL.SIM_STEPS_PER_DAY){
+	  //get_kappa_lockdown(nodes, homes, workplaces, communities, cur_time);
+	  intv_params.lockdown = true;
+	  get_kappa_custom_modular(nodes, homes, workplaces, communities, nbr_cells, cur_time, intv_params);
+	} else if(cur_time < (GLOBAL.NUM_DAYS_BEFORE_INTERVENTIONS+FIRST_PERIOD+SECOND_PERIOD)*GLOBAL.SIM_STEPS_PER_DAY){
+	  set_compliance(nodes,homes,0.8); //compliance hard coded to 0.8 post lockdown.
+	  //get_kappa_lockdown(nodes, homes, workplaces, communities, cur_time);
+	  intv_params.lockdown = true;
+	  get_kappa_custom_modular(nodes, homes, workplaces, communities, nbr_cells, cur_time, intv_params);
+	} else{
+	  set_compliance(nodes,homes,0.8); //compliance hard coded to 0.8 post lockdown.
+	  intervention_params intv_params;
+	  intv_params.case_isolation = true;
+	  intv_params.home_quarantine = true;
+	  intv_params.social_dist_elderly = true;
+	  intv_params.school_closed = true;
+	  intv_params.SC_factor = 0;
+	  intv_params.community_factor = 0.75;
+	  get_kappa_custom_modular(nodes, homes, workplaces, communities, nbr_cells, cur_time, intv_params);
+	}
+}
+
+void get_kappa_containment(vector<agent>& nodes, vector<house>& homes, const vector<workplace>& workplaces, vector<community>& communities, vector<vector<nbr_cell>>& nbr_cells, int cur_time, double FIRST_PERIOD, Intervention intv){
+	if(cur_time < (GLOBAL.NUM_DAYS_BEFORE_INTERVENTIONS+FIRST_PERIOD)*GLOBAL.SIM_STEPS_PER_DAY){
+	  intervention_params intv_params;
+	  intv_params.lockdown = true;
+	  get_kappa_custom_modular(nodes, homes, workplaces, communities, nbr_cells, cur_time, intv_params);
+	} else{
+		if(intv == Intervention::intv_nbr_containment){
+			intervention_params intv_params;
+	  		intv_params.case_isolation = true;
+	  		intv_params.home_quarantine = true;
+	  		intv_params.social_dist_elderly = true;
+	  		intv_params.school_closed = true;
+	  		intv_params.SC_factor = 0;
+	  		intv_params.community_factor = 1;
+			intv_params.neighbourhood_containment = GLOBAL.ENABLE_CONTAINMENT;
+			get_kappa_custom_modular(nodes, homes, workplaces, communities, nbr_cells, cur_time, intv_params);
+		} else{
+			intervention_params intv_params;
+	  		intv_params.case_isolation = true;
+	  		intv_params.home_quarantine = true;
+	  		intv_params.social_dist_elderly = true;
+	  		intv_params.school_closed = true;
+	  		intv_params.SC_factor = 0;
+	  		intv_params.community_factor = 1;
+			intv_params.ward_containment = GLOBAL.ENABLE_CONTAINMENT;
+			get_kappa_custom_modular(nodes, homes, workplaces, communities, nbr_cells, cur_time, intv_params);
+		}
+	}	
+}
+
+void get_kappa_file_read(vector<agent>& nodes, vector<house>& homes, const vector<workplace>& workplaces, vector<community>& communities, vector<vector<nbr_cell>>& nbr_cells, vector<intervention_params>& intv_params_vector, int cur_time){
+  count_type time_threshold = GLOBAL.NUM_DAYS_BEFORE_INTERVENTIONS;
+  count_type cur_day = cur_time/GLOBAL.SIM_STEPS_PER_DAY; //get current day. Division to avoid multiplication inside for loop.
+  const auto SIZE = intv_params_vector.size();
+
+  assert(SIZE > 0);
+  assert(cur_day >= time_threshold);
+  count_type intv_index = 0;
+
+  for (count_type count = 0; count < SIZE - 1; ++count){
+	time_threshold += intv_params_vector[count].num_days;
+	if(cur_day >= time_threshold){
+	  ++intv_index;
+	} else {
+	  break;
+	}
+  }
+
+  set_compliance(nodes,homes,intv_params_vector[intv_index].compliance);
+  get_kappa_custom_modular(nodes, homes, workplaces, communities, nbr_cells, cur_time, intv_params_vector[intv_index]);
+}
+

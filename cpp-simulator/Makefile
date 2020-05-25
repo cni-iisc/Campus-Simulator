@@ -1,5 +1,5 @@
 #Set this to -fopenmp to enable compiling with openmp
-parallel = -fopenmp
+parallel =
 
 #Set this to -DTIMING to enable timing output
 timing = -DTIMING

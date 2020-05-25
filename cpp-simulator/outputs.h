@@ -25,6 +25,8 @@ struct plot_data_struct{
   std::map<std::string, timed_csv_data<double>> cumulative_mean_lambda_fractions;
 
   std::map<std::string, timed_csv_data<long double>> infections_by_new_infectives;
+  std::map<std::string, timed_csv_data<count_type>> quarantined_stats;
+  std::map<std::string, timed_csv_data<double>> curtailment_stats;
 };
 
 

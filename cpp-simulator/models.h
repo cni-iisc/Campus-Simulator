@@ -23,12 +23,19 @@ enum class Intervention {
    intv_fper_intv_sper_intv_tper = 11,
    intv_NYC=12,
    intv_Mum=13,
-   intv_Mum_cyclic=14
+   intv_Mum_cyclic=14,
+   intv_nbr_containment=15,
+   intv_ward_containment=16,
+   intv_file_read=17
 };
 
 enum class Cycle_Type {
   home = 0,
   individual = 1
+};
+
+struct location{
+  double lat, lon; //latitude and longitude, in degrees
 };
 
 template<typename T>
@@ -80,6 +87,69 @@ const double STATE_TRAN[][3] =
    {0.2430000,   0.4320000,   0.5000000},
    {0.2730000,   0.7090000,   0.5000000}
   };
+/*
+struct intervention_params{
+    count_type num_days = 0;
+    double compliance = 0.9;
+    bool case_isolation = false;
+    bool home_quarantine = false;
+    bool lockdown = false;
+    bool social_dist_elderly = false; 
+    bool school_closed = false;
+    bool workplace_odd_even = false;
+    double SC_factor = 0;
+    double community_factor = 1;
+    bool neighbourhood_containment = false;
+    bool ward_containment = false;
+};
+*/
+struct intervention_params {
+  count_type num_days = 0;
+  double compliance = 0.9;
+  bool case_isolation = false;
+  bool home_quarantine = false;
+  bool lockdown = false;
+  bool social_dist_elderly = false; 
+  bool school_closed = false;
+  bool workplace_odd_even = false;
+  double SC_factor = 0;
+  double community_factor = 1;
+  bool neighbourhood_containment = false;
+  bool ward_containment = false;
+
+  intervention_params& set_case_isolation(bool c){
+	this->case_isolation = c;
+	return *this;
+  }
+  intervention_params& set_home_quarantine(bool c){
+	this->home_quarantine = c;
+	return *this;
+  }
+  intervention_params& set_lockdown(bool c){
+	this->lockdown = c;
+	return *this;
+  }
+  intervention_params& set_social_dist_elderly(bool c){
+	this->social_dist_elderly = c;
+	return *this;
+  }
+  intervention_params& set_school_closed(bool c){
+	this->school_closed = c;
+	return *this;
+  }
+  intervention_params& set_workplace_odd_even(bool c){
+	this->workplace_odd_even = c;
+	return *this;
+  }
+  intervention_params& set_SC_factor(double c){
+	this->SC_factor = c;
+	return *this;
+  }
+  intervention_params& set_community_factor(double c){
+	this->community_factor = c;
+	return *this;
+  }
+};
 
 
 //These are parameters associated with the disease progression
@@ -190,7 +260,7 @@ struct global_params{
   //crosses this fraction
   double COMMUNITY_LOCK_THRESHOLD = 1E-3; //0.1%
   double LOCKED_COMMUNITY_LEAKAGE = 1.0;
-  
+  count_type WARD_CONTAINMENT_THRESHOLD = 1; // threshold of hospitalised individuals in ward, beyond which the ward is quarantined.
   //Switches
   //If this is false, the file quarantinedPopulation.json is needed
   bool USE_SAME_INFECTION_PROB_FOR_ALL_WARDS = true;
@@ -229,6 +299,18 @@ struct global_params{
   bool MASK_ACTIVE = false;
   double MASK_FACTOR = 0.8;
   double MASK_START_DATE = 0;//40+
+  
+  //Age stratification
+  count_type NUM_AGE_GROUPS = 16;
+  double SIGNIFICANT_EIGEN_VALUES = 3;
+  bool USE_AGE_DEPENDENT_MIXING = false;
+
+  //Neighbourhood containment. City limits in lat,lon
+  location city_SW, city_NE;
+  double NBR_CELL_SIZE = 1; //in km
+  bool ENABLE_CONTAINMENT = false;
+
+  std::string intervention_filename = "intervention_params.json";
 };
 extern global_params GLOBAL;
 
@@ -243,10 +325,9 @@ inline double get_non_compliance_metric(){
 
 //Age groups (5-years)
 
-const int NUM_AGE_GROUPS = 16;
-inline int get_age_group(int age){
-  int age_group = age/5;
-  return std::min(age_group, NUM_AGE_GROUPS - 1);
+inline count_type get_age_group(int age){
+  count_type age_group = age/5;
+  return std::min(age_group, GLOBAL.NUM_AGE_GROUPS - 1);
 }
 
 // Age index for STATE_TRAN matrix
@@ -257,8 +338,9 @@ double f_kernel(double dist);
 
 // End of global parameters
 
-struct location{
-  double lat, lon; //latitude and longitude, in degrees
+struct grid_cell{
+  count_type cell_x = 0;
+  count_type cell_y = 0; //latitude and longitude, in degrees
 };
 
 //Distance between two locations given by their latitude and longitude, in degrees
@@ -425,6 +507,7 @@ struct agent{
 
 
   bool compliant = true;
+  
   double kappa_H = 1;
   double kappa_W = 1;
   double kappa_C = 1;
@@ -432,6 +515,7 @@ struct agent{
   double incubation_period;
   double asymptomatic_period;
   double symptomatic_period;
+  
 
   double hospital_regular_period;
   double hospital_critical_period;
@@ -482,6 +566,7 @@ struct agent{
 
 struct house{
   location loc;
+  grid_cell neighbourhood;
   double lambda_home = 0;
   std::vector<int> individuals; //list of indices of individuals
   double Q_h = 1;
@@ -497,7 +582,9 @@ struct house{
   bool compliant;
   double non_compliance_metric = 0; //0 - compliant, 1 - non-compliant
   bool quarantined = false;
-  double age_independent_mixing = 0;
+  std::vector<double> age_independent_mixing;
+  std::vector<double> age_dependent_mixing;
+
   //age_dependent_mixing not added yet, since it is unused
   house(){}
   house(double latitude, double longitude, bool compliance):
@@ -520,7 +607,9 @@ struct workplace {
   WorkplaceType workplace_type;
   OfficeType office_type = OfficeType::other;
   bool quarantined = false;
-  double age_independent_mixing = 0;
+  std::vector<double> age_independent_mixing;
+  std::vector<double> age_dependent_mixing;
+
   //age_dependent_mixing not added yet, since it is unused
 
   workplace(){}
@@ -556,6 +645,11 @@ struct community {
   }
 };
 
+struct nbr_cell {
+  grid_cell neighbourhood;
+  std::vector<count_type> houses_list;
+  bool quarantined = false;
+};
 
 struct office_attendance{
   count_type number_of_entries;
@@ -574,4 +668,6 @@ double interpolate(double start, double end, double current, double threshold);
 //reset household and individual compliance flags based on compliance probability.
 void set_compliance(std::vector<agent> & nodes, std::vector<house> & homes,
 					double usual_compliance_probability, double hd_area_compliance_probability);
+
+void set_nbr_cell(house &home);
 #endif

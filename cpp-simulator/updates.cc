@@ -171,29 +171,45 @@ node_update_status update_infection(agent& node, int cur_time){
   return update_status;
 }
 
-void update_all_kappa(vector<agent>& nodes, vector<house>& homes, vector<workplace>& workplaces, vector<community>& communities, int cur_time){
+void update_all_kappa(vector<agent>& nodes, vector<house>& homes, vector<workplace>& workplaces, vector<community>& communities, vector<vector<nbr_cell>>& nbr_cells, vector<intervention_params>& intv_params, int cur_time){
+  intervention_params intv_params_local;
   if(cur_time < GLOBAL.NUM_DAYS_BEFORE_INTERVENTIONS*GLOBAL.SIM_STEPS_PER_DAY){
-    get_kappa_no_intervention(nodes, homes, workplaces, communities,cur_time);
+    //get_kappa_no_intervention(nodes, homes, workplaces, communities,cur_time);
+    get_kappa_custom_modular(nodes, homes, workplaces, communities, nbr_cells, cur_time, intv_params_local);
   }
   else{
     switch(GLOBAL.INTERVENTION){
     case Intervention::no_intervention:
-      get_kappa_no_intervention(nodes, homes, workplaces, communities, cur_time);
+      //get_kappa_no_intervention(nodes, homes, workplaces, communities, cur_time);
+      get_kappa_custom_modular(nodes, homes, workplaces, communities, nbr_cells, cur_time, intv_params_local);
       break;
     case Intervention::case_isolation:
-      get_kappa_case_isolation(nodes, homes, workplaces, communities, cur_time);
+      intv_params_local.case_isolation = true;
+      //get_kappa_case_isolation(nodes, homes, workplaces, communities, cur_time);
+      get_kappa_custom_modular(nodes, homes, workplaces, communities, nbr_cells, cur_time, intv_params_local);
       break;
     case Intervention::home_quarantine:
-      get_kappa_home_quarantine(nodes, homes, workplaces, communities, cur_time);
+      //get_kappa_home_quarantine(nodes, homes, workplaces, communities, cur_time);
+      intv_params_local.home_quarantine = true;
+      get_kappa_custom_modular(nodes, homes, workplaces, communities, nbr_cells, cur_time, intv_params_local);
       break;
     case Intervention::lockdown:
-      get_kappa_lockdown(nodes, homes, workplaces, communities, cur_time);
+      //get_kappa_lockdown(nodes, homes, workplaces, communities, cur_time);
+      intv_params_local.lockdown = true;
+      get_kappa_custom_modular(nodes, homes, workplaces, communities, nbr_cells, cur_time, intv_params_local);
       break;
     case Intervention::case_isolation_and_home_quarantine:
-      get_kappa_CI_HQ(nodes, homes, workplaces, communities, cur_time);
+      //get_kappa_CI_HQ(nodes, homes, workplaces, communities, cur_time);
+      intv_params_local.case_isolation = true;
+      intv_params_local.home_quarantine = true;
+      get_kappa_custom_modular(nodes, homes, workplaces, communities, nbr_cells, cur_time, intv_params_local);
       break;
     case Intervention::case_isolation_and_home_quarantine_sd_65_plus:
-      get_kappa_CI_HQ_65P(nodes, homes, workplaces, communities, cur_time);
+      //get_kappa_CI_HQ_65P(nodes, homes, workplaces, communities, cur_time);
+      intv_params_local.case_isolation = true;
+      intv_params_local.home_quarantine = true;
+      intv_params_local.social_dist_elderly = true;
+      get_kappa_custom_modular(nodes, homes, workplaces, communities, nbr_cells, cur_time, intv_params_local);
       break;
     case Intervention::lockdown_fper_ci_hq_sd_65_plus_sper_ci:
       get_kappa_LOCKDOWN_fper_CI_HQ_SD_65_PLUS_sper_CI(nodes, homes, workplaces, communities, cur_time,
@@ -221,37 +237,143 @@ void update_all_kappa(vector<agent>& nodes, vector<house>& homes, vector<workpla
     case Intervention::intv_NYC:
       get_kappa_NYC(nodes, homes, workplaces, communities, cur_time);
       break;
-	case Intervention::intv_Mum:
-      get_kappa_Mumbai(nodes, homes, workplaces, communities, cur_time,
+    case Intervention::intv_Mum:
+      get_kappa_Mumbai(nodes, homes, workplaces, communities, nbr_cells, cur_time,
                                                    GLOBAL.FIRST_PERIOD, GLOBAL.SECOND_PERIOD);
       break;
 	case Intervention::intv_Mum_cyclic:
       get_kappa_Mumbai_cyclic(nodes, homes, workplaces, communities, cur_time,
 							  GLOBAL.FIRST_PERIOD, GLOBAL.SECOND_PERIOD);
+	  break;
+    case Intervention::intv_nbr_containment:
+      get_kappa_containment(nodes, homes, workplaces, communities, nbr_cells, cur_time, GLOBAL.FIRST_PERIOD, Intervention::intv_nbr_containment);
+      break;
+    case Intervention::intv_ward_containment:
+      get_kappa_containment(nodes, homes, workplaces, communities, nbr_cells, cur_time, GLOBAL.FIRST_PERIOD, Intervention::intv_ward_containment);
+      break;
+    case Intervention::intv_file_read:
+      get_kappa_file_read(nodes, homes, workplaces, communities, nbr_cells, intv_params, cur_time);
       break;
     default:
-	  get_kappa_no_intervention(nodes, homes, workplaces, communities, cur_time);
+      //get_kappa_no_intervention(nodes, homes, workplaces, communities, cur_time);
+      get_kappa_custom_modular(nodes, homes, workplaces, communities, nbr_cells, cur_time, intv_params_local);
       break;
     }
   }
 }
 
-double updated_lambda_w_age_independent(const vector<agent>& nodes, const workplace& workplace){
+vector<double> updated_lambda_w_age_independent(const vector<agent>& nodes, const workplace& workplace){
   double sum_value = 0;
+  vector<double> lambda_age_group(GLOBAL.NUM_AGE_GROUPS);
   for (count_type i=0; i < workplace.individuals.size(); ++i){
 	sum_value += nodes[workplace.individuals[i]].lambda_w;
   }
-  return workplace.scale*sum_value;
+  std::fill(lambda_age_group.begin(), lambda_age_group.end(), workplace.scale*sum_value);
+  return lambda_age_group;
   // Populate it afterwards...
 }
 
-double updated_lambda_h_age_independent(const vector<agent>& nodes, const house& home){
+vector<double> updated_lambda_h_age_independent(const vector<agent>& nodes, const house& home){
   double sum_value = 0;
+  vector<double> lambda_age_group(GLOBAL.NUM_AGE_GROUPS);
   for (count_type i=0; i<home.individuals.size(); ++i){
 	sum_value += nodes[home.individuals[i]].lambda_h;
   }
-  return home.scale*sum_value;
+  std::fill(lambda_age_group.begin(), lambda_age_group.end(), home.scale*sum_value);
+  return lambda_age_group;
   // Populate it afterwards...
+}
+
+vector<double> updated_lambda_h_age_dependent(const vector<agent>& nodes, const house& home, const matrix<double>& home_tx_u, const vector<double>& home_tx_sigma, const matrix<double>& home_tx_vT){
+  auto size = home_tx_u.size();
+
+  vector<double> age_component(GLOBAL.NUM_AGE_GROUPS, 0.0);
+  vector<double> lambda_age_group(GLOBAL.NUM_AGE_GROUPS, 0.0);
+  vector<double> V_tx(GLOBAL.SIGNIFICANT_EIGEN_VALUES, 0.0);
+
+  for (count_type i=0; i<home.individuals.size(); ++i){
+      int ind_age_group = nodes[home.individuals[i]].age_group;
+      age_component[ind_age_group] += nodes[home.individuals[i]].lambda_h;
+  }
+
+  for (count_type eigen_count=0; eigen_count<GLOBAL.SIGNIFICANT_EIGEN_VALUES; ++eigen_count){
+    for(count_type count=0; count<size; ++count){
+      V_tx[eigen_count] += home_tx_vT[eigen_count][count]
+                           * age_component[count];
+    }
+  }
+
+  for (count_type count=0; count<GLOBAL.NUM_AGE_GROUPS; ++count){
+    for (count_type eigen_count=0; eigen_count<GLOBAL.SIGNIFICANT_EIGEN_VALUES; ++eigen_count){
+      lambda_age_group[count] += home_tx_u[count][eigen_count]
+                          * home_tx_sigma[eigen_count]
+                          * V_tx[eigen_count];
+    }
+	lambda_age_group[count] *= home.scale;
+  }
+ return lambda_age_group;
+
+}
+
+vector<double> updated_lambda_w_age_dependent(const vector<agent>& nodes, const workplace& workplace, const matrix<double>& workplace_tx_u, const vector<double>& workplace_tx_sigma, const matrix<double>& workplace_tx_vT){
+
+    auto size = workplace_tx_u.size();
+
+    vector<double> age_component(GLOBAL.NUM_AGE_GROUPS, 0.0);
+    vector<double> lambda_age_group(GLOBAL.NUM_AGE_GROUPS, 0.0);
+    vector<double> V_tx(GLOBAL.SIGNIFICANT_EIGEN_VALUES, 0.0);
+    for (count_type i=0; i<workplace.individuals.size(); ++i){
+        int ind_age_group = nodes[workplace.individuals[i]].age_group;
+        age_component[ind_age_group] += nodes[workplace.individuals[i]].lambda_h;
+    }
+
+    for (count_type eigen_count=0; eigen_count<GLOBAL.SIGNIFICANT_EIGEN_VALUES; ++eigen_count){
+      for(count_type count=0; count<size; ++count){
+        V_tx[eigen_count] += workplace_tx_vT[eigen_count][count]
+                             * age_component[count];
+      }
+    }
+
+    for (count_type count=0; count<GLOBAL.NUM_AGE_GROUPS; ++count){
+      for (count_type eigen_count=0; eigen_count<GLOBAL.SIGNIFICANT_EIGEN_VALUES; ++eigen_count){
+        lambda_age_group[count] += workplace_tx_u[count][eigen_count]
+                            * workplace_tx_sigma[eigen_count]
+                            * V_tx[eigen_count];
+      }
+	  lambda_age_group[count] *=  workplace.scale;
+    }
+    return lambda_age_group;
+}
+
+vector<double> updated_lambda_c_local_age_dependent(const vector<agent>& nodes, const community& community, const matrix<double>& community_tx_u, const vector<double>& community_tx_sigma, const matrix<double>& community_tx_vT){
+
+  auto size = community_tx_u.size();
+
+  vector<double> age_component(GLOBAL.NUM_AGE_GROUPS, 0.0);
+  vector<double> lambda_age_group(GLOBAL.NUM_AGE_GROUPS, 0.0);
+  vector<double> V_tx(GLOBAL.SIGNIFICANT_EIGEN_VALUES, 0.0);
+
+  for (count_type i=0; i<community.individuals.size(); ++i){
+      int ind_age_group = nodes[community.individuals[i]].age_group;
+      age_component[ind_age_group] += nodes[community.individuals[i]].lambda_h;
+  }
+
+  for (count_type eigen_count=0; eigen_count<GLOBAL.SIGNIFICANT_EIGEN_VALUES; ++eigen_count){
+    for(count_type count=0; count<size; ++count){
+      V_tx[eigen_count] += community_tx_vT[eigen_count][count]
+                           * age_component[count];
+    }
+  }
+
+  for (count_type count=0; count<GLOBAL.NUM_AGE_GROUPS; ++count){
+    for (count_type eigen_count=0; eigen_count<GLOBAL.SIGNIFICANT_EIGEN_VALUES; ++eigen_count){
+      lambda_age_group[count] += community_tx_u[count][eigen_count]
+                          * community_tx_sigma[eigen_count]
+                          * V_tx[eigen_count];
+    }
+	lambda_age_group[count] *=  community.scale;
+  }
+ return lambda_age_group;
 }
 
 double updated_travel_fraction(const vector<agent>& nodes, const int cur_time){
@@ -292,7 +414,18 @@ double updated_travel_fraction(const vector<agent>& nodes, const int cur_time){
 void update_lambdas(agent&node, const vector<house>& homes, const vector<workplace>& workplaces, const vector<community>& communities, const double travel_fraction, const int cur_time){
   node.lambda_incoming.set_zero();
   //Contributions from home, workplace, community, and travel
+  if (GLOBAL.USE_AGE_DEPENDENT_MIXING){
+    node.lambda_incoming[0] = node.kappa_H_incoming
+	  * homes[node.home].age_dependent_mixing[node.age_group]
+	  * node.hd_area_factor;
 
+    if(node.workplace != WORKPLACE_HOME) {
+	  node.lambda_incoming[1] = (node.attending?1.0:GLOBAL.ATTENDANCE_LEAKAGE)*node.kappa_W_incoming
+		* workplaces[node.workplace].age_dependent_mixing[node.age_group];
+    }
+    
+  }
+  else{
   //No null check for home as every agent has a home
   node.lambda_incoming.home = node.kappa_H_incoming
 	* homes[node.home].age_independent_mixing
@@ -305,7 +438,6 @@ void update_lambdas(agent&node, const vector<house>& homes, const vector<workpla
 	  * workplaces[node.workplace].age_independent_mixing;
 	//FEATURE_PROPOSAL: make the mixing dependent on node.age_group;
   }
-
    
   // No null check for community as every node has a community.
   //
@@ -346,7 +478,8 @@ double updated_lambda_c_local(const vector<agent>& nodes, const community& commu
   for(count_type i = 0; i < SIZE; ++i){
 	sum_value += nodes[community.individuals[i]].lambda_c;
   }
-
+  //std::fill(lambda_age_group.begin(), lambda_age_group.end(), community.scale*sum_value*community.w_c);
+  //return lambda_age_group;
   return community.scale*sum_value*community.w_c;
 }
 

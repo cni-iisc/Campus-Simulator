@@ -433,37 +433,37 @@ void update_lambdas(agent&node, const vector<house>& homes, const vector<workpla
 		* workplaces[node.workplace].age_independent_mixing;
 	  //FEATURE_PROPOSAL: make the mixing dependent on node.age_group;
 	}
-
-	// No null check for community as every node has a community.
-	//
-	// For all communities add the community lambda with a distance
-	// related scaling factor
-	node.lambda_incoming.community = node.kappa_C_incoming
-	  * node.zeta_a
-	  * node.funct_d_ck
-	  * communities[node.community].lambda_community_global
-	  * node.hd_area_factor
-	  * pow(communities[node.community].individuals.size(),
-			node.hd_area_exponent);
-	//If the agent lives in a high population density area, eg, a slum
-
-	//Travel only happens at "odd" times, twice a day
-	if((cur_time % 2) && node.travels()){
-	  node.lambda_incoming.travel = GLOBAL.BETA_TRAVEL
-		* node.commute_distance
-		* travel_fraction;
-	}
-
-	if(mask_active(cur_time) && node.compliant){
-	  node.lambda_incoming.work *= GLOBAL.MASK_FACTOR;
-	  node.lambda_incoming.community *= GLOBAL.MASK_FACTOR;
-	  node.lambda_incoming.travel *= GLOBAL.MASK_FACTOR;
-	}
-
-	node.lambda = node.lambda_incoming.sum();
-
   }
+  // No null check for community as every node has a community.
+  //
+  // For all communities add the community lambda with a distance
+  // related scaling factor
+  node.lambda_incoming.community = node.kappa_C_incoming
+	* node.zeta_a
+	* node.funct_d_ck
+	* communities[node.community].lambda_community_global
+	* node.hd_area_factor
+	* pow(communities[node.community].individuals.size(),
+		  node.hd_area_exponent);
+  //If the agent lives in a high population density area, eg, a slum
+
+  //Travel only happens at "odd" times, twice a day
+  if((cur_time % 2) && node.travels()){
+	node.lambda_incoming.travel = GLOBAL.BETA_TRAVEL
+	  * node.commute_distance
+	  * travel_fraction;
+  }
+
+  if(mask_active(cur_time) && node.compliant){
+	node.lambda_incoming.work *= GLOBAL.MASK_FACTOR;
+	node.lambda_incoming.community *= GLOBAL.MASK_FACTOR;
+	node.lambda_incoming.travel *= GLOBAL.MASK_FACTOR;
+  }
+
+  node.lambda = node.lambda_incoming.sum();
+
 }
+
 
 double updated_lambda_c_local(const vector<agent>& nodes, const community& community){
   double sum_value = 0;

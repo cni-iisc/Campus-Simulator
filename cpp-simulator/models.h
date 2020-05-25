@@ -23,10 +23,10 @@ enum class Intervention {
    intv_fper_intv_sper_intv_tper = 11,
    intv_NYC=12,
    intv_Mum=13,
-   intv_Mum_cyclic=14,
-   intv_nbr_containment=15,
-   intv_ward_containment=16,
-   intv_file_read=17
+   intv_nbr_containment=14,
+   intv_ward_containment=15,
+   intv_file_read=16,
+   intv_Mum_cyclic=17
 };
 
 enum class Cycle_Type {

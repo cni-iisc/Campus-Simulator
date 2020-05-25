@@ -27,7 +27,10 @@ void compute_scale_workplaces(std::vector<workplace>& workplaces);
 void compute_scale_communities(const std::vector<agent>& nodes, std::vector<community>& communities);
 
 // Age stratification JSON read function.
-std::vector<double> read_JSON_convert_array(const std::string& file_name);
-matrix<double> read_JSON_convert_matrix(const std::string& file_name);
+svd init_home_age_interaction_matrix();
+svd init_school_age_interaction_matrix();
+svd init_workplace_age_interaction_matrix();
+svd init_community_age_interaction_matrix();
+
 
 #endif

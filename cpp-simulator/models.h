@@ -103,6 +103,12 @@ struct intervention_params{
     bool ward_containment = false;
 };
 */
+
+struct svd {
+  matrix<double> u, vT;
+  std::vector<double> sigma;
+};
+
 struct intervention_params {
   count_type num_days = 0;
   double compliance = 0.9;

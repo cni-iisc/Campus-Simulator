@@ -44,39 +44,18 @@ plot_data_struct run_simulation(){
   auto community_dist_matrix = compute_community_distances(communities);
   auto community_fk_matrix = compute_community_distances_fkernel(community_dist_matrix);
 
+  svd home_age_matrix,
+	school_age_matrix,
+	workplace_age_matrix,
+	community_age_matrix;
+
+  if(GLOBAL.USE_AGE_DEPENDENT_MIXING){
+	home_age_matrix = init_home_age_interaction_matrix();
+	school_age_matrix = init_school_age_interaction_matrix();
+	workplace_age_matrix = init_workplace_age_interaction_matrix();
+	community_age_matrix = init_community_age_interaction_matrix();
+  }
   
-  string u_file = "home/U_home.json";
-  string sigma_file = "home/Sigma_home.json";
-  string vT_file = "home/Vtranspose_home.json";
-  
-  auto home_tx_u = read_JSON_convert_matrix(u_file);
-  auto home_tx_sigma = read_JSON_convert_array(sigma_file);
-  auto home_tx_vT = read_JSON_convert_matrix(vT_file);
-  
-  u_file = "school/U_school.json";
-  sigma_file = "school/Sigma_school.json";
-  vT_file = "school/Vtranspose_school.json";
-  
-  auto school_tx_u = read_JSON_convert_matrix(u_file);
-  auto school_tx_sigma = read_JSON_convert_array(sigma_file);
-  auto school_tx_vT = read_JSON_convert_matrix(vT_file);
-  
-  u_file = "workplace/U_workplace.json";
-  sigma_file = "workplace/Sigma_workplace.json";
-  vT_file = "workplace/Vtranspose_workplace.json";
-  
-  auto workplace_tx_u = read_JSON_convert_matrix(u_file);
-  auto workplace_tx_sigma = read_JSON_convert_array(sigma_file);
-  auto workplace_tx_vT = read_JSON_convert_matrix(vT_file);
-  
-  u_file = "other/U_other.json";
-  sigma_file = "other/Sigma_other.json";
-  vT_file = "other/Vtranspose_other.json";
-  
-  auto community_tx_u = read_JSON_convert_matrix(u_file);
-  auto community_tx_sigma = read_JSON_convert_array(sigma_file);
-  auto community_tx_vT = read_JSON_convert_matrix(vT_file);
- 
 #ifdef TIMING
     auto end_time = std::chrono::high_resolution_clock::now();
 	cerr << "simulator: time for JSON reads (ms): " << duration(start_time, end_time) << "\n";
@@ -239,16 +218,24 @@ plot_data_struct run_simulation(){
 
     if(GLOBAL.USE_AGE_DEPENDENT_MIXING){
         for (count_type h = 0; h < GLOBAL.num_homes; ++h){
-          homes[h].age_dependent_mixing = updated_lambda_h_age_dependent(nodes, homes[h], home_tx_u, home_tx_sigma, home_tx_vT);
+          homes[h].age_dependent_mixing = updated_lambda_h_age_dependent(nodes, homes[h],
+																		 home_age_matrix.u,
+																		 home_age_matrix.sigma,
+																		 home_age_matrix.vT);
         }
-
         for (count_type w = 0; w < GLOBAL.num_schools + GLOBAL.num_workplaces; ++w){
-			if(workplaces[w].workplace_type == WorkplaceType::school){
-				workplaces[w].age_dependent_mixing = updated_lambda_w_age_dependent(nodes, workplaces[w], school_tx_u, school_tx_sigma, school_tx_vT);
-			}
-			else{
-				workplaces[w].age_dependent_mixing = updated_lambda_w_age_dependent(nodes, workplaces[w], workplace_tx_u, workplace_tx_sigma, workplace_tx_vT);
-			}			
+		  if(workplaces[w].workplace_type == WorkplaceType::school){
+			workplaces[w].age_dependent_mixing = updated_lambda_w_age_dependent(nodes, workplaces[w],
+																				school_age_matrix.u,
+																				school_age_matrix.sigma,
+																				school_age_matrix.vT);
+		  }
+		  else{
+			workplaces[w].age_dependent_mixing = updated_lambda_w_age_dependent(nodes, workplaces[w],
+																				workplace_age_matrix.u,
+																				workplace_age_matrix.sigma,
+																				workplace_age_matrix.vT);
+		  }
         }
 	}
     else{

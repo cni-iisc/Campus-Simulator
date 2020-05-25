@@ -447,10 +447,7 @@ vector<agent> init_nodes(){
 
 vector<double> read_JSON_convert_array(const string& file_name){
   vector<double> return_object;
-  if(!GLOBAL.USE_AGE_DEPENDENT_MIXING) {
-	  return return_object;
-  }
-  auto file_JSON = readJSONFile(GLOBAL.input_base+"age_tx/" + file_name);   
+  auto file_JSON = readJSONFile(GLOBAL.input_base + "age_tx/" + file_name);
   auto size = file_JSON.GetArray().Size();
   return_object.resize(size);
   int i = 0;
@@ -463,10 +460,7 @@ vector<double> read_JSON_convert_array(const string& file_name){
 
 matrix<double> read_JSON_convert_matrix(const string& file_name){ 
   matrix<double> return_object;
-  if(!GLOBAL.USE_AGE_DEPENDENT_MIXING) {
-	  return return_object;
-  }
-  auto file_JSON = readJSONFile(GLOBAL.input_base+"age_tx/" + file_name);   
+  auto file_JSON = readJSONFile(GLOBAL.input_base + "age_tx/" + file_name);
   auto size = file_JSON.GetArray().Size();
   return_object.resize(size, vector<double>(size));
   int i = 0;
@@ -477,6 +471,40 @@ matrix<double> read_JSON_convert_matrix(const string& file_name){
     i += 1;
   }
   return return_object; 
+}
+
+void init_age_interaction_matrix(const string& directory_base, svd& svd){
+  string u_file = directory_base + "/U_" + directory_base + ".json";
+  string sigma_file = directory_base + "/Sigma_" + directory_base + ".json";
+  string vT_file = directory_base + "/Vtranspose_" + directory_base + ".json";
+
+  svd.u = read_JSON_convert_matrix(u_file);
+  svd.sigma = read_JSON_convert_array(sigma_file);
+  svd.vT = read_JSON_convert_matrix(vT_file);
+}
+
+svd init_home_age_interaction_matrix(){
+  svd svd;
+  init_age_interaction_matrix("home", svd);
+  return svd;
+}
+
+svd init_school_age_interaction_matrix(){
+  svd svd;
+  init_age_interaction_matrix("school", svd);
+  return svd;
+}
+
+svd init_workplace_age_interaction_matrix(){
+  svd svd;
+  init_age_interaction_matrix("workplace", svd);
+  return svd;
+}
+
+svd init_community_age_interaction_matrix(){
+  svd svd;
+  init_age_interaction_matrix("other", svd);
+  return svd;
 }
 
 matrix<double> compute_community_distances(const vector<community>& communities){

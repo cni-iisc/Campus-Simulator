@@ -319,7 +319,7 @@ vector<double> updated_lambda_w_age_dependent(const vector<agent>& nodes, const 
     vector<double> V_tx(GLOBAL.SIGNIFICANT_EIGEN_VALUES, 0.0);
     for (count_type i=0; i<workplace.individuals.size(); ++i){
         int ind_age_group = nodes[workplace.individuals[i]].age_group;
-        age_component[ind_age_group] += nodes[workplace.individuals[i]].lambda_h;
+        age_component[ind_age_group] += nodes[workplace.individuals[i]].lambda_w;
     }
 
     for (count_type eigen_count=0; eigen_count<GLOBAL.SIGNIFICANT_EIGEN_VALUES; ++eigen_count){

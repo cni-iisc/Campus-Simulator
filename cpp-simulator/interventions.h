@@ -67,6 +67,8 @@ void get_kappa_file_read(std::vector<agent>& nodes, std::vector<house>& homes, c
 
 void get_kappa_custom_modular(std::vector<agent>& nodes, std::vector<house>& homes, const std::vector<workplace>& workplaces, std::vector<community>& communities, std::vector<std::vector<nbr_cell>>& nbr_cells, const int cur_time, const intervention_params intv_params);
 
+void get_kappa_Mumbai_alternative_version(std::vector<agent>& nodes, std::vector<house>& homes, const std::vector<workplace>& workplaces, std::vector<community>& communities, std::vector<std::vector<nbr_cell>>& nbr_cells, int cur_time, double FIRST_PERIOD, double SECOND_PERIOD);
+
 void get_kappa_Mumbai_cyclic(std::vector<agent>& nodes, std::vector<house>& homes, const std::vector<workplace>& workplaces, const std::vector<community>& communities, int cur_time, double FIRST_PERIOD, double SECOND_PERIOD);
 
 #endif

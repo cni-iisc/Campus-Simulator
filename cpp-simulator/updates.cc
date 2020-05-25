@@ -238,7 +238,7 @@ void update_all_kappa(vector<agent>& nodes, vector<house>& homes, vector<workpla
       get_kappa_NYC(nodes, homes, workplaces, communities, cur_time);
       break;
     case Intervention::intv_Mum:
-      get_kappa_Mumbai(nodes, homes, workplaces, communities, nbr_cells, cur_time,
+	  get_kappa_Mumbai_alternative_version(nodes, homes, workplaces, communities, nbr_cells, cur_time,
                                                    GLOBAL.FIRST_PERIOD, GLOBAL.SECOND_PERIOD);
       break;
 	case Intervention::intv_Mum_cyclic:
@@ -415,60 +415,60 @@ void update_lambdas(agent&node, const vector<house>& homes, const vector<workpla
   node.lambda_incoming.set_zero();
   //Contributions from home, workplace, community, and travel
   if (GLOBAL.USE_AGE_DEPENDENT_MIXING){
-    node.lambda_incoming[0] = node.kappa_H_incoming
+    node.lambda_incoming.home = node.kappa_H_incoming
 	  * homes[node.home].age_dependent_mixing[node.age_group]
 	  * node.hd_area_factor;
 
     if(node.workplace != WORKPLACE_HOME) {
-	  node.lambda_incoming[1] = (node.attending?1.0:GLOBAL.ATTENDANCE_LEAKAGE)*node.kappa_W_incoming
+	  node.lambda_incoming.work = (node.attending?1.0:GLOBAL.ATTENDANCE_LEAKAGE)*node.kappa_W_incoming
 		* workplaces[node.workplace].age_dependent_mixing[node.age_group];
     }
     
   }
-  else{
-  //No null check for home as every agent has a home
-  node.lambda_incoming.home = node.kappa_H_incoming
-	* homes[node.home].age_independent_mixing
-	* node.hd_area_factor;
-  //If the agent lives in a high population density area, eg, a slum
-  
-  //FEATURE_PROPOSAL: make the mixing dependent on node.age_group;
-  if(node.workplace != WORKPLACE_HOME) {
-	node.lambda_incoming.work = (node.attending?1.0:GLOBAL.ATTENDANCE_LEAKAGE)*node.kappa_W_incoming
-	  * workplaces[node.workplace].age_independent_mixing;
+  else {
+	//No null check for home as every agent has a home
+	node.lambda_incoming.home = node.kappa_H_incoming
+	  * homes[node.home].age_independent_mixing[0]
+	  * node.hd_area_factor;
+	//If the agent lives in a high population density area, eg, a slum
+
 	//FEATURE_PROPOSAL: make the mixing dependent on node.age_group;
-  }
-   
-  // No null check for community as every node has a community.
-  //
-  // For all communities add the community lambda with a distance
-  // related scaling factor
-  node.lambda_incoming.community = node.kappa_C_incoming
-	* node.zeta_a
-	* node.funct_d_ck
-	* communities[node.community].lambda_community_global
-	* node.hd_area_factor
-	* pow(communities[node.community].individuals.size(),
-		  node.hd_area_exponent);
-  //If the agent lives in a high population density area, eg, a slum
-  
-  //Travel only happens at "odd" times, twice a day
-  if((cur_time % 2) && node.travels()){
-	node.lambda_incoming.travel = GLOBAL.BETA_TRAVEL
-	  * node.commute_distance
-	  * travel_fraction;
-  }
-	 
-  if(mask_active(cur_time) && node.compliant){
-	   node.lambda_incoming.work *= GLOBAL.MASK_FACTOR;
-	   node.lambda_incoming.community *= GLOBAL.MASK_FACTOR;
-	   node.lambda_incoming.travel *= GLOBAL.MASK_FACTOR;
-   }
+	if(node.workplace != WORKPLACE_HOME) {
+	  node.lambda_incoming.work = (node.attending?1.0:GLOBAL.ATTENDANCE_LEAKAGE)*node.kappa_W_incoming
+		* workplaces[node.workplace].age_independent_mixing[0];
+	  //FEATURE_PROPOSAL: make the mixing dependent on node.age_group;
+	}
 
-  node.lambda = node.lambda_incoming.sum();
+	// No null check for community as every node has a community.
+	//
+	// For all communities add the community lambda with a distance
+	// related scaling factor
+	node.lambda_incoming.community = node.kappa_C_incoming
+	  * node.zeta_a
+	  * node.funct_d_ck
+	  * communities[node.community].lambda_community_global
+	  * node.hd_area_factor
+	  * pow(communities[node.community].individuals.size(),
+			node.hd_area_exponent);
+	//If the agent lives in a high population density area, eg, a slum
 
+	//Travel only happens at "odd" times, twice a day
+	if((cur_time % 2) && node.travels()){
+	  node.lambda_incoming.travel = GLOBAL.BETA_TRAVEL
+		* node.commute_distance
+		* travel_fraction;
+	}
+
+	if(mask_active(cur_time) && node.compliant){
+	  node.lambda_incoming.work *= GLOBAL.MASK_FACTOR;
+	  node.lambda_incoming.community *= GLOBAL.MASK_FACTOR;
+	  node.lambda_incoming.travel *= GLOBAL.MASK_FACTOR;
+	}
+
+	node.lambda = node.lambda_incoming.sum();
+
+  }
 }
-
 
 double updated_lambda_c_local(const vector<agent>& nodes, const community& community){
   double sum_value = 0;

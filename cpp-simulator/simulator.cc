@@ -197,7 +197,7 @@ plot_data_struct run_simulation(){
 		nodes[j].kappa_travel = GLOBAL.TRAINS_RUNNING && bernoulli(GLOBAL.KAPPA_TRAVEL);
       }
     }
-    
+
 	//#pragma omp parallel for
 	//
 	// Since update_infection uses a random number generator with
@@ -250,54 +250,7 @@ plot_data_struct run_simulation(){
 				workplaces[w].age_dependent_mixing = updated_lambda_w_age_dependent(nodes, workplaces[w], workplace_tx_u, workplace_tx_sigma, workplace_tx_vT);
 			}			
         }
-
-        for (count_type c = 0; c < GLOBAL.num_communities; ++c){
-
-          auto temp_stats = get_infected_community(nodes, communities[c]);
-          //let row = [time_step/SIM_STEPS_PER_DAY,c,temp_stats[0],temp_stats[1],temp_stats[2],temp_stats[3],temp_stats[4]].join(",");
-          plot_data.nums["csvContent"].push_back({time_step, {
-                  c,
-				  temp_stats.affected,
-				  temp_stats.susceptible,
-				  temp_stats.exposed,
-				  temp_stats.infective,
-				  temp_stats.symptomatic,
-				  temp_stats.hospitalised,
-				  temp_stats.critical,
-				  temp_stats.dead,
-				  temp_stats.recovered,
-				  temp_stats.recovered_from_infective,
-				  temp_stats.recovered_from_symptomatic,
-				  temp_stats.recovered_from_hospitalised,
-				  temp_stats.recovered_from_critical,
-				  temp_stats.hd_area_affected,
-				  temp_stats.hd_area_susceptible,
-				  temp_stats.hd_area_exposed,
-				  temp_stats.hd_area_infective,
-				  temp_stats.hd_area_symptomatic,
-				  temp_stats.hd_area_hospitalised,
-				  temp_stats.hd_area_critical,
-				  temp_stats.hd_area_dead,
-				  temp_stats.hd_area_recovered,
-				  temp_stats.hd_area_recovered_from_infective,
-				  temp_stats.hd_area_recovered_from_symptomatic,
-				  temp_stats.hd_area_recovered_from_hospitalised,
-				  temp_stats.hd_area_recovered_from_critical
-                  }});
-
-      //Update w_c value for this community, followed by update of lambdas
-          if(communities[c].individuals.size()>0){
-            communities[c].w_c = interpolate(1.0, GLOBAL.LOCKED_COMMUNITY_LEAKAGE,
-                                       double(temp_stats.hospitalised)/double(communities[c].individuals.size()),
-                                       GLOBAL.COMMUNITY_LOCK_THRESHOLD);
-          }else{
-                  communities[c].w_c = 1;
-          }
-
-       //communities[c].lambda_community = updated_lambda_c_local_age_dependent(nodes, communities[c], community_tx_u, community_tx_sigma, community_tx_vT); 
-       communities[c].lambda_community = updated_lambda_c_local(nodes, communities[c]);
-        }
-    }
+	}
     else{
 	  for (count_type h = 0; h < GLOBAL.num_homes; ++h){
 		homes[h].age_independent_mixing = updated_lambda_h_age_independent(nodes, homes[h]);
@@ -308,11 +261,12 @@ plot_data_struct run_simulation(){
 		workplaces[w].age_independent_mixing = updated_lambda_w_age_independent(nodes, workplaces[w]);
 		//FEATURE_PROPOSAL: make the mixing dependent on node.age_group;
 	  }
-	  
-	  for (count_type c = 0; c < GLOBAL.num_communities; ++c){
-		auto temp_stats = get_infected_community(nodes, communities[c]);
-		//let row = [time_step/SIM_STEPS_PER_DAY,c,temp_stats[0],temp_stats[1],temp_stats[2],temp_stats[3],temp_stats[4]].join(",");
-		plot_data.nums["csvContent"].push_back({time_step, {
+	}
+
+	for (count_type c = 0; c < GLOBAL.num_communities; ++c){
+	  auto temp_stats = get_infected_community(nodes, communities[c]);
+	  //let row = [time_step/SIM_STEPS_PER_DAY,c,temp_stats[0],temp_stats[1],temp_stats[2],temp_stats[3],temp_stats[4]].join(",");
+	  plot_data.nums["csvContent"].push_back({time_step, {
 		  c,
 		  temp_stats.affected,
 		  temp_stats.susceptible,
@@ -342,21 +296,20 @@ plot_data_struct run_simulation(){
 		  temp_stats.hd_area_recovered_from_critical
 		  }});
 
-		//Update w_c value for this community, followed by update of lambdas
-		if(communities[c].individuals.size()>0){
-		  communities[c].w_c = interpolate(1.0, GLOBAL.LOCKED_COMMUNITY_LEAKAGE,
-										   double(temp_stats.hospitalised)/double(communities[c].individuals.size()),
-										   GLOBAL.COMMUNITY_LOCK_THRESHOLD);
-		} else{
-		  communities[c].w_c = 1;
-		}
-		
-		communities[c].lambda_community = updated_lambda_c_local(nodes, communities[c]);
+	  //Update w_c value for this community, followed by update of lambdas
+	  if(communities[c].individuals.size()>0){
+		communities[c].w_c = interpolate(1.0, GLOBAL.LOCKED_COMMUNITY_LEAKAGE,
+										 double(temp_stats.hospitalised)/double(communities[c].individuals.size()),
+										 GLOBAL.COMMUNITY_LOCK_THRESHOLD);
+	  } else{
+		communities[c].w_c = 1;
 	  }
-    }
+
+	  communities[c].lambda_community = updated_lambda_c_local(nodes, communities[c]);
+
+	}
 
 	update_lambda_c_global(communities, community_fk_matrix);
-
 
 	travel_fraction = updated_travel_fraction(nodes,time_step);
 
@@ -366,7 +319,7 @@ plot_data_struct run_simulation(){
 	for (count_type j = 0; j < NUM_PEOPLE; ++j){
 	  update_lambdas(nodes[j], homes, workplaces, communities, travel_fraction, time_step);
 	}
-	
+
 	//Get data for this simulation step
 	count_type n_infected = 0,
 	  n_exposed = 0,
@@ -379,8 +332,7 @@ plot_data_struct run_simulation(){
 	  n_infective = 0,
 	  quarantined_individuals = 0,
 	  quarantined_infectious = 0;
-	
-	
+
 	double susceptible_lambda = 0,
 	  susceptible_lambda_H = 0,
 	  susceptible_lambda_W = 0,

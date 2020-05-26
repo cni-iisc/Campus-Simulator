@@ -178,6 +178,10 @@ void print_intervention_params(const int index, const intervention_params intv_p
 	std::cout<<". neighbourhood_containment : " << intv_params.neighbourhood_containment;
 	std::cout<<". ward_containment : " << intv_params.ward_containment;
 	std::cout<<". compliance : " << intv_params.compliance;
+  std::cout<<". compliance_hd : " << intv_params.compliance_hd;
+  std::cout<<". mask_factor : " << intv_params.mask_factor;
+  std::cout<<". trains_active : " << intv_params.trains_active;
+  std::cout<<". fraction_forced_to_take_train : " << intv_params.fraction_forced_to_take_train;
 }
 
 vector<intervention_params> init_intervention_params(){
@@ -195,10 +199,18 @@ vector<intervention_params> init_intervention_params(){
 				temp.num_days = elem["num_days"].GetInt();
 				if(elem.HasMember("compliance")){
 					temp.compliance = elem["compliance"].GetDouble();
+          temp.compliance_hd = elem["compliance"].GetDouble();
+          //By default, compliance = compliance_hd. Can be reset below
 				} else{
 					temp.compliance = GLOBAL.COMPLIANCE_PROBABILITY;
+          temp.compliance_hd = GLOBAL.COMPLIANCE_PROBABILITY;
+          //By default, compliance = compliance_hd. Can be reset below
+				}
+        if(elem.HasMember("compliance_hd")){
+					temp.compliance_hd = elem["compliance_hd"].GetDouble();
+				} else{
+					temp.compliance_hd = GLOBAL.COMPLIANCE_PROBABILITY;
 				}		
-					
 				if(elem.HasMember("case_isolation")){
 					temp.case_isolation = elem["case_isolation"]["active"].GetBool();
 				}
@@ -223,6 +235,15 @@ vector<intervention_params> init_intervention_params(){
 				if(elem.HasMember("community_factor")){
 					temp.community_factor = elem["community_factor"].GetDouble();
 				}
+        if(elem.HasMember("mask_factor")){
+          temp.mask_factor = elem["mask_factor"].GetDouble();
+        }
+        if(elem.HasMember("trains")){
+          temp.trains_active = elem["trains"]["active"].GetBool();
+          if(elem["trains"].HasMember("fraction_forced_to_take_train")){
+            temp.fraction_forced_to_take_train = elem["trains"]["fraction_forced_to_take_train"].GetDouble();
+          }
+        }
 				if(elem.HasMember("neighbourhood_containment")){
 					temp.neighbourhood_containment = elem["neighbourhood_containment"]["active"].GetBool() && GLOBAL.ENABLE_CONTAINMENT;
 					if(!GLOBAL.ENABLE_CONTAINMENT){

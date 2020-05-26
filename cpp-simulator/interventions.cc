@@ -982,54 +982,21 @@ void get_kappa_NYC(vector<agent>& nodes, vector<house>& homes, const vector<work
 	}
 }
 
-struct intervention_decription {
-  bool case_isolation = false;
-  bool home_quarantine = false;
-  bool lockdown = false;
-  bool social_dist_elderly = false;
-  bool school_closed = false;
-  bool workplace_odd_even = false;
-  double SC_factor = 0;
-  double community_factor = 1;
-
-  intervention_decription& set_case_isolation(bool c){
-	this->case_isolation = c;
-	return *this;
-  }
-  intervention_decription& set_home_quarantine(bool c){
-	this->home_quarantine = c;
-	return *this;
-  }
-  intervention_decription& set_lockdown(bool c){
-	this->lockdown = c;
-	return *this;
-  }
-  intervention_decription& set_social_dist_elderly(bool c){
-	this->social_dist_elderly = c;
-	return *this;
-  }
-  intervention_decription& set_school_closed(bool c){
-	this->school_closed = c;
-	return *this;
-  }
-  intervention_decription& set_workplace_odd_even(bool c){
-	this->workplace_odd_even = c;
-	return *this;
-  }
-  intervention_decription& set_SC_factor(double c){
-	this->SC_factor = c;
-	return *this;
-  }
-  intervention_decription& set_community_factor(double c){
-	this->community_factor = c;
-	return *this;
-  }
-};
-
-
 
 void get_kappa_custom_modular(vector<agent>& nodes, vector<house>& homes, const int cur_time,
-							  const intervention_decription& intv){
+							  const intervention_params& intv){
+  set_compliance(nodes, homes, intv.compliance, intv.compliance_hd);
+  if(intv.mask_factor != 1){
+    GLOBAL.MASK_ACTIVE = true;
+    GLOBAL.MASK_FACTOR = intv.mask_factor;
+    GLOBAL.MASK_START_DATE = 0; // overriding GLOBAL.MASK_START_DATE if
+                                // explicitly given in intervention file.
+  }
+  if(intv.trains_active){
+    GLOBAL.TRAINS_RUNNING = true;
+    GLOBAL.FRACTION_FORCED_TO_TAKE_TRAIN = intv.fraction_forced_to_take_train;
+  }
+
   if(intv.home_quarantine){
     reset_home_quarantines(homes);
     mark_homes_for_quarantine(nodes, homes, cur_time);
@@ -1093,7 +1060,7 @@ void get_kappa_Mumbai_cyclic(vector<agent>& nodes, vector<house>& homes, const v
 				   HD_AREA_COMPLIANCE_PROBABILITY);
 	//get_kappa_custom(nodes, homes, workplaces, communities, cur_time, true, true, false, true, true, false, 0, 0.75);
 	{
-	  intervention_decription intv;
+	  intervention_params intv;
 	  intv.case_isolation = true;
 	  intv.home_quarantine = true;
 	  intv.social_dist_elderly = true;
@@ -1188,8 +1155,6 @@ void get_kappa_file_read(vector<agent>& nodes, vector<house>& homes, const vecto
 	}
   }
 
-  set_compliance(nodes, homes, intv_params_vector[intv_index].compliance,
-				 intv_params_vector[intv_index].compliance);
+
   get_kappa_custom_modular(nodes, homes, workplaces, communities, nbr_cells, cur_time, intv_params_vector[intv_index]);
 }
-

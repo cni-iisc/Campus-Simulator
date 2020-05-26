@@ -112,6 +112,7 @@ struct svd {
 struct intervention_params {
   count_type num_days = 0;
   double compliance = 0.9;
+  double compliance_hd = 0.9;
   bool case_isolation = false;
   bool home_quarantine = false;
   bool lockdown = false;
@@ -122,6 +123,11 @@ struct intervention_params {
   double community_factor = 1;
   bool neighbourhood_containment = false;
   bool ward_containment = false;
+  bool trains_active = false;
+  double fraction_forced_to_take_train = 1;
+  double mask_factor = 1.0;
+
+
 
   intervention_params& set_case_isolation(bool c){
 	this->case_isolation = c;
@@ -153,6 +159,10 @@ struct intervention_params {
   }
   intervention_params& set_community_factor(double c){
 	this->community_factor = c;
+	return *this;
+  }
+  intervention_params& set_mask_factor(double c){
+	this->mask_factor = c;
 	return *this;
   }
 };

@@ -116,9 +116,25 @@ void output_timed_csv(const std::vector<std::string>& field_row, const std::stri
   fout.close();
 }
 
+void output_copy_file(const string& input_file, const string& output_file){
+  std::ofstream fout(output_file, std::ios::out | std::ios::binary);
+  check_stream(fout, output_file);
+
+  std::ifstream fin(input_file, std::ios::in | std::ios::binary);
+
+  constexpr auto BUF_SIZE = 4096;
+  std::streamsize count;
+  char buffer[BUF_SIZE];
+  do {
+	fin.read(&buffer[0], BUF_SIZE);
+	count = fin.gcount();
+	fout.write(&buffer[0], count);
+  } while(count > 0);
+}
+
 void output_global_params(const string& output_dir){
   std::string global_params_path = output_dir + "/global_params.txt";
-  std::ofstream fout(output_dir + "/global_params.txt", std::ios::out);
+  std::ofstream fout(global_params_path, std::ios::out);
   check_stream(fout, global_params_path);
 
   fout << "GIT COMMIT HASH: " << GIT_HASH << ";" << endl;
@@ -215,6 +231,19 @@ void output_global_params(const string& output_dir){
   fout << "ENABLE_CONTAINMENT:" <<GLOBAL.ENABLE_CONTAINMENT << ";"<< endl;
   
   fout.close();
+
+  //Copy the attendance file
+  if(!GLOBAL.IGNORE_ATTENDANCE_FILE){
+	output_copy_file(GLOBAL.input_base + GLOBAL.attendance_filename,
+					 output_dir + "/attendance_file.json");
+  }
+
+  //Copy the intervention file
+  if(GLOBAL.INTERVENTION==Intervention::intv_file_read){
+	output_copy_file(GLOBAL.input_base + GLOBAL.intervention_filename,
+					 output_dir + "/intervention_params.json");
+  }
+
 }
 
 

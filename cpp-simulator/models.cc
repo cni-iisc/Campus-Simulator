@@ -10,20 +10,29 @@ std::mt19937_64 GENERATOR;
 std::default_random_engine GENERATOR;
 #endif
 
+#ifdef MERSENNE_TWISTER
+std::mt19937_64 GENERATOR_NETWORK;
+#else
+std::default_random_engine GENERATOR_NETWORK;
+#endif
 
 void SEED_RNG(){
 #ifdef MERSENNE_TWISTER
   //TODO: Use better seeding.  This just seeds with a 32 bit integer.
   std::random_device rd;
   GLOBAL.RNG_SEED = rd();
+  GLOBAL.RNG_SEED_NETWORK = rd();
   GENERATOR.seed(GLOBAL.RNG_SEED);
+  GENERATOR_NETWORK.seed(GLOBAL.RNG_SEED_NETWORK);
 #endif
 }
 
 void SEED_RNG_PROVIDED_SEED(count_type seed){
 #ifdef MERSENNE_TWISTER
   GLOBAL.RNG_SEED = seed;
+  GLOBAL.RNG_SEED_NETWORK = seed;  //We may need a different seed.
   GENERATOR.seed(GLOBAL.RNG_SEED);
+  GENERATOR_NETWORK.seed(GLOBAL.RNG_SEED_NETWORK);
 #endif
 }
 

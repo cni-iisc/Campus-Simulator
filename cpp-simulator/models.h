@@ -7,6 +7,7 @@
 #include <tuple>
 #include <cmath>
 #include <string>
+#include <algorithm>
 
 enum class Intervention {
    no_intervention = 0,
@@ -72,6 +73,31 @@ inline double uniform_count_type(double left, double right){
   return std::uniform_int_distribution<count_type>(left, right)(GENERATOR);
 }
 
+
+// Random number gnerators for random networks
+#ifdef MERSENNE_TWISTER
+extern std::mt19937_64 GENERATOR_NETWORK;
+#else
+extern std::default_random_engine GENERATOR_NETWORK;
+#endif
+void SEED_RNG();
+void SEED_RNG_PROVIDED_SEED(count_type seed);
+
+inline void randomly_shuffle(std::vector<int>& a){
+  std::random_shuffle(a.begin(), a.end());  // Need to add a specific generator.
+}
+
+inline bool bernoulli_network(double p){
+  return std::bernoulli_distribution(p)(GENERATOR_NETWORK);
+}
+
+inline double uniform_real_network(double left, double right){
+  return std::uniform_real_distribution<double>(left, right)(GENERATOR_NETWORK);
+}
+
+inline double uniform_count_type_network(double left, double right){
+  return std::uniform_int_distribution<count_type>(left, right)(GENERATOR_NETWORK);
+}
 
 // Global parameters
 //age related transition probabilities, symptomatic to hospitalised to critical to fatality.
@@ -171,6 +197,7 @@ const double HOME_QUARANTINE_DAYS = 14;
 // when the input files are read.
 struct global_params{
   count_type RNG_SEED;
+  count_type RNG_SEED_NETWORK;
   double COMPLIANCE_PROBABILITY = 1;
 
   count_type num_homes = 25000;
@@ -317,6 +344,14 @@ struct global_params{
   bool ENABLE_CONTAINMENT = false;
 
   std::string intervention_filename = "intervention_params.json";
+
+  double MIN_PROJECT_SIZE = 3; //Min and Max number of members in a project.
+  double MAX_PROJECT_SIZE = 10;
+  double MIN_CLASS_AGE = 5;
+  double MAX_CLASS_AGE = 19;
+  double MIN_RANDOM_COMMUNITY_SIZE = 2; //Min and Max number of households in a random community.
+  double MAX_RANDOM_COMMUNITY_SIZE = 5;
+
 };
 extern global_params GLOBAL;
 
@@ -506,7 +541,9 @@ struct agent{
   WorkplaceType workplace_type;
   //one of school, office, or home
   OfficeType office_type = OfficeType::other;
-  
+  int workplace_subnetwork = 0;
+  int community_subnetwork = 0;
+
   lambda_incoming_data lambda_incoming;
   //infectiousness from home, workplace, community, travel as seen by
   //individual
@@ -571,12 +608,21 @@ struct agent{
 };
 
 
+struct random_community{
+  double lambda_random_community;
+  count_type community;
+  std::vector<int> households;
+};  
+
+
 struct house{
   location loc;
   grid_cell neighbourhood;
   double lambda_home = 0;
   std::vector<int> individuals; //list of indices of individuals
   double Q_h = 1;
+  count_type community; // ward index
+  random_community random_households;  //to specify random community network 
 
   //Cyclic strategy class.
   //
@@ -605,10 +651,21 @@ struct house{
 };
 
 
+struct project{
+  int workplace;
+  std::vector<int> individuals;	  
+  double scale = 0;
+  double lambda_project = 0;
+  double age_independent_mixing;
+  std::vector<double> age_dependent_mixing;
+};
+
+
 struct workplace {
   location loc;
   double lambda_workplace = 0;
   std::vector<int> individuals; //list of indices of individuals
+  std::vector<project> projects; // list of project indices in the workplace
   double Q_w = 1;
   double scale = 0;
   WorkplaceType workplace_type;
@@ -630,11 +687,13 @@ struct workplace {
 
 };
 
+
 struct community {
   location loc;
   double lambda_community = 0;
   double lambda_community_global = 0;
   std::vector<int> individuals; //list of indices of individuals
+  std::vector<int> households;  //list of households in a community
   double Q_c = 1;
   double scale = 0;
   bool quarantined = false;

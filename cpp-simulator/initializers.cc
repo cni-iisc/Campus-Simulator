@@ -352,6 +352,7 @@ vector<agent> init_nodes(){
 
 	nodes[i].workplace = WORKPLACE_HOME; //null workplace, by default
 	nodes[i].workplace_type = WorkplaceType::home; //home, by default
+	nodes[i].workplace_subnetwork = 0;
 
 	if(elem["workplaceType"].IsInt()){
 	  switch(elem["workplaceType"].GetInt()){
@@ -369,6 +370,7 @@ vector<agent> init_nodes(){
 		  nodes[i].workplace = int(elem["school"].GetDouble());
 		  //Travel
 		  nodes[i].has_to_travel = bernoulli(GLOBAL.P_TRAIN);
+		  nodes[i].workplace_subnetwork = age;
 		}
 		break;
 	  default:
@@ -578,6 +580,104 @@ void assign_individual_home_community(vector<agent>& nodes, vector<house>& homes
 	communities[nodes[i].community].individuals.push_back(i);
   }
 }
+
+void assign_individual_projects(vector<workplace>& workplaces, vector<agent>& nodes){
+  std::vector<int> members;
+  project temp;
+  count_type number_to_be_assigned;
+  count_type project_size;
+  for(count_type i=0; i<workplaces.size(); ++i){
+	  int project_index = 0;
+	  if(workplaces[i].workplace_type==WorkplaceType::office){
+	 	 count_type count = 0;
+	  	 members = workplaces[i].individuals;
+	  	 randomly_shuffle(members);
+	  	 number_to_be_assigned = members.size();
+	  	 while(number_to_be_assigned>0){
+			  workplaces[i].projects.push_back(temp);
+			  workplaces[i].projects[project_index].workplace = i;
+			  project_size = uniform_count_type_network(GLOBAL.MIN_PROJECT_SIZE, GLOBAL.MAX_PROJECT_SIZE);
+			  project_size = std::min(project_size, number_to_be_assigned);
+			  for(count_type j=0; j<project_size; ++j){
+				  workplaces[i].projects[project_index].individuals.push_back(members[count]);
+				  nodes[members[count]].workplace_subnetwork = project_index;
+				  count++;
+			  }
+			  project_index++;
+		  	  number_to_be_assigned = number_to_be_assigned - project_size; 
+	  	}
+	  }
+	  if(workplaces[i].workplace_type==WorkplaceType::school){
+		  members = workplaces[i].individuals;
+		  workplaces[i].projects.resize(GLOBAL.MAX_CLASS_AGE+1);
+		  for(count_type j=0; j<members.size(); ++j){
+			  /*if(nodes[members[j]].age<5){
+				 // std::cout<<" Age error:1-- "<<members[j];
+			  }
+			  if(nodes[members[j]].age>19){
+			  	 // std::cout<<" Age error:2-- "<<members[j];
+			  }*/
+			  project_index = nodes[members[j]].age;
+			  workplaces[i].projects[project_index].individuals.push_back(members[j]);
+			  nodes[members[j]].workplace_subnetwork = project_index;
+	 	   }
+
+  	  }
+  }
+
+//for testing purpose
+/*
+workplace temp1;
+for(count_type count=0; count<5; ++count){
+	temp1 = workplaces[uniform_count_type_network(0,workplaces.size())];
+	for(count_type j=0; j<temp1.individuals.size(); j++){
+		std::cout<<temp1.individuals[j]<< "\t";
+	}
+	for(count_type j=0; j<temp1.projects.size(); j++){
+		std::cout<<" project_index "<<j;
+		for(count_type k=0; k<temp1.projects[j].individuals.size(); k++){
+			std::cout<<temp1.projects[j].individuals[k]<<"\t";
+		}
+	}
+}
+*/
+}
+
+
+void assign_household_community(vector<community>& communities, vector<agent>& nodes, vector<house>& homes){
+  for(count_type i=0; i<homes.size(); ++i){
+	if(homes[i].individuals.size()>0){
+	      homes[i].community = nodes[homes[i].individuals[0]].community;
+	      communities[homes[i].community].households.push_back(i);
+	}	      
+  }
+	  
+
+}
+
+
+void assign_household_random_community(vector<house>& homes, const vector<community>& communities){
+  int degree;
+  int number_to_be_assigned;
+  std::vector<int> members;
+  for(count_type i=0; i<communities.size(); ++i){
+  	for(count_type j=0; j<communities[i].households.size(); ++j){
+		int loop_count = 0;
+		degree = uniform_count_type_network(GLOBAL.MIN_RANDOM_COMMUNITY_SIZE, GLOBAL.MAX_RANDOM_COMMUNITY_SIZE);
+		members = communities[i].households;
+		randomly_shuffle(members);
+		number_to_be_assigned = degree;
+		while(number_to_be_assigned>0){
+			if(members[loop_count]!=communities[i].households[j]){
+				homes[communities[i].households[j]].random_households.households.push_back(members[loop_count]);
+				number_to_be_assigned--;
+			}
+			loop_count++;
+		}
+	}
+  }
+}
+
 
 void assign_homes_nbr_cell(const vector<house>& homes, vector<vector<nbr_cell>>& neighbourhood_cells){
 	if(!GLOBAL.ENABLE_CONTAINMENT){

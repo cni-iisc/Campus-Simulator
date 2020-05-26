@@ -64,6 +64,9 @@ plot_data_struct run_simulation(){
 
   assign_individual_home_community(nodes, homes, workplaces, communities);
   assign_homes_nbr_cell(homes,nbr_cells);
+  assign_individual_projects(workplaces, nodes);
+  assign_household_community(communities, nodes, homes);
+  assign_household_random_community(homes, communities);
 
   compute_scale_homes(homes);
   compute_scale_workplaces(workplaces);

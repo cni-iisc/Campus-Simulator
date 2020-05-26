@@ -231,8 +231,8 @@ struct global_params{
   //Transport
   double BETA_TRAVEL = 10.0;// Validate against data
   double P_TRAIN = 0.9; // Probability with which an agent has to travel
-  double KAPPA_TRAVEL = 1.0;
-  // What fraction of people, among those wo are attending work and take the
+  double FRACTION_FORCED_TO_TAKE_TRAIN = 1.0;
+  // What fraction of people, among those who are attending work and take the
   // train in usual circumstances, are forced (in the absence of other
   // employer-provided means, for example) to take the train.  Only relevant
   // when TRAINS_RUNNING is true.
@@ -540,7 +540,8 @@ struct agent{
   //Transporation
   bool has_to_travel = false; //does the agent take a train to go to
 							  //work?
-  bool kappa_travel = true; //Will the agent take the train today?
+  bool forced_to_take_train = true;
+  //Will the agent be forced to take the train today, as employer did not provide transit?
   
   double commute_distance = 0; //in km
 
@@ -557,7 +558,7 @@ struct agent{
   agent(){}
   // Is the agent curently traveling?
   inline bool travels() const {
-	return kappa_travel
+	return forced_to_take_train
 	  && has_to_travel && attending
 	  && !((quarantined && compliant)
 		   || infection_status == Progression::hospitalised

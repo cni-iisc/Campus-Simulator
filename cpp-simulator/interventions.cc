@@ -1086,7 +1086,7 @@ void get_kappa_Mumbai_cyclic(vector<agent>& nodes, vector<house>& homes, const v
 	get_kappa_lockdown(nodes, homes, workplaces, communities, cur_time);
 	//Update global travel parameters
 	GLOBAL.TRAINS_RUNNING = false;
-	GLOBAL.KAPPA_TRAVEL = 0.0;
+	GLOBAL.FRACTION_FORCED_TO_TAKE_TRAIN = 0.0;
   } else {
 	set_compliance(nodes, homes,
 				   USUAL_COMPLIANCE_PROBABILITY,
@@ -1110,7 +1110,7 @@ void get_kappa_Mumbai_cyclic(vector<agent>& nodes, vector<house>& homes, const v
 	  = GLOBAL.NUM_DAYS_BEFORE_INTERVENTIONS + LOCKDOWN_PERIOD;
 
 	GLOBAL.TRAINS_RUNNING = true;
-	GLOBAL.KAPPA_TRAVEL = 1.0;
+	GLOBAL.FRACTION_FORCED_TO_TAKE_TRAIN = 1.0;
   }
 }
 

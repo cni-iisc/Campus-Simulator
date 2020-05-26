@@ -173,7 +173,8 @@ plot_data_struct run_simulation(){
         nodes[j].attending =
           bernoulli(communities[nodes[j].community].w_c
                     * nodes[j].get_attendance_probability(time_step));
-		nodes[j].kappa_travel = GLOBAL.TRAINS_RUNNING && bernoulli(GLOBAL.KAPPA_TRAVEL);
+		nodes[j].forced_to_take_train = GLOBAL.TRAINS_RUNNING
+		  && bernoulli(GLOBAL.FRACTION_FORCED_TO_TAKE_TRAIN);
       }
     }
 

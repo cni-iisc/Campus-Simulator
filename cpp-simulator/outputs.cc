@@ -130,6 +130,9 @@ void output_copy_file(const string& input_file, const string& output_file){
 	count = fin.gcount();
 	fout.write(&buffer[0], count);
   } while(count > 0);
+
+  fin.close();
+  fout.close();
 }
 
 void output_global_params(const string& output_dir){

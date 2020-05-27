@@ -985,7 +985,6 @@ void get_kappa_NYC(vector<agent>& nodes, vector<house>& homes, const vector<work
 
 void get_kappa_custom_modular(vector<agent>& nodes, vector<house>& homes, const int cur_time,
 							  const intervention_params& intv){
-  set_compliance(nodes, homes, intv.compliance, intv.compliance_hd);
   if(intv.mask_factor != 1){
     GLOBAL.MASK_ACTIVE = true;
     GLOBAL.MASK_FACTOR = intv.mask_factor;
@@ -1155,6 +1154,8 @@ void get_kappa_file_read(vector<agent>& nodes, vector<house>& homes, const vecto
 	}
   }
 
+  set_compliance(nodes, homes, intv_params_vector[intv_index].compliance,
+				 intv_params_vector[intv_index].compliance_hd);
 
   get_kappa_custom_modular(nodes, homes, workplaces, communities, nbr_cells, cur_time, intv_params_vector[intv_index]);
 }

@@ -71,7 +71,8 @@ plot_data_struct run_simulation(){
   compute_scale_homes(homes);
   compute_scale_workplaces(workplaces);
   compute_scale_communities(nodes, communities);
-
+  compute_scale_random_community(homes, nodes);
+  compute_scale_nbr_cells(nodes, nbr_cells, homes);
   double travel_fraction = 0;
   
   //This needs to be done after the initilization.
@@ -222,20 +223,20 @@ plot_data_struct run_simulation(){
 
     if(GLOBAL.USE_AGE_DEPENDENT_MIXING){
         for (count_type h = 0; h < GLOBAL.num_homes; ++h){
-          homes[h].age_dependent_mixing = updated_lambda_h_age_dependent(nodes, homes[h],
+          updated_lambda_h_age_dependent(nodes, homes[h],
 																		 home_age_matrix.u,
 																		 home_age_matrix.sigma,
 																		 home_age_matrix.vT);
         }
         for (count_type w = 0; w < GLOBAL.num_schools + GLOBAL.num_workplaces; ++w){
 		  if(workplaces[w].workplace_type == WorkplaceType::school){
-			workplaces[w].age_dependent_mixing = updated_lambda_w_age_dependent(nodes, workplaces[w],
+			updated_lambda_w_age_dependent(nodes, workplaces[w],
 																				school_age_matrix.u,
 																				school_age_matrix.sigma,
 																				school_age_matrix.vT);
 		  }
 		  else{
-			workplaces[w].age_dependent_mixing = updated_lambda_w_age_dependent(nodes, workplaces[w],
+			updated_lambda_w_age_dependent(nodes, workplaces[w],
 																				workplace_age_matrix.u,
 																				workplace_age_matrix.sigma,
 																				workplace_age_matrix.vT);
@@ -244,12 +245,12 @@ plot_data_struct run_simulation(){
 	}
     else{
 	  for (count_type h = 0; h < GLOBAL.num_homes; ++h){
-		homes[h].age_independent_mixing = updated_lambda_h_age_independent(nodes, homes[h]);
+		updated_lambda_h_age_independent(nodes, homes[h]);
 		//FEATURE_PROPOSAL: make the mixing dependent on node.age_group;
 	  }
 	  
 	  for (count_type w = 0; w < GLOBAL.num_schools + GLOBAL.num_workplaces; ++w){
-		workplaces[w].age_independent_mixing = updated_lambda_w_age_independent(nodes, workplaces[w]);
+		updated_lambda_w_age_independent(nodes, workplaces[w]);
 		//FEATURE_PROPOSAL: make the mixing dependent on node.age_group;
 	  }
 	}
@@ -296,19 +297,20 @@ plot_data_struct run_simulation(){
 		communities[c].w_c = 1;
 	  }
 
-	  communities[c].lambda_community = updated_lambda_c_local(nodes, communities[c]);
-
+	  updated_lambda_c_local(nodes, communities[c]);
 	}
 
+	updated_lambda_c_local_random_community(nodes, communities, homes);
 	update_lambda_c_global(communities, community_fk_matrix);
+	update_lambda_nbr_cells(nodes, nbr_cells, homes);
 
 	travel_fraction = updated_travel_fraction(nodes,time_step);
 
 	// Update lambdas for the next step
 #pragma omp parallel for default(none)									\
-  shared(travel_fraction, time_step, homes, workplaces, communities, nodes)
+  shared(travel_fraction, time_step, homes, workplaces, communities, nbr_cells, nodes)
 	for (count_type j = 0; j < NUM_PEOPLE; ++j){
-	  update_lambdas(nodes[j], homes, workplaces, communities, travel_fraction, time_step);
+	  update_lambdas(nodes[j], homes, workplaces, communities, nbr_cells, travel_fraction, time_step);
 	}
 
 	//Get data for this simulation step

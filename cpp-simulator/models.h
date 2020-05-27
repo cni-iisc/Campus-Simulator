@@ -250,6 +250,10 @@ struct global_params{
   double BETA_W = 0.47 *2; //Thailand data
   double BETA_S = 0.94 *2; //Thailand data
   double BETA_C = 0.097*4.85; // Thailand data. Product = 0.47
+  double BETA_PROJECT = 0;
+  double BETA_CLASS = 0;
+  double BETA_RANDOM_COMMUNITY = 0;
+  double BETA_NBR_CELLS = 0;
 
   double ALPHA = 0.8;
   //exponent of number of people in a household while normalising
@@ -423,16 +427,22 @@ struct lambda_incoming_data {
   double work = 0;
   double community = 0;
   double travel = 0;
+  double project = 0;
+  double random_community = 0;
+  double nbr_cell = 0;
 
   void set_zero(){
 	home = 0;
 	work = 0;
 	community = 0;
 	travel = 0;
+	project = 0;
+  	random_community = 0;
+	nbr_cell = 0;
   }
 
   inline double sum() const {
-	return home + work + community + travel;
+	return home + work + community + travel + project + random_community + nbr_cell;
   }
 
   inline lambda_incoming_data operator/(long double d) const {
@@ -612,6 +622,7 @@ struct random_community{
   double lambda_random_community;
   count_type community;
   std::vector<int> households;
+  double scale = 0;
 };  
 
 
@@ -715,6 +726,8 @@ struct nbr_cell {
   grid_cell neighbourhood;
   std::vector<count_type> houses_list;
   bool quarantined = false;
+  double lambda_nbr = 0;
+  double scale = 0;
 };
 
 struct office_attendance{

@@ -717,6 +717,21 @@ void compute_scale_workplaces(vector<workplace>& workplaces){
 		* workplaces[w].Q_w
 		/ workplaces[w].individuals.size();
 	}
+	for(count_type j=0; j<workplaces[w].projects.size(); ++j){
+		if(workplaces[w].projects[j].individuals.size() ==0){
+			workplaces[w].projects[j].scale = 0;
+		}
+		else{
+			double beta_project = 0;
+		        if(workplaces[w].workplace_type == WorkplaceType::office){
+				beta_project = GLOBAL.BETA_PROJECT; //project
+			  } else if (workplaces[w].workplace_type == WorkplaceType::school){
+				beta_project = GLOBAL.BETA_CLASS; // class
+			  }
+			workplaces[w].projects[j].scale = beta_project/workplaces[w].projects[j].individuals.size();
+		}
+	}
+
   }
 }
 
@@ -731,6 +746,42 @@ void compute_scale_communities(const vector<agent>& nodes, vector<community>& co
 	}
 	else communities[w].scale = GLOBAL.BETA_C
 		   * communities[w].Q_c / sum_value;
+  }
+}
+
+void compute_scale_random_community(vector<house>& houses, vector<agent>& nodes){
+  for(count_type i=0; i<houses.size(); ++i){
+  	double sum_value = 0;
+  	for(count_type j=0; j<houses[i].random_households.households.size(); ++j){
+		if(houses[houses[i].random_households.households[j]].individuals.size()>0){
+			sum_value += houses[houses[i].random_households.households[j]].individuals.size()*nodes[houses[houses[i].random_households.households[j]].individuals[0]].funct_d_ck;
+		}
+	}
+	if(sum_value==0){
+		houses[i].random_households.scale = 0;
+	}
+	else{
+		houses[i].random_households.scale = GLOBAL.BETA_RANDOM_COMMUNITY/sum_value;
+	}
+  }
+}
+
+void compute_scale_nbr_cells(vector<agent>& nodes, vector<vector<nbr_cell>>& nbr_cells, const vector<house>& homes){
+  for(count_type i=0; i<nbr_cells.size(); ++i){
+	for(count_type j=0; j<nbr_cells[i].size(); ++j){
+		double sum_values = 0;
+		for(count_type h=0; h<nbr_cells[i][j].houses_list.size(); ++h){
+			if(homes[nbr_cells[i][j].houses_list[h]].individuals.size()>0){ 
+				sum_values += homes[nbr_cells[i][j].houses_list[h]].individuals.size()*nodes[homes[nbr_cells[i][j].houses_list[h]].individuals[0]].funct_d_ck;
+			}
+		}
+		if(sum_values>0){
+			nbr_cells[i][j].scale = GLOBAL.BETA_NBR_CELLS/sum_values;
+		}
+		else{
+			nbr_cells[i][j].scale = 0;
+		}
+	}
   }
 }
 

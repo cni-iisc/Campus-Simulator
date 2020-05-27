@@ -29,6 +29,8 @@ void assign_household_random_community(std::vector<house>& homes, const std::vec
 void compute_scale_homes(std::vector<house>& homes);
 void compute_scale_workplaces(std::vector<workplace>& workplaces);
 void compute_scale_communities(const std::vector<agent>& nodes, std::vector<community>& communities);
+void compute_scale_random_community(std::vector<house>& houses, std::vector<agent>& nodes);
+void compute_scale_nbr_cells(std::vector<agent>& nodes, std::vector<std::vector<nbr_cell>>& nbr_cells, const std::vector<house>& homes);
 
 // Age stratification JSON read function.
 svd init_home_age_interaction_matrix();

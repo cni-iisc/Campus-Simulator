@@ -262,24 +262,34 @@ void update_all_kappa(vector<agent>& nodes, vector<house>& homes, vector<workpla
   }
 }
 
-double updated_lambda_w_age_independent(const vector<agent>& nodes, const workplace& workplace){
+void updated_lambda_w_age_independent(const vector<agent>& nodes, workplace& workplace){
   double sum_value = 0;
+  project current_project;
   vector<double> lambda_age_group(GLOBAL.NUM_AGE_GROUPS);
   for (count_type i=0; i < workplace.individuals.size(); ++i){
 	sum_value += nodes[workplace.individuals[i]].lambda_w;
   }
-  return workplace.scale*sum_value;
+  workplace.age_independent_mixing = workplace.scale*sum_value;
+  
+  for(count_type i=0; i<workplace.projects.size(); ++i){
+	  double sum_value_project = 0;
+	  current_project = workplace.projects[i];
+	  for(count_type j=0; j<current_project.individuals.size(); ++j){
+		  sum_value_project+=nodes[current_project.individuals[j]].lambda_w;
+	  }
+	  workplace.projects[i].age_independent_mixing = workplace.projects[i].scale*sum_value_project;
+  }  
 }
 
-double updated_lambda_h_age_independent(const vector<agent>& nodes, const house& home){
+void updated_lambda_h_age_independent(const vector<agent>& nodes,  house& home){
   double sum_value = 0;
   for (count_type i=0; i<home.individuals.size(); ++i){
 	sum_value += nodes[home.individuals[i]].lambda_h;
   }
-  return  home.scale*sum_value;
+  home.age_independent_mixing =  home.scale*sum_value;
 }
 
-vector<double> updated_lambda_h_age_dependent(const vector<agent>& nodes, const house& home, const matrix<double>& home_tx_u, const vector<double>& home_tx_sigma, const matrix<double>& home_tx_vT){
+void updated_lambda_h_age_dependent(const vector<agent>& nodes,  house& home, const matrix<double>& home_tx_u, const vector<double>& home_tx_sigma, const matrix<double>& home_tx_vT){
   auto size = home_tx_u.size();
 
   vector<double> age_component(GLOBAL.NUM_AGE_GROUPS, 0.0);
@@ -306,11 +316,11 @@ vector<double> updated_lambda_h_age_dependent(const vector<agent>& nodes, const 
     }
 	lambda_age_group[count] *= home.scale;
   }
- return lambda_age_group;
+ home.age_dependent_mixing = lambda_age_group;
 
 }
 
-vector<double> updated_lambda_w_age_dependent(const vector<agent>& nodes, const workplace& workplace, const matrix<double>& workplace_tx_u, const vector<double>& workplace_tx_sigma, const matrix<double>& workplace_tx_vT){
+void updated_lambda_w_age_dependent(const vector<agent>& nodes, workplace& workplace, const matrix<double>& workplace_tx_u, const vector<double>& workplace_tx_sigma, const matrix<double>& workplace_tx_vT){
 
     auto size = workplace_tx_u.size();
 
@@ -337,7 +347,7 @@ vector<double> updated_lambda_w_age_dependent(const vector<agent>& nodes, const 
       }
 	  lambda_age_group[count] *=  workplace.scale;
     }
-    return lambda_age_group;
+    workplace.age_dependent_mixing = lambda_age_group;
 }
 
 vector<double> updated_lambda_c_local_age_dependent(const vector<agent>& nodes, const community& community, const matrix<double>& community_tx_u, const vector<double>& community_tx_sigma, const matrix<double>& community_tx_vT){
@@ -406,7 +416,7 @@ double updated_travel_fraction(const vector<agent>& nodes, const int cur_time){
 }
 
 
-void update_lambdas(agent&node, const vector<house>& homes, const vector<workplace>& workplaces, const vector<community>& communities, const double travel_fraction, const int cur_time){
+void update_lambdas(agent&node, const vector<house>& homes, const vector<workplace>& workplaces, const vector<community>& communities, const vector<vector<nbr_cell>>& nbr_cells, const double travel_fraction, const int cur_time){
   node.lambda_incoming.set_zero();
   //Contributions from home, workplace, community, and travel
   if (GLOBAL.USE_AGE_DEPENDENT_MIXING){
@@ -431,6 +441,8 @@ void update_lambdas(agent&node, const vector<house>& homes, const vector<workpla
 	if(node.workplace != WORKPLACE_HOME) {
 	  node.lambda_incoming.work = (node.attending?1.0:GLOBAL.ATTENDANCE_LEAKAGE)*node.kappa_W_incoming
 		* workplaces[node.workplace].age_independent_mixing;
+	  node.lambda_incoming.project =  (node.attending?1.0:GLOBAL.ATTENDANCE_LEAKAGE)*node.kappa_W_incoming
+		* workplaces[node.workplace].projects[node.workplace_subnetwork].age_independent_mixing;
 	  //FEATURE_PROPOSAL: make the mixing dependent on node.age_group;
 	}
   }
@@ -446,6 +458,23 @@ void update_lambdas(agent&node, const vector<house>& homes, const vector<workpla
 	* pow(communities[node.community].individuals.size(),
 		  node.hd_area_exponent);
   //If the agent lives in a high population density area, eg, a slum
+   node.lambda_incoming.random_community = node.kappa_C_incoming
+	* node.zeta_a
+	* node.funct_d_ck
+	* homes[node.home].random_households.lambda_random_community
+	* node.hd_area_factor;
+   
+   if(nbr_cells.size()>0){ 
+   node.lambda_incoming.nbr_cell = node.kappa_C_incoming
+	* node.zeta_a
+	* node.funct_d_ck
+	* nbr_cells[homes[node.home].neighbourhood.cell_x][homes[node.home].neighbourhood.cell_y].lambda_nbr
+	* node.hd_area_factor;
+   }
+   else{
+	  node.lambda_incoming.nbr_cell = 0;
+   }
+
 
   //Travel only happens at "odd" times, twice a day
   if((cur_time % 2) && node.travels()){
@@ -458,6 +487,7 @@ void update_lambdas(agent&node, const vector<house>& homes, const vector<workpla
 	node.lambda_incoming.work *= GLOBAL.MASK_FACTOR;
 	node.lambda_incoming.community *= GLOBAL.MASK_FACTOR;
 	node.lambda_incoming.travel *= GLOBAL.MASK_FACTOR;
+	node.lambda_incoming.project *= GLOBAL.MASK_FACTOR;
   }
 
   node.lambda = node.lambda_incoming.sum();
@@ -465,18 +495,46 @@ void update_lambdas(agent&node, const vector<house>& homes, const vector<workpla
 }
 
 
-double updated_lambda_c_local(const vector<agent>& nodes, const community& community){
+void updated_lambda_c_local(const vector<agent>& nodes, community& community){
   double sum_value = 0;
   const auto SIZE = community.individuals.size();
 
 #pragma omp parallel for default(none) shared(nodes, community) reduction (+: sum_value)
   for(count_type i = 0; i < SIZE; ++i){
-	sum_value += nodes[community.individuals[i]].lambda_c;
+	  sum_value += nodes[community.individuals[i]].lambda_c;
   }
+  community.lambda_community = community.scale*sum_value*community.w_c;
   //std::fill(lambda_age_group.begin(), lambda_age_group.end(), community.scale*sum_value*community.w_c);
   //return lambda_age_group;
-  return community.scale*sum_value*community.w_c;
 }
+
+void updated_lambda_c_local_random_community(const vector<agent>& nodes, vector<community>& communities, vector<house>& houses){
+  for(count_type i = 0; i<houses.size(); ++i){
+	double sum_value_household = 0;
+	for(count_type j=0; j<houses[i].random_households.households.size(); ++j){
+		for(count_type k=0; k<houses[houses[i].random_households.households[j]].individuals.size(); ++k){
+			sum_value_household += nodes[houses[houses[i].random_households.households[j]].individuals[k]].lambda_c;
+		}
+	}
+	houses[i].random_households.lambda_random_community = houses[i].random_households.scale*sum_value_household*communities[houses[i].community].w_c;
+  }
+  //Future: instead of updating lambda for each individual, keep it for each household.
+}
+
+void update_lambda_nbr_cells(vector<agent>& nodes, vector<vector<nbr_cell>>& nbr_cells, vector<house>& houses){
+  for(count_type i=0; i<nbr_cells.size(); ++i){
+	  for(count_type j=0; j<nbr_cells[i].size(); ++j){
+	  	  double sum_values = 0;
+		  for(count_type h=0; h<nbr_cells[i][j].houses_list.size(); ++h){
+			  for(count_type k=0; k<houses[nbr_cells[i][j].houses_list[h]].individuals.size(); ++k){
+				  sum_values += nodes[houses[nbr_cells[i][j].houses_list[h]].individuals[k]].lambda_c;
+			  }
+		  }  
+	  	  nbr_cells[i][j].lambda_nbr = nbr_cells[i][j].scale*sum_values;
+	  }
+  }		
+}
+
 
 void update_lambda_c_global(vector<community>& communities,
 							const matrix<double>& community_distance_fk_matrix){

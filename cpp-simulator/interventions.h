@@ -39,14 +39,14 @@ void get_kappa_intv_fper_intv_sper_intv_tper(std::vector<agent>& nodes, std::vec
 
 void get_kappa_NYC(std::vector<agent>& nodes, std::vector<house>& homes, const std::vector<workplace>& workplaces, std::vector<community>& communities, int cur_time);
 
-void get_kappa_containment(std::vector<agent>& nodes, std::vector<house>& homes, const std::vector<workplace>& workplaces, std::vector<community>& communities, const std::vector<std::vector<nbr_cell>>& nbr_cells, int cur_time, double FIRST_PERIOD, Intervention intv);
+void get_kappa_containment(std::vector<agent>& nodes, std::vector<house>& homes, const std::vector<workplace>& workplaces, std::vector<community>& communities, const matrix<nbr_cell>& nbr_cells, int cur_time, double FIRST_PERIOD, Intervention intv);
 
-void get_kappa_file_read(std::vector<agent>& nodes, std::vector<house>& homes, const std::vector<workplace>& workplaces, std::vector<community>& communities, const std::vector<std::vector<nbr_cell>>& nbr_cells, const std::vector<intervention_params>& intv_params_vector, int cur_time);
+void get_kappa_file_read(std::vector<agent>& nodes, std::vector<house>& homes, const std::vector<workplace>& workplaces, std::vector<community>& communities, const matrix<nbr_cell>& nbr_cells, const std::vector<intervention_params>& intv_params_vector, int cur_time);
 
-void get_kappa_custom_modular(std::vector<agent>& nodes, std::vector<house>& homes, const std::vector<workplace>& workplaces, std::vector<community>& communities, const std::vector<std::vector<nbr_cell>>& nbr_cells, const int cur_time, const intervention_params intv_params);
+void get_kappa_custom_modular(std::vector<agent>& nodes, std::vector<house>& homes, const std::vector<workplace>& workplaces, std::vector<community>& communities, const matrix<nbr_cell>& nbr_cells, const int cur_time, const intervention_params intv_params);
 
-void get_kappa_Mumbai_alternative_version(std::vector<agent>& nodes, std::vector<house>& homes, const std::vector<workplace>& workplaces, std::vector<community>& communities, const std::vector<std::vector<nbr_cell>>& nbr_cells, int cur_time, double FIRST_PERIOD, double SECOND_PERIOD);
+void get_kappa_Mumbai_alternative_version(std::vector<agent>& nodes, std::vector<house>& homes, const std::vector<workplace>& workplaces, std::vector<community>& communities, const matrix<nbr_cell>& nbr_cells, int cur_time, double FIRST_PERIOD, double SECOND_PERIOD);
 
-void get_kappa_Mumbai_cyclic(std::vector<agent>& nodes, std::vector<house>& homes, const std::vector<workplace>& workplaces, std::vector<community>& communities, const std::vector<std::vector<nbr_cell>>& nbr_cells, int cur_time, double FIRST_PERIOD, double SECOND_PERIOD);
+void get_kappa_Mumbai_cyclic(std::vector<agent>& nodes, std::vector<house>& homes, const std::vector<workplace>& workplaces, std::vector<community>& communities, const matrix<nbr_cell>& nbr_cells, int cur_time, double FIRST_PERIOD, double SECOND_PERIOD);
 
 #endif

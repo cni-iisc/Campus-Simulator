@@ -267,7 +267,7 @@ void get_kappa_CI_HQ_65P(vector<agent>& nodes, vector<house>& homes, const vecto
 
 void get_kappa_LOCKDOWN_fper_CI_HQ_SD_65_PLUS_sper_CI(vector<agent>& nodes, vector<house>& homes, const vector<workplace>& workplaces, vector<community>& communities, const int cur_time, double FIRST_PERIOD, double SECOND_PERIOD){
 	intervention_params intv_params;
-	vector<vector<nbr_cell>> nbr_cells; //dummy variable  just to enable get_kappa_custom_modular function call.
+	matrix<nbr_cell> nbr_cells; //dummy variable  just to enable get_kappa_custom_modular function call.
 	if(cur_time < (GLOBAL.NUM_DAYS_BEFORE_INTERVENTIONS+FIRST_PERIOD)*GLOBAL.SIM_STEPS_PER_DAY){
 	  intv_params.lockdown = true;
       get_kappa_custom_modular(nodes, homes, workplaces, communities, nbr_cells, cur_time, intv_params);
@@ -287,7 +287,7 @@ void get_kappa_LOCKDOWN_fper_CI_HQ_SD_65_PLUS_sper_CI(vector<agent>& nodes, vect
 
 void get_kappa_LOCKDOWN_fper(vector<agent>& nodes, vector<house>& homes, const vector<workplace>& workplaces, vector<community>& communities, const int cur_time, double FIRST_PERIOD){
   intervention_params intv_params;
-  vector<vector<nbr_cell>> nbr_cells; //dummy variable  just to enable get_kappa_custom_modular function call.
+  matrix<nbr_cell> nbr_cells; //dummy variable  just to enable get_kappa_custom_modular function call.
   if(cur_time < (GLOBAL.NUM_DAYS_BEFORE_INTERVENTIONS+FIRST_PERIOD)*GLOBAL.SIM_STEPS_PER_DAY){
 	//get_kappa_lockdown(nodes, homes, workplaces, communities, cur_time);
 	intv_params.lockdown = true;
@@ -439,7 +439,7 @@ void mark_communities_for_containment(const vector<agent>& nodes, vector<communi
 
 void get_kappa_custom_modular(std::vector<agent>& nodes, std::vector<house>& homes,
 							  const std::vector<workplace>& workplaces, std::vector<community>& communities,
-							  const std::vector<std::vector<nbr_cell>>& nbr_cells,
+							  const matrix<nbr_cell>& nbr_cells,
 							  const int cur_time, const intervention_params intv_params){
   if(intv_params.trains_active){
     GLOBAL.TRAINS_RUNNING = true;
@@ -510,7 +510,7 @@ void get_kappa_custom_modular(std::vector<agent>& nodes, std::vector<house>& hom
 
 void get_kappa_LD_fper_CI_HQ_SD65_SC_sper_SC_tper(vector<agent>& nodes, vector<house>& homes, const vector<workplace>& workplaces, vector<community>& communities, const int cur_time, double FIRST_PERIOD, double SECOND_PERIOD, double THIRD_PERIOD){
 	intervention_params intv_params;
-	vector<vector<nbr_cell>> nbr_cells; //dummy variable  just to enable get_kappa_custom_modular function call.
+	matrix<nbr_cell> nbr_cells; //dummy variable  just to enable get_kappa_custom_modular function call.
 	if(cur_time < (GLOBAL.NUM_DAYS_BEFORE_INTERVENTIONS+FIRST_PERIOD)*GLOBAL.SIM_STEPS_PER_DAY){
 	  //get_kappa_lockdown(nodes, homes, workplaces, communities, cur_time);
 	  intv_params.lockdown = true;
@@ -536,7 +536,7 @@ void get_kappa_LD_fper_CI_HQ_SD65_SC_sper_SC_tper(vector<agent>& nodes, vector<h
 
 void get_kappa_LD_fper_CI_HQ_SD65_SC_sper(vector<agent>& nodes, vector<house>& homes, const vector<workplace>& workplaces, vector<community>& communities, const int cur_time, double FIRST_PERIOD, double SECOND_PERIOD){
 	intervention_params intv_params;
-	vector<vector<nbr_cell>> nbr_cells; //dummy variable  just to enable get_kappa_custom_modular function call.
+	matrix<nbr_cell> nbr_cells; //dummy variable  just to enable get_kappa_custom_modular function call.
 	if(cur_time < (GLOBAL.NUM_DAYS_BEFORE_INTERVENTIONS+FIRST_PERIOD)*GLOBAL.SIM_STEPS_PER_DAY){
 	  //get_kappa_lockdown(nodes, homes, workplaces, communities, cur_time);
 	  intv_params.lockdown = true;
@@ -557,7 +557,7 @@ void get_kappa_LD_fper_CI_HQ_SD65_SC_sper(vector<agent>& nodes, vector<house>& h
 
 void get_kappa_LD_fper_CI_HQ_SD65_SC_OE_sper(vector<agent>& nodes, vector<house>& homes, const vector<workplace>& workplaces, vector<community>& communities, const int cur_time, double FIRST_PERIOD, double OE_SECOND_PERIOD){
 	intervention_params intv_params;
-	vector<vector<nbr_cell>> nbr_cells; //dummy variable  just to enable get_kappa_custom_modular function call.
+	matrix<nbr_cell> nbr_cells; //dummy variable  just to enable get_kappa_custom_modular function call.
 	if(cur_time < (GLOBAL.NUM_DAYS_BEFORE_INTERVENTIONS+FIRST_PERIOD)*GLOBAL.SIM_STEPS_PER_DAY){
 	  //get_kappa_lockdown(nodes, homes, workplaces, communities, cur_time);
 	  intv_params.lockdown = true;
@@ -579,7 +579,7 @@ void get_kappa_LD_fper_CI_HQ_SD65_SC_OE_sper(vector<agent>& nodes, vector<house>
 
 void get_kappa_intv_fper_intv_sper_intv_tper(vector<agent>& nodes, vector<house>& homes, const vector<workplace>& workplaces, vector<community>& communities, const int cur_time, double FIRST_PERIOD, double SECOND_PERIOD, double THIRD_PERIOD){
 	intervention_params intv_params;
-	vector<vector<nbr_cell>> nbr_cells; //dummy variable  just to enable get_kappa_custom_modular function call.
+	matrix<nbr_cell> nbr_cells; //dummy variable  just to enable get_kappa_custom_modular function call.
 	if(cur_time < (GLOBAL.NUM_DAYS_BEFORE_INTERVENTIONS+FIRST_PERIOD)*GLOBAL.SIM_STEPS_PER_DAY){
 	  //get_kappa_lockdown(nodes, homes, workplaces, communities, cur_time);
 	  intv_params.lockdown = true;
@@ -609,7 +609,7 @@ void get_kappa_NYC(vector<agent>& nodes, vector<house>& homes, const vector<work
 	const double THIRD_PERIOD = 3;
 	const double FOURTH_PERIOD = 5;
 	intervention_params intv_params;
-	vector<vector<nbr_cell>> nbr_cells; //dummy variable  just to enable get_kappa_custom_modular function call.
+	matrix<nbr_cell> nbr_cells; //dummy variable  just to enable get_kappa_custom_modular function call.
 	
 	if(cur_time < (GLOBAL.NUM_DAYS_BEFORE_INTERVENTIONS+FIRST_PERIOD)*GLOBAL.SIM_STEPS_PER_DAY){
 	  //get_kappa_case_isolation(nodes, homes, workplaces, communities, cur_time);
@@ -644,7 +644,7 @@ void get_kappa_NYC(vector<agent>& nodes, vector<house>& homes, const vector<work
 
 void get_kappa_Mumbai_cyclic(vector<agent>& nodes, vector<house>& homes,
 							 const vector<workplace>& workplaces, vector<community>& communities,
-							 const std::vector<std::vector<nbr_cell>>& nbr_cells,
+							 const matrix<nbr_cell>& nbr_cells,
 							 const int cur_time, double FIRST_PERIOD, double SECOND_PERIOD){
   auto LOCKDOWN_PERIOD = FIRST_PERIOD + SECOND_PERIOD;
   double USUAL_COMPLIANCE_PROBABILITY = 0.6;
@@ -689,10 +689,10 @@ void get_kappa_Mumbai_cyclic(vector<agent>& nodes, vector<house>& homes,
 //The version below is an older version, based on a different generic implementation
 void get_kappa_Mumbai_alternative_version(vector<agent>& nodes, vector<house>& homes,
 										  const vector<workplace>& workplaces, vector<community>& communities,
-										  const vector<vector<nbr_cell>>& nbr_cells,
+										  const matrix<nbr_cell>& nbr_cells,
 										  int cur_time, double FIRST_PERIOD, double SECOND_PERIOD){
 	intervention_params intv_params;
-	//vector<vector<nbr_cell>> nbr_cells; //dummy variable  just to enable get_kappa_custom_modular function call.
+	//matrix<nbr_cell> nbr_cells; //dummy variable  just to enable get_kappa_custom_modular function call.
 	if(cur_time < (GLOBAL.NUM_DAYS_BEFORE_INTERVENTIONS+FIRST_PERIOD)*GLOBAL.SIM_STEPS_PER_DAY){
 	  //get_kappa_lockdown(nodes, homes, workplaces, communities, cur_time);
 	  intv_params.lockdown = true;
@@ -717,7 +717,7 @@ void get_kappa_Mumbai_alternative_version(vector<agent>& nodes, vector<house>& h
 
 void get_kappa_containment(vector<agent>& nodes, vector<house>& homes,
 						   const vector<workplace>& workplaces, vector<community>& communities,
-						   const vector<vector<nbr_cell>>& nbr_cells,
+						   const matrix<nbr_cell>& nbr_cells,
 						   int cur_time, double FIRST_PERIOD, Intervention intv){
 	if(cur_time < (GLOBAL.NUM_DAYS_BEFORE_INTERVENTIONS+FIRST_PERIOD)*GLOBAL.SIM_STEPS_PER_DAY){
 	  intervention_params intv_params;
@@ -750,7 +750,7 @@ void get_kappa_containment(vector<agent>& nodes, vector<house>& homes,
 
 void get_kappa_file_read(vector<agent>& nodes, vector<house>& homes,
 						 const vector<workplace>& workplaces, vector<community>& communities,
-						 const vector<vector<nbr_cell>>& nbr_cells,
+						 const matrix<nbr_cell>& nbr_cells,
 						 const vector<intervention_params>& intv_params_vector, int cur_time){
   count_type time_threshold = GLOBAL.NUM_DAYS_BEFORE_INTERVENTIONS;
   count_type cur_day = cur_time/GLOBAL.SIM_STEPS_PER_DAY; //get current day. Division to avoid multiplication inside for loop.

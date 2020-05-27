@@ -171,7 +171,7 @@ node_update_status update_infection(agent& node, int cur_time){
   return update_status;
 }
 
-void update_all_kappa(vector<agent>& nodes, vector<house>& homes, vector<workplace>& workplaces, vector<community>& communities, vector<vector<nbr_cell>>& nbr_cells, vector<intervention_params>& intv_params, int cur_time){
+void update_all_kappa(vector<agent>& nodes, vector<house>& homes, vector<workplace>& workplaces, vector<community>& communities, matrix<nbr_cell>& nbr_cells, vector<intervention_params>& intv_params, int cur_time){
   intervention_params intv_params_local;
   if(cur_time < GLOBAL.NUM_DAYS_BEFORE_INTERVENTIONS*GLOBAL.SIM_STEPS_PER_DAY){
     //get_kappa_no_intervention(nodes, homes, workplaces, communities,cur_time);

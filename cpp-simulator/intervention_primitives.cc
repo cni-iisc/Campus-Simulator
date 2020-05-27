@@ -118,7 +118,7 @@ void mark_homes_for_quarantine(const vector<agent>& nodes, vector<house>& homes,
 }
 
 void mark_neighbourhood_homes_for_quarantine(const vector<agent>& nodes, vector<house>& homes,
-												const vector<vector<nbr_cell>>& nbr_cells, const int cur_time){
+											 const matrix<nbr_cell>& nbr_cells, const int cur_time){
 	for (count_type count = 0; count < nodes.size(); ++count){
 		double time_since_hospitalised = cur_time
 		- (nodes[count].time_of_infection

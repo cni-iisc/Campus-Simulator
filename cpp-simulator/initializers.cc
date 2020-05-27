@@ -138,9 +138,9 @@ vector<community> init_community() {
   return communities;
 }
 
-vector<vector<nbr_cell>> init_nbr_cells() {
+matrix<nbr_cell> init_nbr_cells() {
 
-  vector<vector<nbr_cell>> nbr_cells;
+  matrix<nbr_cell> nbr_cells;
 
   if(GLOBAL.ENABLE_CONTAINMENT){
 	location loc_temp;
@@ -596,7 +596,7 @@ void assign_individual_home_community(vector<agent>& nodes, vector<house>& homes
   }
 }
 
-void assign_homes_nbr_cell(const vector<house>& homes, vector<vector<nbr_cell>>& neighbourhood_cells){
+void assign_homes_nbr_cell(const vector<house>& homes, matrix<nbr_cell>& neighbourhood_cells){
 	if(!GLOBAL.ENABLE_CONTAINMENT){
 		return;
 	}

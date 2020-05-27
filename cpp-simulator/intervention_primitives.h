@@ -30,7 +30,7 @@ void mark_and_isolate_quarantined_homes(std::vector<agent>& nodes, std::vector<h
 void mark_homes_for_quarantine(const std::vector<agent>& nodes, std::vector<house>& homes, int cur_time);
 
 void mark_neighbourhood_homes_for_quarantine(const std::vector<agent>& nodes, std::vector<house>& homes,
-											 const std::vector<std::vector<nbr_cell>>& nbr_cells, int cur_time);
+											 const matrix<nbr_cell>& nbr_cells, int cur_time);
 
 #endif
 

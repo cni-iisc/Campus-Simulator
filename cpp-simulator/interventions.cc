@@ -162,8 +162,8 @@ void mark_neighbourhood_homes_for_quarantine(const vector<agent>& nodes, vector<
 			}		
 		}
 	}
-
 }
+
 void isolate_quarantined_residents(vector<agent>& nodes, const vector<house>& homes, const int cur_time){
   for (count_type count = 0; count < homes.size(); ++count){
     if(homes[count].quarantined){
@@ -601,7 +601,10 @@ void mark_communities_for_containment(const vector<agent>& nodes, vector<communi
 	}
 }
 
-void get_kappa_custom_modular(std::vector<agent>& nodes, std::vector<house>& homes, const std::vector<workplace>& workplaces, std::vector<community>& communities, std::vector<std::vector<nbr_cell>>& nbr_cells, const int cur_time, const intervention_params intv_params){
+void get_kappa_custom_modular(std::vector<agent>& nodes, std::vector<house>& homes,
+							  const std::vector<workplace>& workplaces, std::vector<community>& communities,
+							  const std::vector<std::vector<nbr_cell>>& nbr_cells,
+							  const int cur_time, const intervention_params intv_params){
   if(intv_params.trains_active){
     GLOBAL.TRAINS_RUNNING = true;
     GLOBAL.FRACTION_FORCED_TO_TAKE_TRAIN = intv_params.fraction_forced_to_take_train;
@@ -803,7 +806,10 @@ void get_kappa_NYC(vector<agent>& nodes, vector<house>& homes, const vector<work
 	}
 }
 
-void get_kappa_Mumbai_cyclic(vector<agent>& nodes, vector<house>& homes, const vector<workplace>& workplaces, vector<community>& communities, std::vector<std::vector<nbr_cell>>& nbr_cells, const int cur_time, double FIRST_PERIOD, double SECOND_PERIOD){
+void get_kappa_Mumbai_cyclic(vector<agent>& nodes, vector<house>& homes,
+							 const vector<workplace>& workplaces, vector<community>& communities,
+							 const std::vector<std::vector<nbr_cell>>& nbr_cells,
+							 const int cur_time, double FIRST_PERIOD, double SECOND_PERIOD){
   auto LOCKDOWN_PERIOD = FIRST_PERIOD + SECOND_PERIOD;
   double USUAL_COMPLIANCE_PROBABILITY = 0.6;
   double HD_AREA_COMPLIANCE_PROBABILITY = 0.5;
@@ -845,7 +851,10 @@ void get_kappa_Mumbai_cyclic(vector<agent>& nodes, vector<house>& homes, const v
 }
 
 //The version below is an older version, based on a different generic implementation
-void get_kappa_Mumbai_alternative_version(vector<agent>& nodes, vector<house>& homes, const vector<workplace>& workplaces, vector<community>& communities, vector<vector<nbr_cell>>& nbr_cells, int cur_time, double FIRST_PERIOD, double SECOND_PERIOD){
+void get_kappa_Mumbai_alternative_version(vector<agent>& nodes, vector<house>& homes,
+										  const vector<workplace>& workplaces, vector<community>& communities,
+										  const vector<vector<nbr_cell>>& nbr_cells,
+										  int cur_time, double FIRST_PERIOD, double SECOND_PERIOD){
 	intervention_params intv_params;
 	//vector<vector<nbr_cell>> nbr_cells; //dummy variable  just to enable get_kappa_custom_modular function call.
 	if(cur_time < (GLOBAL.NUM_DAYS_BEFORE_INTERVENTIONS+FIRST_PERIOD)*GLOBAL.SIM_STEPS_PER_DAY){
@@ -870,7 +879,10 @@ void get_kappa_Mumbai_alternative_version(vector<agent>& nodes, vector<house>& h
 	}
 }
 
-void get_kappa_containment(vector<agent>& nodes, vector<house>& homes, const vector<workplace>& workplaces, vector<community>& communities, vector<vector<nbr_cell>>& nbr_cells, int cur_time, double FIRST_PERIOD, Intervention intv){
+void get_kappa_containment(vector<agent>& nodes, vector<house>& homes,
+						   const vector<workplace>& workplaces, vector<community>& communities,
+						   const vector<vector<nbr_cell>>& nbr_cells,
+						   int cur_time, double FIRST_PERIOD, Intervention intv){
 	if(cur_time < (GLOBAL.NUM_DAYS_BEFORE_INTERVENTIONS+FIRST_PERIOD)*GLOBAL.SIM_STEPS_PER_DAY){
 	  intervention_params intv_params;
 	  intv_params.lockdown = true;
@@ -900,7 +912,10 @@ void get_kappa_containment(vector<agent>& nodes, vector<house>& homes, const vec
 	}	
 }
 
-void get_kappa_file_read(vector<agent>& nodes, vector<house>& homes, const vector<workplace>& workplaces, vector<community>& communities, vector<vector<nbr_cell>>& nbr_cells, vector<intervention_params>& intv_params_vector, int cur_time){
+void get_kappa_file_read(vector<agent>& nodes, vector<house>& homes,
+						 const vector<workplace>& workplaces, vector<community>& communities,
+						 const vector<vector<nbr_cell>>& nbr_cells,
+						 const vector<intervention_params>& intv_params_vector, int cur_time){
   count_type time_threshold = GLOBAL.NUM_DAYS_BEFORE_INTERVENTIONS;
   count_type cur_day = cur_time/GLOBAL.SIM_STEPS_PER_DAY; //get current day. Division to avoid multiplication inside for loop.
   const auto SIZE = intv_params_vector.size();

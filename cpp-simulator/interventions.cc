@@ -983,14 +983,9 @@ void get_kappa_NYC(vector<agent>& nodes, vector<house>& homes, const vector<work
 }
 
 
+
 void get_kappa_custom_modular(vector<agent>& nodes, vector<house>& homes, const int cur_time,
 							  const intervention_params& intv){
-  if(intv.mask_factor != 1){
-    GLOBAL.MASK_ACTIVE = true;
-    GLOBAL.MASK_FACTOR = intv.mask_factor;
-    GLOBAL.MASK_START_DATE = 0; // overriding GLOBAL.MASK_START_DATE if
-                                // explicitly given in intervention file.
-  }
   if(intv.trains_active){
     GLOBAL.TRAINS_RUNNING = true;
     GLOBAL.FRACTION_FORCED_TO_TAKE_TRAIN = intv.fraction_forced_to_take_train;

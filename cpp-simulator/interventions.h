@@ -5,8 +5,6 @@
 #include "models.h"
 #include <vector>
 
-double kappa_T(const agent&node, double cur_time);
-
 void set_kappa_base_node(agent& node, double community_factor, int cur_time);
 
 void set_kappa_lockdown_node(agent& node, int cur_time);

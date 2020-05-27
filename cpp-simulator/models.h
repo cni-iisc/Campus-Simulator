@@ -680,4 +680,7 @@ void set_compliance(std::vector<agent> & nodes, std::vector<house> & homes,
 					double usual_compliance_probability, double hd_area_compliance_probability);
 
 void set_nbr_cell(house &home);
+
+//kappa_T severity calculation
+double kappa_T(const agent&node, double cur_time);
 #endif

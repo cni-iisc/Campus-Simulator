@@ -200,3 +200,27 @@ void set_nbr_cell(house &home){
   home.neighbourhood.cell_y
 	= count_type(floor(earth_distance(loc_temp,GLOBAL.city_SW)/GLOBAL.NBR_CELL_SIZE));
 }
+
+
+double kappa_T(const agent& node, double cur_time){
+  double val = 0;
+  if(!node.infective){
+	val = 0;
+  }
+  else {
+	double time_since_infection = cur_time - node.time_of_infection;
+
+	if(time_since_infection < node.incubation_period
+	   || time_since_infection> (node.incubation_period
+								 + node.asymptomatic_period
+								 + node.symptomatic_period)) {
+	  // Individual is not yet symptomatic or has been recovered, or has moved to the hospital
+	  val = 0;
+	} else if(time_since_infection < node.incubation_period + node.asymptomatic_period) {
+	  val = 1;
+	} else {
+	  val = 1.5;
+	}
+  }
+  return val;
+}

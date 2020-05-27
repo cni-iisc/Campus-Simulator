@@ -242,7 +242,7 @@ void update_all_kappa(vector<agent>& nodes, vector<house>& homes, vector<workpla
                                                    GLOBAL.FIRST_PERIOD, GLOBAL.SECOND_PERIOD);
       break;
 	case Intervention::intv_Mum_cyclic:
-      get_kappa_Mumbai_cyclic(nodes, homes, workplaces, communities, cur_time,
+      get_kappa_Mumbai_cyclic(nodes, homes, workplaces, communities, nbr_cells, cur_time,
 							  GLOBAL.FIRST_PERIOD, GLOBAL.SECOND_PERIOD);
 	  break;
     case Intervention::intv_nbr_containment:

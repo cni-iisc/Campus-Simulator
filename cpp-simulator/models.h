@@ -30,6 +30,11 @@ enum class Intervention {
    intv_Mum_cyclic=17
 };
 
+enum class Testing_Protocol{
+  no_testing,
+  test_household,
+};
+
 enum class Cycle_Type {
   home = 0,
   individual = 1
@@ -355,6 +360,12 @@ struct global_params{
   double MAX_CLASS_AGE = 19;
   double MIN_RANDOM_COMMUNITY_SIZE = 2; //Min and Max number of households in a random community.
   double MAX_RANDOM_COMMUNITY_SIZE = 5;
+  
+  bool ENABLE_TESTING = false;
+  double TEST_FALSE_NEGATIVE = 0; //Probability of a true positive person tests negative
+  double TEST_FALSE_POSITIVE = 0; //Probability of a true negative person tests positive
+  Testing_Protocol TESTING_PROTOCOL=Testing_Protocol::test_household;
+  double TIME_TO_TEST_POSITIVE = 3;
 
 };
 extern global_params GLOBAL;
@@ -509,6 +520,18 @@ struct lambda_incoming_data {
   }
 };
 
+enum class test_result{
+  not_yet_tested,
+  positive,
+  negative,
+};
+
+struct test_struct{
+  int tested_epoch = -1;
+  bool test_requested = false;
+  test_result state = test_result::not_yet_tested;
+};
+
 struct agent{
   location loc;
   int age;
@@ -615,6 +638,7 @@ struct agent{
 
   //attendance probability at given time, for the agent
   double get_attendance_probability(count_type time) const;
+  test_struct test_status;
 };
 
 

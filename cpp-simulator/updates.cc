@@ -7,6 +7,7 @@
 
 #include "updates.h"
 #include "interventions.h"
+#include "testing.h"
 
 using std::cerr;
 using std::vector;
@@ -387,6 +388,10 @@ double updated_travel_fraction(const vector<agent>& nodes, const int cur_time){
 
   const auto SIZE = nodes.size();
   const auto MASK_FACTOR = GLOBAL.MASK_FACTOR;
+
+
+
+
 #pragma omp parallel for default(none) shared(nodes) \
   reduction (+: usual_travellers, actual_travellers,  \
 			 infected_distance, total_distance)
@@ -557,6 +562,34 @@ void update_lambda_c_global(vector<community>& communities,
   }
 }
 
+void update_test_request(vector<agent>& nodes, vector<house>& homes, vector<workplace>& workplaces, vector<community>& communities, vector<vector<nbr_cell>>& nbr_cells, vector<intervention_params>& intv_params, count_type current_time){
+    switch(GLOBAL.TESTING_PROTOCOL){
+    case Testing_Protocol::no_testing:
+      break;
+    case Testing_Protocol::test_household:
+	    set_test_request_household(nodes, homes, current_time);
+      break;
+    default:
+      break;
+    }
+}
+
+void update_test_status(agent& node, count_type current_time){
+  if(node.test_status.test_requested==true){
+	  if(node.infection_status == Progression::infective || node.infection_status == Progression::symptomatic || node.infection_status == Progression::hospitalised || node.infection_status == Progression::critical){
+		  node.test_status.state = bernoulli(GLOBAL.TEST_FALSE_NEGATIVE)?test_result::negative:test_result::positive;
+		  node.test_status.tested_epoch = current_time;
+	  }
+	  else if(node.infection_status == Progression::exposed && current_time-node.time_of_infection > GLOBAL.SIM_STEPS_PER_DAY*GLOBAL.TIME_TO_TEST_POSITIVE){
+		  node.test_status.state = bernoulli(GLOBAL.TEST_FALSE_NEGATIVE)?test_result::negative:test_result::positive;
+		  node.test_status.tested_epoch = current_time;
+	  }
+	  else{ // test could come positive for a succeptible/recovered/dead person
+		  node.test_status.state = bernoulli(GLOBAL.TEST_FALSE_POSITIVE)?test_result::positive:test_result::negative;
+		  node.test_status.tested_epoch = current_time;
+	  }
+  }
+}
 
 casualty_stats get_infected_community(const vector<agent>& nodes, const community& community){
   count_type affected = 0;

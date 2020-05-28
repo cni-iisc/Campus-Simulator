@@ -191,6 +191,10 @@ plot_data_struct run_simulation(){
 	for(count_type j = 0; j < NUM_PEOPLE; ++j){
 	  auto node_update_status = update_infection(nodes[j], time_step);
 	  nodes[j].psi_T = psi_T(nodes[j], time_step);
+	  
+	  if(GLOBAL.ENABLE_TESTING){
+	  	update_test_status(nodes[j], time_step);
+	  }
 
 	  if(node_update_status.new_infection){
 		++num_new_infections;
@@ -220,8 +224,10 @@ plot_data_struct run_simulation(){
 	}
 
 	update_all_kappa(nodes, homes, workplaces, communities, nbr_cells, intv_params, time_step);
-
-    if(GLOBAL.USE_AGE_DEPENDENT_MIXING){
+	if(GLOBAL.ENABLE_TESTING){
+		update_test_request(nodes, homes, workplaces, communities, nbr_cells, intv_params, time_step);
+    	}
+     if(GLOBAL.USE_AGE_DEPENDENT_MIXING){
         for (count_type h = 0; h < GLOBAL.num_homes; ++h){
           updated_lambda_h_age_dependent(nodes, homes[h],
 																		 home_age_matrix.u,

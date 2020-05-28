@@ -521,13 +521,13 @@ void updated_lambda_c_local_random_community(const vector<agent>& nodes, vector<
   //Future: instead of updating lambda for each individual, keep it for each household.
 }
 
-void update_lambda_nbr_cells(vector<agent>& nodes, vector<vector<nbr_cell>>& nbr_cells, vector<house>& houses){
+void update_lambda_nbr_cells(vector<agent>& nodes, vector<vector<nbr_cell>>& nbr_cells, vector<house>& houses, vector<community>& communities){
   for(count_type i=0; i<nbr_cells.size(); ++i){
 	  for(count_type j=0; j<nbr_cells[i].size(); ++j){
 	  	  double sum_values = 0;
 		  for(count_type h=0; h<nbr_cells[i][j].houses_list.size(); ++h){
 			  for(count_type k=0; k<houses[nbr_cells[i][j].houses_list[h]].individuals.size(); ++k){
-				  sum_values += nodes[houses[nbr_cells[i][j].houses_list[h]].individuals[k]].lambda_c;
+				  sum_values += nodes[houses[nbr_cells[i][j].houses_list[h]].individuals[k]].lambda_c*communities[houses[nbr_cells[i][j].houses_list[h]].community].w_c;
 			  }
 		  }  
 	  	  nbr_cells[i][j].lambda_nbr = nbr_cells[i][j].scale*sum_values;

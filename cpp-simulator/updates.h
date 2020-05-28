@@ -34,7 +34,7 @@ void update_lambdas(agent&node, const std::vector<house>& homes, const std::vect
 
 void updated_lambda_c_local(const std::vector<agent>& nodes, community& community);
 void updated_lambda_c_local_random_community(const std::vector<agent>& nodes, std::vector<community>& communities, std::vector<house>& houses);
-void update_lambda_nbr_cells(std::vector<agent>& nodes, std::vector<std::vector<nbr_cell>>& nbr_cells, std::vector<house>& houses);
+void update_lambda_nbr_cells(std::vector<agent>& nodes, std::vector<std::vector<nbr_cell>>& nbr_cells, std::vector<house>& houses, std::vector<community>& communities);
 
 // Age stratification update functions.
 void updated_lambda_w_age_dependent(const std::vector<agent>& nodes, workplace& workplace, const matrix<double>& workplace_tx_u, const std::vector<double>& workplace_tx_sigma, const matrix<double>& workplace_tx_vT);

@@ -302,7 +302,7 @@ plot_data_struct run_simulation(){
 
 	updated_lambda_c_local_random_community(nodes, communities, homes);
 	update_lambda_c_global(communities, community_fk_matrix);
-	update_lambda_nbr_cells(nodes, nbr_cells, homes);
+	update_lambda_nbr_cells(nodes, nbr_cells, homes, communities);
 
 	travel_fraction = updated_travel_fraction(nodes,time_step);
 

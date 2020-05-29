@@ -563,11 +563,15 @@ void update_lambda_c_global(vector<community>& communities,
 }
 
 void update_test_request(vector<agent>& nodes, vector<house>& homes, vector<workplace>& workplaces, vector<community>& communities, vector<vector<nbr_cell>>& nbr_cells, vector<intervention_params>& intv_params, count_type current_time){
+    testing_probability probabilities;
     switch(GLOBAL.TESTING_PROTOCOL){
     case Testing_Protocol::no_testing:
       break;
     case Testing_Protocol::test_household:
-	    set_test_request_household(nodes, homes, current_time);
+      	    probabilities.prob_test_household_symptomatic = 0;
+ 	    probabilities.prob_test_household_hospitalised = 1;
+	    probabilities.prob_test_household_positive = 1;
+	    set_test_request(nodes, homes, workplaces, nbr_cells, communities, probabilities, current_time);
       break;
     default:
       break;
@@ -588,6 +592,7 @@ void update_test_status(agent& node, count_type current_time){
 		  node.test_status.state = bernoulli(GLOBAL.TEST_FALSE_POSITIVE)?test_result::positive:test_result::negative;
 		  node.test_status.tested_epoch = current_time;
 	  }
+	  node.test_status.test_requested = false;
   }
 }
 

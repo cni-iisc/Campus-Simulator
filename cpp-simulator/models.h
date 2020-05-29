@@ -30,6 +30,26 @@ enum class Intervention {
    intv_Mum_cyclic=17
 };
 
+
+struct testing_probability{
+  double prob_test_household_positive = 0;
+  double prob_test_household_hospitalised = 0;
+  double prob_test_household_symptomatic = 0;
+  double prob_test_workplace_positive = 0;
+  double prob_test_workplace_hospitalised = 0;
+  double prob_test_workplace_symptomatic = 0;
+  double prob_test_random_community_positive = 0;
+  double prob_test_random_community_hospitalised = 0;
+  double prob_test_random_community_symptomatic = 0;
+  double prob_test_neighbourhood_positive = 0;
+  double prob_test_neighbourhood_hospitalised = 0;
+  double prob_test_neighbourhood_symptomatic = 0;
+  double prob_test_school_positive = 0;
+  double prob_test_school_hospitalised = 0;
+  double prob_test_school_symptomatic = 0;
+};
+
+  
 enum class Testing_Protocol{
   no_testing,
   test_household,
@@ -366,6 +386,7 @@ struct global_params{
   double TEST_FALSE_POSITIVE = 0; //Probability of a true negative person tests positive
   Testing_Protocol TESTING_PROTOCOL=Testing_Protocol::test_household;
   double TIME_TO_TEST_POSITIVE = 3;
+  int MINIMUM_TEST_INTERVAL = 7; //Minumum duration between two consecutive tests
 
 };
 extern global_params GLOBAL;

@@ -8,6 +8,7 @@
 #include "initializers.h"
 #include "updates.h"
 #include "simulator.h"
+#include "testing.h"
 
 using std::vector;
 using std::string;
@@ -190,6 +191,7 @@ plot_data_struct run_simulation(){
 	// correct, but slows down the code too much.
 	for(count_type j = 0; j < NUM_PEOPLE; ++j){
 	  auto node_update_status = update_infection(nodes[j], time_step);
+	  auto node_update_testing = update_infection_testing(nodes[j], time_step); 
 	  nodes[j].psi_T = psi_T(nodes[j], time_step);
 	  
 	  if(GLOBAL.ENABLE_TESTING){
@@ -215,7 +217,7 @@ plot_data_struct run_simulation(){
 	  if(node_update_status.new_symptomatic && nodes[j].quarantined){
 		++quarantined_num_cases;
 	  }
-	  if(node_update_status.new_hospitalization){
+	  if(node_update_status.new_hospitalization || node_update_testing.new_hospitalization){
 		++num_cumulative_hospitalizations;
 	  }
 	  if(node_update_status.new_infective){

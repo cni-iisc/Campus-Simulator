@@ -497,6 +497,8 @@ void update_lambdas(agent&node, const vector<house>& homes, const vector<workpla
 	node.lambda_incoming.community *= GLOBAL.MASK_FACTOR;
 	node.lambda_incoming.travel *= GLOBAL.MASK_FACTOR;
 	node.lambda_incoming.project *= GLOBAL.MASK_FACTOR;
+	node.lambda_incoming.random_community *= GLOBAL.MASK_FACTOR;
+	node.lambda_incoming.nbr_cell *= GLOBAL.MASK_FACTOR;
   }
 
   node.lambda = node.lambda_incoming.sum();

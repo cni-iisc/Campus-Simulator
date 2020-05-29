@@ -43,6 +43,7 @@ void update_test_status(agent& node, count_type current_time);
 
 // Age stratification update functions.
 void updated_lambda_w_age_dependent(const std::vector<agent>& nodes, workplace& workplace, const matrix<double>& workplace_tx_u, const std::vector<double>& workplace_tx_sigma, const matrix<double>& workplace_tx_vT);
+void updated_lambda_project(const std::vector<agent>& nodes, workplace& workplace);
 
 void updated_lambda_h_age_dependent(const std::vector<agent>& nodes, house& home, const matrix<double>& home_tx_u, const std::vector<double>& home_tx_sigma, const matrix<double>& home_tx_vT);
 

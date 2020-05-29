@@ -263,15 +263,9 @@ void update_all_kappa(vector<agent>& nodes, vector<house>& homes, vector<workpla
   }
 }
 
-void updated_lambda_w_age_independent(const vector<agent>& nodes, workplace& workplace){
-  double sum_value = 0;
+
+void updated_lambda_project(const vector<agent>& nodes, workplace& workplace){
   project current_project;
-  vector<double> lambda_age_group(GLOBAL.NUM_AGE_GROUPS);
-  for (count_type i=0; i < workplace.individuals.size(); ++i){
-	sum_value += nodes[workplace.individuals[i]].lambda_w;
-  }
-  workplace.age_independent_mixing = workplace.scale*sum_value;
-  
   for(count_type i=0; i<workplace.projects.size(); ++i){
 	  double sum_value_project = 0;
 	  current_project = workplace.projects[i];
@@ -280,6 +274,15 @@ void updated_lambda_w_age_independent(const vector<agent>& nodes, workplace& wor
 	  }
 	  workplace.projects[i].age_independent_mixing = workplace.projects[i].scale*sum_value_project;
   }  
+}
+
+void updated_lambda_w_age_independent(const vector<agent>& nodes, workplace& workplace){
+  double sum_value = 0;
+  vector<double> lambda_age_group(GLOBAL.NUM_AGE_GROUPS);
+  for (count_type i=0; i < workplace.individuals.size(); ++i){
+	sum_value += nodes[workplace.individuals[i]].lambda_w;
+  }
+  workplace.age_independent_mixing = workplace.scale*sum_value; 
 }
 
 void updated_lambda_h_age_independent(const vector<agent>& nodes,  house& home){
@@ -446,11 +449,12 @@ void update_lambdas(agent&node, const vector<house>& homes, const vector<workpla
 	if(node.workplace != WORKPLACE_HOME) {
 	  node.lambda_incoming.work = (node.attending?1.0:GLOBAL.ATTENDANCE_LEAKAGE)*node.kappa_W_incoming
 		* workplaces[node.workplace].age_independent_mixing;
-	  node.lambda_incoming.project =  (node.attending?1.0:GLOBAL.ATTENDANCE_LEAKAGE)*node.kappa_W_incoming
-		* workplaces[node.workplace].projects[node.workplace_subnetwork].age_independent_mixing;
-	  //FEATURE_PROPOSAL: make the mixing dependent on node.age_group;
+  //FEATURE_PROPOSAL: make the mixing dependent on node.age_group;
 	}
   }
+  node.lambda_incoming.project =  (node.attending?1.0:GLOBAL.ATTENDANCE_LEAKAGE)*node.kappa_W_incoming
+	* workplaces[node.workplace].projects[node.workplace_subnetwork].age_independent_mixing;
+
   // No null check for community as every node has a community.
   //
   // For all communities add the community lambda with a distance

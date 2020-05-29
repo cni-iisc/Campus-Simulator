@@ -249,6 +249,7 @@ plot_data_struct run_simulation(){
 																				workplace_age_matrix.sigma,
 																				workplace_age_matrix.vT);
 		  }
+		  updated_lambda_project(nodes, workplaces[w]);
         }
 	}
     else{
@@ -259,6 +260,7 @@ plot_data_struct run_simulation(){
 	  
 	  for (count_type w = 0; w < GLOBAL.num_schools + GLOBAL.num_workplaces; ++w){
 		updated_lambda_w_age_independent(nodes, workplaces[w]);
+		updated_lambda_project(nodes, workplaces[w]);
 		//FEATURE_PROPOSAL: make the mixing dependent on node.age_group;
 	  }
 	}

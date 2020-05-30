@@ -12,6 +12,8 @@ double update_individual_lambda_w(const agent& node, int cur_time);
 
 double update_individual_lambda_c(const agent& node, int cur_time);
 
+double update_individual_lambda_nbr_cell(const agent& node, int cur_time);
+
 struct node_update_status{
   bool new_infection = false;
   bool new_symptomatic = false;

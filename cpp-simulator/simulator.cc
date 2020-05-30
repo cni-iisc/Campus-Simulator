@@ -191,7 +191,7 @@ plot_data_struct run_simulation(){
 	// correct, but slows down the code too much.
 	for(count_type j = 0; j < NUM_PEOPLE; ++j){
 	  auto node_update_status = update_infection(nodes[j], time_step);
-	  auto node_update_testing = update_infection_testing(nodes[j], time_step); 
+	  auto node_update_testing = update_infection_testing(nodes[j], nodes, homes, time_step); 
 	  nodes[j].psi_T = psi_T(nodes[j], time_step);
 	  
 	  if(GLOBAL.ENABLE_TESTING){

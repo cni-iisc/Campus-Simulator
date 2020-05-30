@@ -11,6 +11,6 @@ struct node_update_status_testing{
 };
 
 void set_test_request(std::vector<agent>& nodes, std::vector<house>& homes, std::vector<workplace>& workplaces, std::vector<std::vector<nbr_cell>>& nbr_cells, std::vector<community>& communities, testing_probability probabilities, count_type current_time);
-node_update_status_testing update_infection_testing(agent& node, count_type current_time);
+node_update_status_testing update_infection_testing(agent& node, std::vector<agent>& nodes, std::vector<house>& homes, count_type current_time);
 
 #endif

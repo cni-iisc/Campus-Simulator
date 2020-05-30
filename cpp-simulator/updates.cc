@@ -55,6 +55,19 @@ double update_individual_lambda_c(const agent& node, int cur_time){
 	// optimised version: return node.lambda_h * node.funct_d_ck;
 }
 
+double update_individual_lambda_nbr_cell(const agent& node, int cur_time){
+  double mask_factor = 1.0;
+  if(mask_active(cur_time) && node.compliant){
+	  mask_factor = GLOBAL.MASK_FACTOR;
+  }
+  return (node.infective?1.0:0.0)
+	* node.kappa_T
+	* node.infectiousness
+	* (1 + node.severity)
+	* node.kappa_C
+	* mask_factor;
+	// optimised version: return node.lambda_h * node.funct_d_ck;
+}
 
 //Returns whether the node was infected or turned symptomatic in this time step
 node_update_status update_infection(agent& node, int cur_time){
@@ -168,6 +181,7 @@ node_update_status update_infection(agent& node, int cur_time){
   node.lambda_h = update_individual_lambda_h(node,cur_time);
   node.lambda_w = update_individual_lambda_w(node,cur_time);
   node.lambda_c = update_individual_lambda_c(node,cur_time);
+  node.lambda_nbr_cell = update_individual_lambda_nbr_cell(node,cur_time);
 
   return update_status;
 }
@@ -452,9 +466,10 @@ void update_lambdas(agent&node, const vector<house>& homes, const vector<workpla
   //FEATURE_PROPOSAL: make the mixing dependent on node.age_group;
 	}
   }
-  node.lambda_incoming.project =  (node.attending?1.0:GLOBAL.ATTENDANCE_LEAKAGE)*node.kappa_W_incoming
-	* workplaces[node.workplace].projects[node.workplace_subnetwork].age_independent_mixing;
-
+  if(node.workplace != WORKPLACE_HOME){
+	  node.lambda_incoming.project =  (node.attending?1.0:GLOBAL.ATTENDANCE_LEAKAGE)*node.kappa_W_incoming
+		* workplaces[node.workplace].projects[node.workplace_subnetwork].age_independent_mixing;
+  }
   // No null check for community as every node has a community.
   //
   // For all communities add the community lambda with a distance
@@ -476,7 +491,6 @@ void update_lambdas(agent&node, const vector<house>& homes, const vector<workpla
    if(nbr_cells.size()>0){ 
    node.lambda_incoming.nbr_cell = node.kappa_C_incoming
 	* node.zeta_a
-	* node.funct_d_ck
 	* nbr_cells[homes[node.home].neighbourhood.cell_x][homes[node.home].neighbourhood.cell_y].lambda_nbr
 	* node.hd_area_factor;
    }
@@ -538,7 +552,7 @@ void update_lambda_nbr_cells(vector<agent>& nodes, vector<vector<nbr_cell>>& nbr
 	  	  double sum_values = 0;
 		  for(count_type h=0; h<nbr_cells[i][j].houses_list.size(); ++h){
 			  for(count_type k=0; k<houses[nbr_cells[i][j].houses_list[h]].individuals.size(); ++k){
-				  sum_values += nodes[houses[nbr_cells[i][j].houses_list[h]].individuals[k]].lambda_c*communities[houses[nbr_cells[i][j].houses_list[h]].community].w_c;
+				  sum_values += nodes[houses[nbr_cells[i][j].houses_list[h]].individuals[k]].lambda_nbr_cell*communities[houses[nbr_cells[i][j].houses_list[h]].community].w_c;
 			  }
 		  }  
 	  	  nbr_cells[i][j].lambda_nbr = nbr_cells[i][j].scale*sum_values;

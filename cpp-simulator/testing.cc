@@ -132,7 +132,7 @@ bool should_be_isolated_node_testing(const agent& node, const int current_time, 
 }
 
 
-node_update_status_testing update_infection_testing(agent& node, count_type current_time){
+node_update_status_testing update_infection_testing(agent& node, vector<agent>& nodes, vector<house>& houses, count_type current_time){
   node_update_status_testing temp;
   if(node.test_status.state==test_result::positive){
 	  if(node.infection_status==Progression::symptomatic){
@@ -142,7 +142,9 @@ node_update_status_testing update_infection_testing(agent& node, count_type curr
 		  temp.new_hospitalization = true;
 	  }
 	  if(should_be_isolated_node_testing(node, current_time, HOME_QUARANTINE_DAYS)){
-	  	  modify_kappa_case_isolate_node(node);	  
+		  for(count_type i=0; i<houses[node.home].individuals.size(); ++i){
+			  modify_kappa_case_isolate_node(nodes[houses[node.home].individuals[i]]);	  
+		  }
 	  }
   }
   return temp;

@@ -548,7 +548,7 @@ enum class test_result{
 };
 
 struct test_struct{
-  int tested_epoch = -1;
+  int tested_epoch = -7;
   bool test_requested = false;
   test_result state = test_result::not_yet_tested;
 };
@@ -586,6 +586,8 @@ struct agent{
   //individuals contribution to his workplace cluster
   double lambda_c = 0;
   //individuals contribution to his community
+  double lambda_nbr_cell = 0;
+  //individuals contribution to neighbourhood cell
   double lambda = 0;
 
   double kappa_T = 1;

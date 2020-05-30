@@ -424,6 +424,8 @@ vector<agent> init_nodes(){
 							   i, elem,
 							   seed_candidates);
 
+	nodes[i].test_status.tested_epoch = -1*GLOBAL.MINIMUM_TEST_INTERVAL;
+	
 	++i;
   }
   assert(i == GLOBAL.num_people);
@@ -772,7 +774,7 @@ void compute_scale_nbr_cells(vector<agent>& nodes, vector<vector<nbr_cell>>& nbr
 		double sum_values = 0;
 		for(count_type h=0; h<nbr_cells[i][j].houses_list.size(); ++h){
 			if(homes[nbr_cells[i][j].houses_list[h]].individuals.size()>0){ 
-				sum_values += homes[nbr_cells[i][j].houses_list[h]].individuals.size()*nodes[homes[nbr_cells[i][j].houses_list[h]].individuals[0]].funct_d_ck;
+				sum_values += homes[nbr_cells[i][j].houses_list[h]].individuals.size();
 			}
 		}
 		if(sum_values>0){

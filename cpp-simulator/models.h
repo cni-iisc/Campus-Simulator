@@ -509,6 +509,9 @@ struct lambda_incoming_data {
 	work /= d;
 	community /= d;
 	travel /= d;
+	project /= d;
+	random_community /= d;
+	nbr_cell /= d;
 	return *this;
   }
 
@@ -517,6 +520,9 @@ struct lambda_incoming_data {
 	work *= d;
 	community *= d;
 	travel *= d;
+	project *= d;
+	random_community *= d;
+	nbr_cell *= d;
 	return *this;
   }
 
@@ -525,6 +531,9 @@ struct lambda_incoming_data {
 	work += rhs.work;
 	community += rhs.community;
 	travel += rhs.travel;
+	project += rhs.project;
+	random_community += rhs.random_community;
+	nbr_cell += rhs.nbr_cell;
 	return *this;
   }
 
@@ -533,6 +542,9 @@ struct lambda_incoming_data {
 	work -= rhs.work;
 	community -= rhs.community;
 	travel -= rhs.travel;
+	project -= rhs.project;
+	random_community -= rhs.random_community;
+	nbr_cell -= rhs.nbr_cell;
 	return *this;
   }
 
@@ -541,6 +553,9 @@ struct lambda_incoming_data {
 	work += (update.work - work)/num;
 	community += (update.community - community)/num;
 	travel += (update.travel - travel)/num;
+	project += (update.project -  project)/num;
+	random_community += (update.random_community - random_community)/num;
+	nbr_cell += (update.nbr_cell - nbr_cell)/num;
   }
 };
 

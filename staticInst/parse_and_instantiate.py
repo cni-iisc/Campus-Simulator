@@ -130,6 +130,7 @@ geoDF['wardNo'] = geoDF['wardNo'].astype(int)
 geoDF['wardIndex'] = geoDF['wardNo'] - 1
 geoDF = geoDF[['wardIndex','wardNo', 'wardName', 'geometry']]
 geoDF['wardBounds'] = geoDF.apply(lambda row: MultiPolygon(row['geometry']).bounds, axis=1)
+geoDF = geoDF.sort_values('wardNo')
 
 ##!! Note that the geojson file has coordinates in (longitude, latitude) order!
 geoDF['wardCentre'] = geoDF.apply(lambda row: (MultiPolygon(row['geometry']).centroid.x, MultiPolygon(row['geometry']).centroid.y), axis=1)
@@ -140,12 +141,15 @@ print("done.",flush=True)
 demographics = pd.read_csv(inputfiles["demographics"])
 demographics['wardName'] = demographics['wardName'].values
 demographics['totalPopulation'] = demographics['totalPopulation'].astype(int)
+demographics = demographics.sort_values('wardNo')
 nwards = demographics['wardIndex'].count()
 
 households = pd.read_csv(inputfiles["household"])
+households = households.sort_values('wardNo')
 households['Households'] = households['Households'].astype(int)
 
 employments = pd.read_csv(inputfiles["employment"])
+employments = employments.sort_values('wardNo')
 employments['Employed'] = employments['Employed'].astype(int)
 
 ## Parameters for slums

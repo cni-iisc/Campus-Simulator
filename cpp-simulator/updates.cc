@@ -66,7 +66,6 @@ double update_individual_lambda_nbr_cell(const agent& node, int cur_time){
 	* (1 + node.severity)
 	* node.kappa_C
 	* mask_factor;
-	// optimised version: return node.lambda_h * node.funct_d_ck;
 }
 
 //Returns whether the node was infected or turned symptomatic in this time step
@@ -279,12 +278,10 @@ void update_all_kappa(vector<agent>& nodes, vector<house>& homes, vector<workpla
 
 
 void updated_lambda_project(const vector<agent>& nodes, workplace& workplace){
-  project current_project;
-  for(count_type i=0; i<workplace.projects.size(); ++i){
+  for(count_type i=0; i < workplace.projects.size(); ++i){
 	  double sum_value_project = 0;
-	  current_project = workplace.projects[i];
-	  for(count_type j=0; j<current_project.individuals.size(); ++j){
-		  sum_value_project+=nodes[current_project.individuals[j]].lambda_w;
+	  for(count_type j=0; j < workplace.projects[i].individuals.size(); ++j){
+		  sum_value_project += nodes[workplace.projects[i].individuals[j]].lambda_w;
 	  }
 	  workplace.projects[i].age_independent_mixing = workplace.projects[i].scale*sum_value_project;
   }  
@@ -334,8 +331,7 @@ void updated_lambda_h_age_dependent(const vector<agent>& nodes,  house& home, co
     }
 	lambda_age_group[count] *= home.scale;
   }
- home.age_dependent_mixing = lambda_age_group;
-
+  home.age_dependent_mixing = std::move(lambda_age_group);
 }
 
 void updated_lambda_w_age_dependent(const vector<agent>& nodes, workplace& workplace, const matrix<double>& workplace_tx_u, const vector<double>& workplace_tx_sigma, const matrix<double>& workplace_tx_vT){
@@ -365,7 +361,7 @@ void updated_lambda_w_age_dependent(const vector<agent>& nodes, workplace& workp
       }
 	  lambda_age_group[count] *=  workplace.scale;
     }
-    workplace.age_dependent_mixing = lambda_age_group;
+    workplace.age_dependent_mixing = std::move(lambda_age_group);
 }
 
 vector<double> updated_lambda_c_local_age_dependent(const vector<agent>& nodes, const community& community, const matrix<double>& community_tx_u, const vector<double>& community_tx_sigma, const matrix<double>& community_tx_vT){
@@ -463,7 +459,7 @@ void update_lambdas(agent&node, const vector<house>& homes, const vector<workpla
 	if(node.workplace != WORKPLACE_HOME) {
 	  node.lambda_incoming.work = (node.attending?1.0:GLOBAL.ATTENDANCE_LEAKAGE)*node.kappa_W_incoming
 		* workplaces[node.workplace].age_independent_mixing;
-  //FEATURE_PROPOSAL: make the mixing dependent on node.age_group;
+	  //FEATURE_PROPOSAL: make the mixing dependent on node.age_group;
 	}
   }
   if(node.workplace != WORKPLACE_HOME){
@@ -482,21 +478,22 @@ void update_lambdas(agent&node, const vector<house>& homes, const vector<workpla
 	* pow(communities[node.community].individuals.size(),
 		  node.hd_area_exponent);
   //If the agent lives in a high population density area, eg, a slum
-   node.lambda_incoming.random_community = node.kappa_C_incoming
+
+  node.lambda_incoming.random_community = node.kappa_C_incoming
 	* node.zeta_a
 	* node.funct_d_ck
 	* homes[node.home].random_households.lambda_random_community
 	* node.hd_area_factor;
-   
-   if(nbr_cells.size()>0){ 
-   node.lambda_incoming.nbr_cell = node.kappa_C_incoming
-	* node.zeta_a
-	* nbr_cells[homes[node.home].neighbourhood.cell_x][homes[node.home].neighbourhood.cell_y].lambda_nbr
-	* node.hd_area_factor;
-   }
-   else{
-	  node.lambda_incoming.nbr_cell = 0;
-   }
+
+  if(nbr_cells.size()>0){
+	node.lambda_incoming.nbr_cell = node.kappa_C_incoming
+	  * node.zeta_a
+	  * nbr_cells[homes[node.home].neighbourhood.cell_x][homes[node.home].neighbourhood.cell_y].lambda_nbr
+	  * node.hd_area_factor;
+  }
+  else{
+	node.lambda_incoming.nbr_cell = 0;
+  }
 
 
   //Travel only happens at "odd" times, twice a day
@@ -526,7 +523,7 @@ void updated_lambda_c_local(const vector<agent>& nodes, community& community){
 
 #pragma omp parallel for default(none) shared(nodes, community) reduction (+: sum_value)
   for(count_type i = 0; i < SIZE; ++i){
-	  sum_value += nodes[community.individuals[i]].lambda_c;
+	sum_value += nodes[community.individuals[i]].lambda_c;
   }
   community.lambda_community = community.scale*sum_value*community.w_c;
   //std::fill(lambda_age_group.begin(), lambda_age_group.end(), community.scale*sum_value*community.w_c);
@@ -537,26 +534,29 @@ void updated_lambda_c_local_random_community(const vector<agent>& nodes, vector<
   for(count_type i = 0; i<houses.size(); ++i){
 	double sum_value_household = 0;
 	for(count_type j=0; j<houses[i].random_households.households.size(); ++j){
-		for(count_type k=0; k<houses[houses[i].random_households.households[j]].individuals.size(); ++k){
-			sum_value_household += nodes[houses[houses[i].random_households.households[j]].individuals[k]].lambda_c;
-		}
+	  for(count_type k=0; k<houses[houses[i].random_households.households[j]].individuals.size(); ++k){
+		sum_value_household += nodes[houses[houses[i].random_households.households[j]].individuals[k]].lambda_c;
+	  }
 	}
-	houses[i].random_households.lambda_random_community = houses[i].random_households.scale*sum_value_household*communities[houses[i].community].w_c;
+	houses[i].random_households.lambda_random_community = houses[i].random_households.scale
+	  * sum_value_household
+	  * communities[houses[i].community].w_c;
   }
   //Future: instead of updating lambda for each individual, keep it for each household.
 }
 
 void update_lambda_nbr_cells(vector<agent>& nodes, vector<vector<nbr_cell>>& nbr_cells, vector<house>& houses, vector<community>& communities){
   for(count_type i=0; i<nbr_cells.size(); ++i){
-	  for(count_type j=0; j<nbr_cells[i].size(); ++j){
-	  	  double sum_values = 0;
-		  for(count_type h=0; h<nbr_cells[i][j].houses_list.size(); ++h){
-			  for(count_type k=0; k<houses[nbr_cells[i][j].houses_list[h]].individuals.size(); ++k){
-				  sum_values += nodes[houses[nbr_cells[i][j].houses_list[h]].individuals[k]].lambda_nbr_cell*communities[houses[nbr_cells[i][j].houses_list[h]].community].w_c;
-			  }
-		  }  
-	  	  nbr_cells[i][j].lambda_nbr = nbr_cells[i][j].scale*sum_values;
+	for(count_type j=0; j<nbr_cells[i].size(); ++j){
+	  double sum_values = 0;
+	  for(count_type h=0; h<nbr_cells[i][j].houses_list.size(); ++h){
+		for(count_type k=0; k<houses[nbr_cells[i][j].houses_list[h]].individuals.size(); ++k){
+		  sum_values += nodes[houses[nbr_cells[i][j].houses_list[h]].individuals[k]].lambda_nbr_cell
+			* communities[houses[nbr_cells[i][j].houses_list[h]].community].w_c;
+		}
 	  }
+	  nbr_cells[i][j].lambda_nbr = nbr_cells[i][j].scale*sum_values;
+	}
   }		
 }
 
@@ -582,37 +582,45 @@ void update_lambda_c_global(vector<community>& communities,
   }
 }
 
-void update_test_request(vector<agent>& nodes, vector<house>& homes, vector<workplace>& workplaces, vector<community>& communities, vector<vector<nbr_cell>>& nbr_cells, vector<intervention_params>& intv_params, count_type current_time){
-    testing_probability probabilities;
-    switch(GLOBAL.TESTING_PROTOCOL){
-    case Testing_Protocol::no_testing:
-      break;
-    case Testing_Protocol::test_household:
-      	    probabilities.prob_test_household_symptomatic = 0;
- 	    probabilities.prob_test_household_hospitalised = 1;
-	    probabilities.prob_test_household_positive = 1;
-	    set_test_request(nodes, homes, workplaces, nbr_cells, communities, probabilities, current_time);
-      break;
-    default:
-      break;
-    }
+void update_test_request(vector<agent>& nodes, vector<house>& homes,
+						 vector<workplace>& workplaces, vector<community>& communities,
+						 vector<vector<nbr_cell>>& nbr_cells, count_type current_time){
+  testing_probability probabilities;
+  switch(GLOBAL.TESTING_PROTOCOL){
+  case Testing_Protocol::no_testing:
+	break;
+  case Testing_Protocol::test_household:
+	probabilities.prob_test_household_symptomatic = 0;
+	probabilities.prob_test_household_hospitalised = 1;
+	probabilities.prob_test_household_positive = 1;
+	set_test_request(nodes, homes, workplaces, nbr_cells, communities, probabilities, current_time);
+	break;
+  default:
+	break;
+  }
 }
 
 void update_test_status(agent& node, count_type current_time){
   if(node.test_status.test_requested==true){
-	  if(node.infection_status == Progression::infective || node.infection_status == Progression::symptomatic || node.infection_status == Progression::hospitalised || node.infection_status == Progression::critical){
-		  node.test_status.state = bernoulli(GLOBAL.TEST_FALSE_NEGATIVE)?test_result::negative:test_result::positive;
-		  node.test_status.tested_epoch = current_time;
-	  }
-	  else if(node.infection_status == Progression::exposed && current_time-node.time_of_infection > GLOBAL.SIM_STEPS_PER_DAY*GLOBAL.TIME_TO_TEST_POSITIVE){
-		  node.test_status.state = bernoulli(GLOBAL.TEST_FALSE_NEGATIVE)?test_result::negative:test_result::positive;
-		  node.test_status.tested_epoch = current_time;
-	  }
-	  else{ // test could come positive for a succeptible/recovered/dead person
-		  node.test_status.state = bernoulli(GLOBAL.TEST_FALSE_POSITIVE)?test_result::positive:test_result::negative;
-		  node.test_status.tested_epoch = current_time;
-	  }
-	  node.test_status.test_requested = false;
+	if(node.infection_status == Progression::infective
+	   || node.infection_status == Progression::symptomatic
+	   || node.infection_status == Progression::hospitalised
+	   || node.infection_status == Progression::critical){
+	  node.test_status.state = bernoulli(GLOBAL.TEST_FALSE_NEGATIVE)?test_result::negative:test_result::positive;
+	  node.test_status.tested_epoch = current_time;
+	}
+	else if(node.infection_status == Progression::exposed
+			&& current_time-node.time_of_infection > GLOBAL.SIM_STEPS_PER_DAY*GLOBAL.TIME_TO_TEST_POSITIVE){
+	  node.test_status.state = bernoulli(GLOBAL.TEST_FALSE_NEGATIVE)?test_result::negative:test_result::positive;
+	  //We might want to have higher false negative rate here, depending upon updates in the data.
+	  node.test_status.tested_epoch = current_time;
+	}
+	else{
+	  // Test could come positive for a succeptible/recovered/dead person
+	  node.test_status.state = bernoulli(GLOBAL.TEST_FALSE_POSITIVE)?test_result::positive:test_result::negative;
+	  node.test_status.tested_epoch = current_time;
+	}
+	node.test_status.test_requested = false;
   }
 }
 

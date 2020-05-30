@@ -227,7 +227,7 @@ plot_data_struct run_simulation(){
 
 	update_all_kappa(nodes, homes, workplaces, communities, nbr_cells, intv_params, time_step);
 	if(GLOBAL.ENABLE_TESTING){
-	  update_test_request(nodes, homes, workplaces, communities, nbr_cells, intv_params, time_step);
+	  update_test_request(nodes, homes, workplaces, communities, nbr_cells, time_step);
 	}
 	if(GLOBAL.USE_AGE_DEPENDENT_MIXING){
 	  for (count_type h = 0; h < GLOBAL.num_homes; ++h){

@@ -39,7 +39,7 @@ void updated_lambda_c_local_random_community(const std::vector<agent>& nodes, st
 void update_lambda_nbr_cells(std::vector<agent>& nodes, std::vector<std::vector<nbr_cell>>& nbr_cells, std::vector<house>& houses, std::vector<community>& communities);
 
 //Update test request and test status
-void update_test_request(std::vector<agent>& nodes, std::vector<house>& homes, std::vector<workplace>& workplaces, std::vector<community>& communities, std::vector<std::vector<nbr_cell>>& nbr_cells, std::vector<intervention_params>& intv_params, count_type current_time);
+void update_test_request(std::vector<agent>& nodes, std::vector<house>& homes, std::vector<workplace>& workplaces, std::vector<community>& communities, std::vector<std::vector<nbr_cell>>& nbr_cells, count_type current_time);
 void update_test_status(agent& node, count_type current_time);
 
 

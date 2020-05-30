@@ -61,6 +61,16 @@ int main(int argc, char** argv){
 	 cxxopts::value<double>()->default_value(DEFAULTS.BETA_S))
 	("BETA_TRAVEL", "the beta_travel parameter",
 	 cxxopts::value<double>()->default_value(DEFAULTS.BETA_TRAVEL))
+	("BETA_CLASS", "the beta_class parameter",
+	 cxxopts::value<double>()->default_value(DEFAULTS.BETA_CLASS))
+	("BETA_PROJECT", "the beta_project parameter",
+	 cxxopts::value<double>()->default_value(DEFAULTS.BETA_PROJECT))
+	("BETA_RANDOM_COMMUNITY", "the beta_random_community parameter",
+	 cxxopts::value<double>()->default_value(DEFAULTS.BETA_RANDOM_COMMUNITY))
+	("BETA_NBR_CELLS", "the beta_travel parameter",
+	 cxxopts::value<double>()->default_value(DEFAULTS.BETA_NBR_CELLS))
+	("ENABLE_TESTING", "the enable_testing parameter",
+	 cxxopts::value<bool>()->default_value(DEFAULTS.ENABLE_TESTING))
 	("HD_AREA_FACTOR", "multiplicative factor for high density areas",
 	 cxxopts::value<double>()->default_value(DEFAULTS.HD_AREA_FACTOR))
 	("HD_AREA_EXPONENT", "exponent for community size for high density areas",
@@ -148,6 +158,10 @@ int main(int argc, char** argv){
   GLOBAL.BETA_C = optvals["BETA_C"].as<double>();
   GLOBAL.BETA_S = optvals["BETA_S"].as<double>();
   GLOBAL.BETA_TRAVEL = optvals["BETA_TRAVEL"].as<double>();
+  GLOBAL.BETA_CLASS = optvals["BETA_CLASS"].as<double>();
+  GLOBAL.BETA_PROJECT = optvals["BETA_PROJECT"].as<double>();
+  GLOBAL.BETA_RANDOM_COMMUNITY = optvals["BETA_RANDOM_COMMUNITY"].as<double>();
+  GLOBAL.BETA_NBR_CELLS = optvals["BETA_NBR_CELLS"].as<double>();
 
   GLOBAL.HD_AREA_FACTOR = optvals["HD_AREA_FACTOR"].as<double>();
   GLOBAL.HD_AREA_EXPONENT = optvals["HD_AREA_EXPONENT"].as<double>();
@@ -210,6 +224,7 @@ int main(int argc, char** argv){
   GLOBAL.ENABLE_CONTAINMENT = optvals["ENABLE_CONTAINMENT"].count();
   GLOBAL.WARD_CONTAINMENT_THRESHOLD = optvals["WARD_CONTAINMENT_THRESHOLD"].as<count_type>();
 
+  GLOBAL.ENABLE_TESTING = optvals["ENABLE_TESTING"].count();
   GLOBAL.intervention_filename = optvals["intervention_filename"].as<std::string>();
 
 

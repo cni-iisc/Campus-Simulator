@@ -32,6 +32,11 @@ default_options['--FIRST_PERIOD'] =3
 default_options['--SECOND_PERIOD'] =4
 default_options['--THIRD_PERIOD'] =5
 default_options['--OE_SECOND_PERIOD'] =6
+default_options['--BETA_CLASS']=0
+default_options['--BETA_PROJECT']=0
+default_options['--BETA_RANDOM_COMMUNITY']=0
+default_options['--BETA_NBR_CELLS']=0
+default_flags['--ENABLE_TESTING']= False
 # Set this to "--SEED_HD_AREA_POPULATION" to seed hd area population
 # as well.
 # SEED_HD_AREA_POPULATION="--SEED_HD_AREA_POPULATION"

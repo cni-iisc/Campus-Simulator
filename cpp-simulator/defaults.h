@@ -53,6 +53,11 @@ struct defaults{
   std::string ENABLE_CONTAINMENT = "false";
   std::string WARD_CONTAINMENT_THRESHOLD  = "0";
   std::string intervention_params_filename = "intervention_params.json";
+  std::string BETA_PROJECT = "0";
+  std::string BETA_CLASS = "0";
+  std::string BETA_RANDOM_COMMUNITY = "0";
+  std::string BETA_NBR_CELLS = "0";
+  std::string ENABLE_TESTING = "false";
 } DEFAULTS;
 
 #endif

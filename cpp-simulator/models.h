@@ -82,6 +82,9 @@ extern std::default_random_engine GENERATOR;
 void SEED_RNG();
 void SEED_RNG_PROVIDED_SEED(count_type seed);
 
+void SEED_RNG_GRAPH();
+void SEED_RNG_GRAPH_PROVIDED_SEED(count_type seed);
+
 inline double gamma(double shape, double scale){
   return std::gamma_distribution<double>(shape, scale)(GENERATOR);
 }
@@ -109,7 +112,7 @@ void SEED_RNG();
 void SEED_RNG_PROVIDED_SEED(count_type seed);
 
 inline void randomly_shuffle(std::vector<int>& a){
-  std::random_shuffle(a.begin(), a.end());  // Need to add a specific generator.
+  std::shuffle(a.begin(), a.end(), GENERATOR_NETWORK);  // Need to add a specific generator.
 }
 
 inline bool bernoulli_network(double p){

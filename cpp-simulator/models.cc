@@ -21,20 +21,34 @@ void SEED_RNG(){
   //TODO: Use better seeding.  This just seeds with a 32 bit integer.
   std::random_device rd;
   GLOBAL.RNG_SEED = rd();
-  GLOBAL.RNG_SEED_NETWORK = rd();
   GENERATOR.seed(GLOBAL.RNG_SEED);
+#endif
+}
+
+void SEED_RNG_GRAPH(){
+#ifdef MERSENNE_TWISTER
+  //TODO: Use better seeding.  This just seeds with a 32 bit integer.
+  std::random_device rd;
+  GLOBAL.RNG_SEED_NETWORK = rd();
   GENERATOR_NETWORK.seed(GLOBAL.RNG_SEED_NETWORK);
 #endif
 }
 
+
 void SEED_RNG_PROVIDED_SEED(count_type seed){
 #ifdef MERSENNE_TWISTER
   GLOBAL.RNG_SEED = seed;
-  GLOBAL.RNG_SEED_NETWORK = seed;  //We may need a different seed.
   GENERATOR.seed(GLOBAL.RNG_SEED);
+#endif
+}
+
+void SEED_RNG_GRAPH_PROVIDED_SEED(count_type seed){
+#ifdef MERSENNE_TWISTER
+  GLOBAL.RNG_SEED_NETWORK = seed;
   GENERATOR_NETWORK.seed(GLOBAL.RNG_SEED_NETWORK);
 #endif
 }
+
 
 
 global_params GLOBAL;

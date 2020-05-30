@@ -99,6 +99,10 @@ int main(int argc, char** argv){
      cxxopts::value<double>()->default_value(DEFAULTS.OE_SECOND_PERIOD))
 	("PROVIDE_INITIAL_SEED",
 	 "provide an initial seed to the simulator. If this is not provided, the simulator uses "
+	 "std::random_device to get this random seed.",
+	 cxxopts::value<count_type>())
+	("PROVIDE_INITIAL_SEED_GRAPH",
+	 "provide the initial seed for the interaction graphs. If this is not provided, the simulator uses "
 	 "std::random_device to get the random seed.",
 	 cxxopts::value<count_type>())
     ("LOCKED_COMMUNITY_LEAKAGE", "minimum community infection leakage under containment",
@@ -195,10 +199,17 @@ int main(int argc, char** argv){
   
   if(optvals["PROVIDE_INITIAL_SEED"].count()){
 	//Initial seed was provided
-	SEED_RNG_PROVIDED_SEED(optvals["PROVIDE_INITIAL_SEED"].as<count_type>()); 
+	SEED_RNG_PROVIDED_SEED(optvals["PROVIDE_INITIAL_SEED"].as<count_type>());
   } else {
 	SEED_RNG(); //No Initial seed was provided
   }
+  if(optvals["PROVIDE_INITIAL_SEED_GRAPH"].count()){
+	//Initial seed was provided
+	SEED_RNG_GRAPH_PROVIDED_SEED(optvals["PROVIDE_INITIAL_SEED_GRAPH"].as<count_type>());
+  } else {
+	SEED_RNG_GRAPH(); //No Initial seed was provided
+  }
+
   //Done saving options
   
   GLOBAL.LOCKED_COMMUNITY_LEAKAGE = optvals["LOCKED_COMMUNITY_LEAKAGE"].as<double>();

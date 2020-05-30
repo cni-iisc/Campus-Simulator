@@ -197,10 +197,10 @@ void output_global_params(const string& output_dir){
   fout << "CYCLIC_POLICY_START_DAY: " << GLOBAL.CYCLIC_POLICY_START_DAY << ";" << endl;
 
   // Beta values
-  fout << "BETA_H: " << GLOBAL.BETA_H << ";" << endl;  //Thailand data
-  fout << "BETA_W: " << GLOBAL.BETA_W << ";" << endl;  //Thailand data
-  fout << "BETA_S: " << GLOBAL.BETA_S << ";" << endl;  //Thailand data
-  fout << "BETA_C: " << GLOBAL.BETA_C << ";" << endl;  // Thailand data. Product = 0.47
+  fout << "BETA_H: " << GLOBAL.BETA_H << ";" << endl;
+  fout << "BETA_W: " << GLOBAL.BETA_W << ";" << endl;
+  fout << "BETA_S: " << GLOBAL.BETA_S << ";" << endl;
+  fout << "BETA_C: " << GLOBAL.BETA_C << ";" << endl;
 
   fout << "ALPHA: " << GLOBAL.ALPHA << ";" << endl; 
 

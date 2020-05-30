@@ -227,30 +227,30 @@ plot_data_struct run_simulation(){
 
 	update_all_kappa(nodes, homes, workplaces, communities, nbr_cells, intv_params, time_step);
 	if(GLOBAL.ENABLE_TESTING){
-		update_test_request(nodes, homes, workplaces, communities, nbr_cells, intv_params, time_step);
-    	}
-     if(GLOBAL.USE_AGE_DEPENDENT_MIXING){
-        for (count_type h = 0; h < GLOBAL.num_homes; ++h){
-          updated_lambda_h_age_dependent(nodes, homes[h],
-																		 home_age_matrix.u,
-																		 home_age_matrix.sigma,
-																		 home_age_matrix.vT);
-        }
-        for (count_type w = 0; w < GLOBAL.num_schools + GLOBAL.num_workplaces; ++w){
-		  if(workplaces[w].workplace_type == WorkplaceType::school){
-			updated_lambda_w_age_dependent(nodes, workplaces[w],
-																				school_age_matrix.u,
-																				school_age_matrix.sigma,
-																				school_age_matrix.vT);
-		  }
-		  else{
-			updated_lambda_w_age_dependent(nodes, workplaces[w],
-																				workplace_age_matrix.u,
-																				workplace_age_matrix.sigma,
-																				workplace_age_matrix.vT);
-		  }
-		  updated_lambda_project(nodes, workplaces[w]);
-        }
+	  update_test_request(nodes, homes, workplaces, communities, nbr_cells, intv_params, time_step);
+	}
+	if(GLOBAL.USE_AGE_DEPENDENT_MIXING){
+	  for (count_type h = 0; h < GLOBAL.num_homes; ++h){
+		updated_lambda_h_age_dependent(nodes, homes[h],
+									   home_age_matrix.u,
+									   home_age_matrix.sigma,
+									   home_age_matrix.vT);
+	  }
+	  for (count_type w = 0; w < GLOBAL.num_schools + GLOBAL.num_workplaces; ++w){
+		if(workplaces[w].workplace_type == WorkplaceType::school){
+		  updated_lambda_w_age_dependent(nodes, workplaces[w],
+										 school_age_matrix.u,
+										 school_age_matrix.sigma,
+										 school_age_matrix.vT);
+		}
+		else{
+		  updated_lambda_w_age_dependent(nodes, workplaces[w],
+										 workplace_age_matrix.u,
+										 workplace_age_matrix.sigma,
+										 workplace_age_matrix.vT);
+		}
+		updated_lambda_project(nodes, workplaces[w]);
+	  }
 	}
     else{
 	  for (count_type h = 0; h < GLOBAL.num_homes; ++h){

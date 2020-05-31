@@ -4,7 +4,7 @@
 #Copyright [2020] [Indian Institute of Science, Bangalore & Tata Institute of Fundamental Research, Mumbai]
 #SPDX-License-Identifier: Apache-2.0
 #"""
-__name__ = "Script for generating city files - instantiation of a synthetic city"
+# Script for generating city files - instantiation of a synthetic city
 
 import json
 import geopandas as gpd

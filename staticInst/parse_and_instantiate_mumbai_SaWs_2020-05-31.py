@@ -32,7 +32,7 @@ interactive = 0
 
 default_miniPop = 10000
 default_city="mumbai"
-default_ibasepath = 'data/base/mumbai_slums-as-wards_2020-05-31/'
+default_ibasepath = 'data/base/mumbai_master/'
 default_obasepath = 'data/mumbai-10k/'
 
 a_workplacesize = 3.26

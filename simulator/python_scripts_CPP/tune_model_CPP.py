@@ -23,6 +23,11 @@ SYMPTOMATIC_FRACTION=0.67
 MEAN_HOSPITAL_REGULAR_PERIOD=8
 MEAN_HOSPITAL_CRITICAL_PERIOD=8
 COMPLIANCE_PROBABILITY=0.9
+
+##########################################################################################################
+### IMPORTANT: Check if these value fit the city we want to calibrate on. Currently set to Mumbai values #
+##########################################################################################################
+
 F_KERNEL_A= 2.709
 F_KERNEL_B= 1.278
 BETA_H=0.91100
@@ -30,11 +35,13 @@ BETA_W=0.48803
 BETA_C=0.22089
 BETA_S=0.97607
 BETA_TRAVEL=0
+
+
 HD_AREA_FACTOR=2.0
 HD_AREA_EXPONENT=0
 INTERVENTION=0
-output_directory_base="/home/covid/iisc_covid/cpp-simulator/outputs/calibration_2020-05-31/"
-input_directory="/home/covid/iisc_covid/staticInst/data/mumbai_1million_2020-05-31"
+output_directory_base="../../cpp-simulator/outputs/calibration_2020-05-31/"
+input_directory="../../staticInst/data/mumbai_1million_2020-05-31"
 CALIBRATION_DELAY=0
 DAYS_BEFORE_LOCKDOWN=0
 # Set this to "--SEED_HD_AREA_POPULATION" to seed hd area population

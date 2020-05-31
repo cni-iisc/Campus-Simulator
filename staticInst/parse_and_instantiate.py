@@ -124,19 +124,6 @@ for f in outputfiles:
 print("Creating city with a population of approximately ",miniPop,flush=True)
 print("")
 
-print("Reading city.geojson to get ward polygons...",end='',flush=True)
-geoDF = gpd.read_file(inputfiles["citygeojson"])
-geoDF['wardNo'] = geoDF['wardNo'].astype(int)
-geoDF['wardIndex'] = geoDF['wardNo'] - 1
-geoDF = geoDF[['wardIndex','wardNo', 'wardName', 'geometry']]
-geoDF['wardBounds'] = geoDF.apply(lambda row: MultiPolygon(row['geometry']).bounds, axis=1)
-geoDF = geoDF.sort_values('wardNo')
-
-##!! Note that the geojson file has coordinates in (longitude, latitude) order!
-geoDF['wardCentre'] = geoDF.apply(lambda row: (MultiPolygon(row['geometry']).centroid.x, MultiPolygon(row['geometry']).centroid.y), axis=1)
-print("done.",flush=True)
-
-
 # Read input data files
 demographics = pd.read_csv(inputfiles["demographics"])
 demographics['wardName'] = demographics['wardName'].values
@@ -152,6 +139,46 @@ employments = pd.read_csv(inputfiles["employment"])
 employments = employments.sort_values('wardNo')
 employments['Employed'] = employments['Employed'].astype(int)
 
+def checkName(df, nwards=nwards,name="df"):
+    if "wardName" not in df.columns:
+        return
+    for i in range(df.shape[0]):
+        if df["wardName"].iloc[i] != demographics['wardName'].iloc[i]:
+            print(f"WARNING: Check if this is a mismatch!")
+            print(f"{i}\t {name}: {df['wardName'].iloc[i]}\t demographics: {demographics['wardName'].iloc[i]}")
+
+def checkRows(df, nwards=nwards, name="df"):
+    assert df.shape[0] == nwards,\
+        f"Mismatch in {name}: num_rows is not {nwards}"
+    for i in range(nwards):
+        assert df["wardNo"].iloc[i] == i+1,\
+            f"Mismatch in {name}: row {i+1} has wardNo {df['wardIndex'].iloc[i]}"
+    checkName(df,nwards=nwards,name=name)
+
+print("Reading city.geojson to get ward polygons...",end='',flush=True)
+geoDF = gpd.read_file(inputfiles["citygeojson"])
+geoDF['wardNo'] = geoDF['wardNo'].astype(int)
+geoDF['wardIndex'] = geoDF['wardNo'] - 1
+geoDF = geoDF[['wardIndex','wardNo', 'wardName', 'geometry']]
+geoDF['wardBounds'] = geoDF.apply(lambda row: MultiPolygon(row['geometry']).bounds, axis=1)
+geoDF = geoDF.sort_values('wardNo')
+checkRows(geoDF, name="city.geojson")
+
+##!! Note that the geojson file has coordinates in (longitude, latitude) order!
+geoDF['wardCentre'] = geoDF.apply(lambda row: (MultiPolygon(row['geometry']).centroid.x, MultiPolygon(row['geometry']).centroid.y), axis=1)
+print("done.",flush=True)
+
+print("Checking for mismatches...", end="", flush=True)
+checkRows(demographics, name="demographics")
+checkRows(households, name="households")
+checkRows(employments, name="employments")
+
+for i in range(geoDF.shape[0]):
+    if geoDF["wardName"].iloc[i] != demographics['wardName'].iloc[i]:
+        print(f"WARNING: Check if this is a mismatch!")
+        print(f"{i}\t geoDF: {geoDF['wardName'].iloc[i]}\t demographics: {demographics['wardName'].iloc[i]}")
+print("done",flush=True)
+
 ## Parameters for slums
 slumflag = 0
 slumclustersflag = 0
@@ -160,6 +187,8 @@ slumprecomputedflag = 0
 if os.path.exists(inputfiles['slumfrac']):
     slumflag = 1
     slumfracs = pd.read_csv(inputfiles["slumfrac"])
+    checkRows(slumfracs, name="slumfracs")
+
 
 if os.path.exists(inputfiles['slumcluster']):
     slumclustersflag = 1
@@ -304,6 +333,26 @@ def getCommunityCenterDistance(lat,lon,wardIndex):
     return distance(lat,lon,latc,lonc)
 
 
+homeworkmatrix = []
+if os.path.exists(inputfiles['ODMatrix']):
+    ODMatrix = pd.read_csv(inputfiles['ODMatrix'])
+
+    checkRows(ODMatrix, name="ODMatrix")
+    cols = [a for a in ODMatrix.columns if a != "wardNo"]
+    for i in range(nwards):
+        assert int(cols[i]) == i+1,\
+            f"Mismatch in ODMatrix.csv: col {i+1} has {cols[i]}"
+
+    _ = ODMatrix.pop("wardNo")
+    ODMatrix = ODMatrix.values
+else:
+    print("ODMatrix not found. Using uniform ODmatrix.",flush=True)
+    ODMatrix = [[(1/nwards) for _ in range(nwards)] for _ in range(nwards)]
+for i in range(nwards):
+    ODMatrix[i][0] = ODMatrix[i][0] + 1 - sum(ODMatrix[i])
+    #Adjust in case the rows don't sum to 1
+
+
 #Now the real city building begins
 
 #Creating houses
@@ -357,18 +406,6 @@ for wardIndex in range(nwards):
         hid+=1
 print("done.",flush=True)
 
-
-homeworkmatrix = []
-if os.path.exists(inputfiles['ODMatrix']):
-    ODMatrix = pd.read_csv(inputfiles['ODMatrix'])
-    _ = ODMatrix.pop("wardNo")
-    ODMatrix = ODMatrix.values
-else:
-    print("ODMatrix not found. Using uniform ODmatrix.",flush=True)
-    ODMatrix = [[(1/nwards) for _ in range(nwards)] for _ in range(nwards)]
-for i in range(nwards):
-    ODMatrix[i][0] = ODMatrix[i][0] + 1 - sum(ODMatrix[i])
-    #Adjust in case the rows don't sum to 1
 
 print("Creating individuals to populate the households...",end='',flush=True)
 

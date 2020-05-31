@@ -98,7 +98,8 @@ outputfiles = {
     "schools":"schools.json",
     "wardCentreDistance":"wardCentreDistance.json",
     "commonArea":"commonArea.json",
-    "fractionPopulation":"fractionPopulation.json"
+    "fractionPopulation":"fractionPopulation.json",
+    "PRG_state":"PRG_state.log"
               }
 
 #Check if the necessary files are present.
@@ -121,6 +122,10 @@ if not os.path.exists(obasepath):
 
 for f in outputfiles:
     outputfiles[f] = os.path.join(obasepath,outputfiles[f])
+
+with open(outputfiles["PRG_state"],"w+") as f:
+    f.write(str(random.getstate()))
+
 print("Creating city with a population of approximately ",miniPop,flush=True)
 print("")
 

@@ -138,6 +138,7 @@ employments = employments.sort_values("wardNo")
 employments['Employed'] = employments['Employed'].astype(int)
 
 
+hd_flag = 0
 if 'hd_flag' in demographics.columns:
     hd_flag=1
 else:

@@ -12,7 +12,7 @@ std::vector<house> init_homes();
 std::vector<workplace> init_workplaces();
 std::vector<community> init_community();
 std::vector<agent> init_nodes();
-std::vector<std::vector<nbr_cell>> init_nbr_cells();
+matrix<nbr_cell> init_nbr_cells();
 std::vector<intervention_params> init_intervention_params();
 
 matrix<double> compute_community_distances(const std::vector<community>& communities);
@@ -20,7 +20,7 @@ matrix<double> compute_community_distances_fkernel(const matrix<double>& communi
 
 //Assign individuals to homes, workplace, community
 void assign_individual_home_community(std::vector<agent>& nodes, std::vector<house>& homes, std::vector<workplace>& workplaces, std::vector<community>& communities);
-void assign_homes_nbr_cell(const std::vector<house>& homes, std::vector<std::vector<nbr_cell>>& nbr_cells);
+void assign_homes_nbr_cell(const std::vector<house>& homes, matrix<nbr_cell>& nbr_cells);
 void assign_individual_projects(std::vector<workplace>& workplaces, std::vector<agent>& nodes);
 void assign_household_community(std::vector<community>& communities, std::vector<agent>& nodes, std::vector<house>& homes);
 void assign_household_random_community(std::vector<house>& homes, const std::vector<community>& communities);
@@ -30,7 +30,7 @@ void compute_scale_homes(std::vector<house>& homes);
 void compute_scale_workplaces(std::vector<workplace>& workplaces);
 void compute_scale_communities(const std::vector<agent>& nodes, std::vector<community>& communities);
 void compute_scale_random_community(std::vector<house>& houses, std::vector<agent>& nodes);
-void compute_scale_nbr_cells(std::vector<agent>& nodes, std::vector<std::vector<nbr_cell>>& nbr_cells, const std::vector<house>& homes);
+void compute_scale_nbr_cells(std::vector<agent>& nodes, matrix<nbr_cell>& nbr_cells, const std::vector<house>& homes);
 
 // Age stratification JSON read function.
 svd init_home_age_interaction_matrix();

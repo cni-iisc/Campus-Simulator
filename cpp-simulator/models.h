@@ -166,6 +166,7 @@ struct svd {
 struct intervention_params {
   count_type num_days = 0;
   double compliance = 0.9;
+  double compliance_hd = 0.9;
   bool case_isolation = false;
   bool home_quarantine = false;
   bool lockdown = false;
@@ -176,6 +177,8 @@ struct intervention_params {
   double community_factor = 1;
   bool neighbourhood_containment = false;
   bool ward_containment = false;
+  bool trains_active = false;
+  double fraction_forced_to_take_train = 1;
 
   intervention_params& set_case_isolation(bool c){
 	this->case_isolation = c;
@@ -814,4 +817,7 @@ void set_compliance(std::vector<agent> & nodes, std::vector<house> & homes,
 					double usual_compliance_probability, double hd_area_compliance_probability);
 
 void set_nbr_cell(house &home);
+
+//kappa_T severity calculation
+double kappa_T(const agent&node, double cur_time);
 #endif

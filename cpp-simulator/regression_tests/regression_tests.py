@@ -206,6 +206,10 @@ for intervention in range(16):
 
 	regression_tests.append(current_test)
 
+
+#remove old output files
+os.system('rm -rf ./output_files/')
+
 # Launch all regresstion tests
 launch_regression(regression_tests)
 

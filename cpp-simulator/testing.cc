@@ -2,7 +2,7 @@
 //SPDX-License-Identifier: Apache-2.0
 #include "models.h"
 #include "testing.h"
-#include "interventions.h"
+#include "intervention_primitives.h"
 using std::vector;
 
 

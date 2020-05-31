@@ -24,7 +24,7 @@ struct node_update_status{
 //Returns whether the node was infected or turned symptomatic in this time step
 node_update_status update_infection(agent& node, int cur_time);
 
-void update_all_kappa(std::vector<agent>& nodes, std::vector<house>& homes, std::vector<workplace>& workplaces, std::vector<community>& communities, std::vector<std::vector<nbr_cell>>& nbr_cells, std::vector<intervention_params>& intv_params, int cur_time);
+void update_all_kappa(std::vector<agent>& nodes, std::vector<house>& homes, std::vector<workplace>& workplaces, std::vector<community>& communities, matrix<nbr_cell>& nbr_cells, std::vector<intervention_params>& intv_params, int cur_time);
 
 void updated_lambda_w_age_independent(const std::vector<agent>& nodes, workplace& workplace);
 

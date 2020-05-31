@@ -379,7 +379,10 @@ for h in houses:
         p["workplaceType"]=0
         p["school"]=None
 
-        if age<=15:
+        if age < 3:
+            p["employed"]=0
+            p["workplaceType"] = 0
+        elif age >= 3 and age <= 15 :
             #decide about his/her school
             p["employed"]=0
             p["workplaceType"]=2 #this is school
@@ -387,7 +390,7 @@ for h in houses:
             #assuming they all go to school
             schoolers[wardIndex].append(pid)
 
-        elif age>=15 and age<65:
+        elif age>15 and age<=65:
             #decide about employment
             eprob = demographics['employed_frac'][wardIndex]
             eprobadjusted = eprob/sum([ageweights[a] for a in range(3,13)])

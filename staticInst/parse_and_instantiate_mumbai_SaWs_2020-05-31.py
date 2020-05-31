@@ -187,7 +187,7 @@ print("Checking for mismatches...", end="", flush=True)
 checkRows(demographics, name="demographics")
 checkRows(households, name="households")
 checkRows(employments, name="employments")
-
+print("done", flush=True)
 
 # In[ ]:
 

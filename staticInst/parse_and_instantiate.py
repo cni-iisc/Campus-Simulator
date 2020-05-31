@@ -125,7 +125,7 @@ for f in outputfiles:
 
 with open(outputfiles["PRG_state"],"w+") as f:
     f.write(f"random.getstate():\n{str(random.getstate())}\n\n")
-    f.write(f"np.random.get_state():\n{str(random.get_state())}\n")
+    f.write(f"np.random.get_state():\n{str(np.random.get_state())}\n")
 
 print("Creating city with a population of approximately ",miniPop,flush=True)
 print("")

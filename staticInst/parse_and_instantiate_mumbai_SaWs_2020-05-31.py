@@ -1,8 +1,10 @@
-#!/usr/bin/env python
-# coding: utf-8
-
-# In[ ]:
-
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+#"""
+#Copyright [2020] [Indian Institute of Science, Bangalore & Tata Institute of Fundamental Research, Mumbai]
+#SPDX-License-Identifier: Apache-2.0
+#"""
+# Script for generating city files - instantiation of a synthetic city
 
 import json
 import geopandas as gpd
@@ -24,10 +26,6 @@ import os
 import sys
 
 from computeDistributions import *
-
-
-# In[ ]:
-
 
 # Default Global Prameters
 interactive = 0
@@ -80,12 +78,10 @@ else:
 if city == 'bangalore':
     a_commuter_distance = 10.751
     b_commuter_distance = 5.384
+
 else:
     a_commuter_distance = 4 #parameter in distribution for commuter distance - Thailand paper
     b_commuter_distance = 3.8  #parameter in distribution for commuter distance - Thailand paper
-
-
-# In[ ]:
 
 
 inputfiles = {
@@ -104,6 +100,7 @@ outputfiles = {
     "commonArea":"commonArea.json",
     "fractionPopulation":"fractionPopulation.json"
               }
+
 #Check if the necessary files are present.
 for f in inputfiles:
     assert os.path.isfile(os.path.join(ibasepath, inputfiles[f])), "File {} doesn't exist!".format(inputfiles[f])
@@ -116,20 +113,30 @@ for f in inputfiles:
     inputfiles[f] = os.path.join(ibasepath,inputfiles[f])
 
 
-
 # Create output directory if not present
 if not os.path.exists(obasepath):
     os.mkdir(obasepath)
+
 for f in outputfiles:
     outputfiles[f] = os.path.join(obasepath,outputfiles[f])
+print("Creating city with a population of approximately ",miniPop,flush=True)
+print("")
 
 # Read input data files
 demographics = pd.read_csv(inputfiles["demographics"])
 demographics['wardName'] = demographics['wardName'].values
 demographics['totalPopulation'] = demographics['totalPopulation'].astype(int)
-demographics = demographics.sort_values("wardNo")
-
+demographics = demographics.sort_values('wardNo')
 nwards = demographics['wardIndex'].count()
+
+households = pd.read_csv(inputfiles["household"])
+households = households.sort_values("wardNo")
+households['Households'] = households['Households'].astype(int)
+
+employments = pd.read_csv(inputfiles["employment"])
+employments = employments.sort_values("wardNo")
+employments['Employed'] = employments['Employed'].astype(int)
+
 
 if 'hd_flag' in demographics.columns:
     hd_flag=1
@@ -145,9 +152,11 @@ def checkName(df, nwards=nwards,name="df"):
             print(f"{i}\t {name}: {df['wardName'].iloc[i]}\t demographics: {demographics['wardName'].iloc[i]}")
 
 def checkRows(df, nwards=nwards, name="df"):
-    assert df.shape[0] == nwards,        f"Mismatch in {name}: num_rows is not {nwards}"
+    assert df.shape[0] == nwards,\
+        f"Mismatch in {name}: num_rows is not {nwards}"
     for i in range(nwards):
-        assert df["wardNo"].iloc[i] == i+1,            f"Mismatch in {name}: row {i+1} has wardNo {df['wardIndex'].iloc[i]}"
+        assert df["wardNo"].iloc[i] == i+1,\
+            f"Mismatch in {name}: row {i+1} has wardNo {df['wardIndex'].iloc[i]}"
     checkName(df,nwards=nwards,name=name)
 
 
@@ -173,15 +182,7 @@ else:
 
 # In[ ]:
 
-
-households = pd.read_csv(inputfiles["household"])
-households['Households'] = households['Households'].astype(int)
-households = households.sort_values("wardNo")
-
-employments = pd.read_csv(inputfiles["employment"])
-employments['Employed'] = employments['Employed'].astype(int)
-employments = employments.sort_values("wardNo")
-
+print("Checking for mismatches...", end="", flush=True)
 checkRows(demographics, name="demographics")
 checkRows(households, name="households")
 checkRows(employments, name="employments")
@@ -231,9 +232,6 @@ def sampleSchoolSize():
     return (100*s + random.randint(0,99))
 
 
-# In[ ]:
-
-
 totalPop = demographics['totalPopulation'].sum()
 scale = miniPop/totalPop
 
@@ -262,7 +260,7 @@ def sampleRandomLatLong(wardIndex):
         while True:
             lat = random.uniform(lat1,lat2)
             lon = random.uniform(lon1,lon2)
-            point = Point(lon,lat)
+            point = Point(lon,lat) #IMPORTANT: Point takes in order of longitude, latitude
             if MultiPolygon(geoDF['geometry'][wardIndex]).contains(point):
                 return (lat,lon)
 def distance(lat1, lon1, lat2, lon2):
@@ -292,11 +290,12 @@ def getCommunityCenterDistance(lat,lon,wardIndex):
 
 if os.path.exists(inputfiles['ODMatrix']):
     ODMatrix = pd.read_csv(inputfiles['ODMatrix'])
-    checkRows(ODMatrix, name="ODMatrix")
 
+    checkRows(ODMatrix, name="ODMatrix")
     cols = [a for a in ODMatrix.columns if a != "wardNo"]
     for i in range(nwards):
-        assert int(cols[i]) == i+1,            f"Mismatch in ODMatrix.csv: col {i+1} has {cols[i]}"
+        assert int(cols[i]) == i+1,\
+            f"Mismatch in ODMatrix.csv: col {i+1} has {cols[i]}"
 
     _ = ODMatrix.pop("wardNo")
     ODMatrix = ODMatrix.values
@@ -308,8 +307,9 @@ for i in range(nwards):
     #Adjust in case the rows don't sum to 1
 
 
-# In[ ]:
+#Now the real city building begins
 
+#Creating houses
 
 print("Creating households for each ward...",end='',flush=True)
 houses = []
@@ -413,10 +413,10 @@ for h in houses:
         wardpop_actual[p["wardIndex"]]+=1
         totalPop_actual+=1
         pid+=1
+
+
 print("done.",flush=True)
 
-
-# In[ ]:
 
 
 def workplaces_size_distribution(a=3.26, c=0.97, m_max=2870):
@@ -478,8 +478,6 @@ def sampleOfficeType(size):
     else:
         return  officeType['Other']
 
-
-# In[ ]:
 
 
 print("Assigning schools...",end='', flush=True)
@@ -547,8 +545,6 @@ for wardIndex in range(nwards):
 print('done.',flush=True)
 
 
-# In[ ]:
-
 
 # Stats of instantiated city
 print("")
@@ -559,10 +555,6 @@ print("Households:",len(houses))
 print("Schools:",len(schools))
 print("Workplaces:",len(workplaces))
 print("")
-
-
-# In[ ]:
-
 
 # Assigning Common Areas
 commonAreas = []
@@ -588,12 +580,12 @@ for i in range(nwards):
         wardCentreDistances[i][str(j+1)]=d
 
 
-# In[ ]:
 
 
 # Create dataframes for validation
 df1 = pd.DataFrame(individuals)
 del individuals
+
 # Creating instantiated city files as JSONs
 print("Dumping to json files...",end='',flush=True)
 
@@ -634,10 +626,6 @@ del wardCentreDistances, commonAreas, fractionPopulations, schools, houses, work
 
 df1.to_json(outputfiles['individuals'], orient='records')
 print("individuals.json ... done.",flush=True)
-
-
-# In[ ]:
-
 
 print('\nGenerating validation plots for the instantitaion...\n')
 
@@ -751,6 +739,3 @@ plt.legend()
 plt.savefig(os.path.join(obasepath,'workplace_distance.png'))
 plt.close()
 print("done.",flush=True)
-
-
-# In[ ]:

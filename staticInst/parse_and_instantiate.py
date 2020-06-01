@@ -453,7 +453,7 @@ for h in houses:
         if age < 3:
             p["employed"]=0
             p["workplaceType"] = 0
-        elif age >= 3 and age < 15 :
+        elif age >= 3 and age <= 15 :
             #decide about his/her school
             p["employed"]=0
             p["workplaceType"]=2 #this is school
@@ -463,7 +463,24 @@ for h in houses:
                 slum_schoolers[wardIndex].append(pid)
             else:
                 nonslum_schoolers[wardIndex].append(pid)
-        elif age >= 15 and age < 65:
+        elif age>15  and age<= 20:
+            if(random.uniform(0,1)<0.5):
+                p["employed"]=1
+
+                p["workplace"]="TODO"
+                workplaceward = int(np.random.choice(list(range(nwards)),1,p=ODMatrix[wardIndex])[0])
+                p["workplaceward"]=workplaceward
+                p["workplaceType"]=1
+                workers[workplaceward].append(pid)
+            else:
+                p["workplaceType"]=2
+                #Half of the unemployed in this age bracket go to school
+                if slumflag ==1 and p["slum"]==1:
+                    slum_schoolers[wardIndex].append(pid)
+                else:
+                    nonslum_schoolers[wardIndex].append(pid)
+                
+        elif age > 20 and age <= 65:
             #decide about employment
             eprob = demographics['employed_frac'][wardIndex]
             eprobadjusted = eprob/sum([ageweights[a] for a in range(3,13)])
@@ -478,15 +495,6 @@ for h in houses:
                 workers[workplaceward].append(pid)
             else:
                 p["employed"]=0
-                if age < 20 and random.choice([True,False]):
-                        p["workplaceType"]=2
-                        #Half of the unemployed in this age bracket go to school
-                        if slumflag ==1 and p["slum"]==1:
-                            slum_schoolers[wardIndex].append(pid)
-                        else:
-                            nonslum_schoolers[wardIndex].append(pid)
-                else:
-                    p["workplaceType"] = 0
         else:
             #decide about seniors
             p["employed"]=0

@@ -480,7 +480,7 @@ for h in houses:
                 p["employed"]=0
                 if age < 20:
                         p["workplaceType"]=2
-                        # All the unemployed go to school
+                        # All the unemployed in this age bracket go to school
                         if slumflag ==1 and p["slum"]==1:
                             slum_schoolers[wardIndex].append(pid)
                         else:

@@ -411,9 +411,9 @@ for h in houses:
                 workers[workplaceward].append(pid)
             else:
                 p["employed"]=0
-                if age < 20 and random.choice([True,False]):
+                if age < 20:
                     p["workplaceType"]=2
-                    #Half of the unemployed in this age bracket go to school
+                    #All the unemployed in this age bracket go to school
                     schoolers[wardIndex].append(pid)
                 else:
                     p["workplaceType"] = 0

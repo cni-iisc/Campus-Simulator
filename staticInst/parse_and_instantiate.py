@@ -125,7 +125,7 @@ for f in outputfiles:
 
 with open(outputfiles["PRG_state"],"w+") as f:
     f.write(f"random.getstate():\n{str(random.getstate())}\n\n")
-    f.write(f"np.random.get_state():\n{str(random.get_state())}\n")
+    f.write(f"np.random.get_state():\n{str(np.random.get_state())}\n")
 
 print("Creating city with a population of approximately ",miniPop,flush=True)
 print("")
@@ -478,9 +478,9 @@ for h in houses:
                 workers[workplaceward].append(pid)
             else:
                 p["employed"]=0
-                if age < 20 and random.choice([True,False]):
+                if age < 20:
                         p["workplaceType"]=2
-                        #Half of the unemployed in this age bracket go to school
+                        # All the unemployed in this age bracket go to school
                         if slumflag ==1 and p["slum"]==1:
                             slum_schoolers[wardIndex].append(pid)
                         else:
@@ -490,6 +490,7 @@ for h in houses:
         else:
             #decide about seniors
             p["employed"]=0
+            p["workplaceType"] = 0
         individuals.append(p)
         wardpop_actual[p["wardIndex"]]+=1
         totalPop_actual+=1

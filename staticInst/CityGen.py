@@ -748,14 +748,6 @@ class City:
 # In[ ]:
 
 
-city = City("bangalore", "data/base/bangalore")
-city.generate(10000)
-city.dump_files("tmp/")
-
-
-# In[ ]:
-
-
 def validate(city, plots_folder):
     ### I am just copying the validation scripts for now. 
     ### Not going through them carefully
@@ -896,33 +888,6 @@ def restore_state(np_state_file, random_state_file):
 
 
 def main():
-    
-    default_pop = 100000
-    default_city = "bangalore"
-    default_ibasepath = 'data/base/bangalore/'
-    default_obasepath = 'data/bangalore-100K/'
-
-    my_parser = argparse.ArgumentParser(description='Create mini-city for COVID-19 simulation')
-    my_parser.add_argument('-c', help='target city', default=default_city)
-    my_parser.add_argument('-n', help='target population', default=default_pop)
-    my_parser.add_argument('-i', help='input folder', default=default_ibasepath)
-    my_parser.add_argument('-o', help='output folder', default=default_obasepath)
-    my_parser.add_argument('-r', help='restore
-
-
-# In[ ]:
-
-
-def restore_state(np_state_file, random_state_file):
-    with open(np_state_file, 'rb') as f:
-        np.random.RandomState.set_state(pickle.load(f))
-    with open(random_state_file, 'rb') as f:
-        random.setstate(pickle.load(f))
-
-
-def main():
-    
-    
     
     default_pop = 100000
     default_city = "bangalore"

@@ -990,8 +990,8 @@ def main():
     population = int(args.n)
     input_dir = args.i
     output_dir = args.o
-    
-    city = City(city, input_dir)
+   
+    city = City(city, input_dir, restore_randomness = args.s)
     city.generate(population)
     city.dump_files(output_dir)
     if args.validate:

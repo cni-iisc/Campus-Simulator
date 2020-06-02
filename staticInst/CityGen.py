@@ -32,8 +32,6 @@ from computeDistributions import *
 # In[ ]:
 
 
-state_random = random.getstate()
-state_numpy = np.random.get_state()
 
 inputfiles = {
     "citygeojson":"city.geojson",
@@ -155,6 +153,8 @@ def workplaces_size_distribution(a=3.26, c=0.97, m_max=2870):
 
 class City:
     
+    state_numpy = None
+    state_random = None
     #Default values:
     
     #ppl working at sez and gov (Bangalore data)
@@ -201,8 +201,17 @@ class City:
     num_schools = None    
     num_workers = None
     
-    
-    
+    def get_random_seeds(self):
+        self.state_random = random.getstate()
+        self.state_numpy = np.random.get_state()
+
+    def set_random_seeds(self, folder):
+        print(f"Restoring random seeds from {folder}.")
+        with open(os.path.join(folder, outputfiles['PRG_random_state']), 'rb') as f:
+            random.setstate(pickle.load(f))
+        with open(os.path.join(folder, outputfiles['PRG_np_random_state']), 'rb') as f:
+            np.random.set_state(pickle.load(f))
+
     def checkName(self, df, name="df"):
         assert self.demographics is not None
         if "wardName" not in df.columns:
@@ -440,6 +449,7 @@ class City:
         
         employed_frac = self.employments["Employed"] / self.demographics["totalPopulation"]
         self.demographics["generatedPopulation"] = 0
+        self.employments["generatedEmployed"] = 0
         generatedPop = 0
         num_workers = 0
         
@@ -500,7 +510,7 @@ class City:
                         p["workplaceType"] = workplacesTypes["office"]
                         self.workers[workplaceward].append(pid)
                         num_workers+=1
-                        
+                        self.employments["generatedEmployed"].iloc[wardIndex]+=1
                     else:
                         p["employed"] = 0
                         if age < 20:
@@ -643,30 +653,36 @@ class City:
         assert self.employments is not None
         assert self.ODMatrix is not None
         
-        start = time.time()
         last = time.time()
+        start = last
         self.rescale(n)
         print("Creating houses...",end='',flush=True)
         self.createHouses()
         t = time.time()
         print(f"done (in {t - last:.02f} seconds).",flush=True)
+
         last = t
         print("Populating houses...",end='',flush=True)
         self.populateHouses()
         t = time.time()
         print(f"done (in {t - last:.02f} seconds).",flush=True)
+        
         last = t
         print("Assigning schools...",end='',flush=True)
         self.assignSchools()
+        t = time.time()
         print(f"done (in {t - last:.02f} seconds).",flush=True)
+        
         last = t
         print("Assigning workplaces...",end='',flush=True)
         self.assignWorkplaces()
+        t = time.time()
         print(f"done (in {t - last:.02f} seconds).",flush=True)
-        last = t
+        print(f"Total time: {time.time() - start:.02f} seconds.",flush=True)
         print("")
         self.describe()
         
+
     def dump_files(self, output_dir):
         assert self.houses is not None
         assert self.individuals is not None
@@ -718,22 +734,35 @@ class City:
             f.write(json.dumps(fractionPopulations))
         with open(os.path.join(output_dir,outputfiles['wardCentreDistance']), "w+") as f:
             f.write(json.dumps(wardCentreDistances))     
-        with open(os.path.join(output_dir,outputfiles['PRG_np_random_state']), "wb") as f:
-            pickle.dump(state_numpy, f)
+        with open(os.path.join(output_dir,outputfiles['PRG_np_random_state']), "wb+") as f:
+            pickle.dump(self.state_numpy,f)
         with open(os.path.join(output_dir,outputfiles['PRG_random_state']), "wb+") as f:
-            pickle.dump(state_random,f)
+            pickle.dump(self.state_random,f)
+
         print(f"done (in {time.time() - start:.02f} seconds)")
         
-    def __init__(self, city, input_dir):
+    def __init__(self, city, input_dir, restore_randomness = None):
         
-       
         if city=="bangalore":
             self.a_commuter_distance = 10.751
             self.b_commuter_distance = 5.384
         elif city=="mumbai":
             self.a_commuter_distance = 2.709
             self.b_commuter_distance = 1.278
-            
+        else:
+            self.a_commuter_distance = 4
+            self.b_commuter_distance = 3.8
+        
+        if restore_randomness is not None:
+            assert fileExists(
+                os.path.join(restore_randomness, outputfiles['PRG_np_random_state'])
+                ), f"{os.path.join(restore_randomness, outputfiles['PRG_np_random_state'])} not found"
+            assert fileExists(
+                os.path.join(restore_randomness, outputfiles['PRG_random_state'])
+                ), f"{os.path.join(restore_randomness, outputfiles['PRG_random_state'])} not found"
+            self.set_random_seeds(restore_randomness)
+
+        self.get_random_seeds()
         self.set_demographics(input_dir)
         self.set_employments(input_dir)
         self.set_city_profile(input_dir)
@@ -748,7 +777,7 @@ class City:
 # In[ ]:
 
 
-def validate(city, plots_folder):
+def validate(city, plots_folder=None):
     ### I am just copying the validation scripts for now. 
     ### Not going through them carefully
     
@@ -779,7 +808,10 @@ def validate(city, plots_folder):
     plt.grid(True)
     plt.legend()
     plt.xticks(np.arange(0,81,10), np.concatenate((age_values[np.arange(0,71,10)], ['80+'])) )
-    plt.savefig(os.path.join(plots_folder, 'age.png'))
+    if plots_folder is not None: 
+        plt.savefig(os.path.join(plots_folder, 'age.png'))
+    else:
+        plt.show()
     plt.close()
     print("done.",flush=True)
     
@@ -795,14 +827,35 @@ def validate(city, plots_folder):
     plt.grid(True)
     plt.legend()
     plt.xticks(np.arange(0,len(household_sizes),1), np.concatenate((age_values[np.arange(1,household_sizes[-1],1)], [str(household_sizes[-1])+'+'])) )
-    plt.savefig(os.path.join(plots_folder,'household_size.png'))
+    if plots_folder is not None:
+        plt.savefig(os.path.join(plots_folder,'household_size.png'))
+    else:
+        plt.show()
     plt.close()
     print("done.",flush=True)
 
     print("Validating school-size in instantiation...",end='',flush=True)
     schoolsizeDistribution = city.schoolsize_weights
-    full_frame = np.floor(np.array([len(np.where(df1['school'] == i)[0]) for i in np.unique(df1['school'].values)[~np.isnan(np.unique(df1['school'].values))]])/100).astype(int)
-    schoolsize_output = [len(np.where(full_frame == j)[0]) for j in np.arange(0,len(schoolsizeDistribution))] / np.sum([len(np.where(full_frame == j)[0]) for j in np.arange(0,len(schoolsizeDistribution))])
+    full_frame = np.floor(
+        np.array([
+                len(np.where(df1['school'] == i)[0]) for i in np.unique(
+                    df1['school'].values
+                    )[~np.isnan(np.unique(df1['school'].values))]
+                ])/100
+        ).astype(int)
+
+    schoolsize_output = [
+        len(np.where(full_frame == j)[0]) for j in np.arange(
+            0,
+            len(schoolsizeDistribution)
+            )
+        ] / np.sum([
+                len(np.where(full_frame == j)[0]) for j in np.arange(
+                    0,
+                    len(schoolsizeDistribution)
+                    )
+                ])
+    
     plt.plot(schoolsize_output,'r-o', label='Instantiation')
     plt.plot(schoolsizeDistribution,'b-', label='Data')
     xlabel = np.arange(0,len(schoolsizeDistribution))
@@ -812,7 +865,10 @@ def validate(city, plots_folder):
     plt.legend()
     plt.title('Distribution of school size')
     plt.grid(True)
-    plt.savefig(os.path.join(plots_folder, 'school_size.png'))
+    if plots_folder is not None:
+        plt.savefig(os.path.join(plots_folder, 'school_size.png'))
+    else:
+        plt.show()
     plt.close()
     print("done.",flush=True)
 
@@ -836,8 +892,14 @@ def validate(city, plots_folder):
     # workplace size
     print("Validating workplace-size in instantiation...",end='',flush=True)
 
-    full_frame = np.array([len(np.where(df1['workplace'] == i)[0]) for i in np.unique(df1['workplace'].values)[~np.isnan(np.unique(df1['workplace'].values))]])
-    workplacesize_output = [len(np.where(full_frame == j)[0]) for j in workplace_sizes] / np.sum([len(np.where(full_frame == j)[0]) for j in workplace_sizes])
+    full_frame = np.array([
+        len(np.where(df1['workplace'] == i)[0]) for i in np.unique(
+            df1['workplace'].values
+            )[~np.isnan(np.unique(df1['workplace'].values))]
+        ])
+    workplacesize_output = [len(np.where(full_frame == j)[0]) for j in workplace_sizes] / np.sum([
+        len(np.where(full_frame == j)[0]) for j in workplace_sizes
+        ])
     workplace_distribution = p_n
     plt.plot(np.log10(workplace_sizes),np.log10(workplacesize_output),'r',label='Instantiation')
     plt.plot(np.log10(workplace_sizes), np.log10(workplace_distribution),label='Model')
@@ -849,7 +911,10 @@ def validate(city, plots_folder):
     plot_xlabel =  [1, 10, 100, 1000, 2400]
     plot_xlabel1 = np.log10(workplace_sizes)[plot_xlabel]
     plt.xticks(plot_xlabel1, (workplace_sizes)[plot_xlabel])
-    plt.savefig(os.path.join(plots_folder,'workplace_size.png'))
+    if plots_folder is not None:
+        plt.savefig(os.path.join(plots_folder,'workplace_size.png'))
+    else:
+        plt.show()
     plt.close()
     print("done.",flush=True)
     
@@ -857,10 +922,32 @@ def validate(city, plots_folder):
     wp = pd.DataFrame(city.workplaces)
 
     print("Validating workplace commute distance in instantiation...",end='',flush=True)
-    full_frame = np.array([distance(df1.loc[i,'lat'],df1.loc[i,'lon'],wp.loc[(wp.index+city.num_schools)==int(df1.loc[i,'workplace']),'lat'].values[0],wp.loc[(wp.index+city.num_schools)==int(df1.loc[i,'workplace']),'lon'].values[0]) for i in np.where(df1['workplaceType']==1)[0]])
-    commuter_distance_output = [len(np.where(np.array(np.floor(full_frame),dtype=int) ==i)[0]) for i in np.arange(0,city.m_max_commuter_distance)]/np.sum([len(np.where(np.array(np.floor(full_frame),dtype=int) ==i)[0]) for i in np.arange(0,city.m_max_commuter_distance)])
+    full_frame = np.array([
+        distance(
+            df1.loc[i,'lat'],
+            df1.loc[i,'lon'],
+            wp.loc[(wp.index+city.num_schools)==int(df1.loc[i,'workplace']),'lat'].values[0],
+            wp.loc[(wp.index+city.num_schools)==int(df1.loc[i,'workplace']),'lon'].values[0]
+            ) for i in np.where(df1['workplaceType']==1)[0]
+        ])
+    commuter_distance_output = [
+        len(np.where(np.array(np.floor(full_frame),dtype=int) ==i)[0]) for i in np.arange(
+            0,
+            city.m_max_commuter_distance
+            )
+        ] / np.sum([
+                len(np.where(np.array(np.floor(full_frame),dtype=int) ==i)[0]) for i in np.arange(
+                    0,
+                    city.m_max_commuter_distance
+                    )
+                ])
     actual_dist=[]
-    actual_dist = travel_distance_distribution(0,city.m_max_commuter_distance,city.a_commuter_distance,city.b_commuter_distance)
+    actual_dist = travel_distance_distribution(
+        0,
+        city.m_max_commuter_distance,
+        city.a_commuter_distance,
+        city.b_commuter_distance
+        )
     d = np.arange(0,city.m_max_commuter_distance,1)
     plt.plot(np.log10(d),np.log10(actual_dist),'b-',label='Model')
     plt.plot(np.log10(d),np.log10((commuter_distance_output)),'r-o',label='Instantiation')
@@ -872,19 +959,15 @@ def validate(city, plots_folder):
     plt.xticks(plot_xlabel1,d[plot_xlabel])
     plt.grid(True)
     plt.legend()
-    plt.savefig(os.path.join(plots_folder,'workplace_distance.png'))
+    if plots_folder is not None:
+        plt.savefig(os.path.join(plots_folder,'workplace_distance.png'))
+    else:
+        plt.show()
     plt.close()
     print("done.",flush=True)
 
 
 # In[ ]:
-
-
-def restore_state(np_state_file, random_state_file):
-    with open(np_state_file, 'rb') as f:
-        np.random.RandomState.set_state(pickle.load(f))
-    with open(random_state_file, 'rb') as f:
-        random.setstate(pickle.load(f))
 
 
 def main():
@@ -899,19 +982,19 @@ def main():
     my_parser.add_argument('-n', help='target population', default=default_pop)
     my_parser.add_argument('-i', help='input folder', default=default_ibasepath)
     my_parser.add_argument('-o', help='output folder', default=default_obasepath)
+    my_parser.add_argument('--validate', help='validation on', action="store_true")
+    my_parser.add_argument('-s', help='[for debug] restore random seed from folder', default=None)
 
     args = my_parser.parse_args()
     city = (args.c).lower()
     population = int(args.n)
     input_dir = args.i
     output_dir = args.o
-
-    validate_city=False
     
     city = City(city, input_dir)
     city.generate(population)
     city.dump_files(output_dir)
-    if validate_city:
+    if args.validate:
         validate(city,output_dir)
 
 if __name__ == "__main__":

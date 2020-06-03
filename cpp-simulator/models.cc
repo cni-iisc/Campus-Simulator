@@ -207,7 +207,7 @@ void set_compliance(std::vector<agent> & nodes, std::vector<house> & homes,
 }
 
 void set_nbr_cell(house &home){
-  if(!GLOBAL.ENABLE_CONTAINMENT) {
+  if(!GLOBAL.ENABLE_NBR_CELLS) {
     return;
   }
 

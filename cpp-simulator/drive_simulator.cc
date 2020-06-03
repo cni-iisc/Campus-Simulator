@@ -129,6 +129,8 @@ int main(int argc, char** argv){
      cxxopts::value<double>()->default_value(DEFAULTS.NBR_CELL_SIZE))
      ("ENABLE_CONTAINMENT", "Enable containment",
      cxxopts::value<bool>()->default_value(DEFAULTS.ENABLE_CONTAINMENT))
+     ("ENABLE_NBR_CELLS", "Enable neighbourhood cells",
+     cxxopts::value<bool>()->default_value(DEFAULTS.ENABLE_NBR_CELLS))
      ("intervention_filename", "intervention json filename",
 	 cxxopts::value<std::string>()->default_value(DEFAULTS.intervention_params_filename))
      ;
@@ -233,11 +235,12 @@ int main(int argc, char** argv){
   GLOBAL.city_NE.lon = optvals["CITY_NE_LON"].as<double>();
   GLOBAL.NBR_CELL_SIZE = optvals["NBR_CELL_SIZE"].as<double>();
   GLOBAL.ENABLE_CONTAINMENT = optvals["ENABLE_CONTAINMENT"].count();
+  GLOBAL.ENABLE_NBR_CELLS = optvals["ENABLE_NBR_CELLS"].count();
   GLOBAL.WARD_CONTAINMENT_THRESHOLD = optvals["WARD_CONTAINMENT_THRESHOLD"].as<count_type>();
 
   GLOBAL.ENABLE_TESTING = optvals["ENABLE_TESTING"].count();
   GLOBAL.intervention_filename = optvals["intervention_filename"].as<std::string>();
-
+  GLOBAL.ENABLE_NBR_CELLS = GLOBAL.ENABLE_NBR_CELLS || GLOBAL.ENABLE_CONTAINMENT;
 
 
   if(GLOBAL.input_base != ""

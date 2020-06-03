@@ -60,7 +60,7 @@ vector<house> init_homes(){
 	  homes[index].cyclic_strategy_class = uniform_count_type(0, GLOBAL.NUMBER_OF_CYCLIC_CLASSES - 1);
 	}
 
-	if(GLOBAL.ENABLE_CONTAINMENT) { 
+	if(GLOBAL.ENABLE_NBR_CELLS) { 
 		set_nbr_cell(homes[index]);
 	}
 
@@ -144,7 +144,7 @@ matrix<nbr_cell> init_nbr_cells() {
 
   matrix<nbr_cell> nbr_cells;
 
-  if(GLOBAL.ENABLE_CONTAINMENT){
+  if(GLOBAL.ENABLE_NBR_CELLS){
 	location loc_temp;
 
 	loc_temp.lat = GLOBAL.city_SW.lat;
@@ -677,7 +677,7 @@ void assign_household_random_community(vector<house>& homes, const vector<commun
 
 
 void assign_homes_nbr_cell(const vector<house>& homes, matrix<nbr_cell>& neighbourhood_cells){
-	if(!GLOBAL.ENABLE_CONTAINMENT){
+	if(!GLOBAL.ENABLE_NBR_CELLS){
 		return;
 	}
 	for (count_type home_count = 0; home_count < homes.size(); home_count++){

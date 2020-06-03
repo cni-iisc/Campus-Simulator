@@ -232,7 +232,8 @@ void output_global_params(const string& output_dir){
 
   fout << "WARD_CONTAINMENT_THRESHOLD:" <<GLOBAL.WARD_CONTAINMENT_THRESHOLD << ";"<< endl;
   fout << "ENABLE_CONTAINMENT:" <<GLOBAL.ENABLE_CONTAINMENT << ";"<< endl;
-  
+  fout << "ENABLE_NBR_CELLS:" <<GLOBAL.ENABLE_NBR_CELLS << ";"<< endl;
+
   fout.close();
 
   //Copy the attendance file

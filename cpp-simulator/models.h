@@ -377,6 +377,7 @@ struct global_params{
   location city_SW, city_NE;
   double NBR_CELL_SIZE = 1; //in km
   bool ENABLE_CONTAINMENT = false;
+  bool ENABLE_NBR_CELLS = false;
 
   std::string intervention_filename = "intervention_params.json";
 

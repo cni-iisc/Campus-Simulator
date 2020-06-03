@@ -237,7 +237,7 @@ class City:
         
         geoDF = gpd.read_file(Path(input_dir,inputfiles["citygeojson"]))
         geoDF['wardNo'] = geoDF['wardNo'].astype(int)
-        geoDF = geoDF.sort_values('wardNo')
+        geoDF = geoDF.sort_values('wardNo').reset_index(drop=True)
         geoDF['wardIndex'] = geoDF['wardNo'] - 1
         
         geoDF = geoDF[['wardIndex','wardNo', 'wardName', 'geometry']]
@@ -251,6 +251,7 @@ class City:
                 ), 
             axis=1
             )
+
         self.geoDF = geoDF
         
     def set_demographics(self, input_dir):
@@ -258,7 +259,7 @@ class City:
         
         demographics = pd.read_csv(Path(input_dir,inputfiles["demographics"]))
         demographics["wardNo"] = demographics["wardNo"].astype(int)
-        demographics = demographics.sort_values("wardNo")
+        demographics = demographics.sort_values("wardNo").reset_index(drop=True)
         
         necessary_cols = ["wardNo", "wardName", "totalPopulation"]
         for col in necessary_cols:
@@ -286,7 +287,7 @@ class City:
         
         employments = pd.read_csv(Path(input_dir,inputfiles["employment"]))
         employments["wardNo"] = employments["wardNo"].astype(int)
-        employments = employments.sort_values('wardNo')
+        employments = employments.sort_values('wardNo').reset_index(drop=True)
         
         necessary_cols = ["wardNo", "Employed"]
         for col in necessary_cols:

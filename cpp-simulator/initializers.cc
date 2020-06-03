@@ -48,11 +48,19 @@ vector<house> init_homes(){
   GLOBAL.num_homes = size;
   double temp_non_compliance_metric = 0;
   count_type index = 0;
+
+  bool compliance; 
+  
   for (auto &elem: houseJSON.GetArray()){
-	temp_non_compliance_metric = get_non_compliance_metric();
+    temp_non_compliance_metric = get_non_compliance_metric();
+    if(elem.HasMember("slum") && elem["slum"].GetInt()){
+	  compliance = (temp_non_compliance_metric<=GLOBAL.HD_COMPLIANCE_PROBABILITY);
+	} else {
+	  compliance = (temp_non_compliance_metric<=GLOBAL.COMPLIANCE_PROBABILITY);
+	}
 	homes[index].set(elem["lat"].GetDouble(),
 					 elem["lon"].GetDouble(),
-					 (temp_non_compliance_metric<=GLOBAL.COMPLIANCE_PROBABILITY)?1.0:0,
+					 compliance,
 					 temp_non_compliance_metric);
 
 	//Cyclic strategy class

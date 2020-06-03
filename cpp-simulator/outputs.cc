@@ -145,7 +145,8 @@ void output_global_params(const string& output_dir){
 
   fout << "RNG_SEED: " << GLOBAL.RNG_SEED << ";" << endl;
 
-  fout << "COMPLIANCE_PROBABILITY: " << GLOBAL.COMPLIANCE_PROBABILITY << ";" << endl; 
+  fout << "COMPLIANCE_PROBABILITY: " << GLOBAL.COMPLIANCE_PROBABILITY << ";" << endl;
+  fout << "HD_COMPLIANCE_PROBABILITY: " << GLOBAL.HD_COMPLIANCE_PROBABILITY << ";" << endl;
   
   fout << "num_homes: " << GLOBAL.num_homes << ";" << endl; 
   fout << "num_workplaces: " << GLOBAL.num_workplaces << ";" << endl; 

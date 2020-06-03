@@ -265,7 +265,7 @@ struct global_params{
   count_type RNG_SEED;
   count_type RNG_SEED_NETWORK;
   double COMPLIANCE_PROBABILITY = 1;
-
+  double HD_COMPLIANCE_PROBABILITY = 1;
   count_type num_homes = 25000;
   count_type num_workplaces = 5000;
   count_type num_schools = 0;

@@ -287,8 +287,7 @@ plot_data_struct run_simulation(){
 	  //Update w_c value for this community, followed by update of lambdas
 	  if(communities[c].individuals.size()>0){
 		communities[c].w_c = interpolate(1.0, GLOBAL.LOCKED_COMMUNITY_LEAKAGE,
-										 double(temp_stats.hospitalised + temp_stats.critical)
-										 /double(communities[c].individuals.size()),
+										 double(temp_stats.hospitalised)/double(communities[c].individuals.size()),
 										 GLOBAL.COMMUNITY_LOCK_THRESHOLD);
 	  } else{
 		communities[c].w_c = 1;

@@ -13,7 +13,7 @@
 
 int main(int argc, char** argv){
   cxxopts::Options options(argv[0],
-			   "Simulate the mean field agent model");
+						   "Simulate the mean field agent model");
 
   options.add_options("Basic")
     ("h,help", "display description of program options")
@@ -28,7 +28,7 @@ int main(int argc, char** argv){
      "std::random_device to get the random seed.",
      cxxopts::value<count_type>())
     ;
-  
+
   options.add_options("Infection seeding")
     ("SEED_HD_AREA_POPULATION", "seed those living in high-density areas as well",
      cxxopts::value<bool>()->default_value(DEFAULTS.SEED_HD_AREA_POPULATION))
@@ -41,7 +41,7 @@ int main(int argc, char** argv){
     ("INIT_FIXED_NUMBER_INFECTED", "initial number of people infected.  If --SEED_FIXED_NUMBER is provided, this supersedes INIT_FRAC_INFECTED",
      cxxopts::value<count_type>()->default_value(DEFAULTS.INIT_FIXED_NUMBER_INFECTED))
     ;
-  
+
   options.add_options("Disease progression")
     ("INCUBATION_PERIOD", "incubation period",
      cxxopts::value<double>()->default_value(DEFAULTS.INCUBATION_PERIOD))
@@ -56,7 +56,7 @@ int main(int argc, char** argv){
     ("MEAN_HOSPITAL_CRITICAL_PERIOD", "mean period of critical care hospitalization",
      cxxopts::value<double>()->default_value(DEFAULTS.MEAN_HOSPITAL_CRITICAL_PERIOD))
     ;
-  
+
   options.add_options("City")
     ("COMPLIANCE_PROBABILITY", "default compliance probability",
      cxxopts::value<double>()->default_value(DEFAULTS.COMPLIANCE_PROBABILITY))
@@ -79,7 +79,7 @@ int main(int argc, char** argv){
     ("HD_AREA_EXPONENT", "exponent for community size for high density areas",
      cxxopts::value<double>()->default_value(DEFAULTS.HD_AREA_EXPONENT))
     ;
-  
+
   options.add_options("Intervention - basic")
     ("INTERVENTION", "index of the intervention",
      cxxopts::value<count_type>()->default_value(DEFAULTS.INTERVENTION))
@@ -96,45 +96,47 @@ int main(int argc, char** argv){
     ("OE_SECOND_PERIOD", "length in days of the second odd-even intervention period",
      cxxopts::value<double>()->default_value(DEFAULTS.OE_SECOND_PERIOD))
     ;
-  
+
   options.add_options("Intervention - cylic strategy")
     ("CYCLIC_POLICY_TYPE", "whether cyclic policy (only relevant in interventions which enable cyclic work schedule) is implemented based on homes or individuals",
      cxxopts::value<count_type>()->default_value(DEFAULTS.CYCLIC_POLICY_TYPE))
     ;
-  
-  options.add_options("Intervention - soft containment zone")
+
+  options.add_options("Intervention - soft containment zones")
     ("LOCKED_COMMUNITY_LEAKAGE", "minimum community infection leakage under containment",
      cxxopts::value<double>()->default_value(DEFAULTS.LOCKED_COMMUNITY_LEAKAGE))
     ("COMMUNITY_LOCK_THRESHOLD", "hospitalisation fraction in a ward beyond which the ward will be cordoned off.",
      cxxopts::value<double>()->default_value(DEFAULTS.COMMUNITY_LOCK_THRESHOLD))
     ;
-  
-  options.add_options("Intervention - neighbourhood and ward containment")
-    ("ENABLE_CONTAINMENT", "Enable containment",
+
+  options.add_options("Intervention - neighbourhood containment")
+    ("ENABLE_CONTAINMENT", "enable neighborhood containment",
      cxxopts::value<bool>()->default_value(DEFAULTS.ENABLE_CONTAINMENT))
-    ("CITY_SW_LAT", "South West latitude boundary of the City",
+    ("CITY_SW_LAT", "south west latitude boundary of the city",
      cxxopts::value<double>()->default_value(DEFAULTS.CITY_SW_LAT))
-    ("CITY_SW_LON", "South West longitude boundary of the City",
+    ("CITY_SW_LON", "south west longitude boundary of the city",
      cxxopts::value<double>()->default_value(DEFAULTS.CITY_SW_LON))
-    ("CITY_NE_LAT", "North East latitude boundary of the City",
+    ("CITY_NE_LAT", "north east latitude boundary of the city",
      cxxopts::value<double>()->default_value(DEFAULTS.CITY_NE_LAT))
-    ("CITY_NE_LON", "North East longitude boundary of the City",
+    ("CITY_NE_LON", "north east longitude boundary of the city",
      cxxopts::value<double>()->default_value(DEFAULTS.CITY_NE_LON))
-    ("NBR_CELL_SIZE", "Neighbourhood cell size (length of side)",
+    ("NBR_CELL_SIZE", "neighbourhood cell size (length of side)",
      cxxopts::value<double>()->default_value(DEFAULTS.NBR_CELL_SIZE))
-    ("WARD_CONTAINMENT_THRESHOLD", "number of individuals beyond which  ward is contained.",
+    ("WARD_CONTAINMENT_THRESHOLD",
+	 "threhsold on the number of hospitalized individuals beyond which neighbourhood containment is enabled in a ward.",
      cxxopts::value<count_type>()->default_value(DEFAULTS.WARD_CONTAINMENT_THRESHOLD))
     ;
-  
+
   options.add_options("Age-dependent mixing")
-    ("USE_AGE_DEPENDENT_MIXING", "Boolean for using age dependent interactions",
+    ("USE_AGE_DEPENDENT_MIXING", "whether age-stratified interacctions are enabled",
      cxxopts::value<bool>()->default_value(DEFAULTS.USE_AGE_DEPENDENT_MIXING))
-    ("SIGNIFICANT_EIGEN_VALUES", "Number of principal components to use",
+    ("SIGNIFICANT_EIGEN_VALUES",
+	 "number of principal components of the age-stratification matrix to use",
      cxxopts::value<double>()->default_value(DEFAULTS.SIGNIFICANT_EIGEN_VALUES))
-    ("NUM_AGE_GROUPS", "Number of age groups in the age",
+    ("NUM_AGE_GROUPS", "number of age group buckets",
      cxxopts::value<count_type>()->default_value(DEFAULTS.NUM_AGE_GROUPS))
     ;
-  
+
   options.add_options("Other")
     ("IGNORE_ATTENDANCE_FILE", "whether to ignore the attendance file",
      cxxopts::value<bool>()->default_value(DEFAULTS.IGNORE_ATTENDANCE_FILE))
@@ -145,7 +147,7 @@ int main(int argc, char** argv){
     ("MASK_ACTIVE", "whether masks factor needs to be incorporated",
      cxxopts::value<bool>()->default_value(DEFAULTS.MASK_ACTIVE))
     ;
-  
+
   auto optvals = options.parse(argc, argv);
   
   if(optvals.count("help")){
@@ -155,8 +157,8 @@ int main(int argc, char** argv){
 			       "City",
 			       "Intervention - basic",
 			       "Intervention - cyclic strategy",
-			       "Intervention - soft containment zone",
-			       "Intervention - neighbourhood and ward containment",
+			       "Intervention - soft containment zones",
+			       "Intervention - neighbourhood containment",
 			       "Age-dependent mixing",
 			       "Other"
       }) << std::endl;

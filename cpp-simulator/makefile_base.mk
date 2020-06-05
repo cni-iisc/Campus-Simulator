@@ -1,5 +1,5 @@
 #this should be 'yes' for the status of the git repository to be checked during compiling
-check_git=yes
+check_git=
 
 #Set this to -DTIMING to enable timing output
 timing = -DTIMING

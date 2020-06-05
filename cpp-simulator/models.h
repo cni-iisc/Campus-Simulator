@@ -68,7 +68,7 @@ inline double uniform_real(double left, double right){
   return std::uniform_real_distribution<double>(left, right)(GENERATOR);
 }
 
-inline double uniform_count_type(double left, double right){
+inline count_type uniform_count_type(double left, double right){
   return std::uniform_int_distribution<count_type>(left, right)(GENERATOR);
 }
 

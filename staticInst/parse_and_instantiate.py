@@ -136,6 +136,10 @@ demographics['wardName'] = demographics['wardName'].values
 demographics['totalPopulation'] = demographics['totalPopulation'].astype(int)
 demographics = demographics.sort_values('wardNo')
 nwards = demographics['wardIndex'].count()
+if "hd_flag" in demographics.columns:
+    print(f"[Error] `hd_flag' found in demographics.csv. Please use the script `parse_and_instantiate_mumbai_with_hd_areas.py' instead.")
+    exit(1)
+
 
 households = pd.read_csv(inputfiles["household"])
 households = households.sort_values('wardNo')

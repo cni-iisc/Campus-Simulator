@@ -123,7 +123,7 @@ int main(int argc, char** argv){
     ("NBR_CELL_SIZE", "neighbourhood cell size (length of side)",
      cxxopts::value<double>()->default_value(DEFAULTS.NBR_CELL_SIZE))
     ("WARD_CONTAINMENT_THRESHOLD",
-	 "threhsold on the number of hospitalized individuals beyond which neighbourhood containment is enabled in a ward.",
+	 "threhsold on the number of hospitalized individuals in a ward beyond which the ward becomes a containment zone.",
      cxxopts::value<count_type>()->default_value(DEFAULTS.WARD_CONTAINMENT_THRESHOLD))
     ;
 

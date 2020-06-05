@@ -79,29 +79,30 @@ The sub-directory structure followed for storing and processing of static data s
       |- base/                                         # Raw data for each city
          |- bangalore/                                 # Data for Bangalore City
             |- demographics.csv                        # demographic data about each ward
-            |- households.csv                          # age and household-size distributions
+            |- households.csv                          # number of households in each ward
             |- ODMatrix.csv                            # origin-destination matrix for employed
             |- city.geojson                            # geographic boundaries of wards
             |- employment.csv                          # census data on employed people
-            |- cityProfile.json                        # processed demographic data dump for all wards
+            |- cityProfile.json                        # age, household size and school size distributions
          |- mumbai_no-slums/                           # Data for Mumbai City, with no special subdivision of wards
             |- demographics.csv                        # demographic data about each ward
-            |- households.csv                          # age and household-size distributions
+            |- households.csv                          # number of households in each ward
             |- ODMatrix.csv                            # origin-destination matrix for employed
             |- city.geojson                            # geographic boundaries of wards
             |- employment.csv                          # census data on employed people
-            |- cityProfile.json                        # processed demographic data dump for all wards
+            |- cityProfile.json                        # age, household size and school size distributions
          |- mumbai/                                    # Data for Mumbai City, with each of the 24 wards split into non-HD areas and HD-areas
             |- demographics.csv                        # demographic data about each ward division (48 total)
-            |- households.json                         # age and household-size distributions
+            |- households.json                         # number of households in each ward
+            |- ODMatrix.csv                            # origin-destination matrix for employed
             |- city.geojson                            # geographic boundaries of wards (24 total)
             |- employment.csv                          # census data on employed people
-            |- cityProfile.json                        # processed demographic data dump for all wards
+            |- cityProfile.json                        # age, household size and school size distributions
             |- presampled-points/                      # presampled latitude-longitudes for 48 ward subdivisions
                |- 0.csv                                # presampled points for ward index 0
                ...
                |- 47.csv                               # presampled points for ward index 47
-               |- PresamplePoints.ipynb                # python notebook for presampling points from wards
+               |- PresamplePoints.ipynb                # python notebook for presampling points from wards subdivisions
                |- slumClusters.geojson                 # geographic boundaries of slum clusters
    |- computeDistributions.py                          # module to get distributions from the cityProfile.json
    |- parse_and_instantiate.py                         # script to instantiate a city

@@ -40,7 +40,9 @@ After setting up the environment, we are ready to run the script to instantiate 
 
 To instantiate a Bangalore city with the mentioned configurations run the command
 
-'''python parse_and_instantiate.py -c city_name -n target_population -i inputPath -o outputPath'''
+```
+python parse_and_instantiate.py -c city_name -n target_population -i inputPath -o outputPath
+```
 
 The above script instantiates a synthetic Bangalore city where the population of 100,000 people are randomly distributed across the 198 wards of the city with each individual being assigned to a house, school, workplace and community centre based on their age, and commute distance. The instantiated outputs are in the form of JSON files and will be available in the specified output directory (or) `staticInst/data/web_input_files`.
 
@@ -57,8 +59,9 @@ outputPath = './data/bangalore-100K/'
 #### Instantiating Mumbai
 
 Mumbai base data files are provided in two forms:
- - `./data/base/mumbai`: Consisting of 48 wards, where each ward is split into the non-HD area and the HD area.
- - `./data/base/mumbai_no-slums`: Consisting of 24 wards, with no additional subdivision into HD-areas and non-HD areas.
+
+- `./data/base/mumbai`: Consisting of 48 wards, where each ward is split into the non-HD area and the HD area.
+- `./data/base/mumbai_no-slums`: Consisting of 24 wards, with no additional subdivision into HD-areas and non-HD areas.
 
 In order to instantiate a version of Mumbai with 48 wards, please use the modified script `parse_and_instantiate_mumbai_with_hd_areas.py`:
 

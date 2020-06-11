@@ -146,6 +146,8 @@ int main(int argc, char** argv){
      cxxopts::value<std::string>()->default_value(DEFAULTS.intervention_params_filename))
     ("MASK_ACTIVE", "whether masks factor needs to be incorporated",
      cxxopts::value<bool>()->default_value(DEFAULTS.MASK_ACTIVE))
+    ("MASK_START_DELAY", "days after which masks are enforced",
+     cxxopts::value<double>()->default_value(DEFAULTS.MASK_START_DELAY))
     ;
 
   auto optvals = options.parse(argc, argv);
@@ -238,7 +240,7 @@ int main(int argc, char** argv){
   GLOBAL.HOSPITAL_CRITICAL_PERIOD = GLOBAL.MEAN_HOSPITAL_CRITICAL_PERIOD*GLOBAL.SIM_STEPS_PER_DAY;
   
   GLOBAL.MASK_ACTIVE = optvals["MASK_ACTIVE"].count();
-  GLOBAL.MASK_START_DATE = GLOBAL.CALIBRATION_DELAY + 40; //masks starts from April 9
+  GLOBAL.MASK_START_DATE = GLOBAL.CALIBRATION_DELAY + optvals["MASK_START_DELAY"].as<double>(); //masks starts from April 9
 
   //initialise city bounding box co-ordinates with Bangalore values. Will read from file later.
   GLOBAL.city_SW.lat = optvals["CITY_SW_LAT"].as<double>();

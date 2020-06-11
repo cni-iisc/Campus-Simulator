@@ -153,7 +153,7 @@ int main(int argc, char** argv){
   if(optvals.count("help")){
     std::cout << options.help({"Basic",
 			       "Infection seeding",
-			       "Disease Progression",
+			       "Disease progression",
 			       "City",
 			       "Intervention - basic",
 			       "Intervention - cyclic strategy",

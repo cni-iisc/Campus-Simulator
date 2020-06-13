@@ -26,6 +26,20 @@ import time
 import matplotlib.pyplot as plt
 from computeDistributions import *
 
+from functools import wraps
+from time import time
+
+def measure(func):
+    @wraps(func)
+    def _time_it(*args, **kwargs):
+        start = int(round(time() * 1000))
+        try:
+            return func(*args, **kwargs)
+        finally:
+            end_ = int(round(time() * 1000)) - start
+            print(f"(Took {end_ if end_ > 0 else 0} ms)")
+    return _time_it
+
 
 # In[ ]:
 
@@ -410,7 +424,9 @@ class City:
         (latc,lonc) = self.community_centres[wardIndex]
         return distance(lat,lon,latc,lonc)
         
-    def createHouses(self):        
+    @measure
+    def createHouses(self):
+        print("Creating houses...",end='',flush=True)
         self.houses = []
         hid = 0
         for wardIndex in range(self.nwards):
@@ -437,8 +453,11 @@ class City:
                 self.houses.append(h)
                 hid+=1
         self.num_houses = hid
-        
+        print("done.",flush=True)
+       
+    @measure
     def populateHouses(self):
+        print("Populating houses...",end='',flush=True)
         assert self.houses is not None
         
         pid = 0
@@ -531,6 +550,7 @@ class City:
                 pid+=1
         self.num_individuals = generatedPop
         self.num_workers = num_workers
+        print("done.",flush=True)
 
         
     def sampleOfficeType(self, size):
@@ -564,7 +584,9 @@ class City:
         else:
             return  officeType['Other']
 
+    @measure
     def assignSchools(self):
+        print("Assigning schools...",end='',flush=True)
         assert self.houses is not None
         assert self.individuals is not None
         
@@ -599,8 +621,11 @@ class City:
                 #Need to think about how to fix this corner case.
 
         self.num_schools = sid
-        
+        print("done.",flush=True)
+
+    @measure
     def assignWorkplaces(self):
+        print("Assigning workplaces...",end='',flush=True)
         assert self.houses is not None
         assert self.individuals is not None
         assert self.schools is not None
@@ -633,6 +658,7 @@ class City:
                 self.workplaces.append(w)
                 count+=1
         self.num_workplaces = count
+        print("done.",flush=True)
     
     def describe(self):
         
@@ -646,42 +672,20 @@ class City:
         print(f"Number of workers: {self.num_workers}")
         print("")
 
-    
     def generate(self, n):
         assert self.demographics is not None
         assert self.employments is not None
         assert self.ODMatrix is not None
         
-        last = time.time()
-        start = last
         self.rescale(n)
-        print("Creating houses...",end='',flush=True)
         self.createHouses()
-        t = time.time()
-        print(f"done (in {t - last:.02f} seconds).",flush=True)
-
-        last = t
-        print("Populating houses...",end='',flush=True)
         self.populateHouses()
-        t = time.time()
-        print(f"done (in {t - last:.02f} seconds).",flush=True)
-        
-        last = t
-        print("Assigning schools...",end='',flush=True)
         self.assignSchools()
-        t = time.time()
-        print(f"done (in {t - last:.02f} seconds).",flush=True)
-        
-        last = t
-        print("Assigning workplaces...",end='',flush=True)
         self.assignWorkplaces()
-        t = time.time()
-        print(f"done (in {t - last:.02f} seconds).",flush=True)
-        print(f"Total time: {time.time() - start:.02f} seconds.",flush=True)
         print("")
         self.describe()
         
-
+    @measure
     def dump_files(self, output_dir):
         assert self.houses is not None
         assert self.individuals is not None
@@ -690,7 +694,6 @@ class City:
         
         assert output_dir is not None
                
-        start = time.time()
         print("Dumping json files...",end='',flush=True)
         
         Path(output_dir).mkdir(parents = True, exist_ok = True)
@@ -738,7 +741,7 @@ class City:
         with open(os.path.join(output_dir,outputfiles['PRG_random_state']), "wb+") as f:
             pickle.dump(self.state_random,f)
 
-        print(f"done (in {time.time() - start:.02f} seconds)")
+        print("done.",flush=True)
         
     def __init__(self, city, input_dir, restore_randomness = None):
         
@@ -777,12 +780,13 @@ class City:
 
 
 def validate_ages(city, plots_folder=None):
-    
-    df = pd.DataFrame(city.individuals)['age'].value_counts(normalize=True).sort_index(ascending=True)
-    
-    age_values, age_distribution = compute_age_distribution(city.age_weights)
     print("Validating age distribution in instantiation...",end='',flush=True)
-    plt.plot(df.index, df, 'r-o',label='Instantiation')
+    age_values, age_distribution = compute_age_distribution(city.age_weights)
+    
+    plt.plot(
+        pd.DataFrame(city.individuals)['age'].value_counts(normalize=True).sort_index(ascending=True),
+        'r-o',
+        label='Instantiation')
     plt.plot(age_values, age_distribution, 'b-',label='Data')
     plt.xlabel('Age')
     plt.ylabel('Density')
@@ -798,24 +802,28 @@ def validate_ages(city, plots_folder=None):
     print("done.",flush=True)
     
 def validate_householdsizes(city, plots_folder=None):
-    household_sizes, household_distribution = compute_household_size_distribution(
-    city.householdsize_bins, 
-    city.householdsize_weights
-    )
-    df1 = pd.DataFrame(city.individuals)
-    
     print("Validating household-size in instantiation...",end='',flush=True)
-    house = df1['household'].value_counts().values
-    unique_elements, counts_elements = np.unique(house, return_counts=True)
-    counts_elements = counts_elements / np.sum(counts_elements)
-    plt.plot(counts_elements, 'r-o', label='Instantiation')
-    plt.plot(household_distribution, 'b-', label='data')
+    
+    household_sizes, household_distribution = compute_household_size_distribution(
+        city.householdsize_bins, 
+        city.householdsize_weights
+    )
+    plt.plot(
+        pd.DataFrame(city.individuals).groupby(
+                'household'
+        ).count()['id'].value_counts(normalize=True).sort_index(ascending=True),
+        color="red",
+        marker="o",
+        label="Instantiation"        
+    )
+    plt.plot(household_sizes , household_distribution, color="blue", label='data')
+
     plt.xlabel('Household-size')
     plt.ylabel('Density')
     plt.title('Distribution of household-size')
     plt.grid(True)
     plt.legend()
-    plt.xticks(np.arange(0,len(household_sizes),1), household_sizes[:-1] + [str(household_sizes[-1])+'+'])
+
     if plots_folder is not None:
         plt.savefig(os.path.join(plots_folder,'household_size.png'))
     else:
@@ -826,22 +834,23 @@ def validate_householdsizes(city, plots_folder=None):
 def validate_schoolsizes(city, plots_folder=None):
     print("Validating school-size in instantiation...",end='',flush=True)
 
-    n = city.num_schools
     weights = city.schoolsize_weights
-    bins = [i*100 for i in range(len(weights))]
-    labels = [str(a) for a in bins[:-1]] + [str(bins[-1])+'+']
+    plt.plot(
+        (pd.DataFrame(city.individuals).groupby(
+            'school'
+            ).count()['id']/100
+        ).astype(int).value_counts(normalize=True).sort_index(ascending=True),
+        color="red",
+        label="Instantiation"
+    )
+    plt.plot(weights, label='Data', color="blue")
+    
 
-    df = pd.DataFrame(city.individuals).copy()
-    countdf = df[pd.notna(df['school'])].groupby(['school']).count()[['id']]
-
-    ax = plt.gca()
-    ax.grid(True)
-    plt.hist(
-        countdf.values, 
-        bins=[0,100,200,300,400,500,600,700,800,900], label="Instantiation")
-    plt.plot([0,100,200,300,400,500,600,700,800,900], [a*n for a in city.schoolsize_weights], label="Data")
+    bins = list(range(len(weights)))
+    labels = [str(a*100) for a in bins[:-1]] + [str(bins[-1]*100)+'+']
     plt.xticks(bins[1:], labels[1:])
     plt.title("Distribution of school sizes")
+    plt.grid(True)
     plt.legend()
     if plots_folder is not None:
         plt.savefig(os.path.join(plots_folder, 'school_size.png'))
@@ -857,7 +866,7 @@ def validate_workplacesizes(city, plots_folder=None):
     c_workplacesize = 0.97
     m_max_workplacesize = 2870
 
-        # generate workplace size distribution
+    # generate workplace size distribution
     a=a_workplacesize
     c=c_workplacesize
     m_max=m_max_workplacesize
@@ -876,13 +885,18 @@ def validate_workplacesizes(city, plots_folder=None):
    # workplace size
     print("Validating workplace-size in instantiation...",end='',flush=True)
 
-    df = pd.DataFrame(city.individuals).groupby(['workplace']).count()[['id']]
-    df["count"] = 0
-    df = df.groupby('id').count() / city.num_workplaces
-    plt.loglog(df.index, df['count'], color="red", label='Instantiation')
-    plt.loglog(np.arange(float(m_max)), p_n, label='Data (Zipf)')
+    plt.loglog(
+        pd.DataFrame(city.individuals).groupby(
+                'workplace'
+        ).count()['id'].value_counts(normalize=True).sort_index(ascending=True),
+        color="red",
+        label="Instantiation"        
+    )
+    plt.loglog(np.arange(float(m_max)), p_n, color="blue", label='Data (Zipf)')
     plt.title("Distribution of workplaces sizes")
+    plt.xlim(right=m_max_workplacesize)
     plt.legend()
+    plt.grid(True)
     if plots_folder is not None:
         plt.savefig(os.path.join(plots_folder,'workplace_size.png'))
     else:
@@ -897,17 +911,19 @@ def validate_commutedistances(city, plots_folder=None):
                                                  right_on='id'
                                                 )[['id_x','lat_x','lon_x','lat_y','lon_y']]
     df_merged['commute_distance'] = df_merged.apply(
-        lambda row: math.floor(distance(
+        lambda row: int(distance(
             row['lat_x'],
             row['lon_x'],
             row['lat_y'],
             row['lon_y']
-            )), axis=1)
-    df = df_merged.groupby('commute_distance').count()/city.num_workers
-    plt.loglog(df.index, df['id_x'], color="red", label='Instantiation')
+            )), axis=1
+    )    
+    plt.loglog(
+        df_merged['commute_distance'].value_counts(normalize=True).sort_index(ascending=True),
+        color="red", marker="o",label='Instantiation')
     plt.ylabel("Density")
-    plt.xlabel("Commute distance")
-    plt.title('Commute distances')
+    plt.xlabel("Commute distance (in kms)")
+    plt.title('Workplace commute distances')
     actual_dist = travel_distance_distribution(
         0,
         city.m_max_commuter_distance,
@@ -916,13 +932,15 @@ def validate_commutedistances(city, plots_folder=None):
         )
     plt.loglog(actual_dist, label='Distance kernel')
     plt.legend()
+    plt.grid(True)
     if plots_folder is not None:
-        plt.savefig(os.path.join(plots_folder,'workplace_size.png'))
+        plt.savefig(os.path.join(plots_folder,'workplace_distance.png'))
     else:
         plt.show()
     plt.close()
     print("done.", flush=True)
 
+@measure
 def validate(city, plots_folder=None):
     validate_ages(city, plots_folder=plots_folder)
     validate_householdsizes(city, plots_folder=plots_folder)
@@ -934,7 +952,42 @@ def validate(city, plots_folder=None):
 # In[ ]:
 
 
+def main():
+    
+    default_pop = 100000
+    default_city = "bangalore"
+    default_ibasepath = 'data/base/bangalore/'
+    default_obasepath = 'data/bangalore-100K/'
+
+    my_parser = argparse.ArgumentParser(description='Create mini-city for COVID-19 simulation')
+    my_parser.add_argument('-c', help='target city', default=default_city)
+    my_parser.add_argument('-n', help='target population', default=default_pop)
+    my_parser.add_argument('-i', help='input folder', default=default_ibasepath)
+    my_parser.add_argument('-o', help='output folder', default=default_obasepath)
+    my_parser.add_argument('--validate', help='validation on', action="store_true")
+    my_parser.add_argument('-s', help='[for debug] restore random seed from folder', default=None)
+
+    args = my_parser.parse_args()
+    city = (args.c).lower()
+    population = int(args.n)
+    input_dir = args.i
+    output_dir = args.o
+   
+    city = City(city, input_dir, restore_randomness = args.s)
+    city.generate(population)
+    city.dump_files(output_dir)
+    if args.validate:
+        validate(city,output_dir)
+
+if __name__ == "__main__":
+    main()
+
+
+# In[ ]:
+
+
 ###### OLDER VALIDATION Scripts. Keeping it for just comparison in case I missed something
+@measure
 def validate_old(city, plots_folder=None):
     ### I am just copying the validation scripts for now. 
     ### Not going through them carefully
@@ -1123,44 +1176,4 @@ def validate_old(city, plots_folder=None):
         plt.show()
     plt.close()
     print("done.",flush=True)
-
-
-# In[ ]:
-
-
-def main():
-    
-    default_pop = 100000
-    default_city = "bangalore"
-    default_ibasepath = 'data/base/bangalore/'
-    default_obasepath = 'data/bangalore-100K/'
-
-    my_parser = argparse.ArgumentParser(description='Create mini-city for COVID-19 simulation')
-    my_parser.add_argument('-c', help='target city', default=default_city)
-    my_parser.add_argument('-n', help='target population', default=default_pop)
-    my_parser.add_argument('-i', help='input folder', default=default_ibasepath)
-    my_parser.add_argument('-o', help='output folder', default=default_obasepath)
-    my_parser.add_argument('--validate', help='validation on', action="store_true")
-    my_parser.add_argument('-s', help='[for debug] restore random seed from folder', default=None)
-
-    args = my_parser.parse_args()
-    city = (args.c).lower()
-    population = int(args.n)
-    input_dir = args.i
-    output_dir = args.o
-   
-    city = City(city, input_dir, restore_randomness = args.s)
-    city.generate(population)
-    city.dump_files(output_dir)
-    if args.validate:
-        validate(city,output_dir)
-
-if __name__ == "__main__":
-    main()
-
-
-# In[ ]:
-
-
-
 

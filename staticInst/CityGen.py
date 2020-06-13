@@ -32,12 +32,13 @@ from time import time
 def measure(func):
     @wraps(func)
     def _time_it(*args, **kwargs):
-        start = int(round(time() * 1000))
+        start = time()
         try:
+            print(f"{func.__name__.ljust(30)}...\t", end='', flush=True)
             return func(*args, **kwargs)
         finally:
-            end_ = int(round(time() * 1000)) - start
-            print(f"(Took {end_ if end_ > 0 else 0} ms)")
+            end = int((time() - start)*1000)
+            print(f"done. ({end} ms)")
     return _time_it
 
 
@@ -426,7 +427,6 @@ class City:
         
     @measure
     def createHouses(self):
-        print("Creating houses...",end='',flush=True)
         self.houses = []
         hid = 0
         for wardIndex in range(self.nwards):
@@ -453,11 +453,9 @@ class City:
                 self.houses.append(h)
                 hid+=1
         self.num_houses = hid
-        print("done.",flush=True)
        
     @measure
     def populateHouses(self):
-        print("Populating houses...",end='',flush=True)
         assert self.houses is not None
         
         pid = 0
@@ -550,8 +548,6 @@ class City:
                 pid+=1
         self.num_individuals = generatedPop
         self.num_workers = num_workers
-        print("done.",flush=True)
-
         
     def sampleOfficeType(self, size):
         num_gov = 0
@@ -586,7 +582,6 @@ class City:
 
     @measure
     def assignSchools(self):
-        print("Assigning schools...",end='',flush=True)
         assert self.houses is not None
         assert self.individuals is not None
         
@@ -621,11 +616,9 @@ class City:
                 #Need to think about how to fix this corner case.
 
         self.num_schools = sid
-        print("done.",flush=True)
 
     @measure
     def assignWorkplaces(self):
-        print("Assigning workplaces...",end='',flush=True)
         assert self.houses is not None
         assert self.individuals is not None
         assert self.schools is not None
@@ -658,7 +651,6 @@ class City:
                 self.workplaces.append(w)
                 count+=1
         self.num_workplaces = count
-        print("done.",flush=True)
     
     def describe(self):
         
@@ -694,7 +686,6 @@ class City:
         
         assert output_dir is not None
                
-        print("Dumping json files...",end='',flush=True)
         
         Path(output_dir).mkdir(parents = True, exist_ok = True)
         
@@ -741,7 +732,6 @@ class City:
         with open(os.path.join(output_dir,outputfiles['PRG_random_state']), "wb+") as f:
             pickle.dump(self.state_random,f)
 
-        print("done.",flush=True)
         
     def __init__(self, city, input_dir, restore_randomness = None):
         
@@ -779,8 +769,8 @@ class City:
 # In[ ]:
 
 
+@measure
 def validate_ages(city, plots_folder=None):
-    print("Validating age distribution in instantiation...",end='',flush=True)
     age_values, age_distribution = compute_age_distribution(city.age_weights)
     
     plt.plot(
@@ -799,11 +789,9 @@ def validate_ages(city, plots_folder=None):
     else:
         plt.show()
     plt.close()
-    print("done.",flush=True)
-    
-def validate_householdsizes(city, plots_folder=None):
-    print("Validating household-size in instantiation...",end='',flush=True)
-    
+
+@measure
+def validate_householdsizes(city, plots_folder=None):    
     household_sizes, household_distribution = compute_household_size_distribution(
         city.householdsize_bins, 
         city.householdsize_weights
@@ -829,11 +817,9 @@ def validate_householdsizes(city, plots_folder=None):
     else:
         plt.show()
     plt.close()
-    print("done.",flush=True)
 
+@measure
 def validate_schoolsizes(city, plots_folder=None):
-    print("Validating school-size in instantiation...",end='',flush=True)
-
     weights = city.schoolsize_weights
     plt.plot(
         (pd.DataFrame(city.individuals).groupby(
@@ -857,8 +843,8 @@ def validate_schoolsizes(city, plots_folder=None):
     else:
         plt.show()
     plt.close()
-    print("done.",flush=True)
-    
+
+@measure
 def validate_workplacesizes(city, plots_folder=None):
     df1 = pd.DataFrame(city.individuals)
 
@@ -882,9 +868,6 @@ def validate_workplacesizes(city, plots_folder=None):
         p_n[m] = p_nminus[m] - prev
         prev = p_nminus[m]
 
-   # workplace size
-    print("Validating workplace-size in instantiation...",end='',flush=True)
-
     plt.loglog(
         pd.DataFrame(city.individuals).groupby(
                 'workplace'
@@ -902,10 +885,9 @@ def validate_workplacesizes(city, plots_folder=None):
     else:
         plt.show()
     plt.close()
-    print("done.", flush=True)
-    
+
+@measure
 def validate_commutedistances(city, plots_folder=None):
-    print("Validating commute distances in instantiation...",end='',flush=True)
     df_merged = pd.DataFrame(city.individuals).merge(pd.DataFrame(city.workplaces),
                                                  left_on='workplace', 
                                                  right_on='id'
@@ -938,9 +920,7 @@ def validate_commutedistances(city, plots_folder=None):
     else:
         plt.show()
     plt.close()
-    print("done.", flush=True)
 
-@measure
 def validate(city, plots_folder=None):
     validate_ages(city, plots_folder=plots_folder)
     validate_householdsizes(city, plots_folder=plots_folder)

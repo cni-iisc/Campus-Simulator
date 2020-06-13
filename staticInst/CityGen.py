@@ -16,21 +16,18 @@ import argparse
 
 import math
 from shapely.geometry import Point, MultiPolygon
+from descartes import PolygonPatch
 
 import os
 from pathlib import Path
 
 import time
 
-import warnings
-warnings.filterwarnings('ignore')
-
 import matplotlib.pyplot as plt
 from computeDistributions import *
 
 
 # In[ ]:
-
 
 
 inputfiles = {
@@ -201,6 +198,7 @@ class City:
     num_schools = None    
     num_workers = None
     
+    
     def get_random_seeds(self):
         self.state_random = random.getstate()
         self.state_numpy = np.random.get_state()
@@ -352,8 +350,8 @@ class City:
         
     def sampleRandomLatLon(self, wardIndex):
         if self.presampled_points is not None:
-            i = random.randint(0,len(self.presampled_points[wardIndex])-1)
-            (lat,lon) = self.presampled_points[wardIndex].loc[i]
+            i = random.randint(0,self.presampled_points[wardIndex].shape[0]-1)
+            (lat,lon) = self.presampled_points[wardIndex].iloc[i]
             return (lat,lon)
         else:
             assert self.geoDF is not None
@@ -528,7 +526,7 @@ class City:
                     p["workplaceType"] = workplacesTypes[None]
                     
                 self.individuals.append(p)
-                self.demographics["generatedPopulation"].iloc[wardIndex]+=1
+                self.demographics.at[wardIndex,"generatedPopulation"]+=1
                 generatedPop +=1
                 pid+=1
         self.num_individuals = generatedPop
@@ -778,7 +776,166 @@ class City:
 # In[ ]:
 
 
+def validate_ages(city, plots_folder=None):
+    
+    df = pd.DataFrame(city.individuals)['age'].value_counts(normalize=True).sort_index(ascending=True)
+    
+    age_values, age_distribution = compute_age_distribution(city.age_weights)
+    print("Validating age distribution in instantiation...",end='',flush=True)
+    plt.plot(df.index, df, 'r-o',label='Instantiation')
+    plt.plot(age_values, age_distribution, 'b-',label='Data')
+    plt.xlabel('Age')
+    plt.ylabel('Density')
+    plt.title('Distribution of age')
+    plt.grid(True)
+    plt.legend()
+    plt.xticks(np.arange(0,81,10), np.concatenate((age_values[np.arange(0,71,10)], ['80+'])) )
+    if plots_folder is not None: 
+        plt.savefig(os.path.join(plots_folder, 'age.png'))
+    else:
+        plt.show()
+    plt.close()
+    print("done.",flush=True)
+    
+def validate_householdsizes(city, plots_folder=None):
+    household_sizes, household_distribution = compute_household_size_distribution(
+    city.householdsize_bins, 
+    city.householdsize_weights
+    )
+    df1 = pd.DataFrame(city.individuals)
+    
+    print("Validating household-size in instantiation...",end='',flush=True)
+    house = df1['household'].value_counts().values
+    unique_elements, counts_elements = np.unique(house, return_counts=True)
+    counts_elements = counts_elements / np.sum(counts_elements)
+    plt.plot(counts_elements, 'r-o', label='Instantiation')
+    plt.plot(household_distribution, 'b-', label='data')
+    plt.xlabel('Household-size')
+    plt.ylabel('Density')
+    plt.title('Distribution of household-size')
+    plt.grid(True)
+    plt.legend()
+    plt.xticks(np.arange(0,len(household_sizes),1), household_sizes[:-1] + [str(household_sizes[-1])+'+'])
+    if plots_folder is not None:
+        plt.savefig(os.path.join(plots_folder,'household_size.png'))
+    else:
+        plt.show()
+    plt.close()
+    print("done.",flush=True)
+
+def validate_schoolsizes(city, plots_folder=None):
+    print("Validating school-size in instantiation...",end='',flush=True)
+
+    n = city.num_schools
+    weights = city.schoolsize_weights
+    bins = [i*100 for i in range(len(weights))]
+    labels = [str(a) for a in bins[:-1]] + [str(bins[-1])+'+']
+
+    df = pd.DataFrame(city.individuals).copy()
+    countdf = df[pd.notna(df['school'])].groupby(['school']).count()[['id']]
+
+    ax = plt.gca()
+    ax.grid(True)
+    plt.hist(
+        countdf.values, 
+        bins=[0,100,200,300,400,500,600,700,800,900], label="Instantiation")
+    plt.plot([0,100,200,300,400,500,600,700,800,900], [a*n for a in city.schoolsize_weights], label="Data")
+    plt.xticks(bins[1:], labels[1:])
+    plt.title("Distribution of school sizes")
+    plt.legend()
+    if plots_folder is not None:
+        plt.savefig(os.path.join(plots_folder, 'school_size.png'))
+    else:
+        plt.show()
+    plt.close()
+    print("done.",flush=True)
+    
+def validate_workplacesizes(city, plots_folder=None):
+    df1 = pd.DataFrame(city.individuals)
+
+    a_workplacesize = 3.26
+    c_workplacesize = 0.97
+    m_max_workplacesize = 2870
+
+        # generate workplace size distribution
+    a=a_workplacesize
+    c=c_workplacesize
+    m_max=m_max_workplacesize
+    workplace_sizes = np.arange(m_max)
+    p_nplus = np.arange(float(m_max))
+    for m in range(m_max):
+        p_nplus[m] =  ((( (1+m_max/a)/(1+m/a))**c) -1) / (((1+m_max/a)**c) -1)
+
+    p_nminus = 1.0 - p_nplus
+    p_n = np.arange(float(m_max))
+    prev=0.0
+    for m in range(1, m_max):
+        p_n[m] = p_nminus[m] - prev
+        prev = p_nminus[m]
+
+   # workplace size
+    print("Validating workplace-size in instantiation...",end='',flush=True)
+
+    df = pd.DataFrame(city.individuals).groupby(['workplace']).count()[['id']]
+    df["count"] = 0
+    df = df.groupby('id').count() / city.num_workplaces
+    plt.loglog(df.index, df['count'], color="red", label='Instantiation')
+    plt.loglog(np.arange(float(m_max)), p_n, label='Data (Zipf)')
+    plt.title("Distribution of workplaces sizes")
+    plt.legend()
+    if plots_folder is not None:
+        plt.savefig(os.path.join(plots_folder,'workplace_size.png'))
+    else:
+        plt.show()
+    plt.close()
+    print("done.", flush=True)
+    
+def validate_commutedistances(city, plots_folder=None):
+    print("Validating commute distances in instantiation...",end='',flush=True)
+    df_merged = pd.DataFrame(city.individuals).merge(pd.DataFrame(city.workplaces),
+                                                 left_on='workplace', 
+                                                 right_on='id'
+                                                )[['id_x','lat_x','lon_x','lat_y','lon_y']]
+    df_merged['commute_distance'] = df_merged.apply(
+        lambda row: math.floor(distance(
+            row['lat_x'],
+            row['lon_x'],
+            row['lat_y'],
+            row['lon_y']
+            )), axis=1)
+    df = df_merged.groupby('commute_distance').count()/city.num_workers
+    plt.loglog(df.index, df['id_x'], color="red", label='Instantiation')
+    plt.ylabel("Density")
+    plt.xlabel("Commute distance")
+    plt.title('Commute distances')
+    actual_dist = travel_distance_distribution(
+        0,
+        city.m_max_commuter_distance,
+        city.a_commuter_distance,
+        city.b_commuter_distance
+        )
+    plt.loglog(actual_dist, label='Distance kernel')
+    plt.legend()
+    if plots_folder is not None:
+        plt.savefig(os.path.join(plots_folder,'workplace_size.png'))
+    else:
+        plt.show()
+    plt.close()
+    print("done.", flush=True)
+
 def validate(city, plots_folder=None):
+    validate_ages(city, plots_folder=plots_folder)
+    validate_householdsizes(city, plots_folder=plots_folder)
+    validate_schoolsizes(city, plots_folder=plots_folder)
+    validate_workplacesizes(city, plots_folder=plots_folder)
+    validate_commutedistances(city, plots_folder=plots_folder)
+
+
+# In[ ]:
+
+
+###### OLDER VALIDATION Scripts. Keeping it for just comparison in case I missed something
+def validate_old(city, plots_folder=None):
     ### I am just copying the validation scripts for now. 
     ### Not going through them carefully
     

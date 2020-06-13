@@ -42,6 +42,7 @@ struct defaults{
   std::string LOCKED_COMMUNITY_LEAKAGE = "1.0";
   std::string COMMUNITY_LOCK_THRESHOLD = "0.001";
   std::string MASK_ACTIVE = "false";
+  std::string MASK_START_DELAY = "40";
   std::string USE_AGE_DEPENDENT_MIXING = "false";
   std::string SIGNIFICANT_EIGEN_VALUES = "3.0";
   std::string NUM_AGE_GROUPS = "16";

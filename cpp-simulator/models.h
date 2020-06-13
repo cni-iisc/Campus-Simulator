@@ -68,7 +68,7 @@ inline double uniform_real(double left, double right){
   return std::uniform_real_distribution<double>(left, right)(GENERATOR);
 }
 
-inline double uniform_count_type(double left, double right){
+inline count_type uniform_count_type(double left, double right){
   return std::uniform_int_distribution<count_type>(left, right)(GENERATOR);
 }
 
@@ -109,6 +109,15 @@ struct svd {
   std::vector<double> sigma;
 };
 
+struct kappa_values{
+double kappa_H;
+double kappa_H_incoming;
+double kappa_W;
+double kappa_W_incoming;
+double kappa_C;
+double kappa_C_incoming;
+};
+
 struct intervention_params {
   count_type num_days = 0;
   double compliance = 0.9;
@@ -125,7 +134,24 @@ struct intervention_params {
   bool ward_containment = false;
   bool trains_active = false;
   double fraction_forced_to_take_train = 1;
+  kappa_values lockdown_kappas_compliant;
+  kappa_values lockdown_kappas_non_compliant;
 
+  intervention_params(){
+    lockdown_kappas_compliant.kappa_H = 2.0;
+    lockdown_kappas_compliant.kappa_H_incoming = 1.0;
+    lockdown_kappas_compliant.kappa_W = 0.25;
+    lockdown_kappas_compliant.kappa_W_incoming = 0.25;
+    lockdown_kappas_compliant.kappa_C = 0.25;
+    lockdown_kappas_compliant.kappa_C_incoming = 0.25;
+
+    lockdown_kappas_non_compliant.kappa_H = 1.25;
+    lockdown_kappas_non_compliant.kappa_H_incoming = 1.0;
+    lockdown_kappas_non_compliant.kappa_W = 0.25;
+    lockdown_kappas_non_compliant.kappa_W_incoming = 0.25;
+    lockdown_kappas_non_compliant.kappa_C = 1;
+    lockdown_kappas_non_compliant.kappa_C_incoming = 1;
+  }
   intervention_params& set_case_isolation(bool c){
 	this->case_isolation = c;
 	return *this;

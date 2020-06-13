@@ -663,13 +663,15 @@ void assign_household_random_community(vector<house>& homes, const vector<commun
 	  set<count_type> chosen;
 	  chosen.clear();
 	  count_type candidate;
-	  for(count_type k = 0; k < degree; ++k){
+	  while(homes[current_household].random_households.households.size() < degree){
 		do{
-		  candidate = uniform_count_type_network(0, NUM_HOUSEHOLDS - 1);
+		  candidate = communities[i].households[uniform_count_type_network(0, NUM_HOUSEHOLDS - 1)];
 		}while(candidate == current_household
-			   || chosen.find(candidate) != chosen.end());
+			   || (std::find(homes[current_household].random_households.households.begin(),
+			    homes[current_household].random_households.households.end(), candidate) != homes[current_household].random_households.households.end()));
 		chosen.insert(candidate);
 		homes[current_household].random_households.households.push_back(candidate);
+		homes[candidate].random_households.households.push_back(current_household);
 	  }
 	}
   }

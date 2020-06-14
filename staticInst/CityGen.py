@@ -11,17 +11,14 @@ import pickle
 import json
 import pandas as pd
 import geopandas as gpd
-import csv
 import argparse
 
 import math
 from shapely.geometry import Point, MultiPolygon
-from descartes import PolygonPatch
 
 import os
+import sys
 from pathlib import Path
-
-import time
 
 import matplotlib.pyplot as plt
 from computeDistributions import *
@@ -81,24 +78,6 @@ officeType = {
     "Medical":5
     }
 
-def workplaces_size_distribution(a=3.26, c=0.97, m_max=2870):
-    count=1
-    a=3.26
-    c=0.97
-    m_max=2870
-    p_nplus = np.arange(float(m_max))
-    for m in range(m_max):
-        p_nplus[m] =  ((( (1+m_max/a)/(1+m/a))**c) -1) / (((1+m_max/a)**c) -1)
-
-    p_nminus = 1.0 - p_nplus
-    p_n = np.arange(float(m_max))
-    prev=0.0
-    for m in range(1, m_max):
-        p_n[m] = p_nminus[m] - prev
-        prev = p_nminus[m]
-
-    return p_n/sum(p_n)
-
 
 # In[ ]:
 
@@ -112,7 +91,7 @@ def folderExists(path):
 def normalise(raw): 
     # Scale everything so that the array sums to 1
     # It doesn't quite, due to floating point errors, but 
-    # np.random.choice does not complian anymore.
+    # np.random.choice does not complain anymore.
     s = sum([float(i) for i in raw]); return [float(i)/s for i in raw]
     
 def sampleBinsWeights(bins,weights):
@@ -135,7 +114,8 @@ def distance(lat1, lon1, lat2, lon2):
 
     dlat = math.radians(lat2-lat1)
     dlon = math.radians(lon2-lon1)
-    a = math.sin(dlat/2) * math.sin(dlat/2) + math.cos(math.radians(lat1)) * math.cos(math.radians(lat2)) * math.sin(dlon/2) * math.sin(dlon/2)
+    a = (math.sin(dlat/2) * math.sin(dlat/2) + math.cos(math.radians(lat1)) 
+         * math.cos(math.radians(lat2)) * math.sin(dlon/2) * math.sin(dlon/2))
     c = 2 * math.atan2(math.sqrt(a), math.sqrt(1-a))
     d = radius * c
 
@@ -214,7 +194,7 @@ class City:
     num_workers = None
     
     
-    def get_random_seeds(self):
+    def save_random_seeds(self):
         self.state_random = random.getstate()
         self.state_numpy = np.random.get_state()
 
@@ -734,7 +714,6 @@ class City:
 
         
     def __init__(self, city, input_dir, restore_randomness = None):
-        
         if city=="bangalore":
             self.a_commuter_distance = 10.751
             self.b_commuter_distance = 5.384
@@ -754,7 +733,7 @@ class City:
                 ), f"{os.path.join(restore_randomness, outputfiles['PRG_random_state'])} not found"
             self.set_random_seeds(restore_randomness)
 
-        self.get_random_seeds()
+        self.save_random_seeds()
         self.set_demographics(input_dir)
         self.set_employments(input_dir)
         self.set_city_profile(input_dir)
@@ -770,11 +749,13 @@ class City:
 
 
 @measure
-def validate_ages(city, plots_folder=None):
+def validate_ages(city, df_ind, plots_folder=None):
     age_values, age_distribution = compute_age_distribution(city.age_weights)
     
     plt.plot(
-        pd.DataFrame(city.individuals)['age'].value_counts(normalize=True).sort_index(ascending=True),
+        (df_ind['age']
+         .value_counts(normalize=True)
+         .sort_index(ascending=True)),
         'r-o',
         label='Instantiation')
     plt.plot(age_values, age_distribution, 'b-',label='Data')
@@ -791,20 +772,21 @@ def validate_ages(city, plots_folder=None):
     plt.close()
 
 @measure
-def validate_householdsizes(city, plots_folder=None):    
+def validate_householdsizes(city, df_ind, plots_folder=None):    
     household_sizes, household_distribution = compute_household_size_distribution(
         city.householdsize_bins, 
         city.householdsize_weights
     )
-    plt.plot(
-        pd.DataFrame(city.individuals).groupby(
-                'household'
-        ).count()['id'].value_counts(normalize=True).sort_index(ascending=True),
+    plt.plot((df_ind
+              .groupby('household')
+              .count()['id']
+              .value_counts(normalize=True)
+              .sort_index(ascending=True)),
         color="red",
         marker="o",
         label="Instantiation"        
     )
-    plt.plot(household_sizes , household_distribution, color="blue", label='data')
+    plt.plot(household_sizes , household_distribution, color="blue", label='Data')
 
     plt.xlabel('Household-size')
     plt.ylabel('Density')
@@ -819,19 +801,20 @@ def validate_householdsizes(city, plots_folder=None):
     plt.close()
 
 @measure
-def validate_schoolsizes(city, plots_folder=None):
+def validate_schoolsizes(city, df_ind, plots_folder=None):
     weights = city.schoolsize_weights
-    plt.plot(
-        (pd.DataFrame(city.individuals).groupby(
-            'school'
-            ).count()['id']/100
-        ).astype(int).value_counts(normalize=True).sort_index(ascending=True),
+    plt.plot(((df_ind
+               .dropna(subset=['school'])
+               .groupby('school')
+               .count()['id']/100)
+              .astype(int)
+              .value_counts(normalize=True)
+              .sort_index(ascending=True)),
         color="red",
         label="Instantiation"
     )
     plt.plot(weights, label='Data', color="blue")
     
-
     bins = list(range(len(weights)))
     labels = [str(a*100) for a in bins[:-1]] + [str(bins[-1]*100)+'+']
     plt.xticks(bins[1:], labels[1:])
@@ -845,33 +828,15 @@ def validate_schoolsizes(city, plots_folder=None):
     plt.close()
 
 @measure
-def validate_workplacesizes(city, plots_folder=None):
-    df1 = pd.DataFrame(city.individuals)
-
-    a_workplacesize = 3.26
-    c_workplacesize = 0.97
-    m_max_workplacesize = 2870
-
-    # generate workplace size distribution
-    a=a_workplacesize
-    c=c_workplacesize
-    m_max=m_max_workplacesize
-    workplace_sizes = np.arange(m_max)
-    p_nplus = np.arange(float(m_max))
-    for m in range(m_max):
-        p_nplus[m] =  ((( (1+m_max/a)/(1+m/a))**c) -1) / (((1+m_max/a)**c) -1)
-
-    p_nminus = 1.0 - p_nplus
-    p_n = np.arange(float(m_max))
-    prev=0.0
-    for m in range(1, m_max):
-        p_n[m] = p_nminus[m] - prev
-        prev = p_nminus[m]
-
+def validate_workplacesizes(city, df_ind, plots_folder=None):
+    p_n = workplaces_size_distribution()
     plt.loglog(
-        pd.DataFrame(city.individuals).groupby(
-                'workplace'
-        ).count()['id'].value_counts(normalize=True).sort_index(ascending=True),
+        (df_ind
+         .dropna(subset=['workplace'])
+         .groupby('workplace')
+         .count()['id']
+         .value_counts(normalize=True)
+         .sort_index(ascending=True)),
         color="red",
         label="Instantiation"        
     )
@@ -887,21 +852,25 @@ def validate_workplacesizes(city, plots_folder=None):
     plt.close()
 
 @measure
-def validate_commutedistances(city, plots_folder=None):
-    df_merged = pd.DataFrame(city.individuals).merge(pd.DataFrame(city.workplaces),
-                                                 left_on='workplace', 
-                                                 right_on='id'
-                                                )[['id_x','lat_x','lon_x','lat_y','lon_y']]
-    df_merged['commute_distance'] = df_merged.apply(
+def validate_commutedistances(city, df_ind, df_work, plots_folder=None):
+    df_merged = (df_ind
+                 .dropna(subset=['workplace'])
+                 .merge(
+                     df_work,
+                     left_on='workplace',
+                     right_on='id'
+                 )[['id_x','lat_x','lon_x','lat_y','lon_y']])
+    df_merged['commute_distance'] = (df_merged.apply(
         lambda row: int(distance(
             row['lat_x'],
             row['lon_x'],
             row['lat_y'],
-            row['lon_y']
-            )), axis=1
-    )    
+            row['lon_y'])),
+        axis=1))
     plt.loglog(
-        df_merged['commute_distance'].value_counts(normalize=True).sort_index(ascending=True),
+        (df_merged['commute_distance']
+         .value_counts(normalize=True)
+         .sort_index(ascending=True)),
         color="red", marker="o",label='Instantiation')
     plt.ylabel("Density")
     plt.xlabel("Commute distance (in kms)")
@@ -912,7 +881,7 @@ def validate_commutedistances(city, plots_folder=None):
         city.a_commuter_distance,
         city.b_commuter_distance
         )
-    plt.loglog(actual_dist, label='Distance kernel')
+    plt.loglog(actual_dist, label='Data (distance kernel)')
     plt.legend()
     plt.grid(True)
     if plots_folder is not None:
@@ -922,11 +891,13 @@ def validate_commutedistances(city, plots_folder=None):
     plt.close()
 
 def validate(city, plots_folder=None):
-    validate_ages(city, plots_folder=plots_folder)
-    validate_householdsizes(city, plots_folder=plots_folder)
-    validate_schoolsizes(city, plots_folder=plots_folder)
-    validate_workplacesizes(city, plots_folder=plots_folder)
-    validate_commutedistances(city, plots_folder=plots_folder)
+    df_ind = pd.DataFrame(city.individuals)
+    df_work = pd.DataFrame(city.workplaces)
+    validate_ages(city, df_ind,  plots_folder=plots_folder)
+    validate_householdsizes(city, df_ind, plots_folder=plots_folder)
+    validate_schoolsizes(city, df_ind,  plots_folder=plots_folder)
+    validate_workplacesizes(city, df_ind, plots_folder=plots_folder)
+    validate_commutedistances(city, df_ind, df_work, plots_folder=plots_folder)
 
 
 # In[ ]:
@@ -944,7 +915,7 @@ def main():
     my_parser.add_argument('-n', help='target population', default=default_pop)
     my_parser.add_argument('-i', help='input folder', default=default_ibasepath)
     my_parser.add_argument('-o', help='output folder', default=default_obasepath)
-    my_parser.add_argument('--validate', help='validation on', action="store_true")
+    my_parser.add_argument('--validate', help='script for validation plots on', action="store_true")
     my_parser.add_argument('-s', help='[for debug] restore random seed from folder', default=None)
 
     args = my_parser.parse_args()
@@ -952,7 +923,15 @@ def main():
     population = int(args.n)
     input_dir = args.i
     output_dir = args.o
-   
+    
+    if len(sys.argv)==1:
+        print("No arguments passed.\n")
+        my_parser.print_help()
+        print("\n Assuming default values.\n")
+
+    print(f"City: {city}")
+    print(f"input_folder: {input_dir}")
+    print(f"output_folder: {output_dir}")
     city = City(city, input_dir, restore_randomness = args.s)
     city.generate(population)
     city.dump_files(output_dir)

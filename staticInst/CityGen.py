@@ -151,6 +151,7 @@ class City:
     max_ites = 1500000 /10
     max_ites_not_sez=max_ites-max_sez
 
+    # Feature request: Read these commuter distance params from cityprofile.json
     a_commuter_distance = 4 #parameter in distribution for commuter distance - Thailand paper
     b_commuter_distance = 3.8  #parameter in distribution for commuter distance - Thailand paper
     m_max_commuter_distance = None
@@ -189,7 +190,6 @@ class City:
     num_schools = None    
     num_workers = None
     
-    
     def save_random_seeds(self):
         self.state_random = random.getstate()
         self.state_numpy = np.random.get_state()
@@ -227,7 +227,7 @@ class City:
         geoDF = gpd.read_file(Path(input_dir,inputfiles["citygeojson"]))
         geoDF['wardNo'] = geoDF['wardNo'].astype(int)
         geoDF = geoDF.sort_values('wardNo').reset_index(drop=True)
-        geoDF['wardIndex'] = geoDF['wardNo'] - 1
+        geoDF['wardIndex'] = geoDF['wardNo'] - 1   # Just to use an 0-indexed column 
         
         geoDF = geoDF[['wardIndex','wardNo', 'wardName', 'geometry']]
         geoDF['wardBounds'] = geoDF.apply(lambda row: MultiPolygon(row['geometry']).bounds, axis=1)
@@ -240,7 +240,6 @@ class City:
                 ), 
             axis=1
             )
-
         self.geoDF = geoDF
         
     def set_demographics(self, input_dir):
@@ -254,6 +253,7 @@ class City:
         for col in necessary_cols:
             assert col in demographics.columns
         demographics["wardIndex"] = demographics["wardNo"] - 1
+        necessary_cols += ["wardIndex"]
         self.checkRows(demographics,"demographics")
         
         if "hd_flag" in demographics.columns:
@@ -265,7 +265,7 @@ class City:
 
         demographics['totalPopulation'] = demographics['totalPopulation'].astype(int)
 
-        self.nwards = demographics['wardIndex'].count()
+        self.nwards = demographics['wardIndex'].shape[0]
         self.totalPop = demographics['totalPopulation'].sum()
 
         self.demographics = demographics[necessary_cols]
@@ -282,6 +282,7 @@ class City:
         for col in necessary_cols:
             assert col in employments.columns
         employments["wardIndex"] = employments["wardNo"] - 1
+        necessary_cols += ["wardIndex"]
         self.checkRows(employments, "employments")
 
         employments['Employed'] = employments['Employed'].astype(int)
@@ -465,7 +466,7 @@ class City:
                 if self.has_slums:
                     p["slum"] = h["slum"]
 
-                age = self.sampleAge()
+                age = self.sampleAge()  # Currently, ages of household members chosen independently.
                 p["age"] = age
 
                 if age < 3:                         # toddlers stay at home
@@ -511,8 +512,6 @@ class City:
                             self.schoolers[wardIndex].append(pid)
                         else:
                             p["workplaceType"] = workplacesTypes[None]
-
-                        p["workplaceType"] = workplacesTypes[None]
                 else:
                     #decide about seniors
                     p["employed"] = 0
@@ -709,7 +708,7 @@ class City:
             pickle.dump(self.state_random,f)
 
         
-    def __init__(self, city, input_dir, restore_randomness = None):
+    def __init__(self, city, input_dir, random_seed_dir = None):
         if city=="bangalore":
             self.a_commuter_distance = 10.751
             self.b_commuter_distance = 5.384
@@ -720,14 +719,14 @@ class City:
             self.a_commuter_distance = 4
             self.b_commuter_distance = 3.8
         
-        if restore_randomness is not None:
+        if random_seed_dir is not None:
             assert fileExists(
-                os.path.join(restore_randomness, outputfiles['PRG_np_random_state'])
-                ), f"{os.path.join(restore_randomness, outputfiles['PRG_np_random_state'])} not found"
+                os.path.join(random_seed_dir, outputfiles['PRG_np_random_state'])
+                ), f"{os.path.join(random_seed_dir, outputfiles['PRG_np_random_state'])} not found"
             assert fileExists(
-                os.path.join(restore_randomness, outputfiles['PRG_random_state'])
-                ), f"{os.path.join(restore_randomness, outputfiles['PRG_random_state'])} not found"
-            self.set_random_seeds(restore_randomness)
+                os.path.join(random_seed_dir, outputfiles['PRG_random_state'])
+                ), f"{os.path.join(random_seed_dir, outputfiles['PRG_random_state'])} not found"
+            self.set_random_seeds(random_seed_dir)
 
         self.save_random_seeds()
         self.set_demographics(input_dir)
@@ -774,8 +773,8 @@ def validate_householdsizes(city, df_ind, plots_folder=None):
         city.householdsize_weights
     )
     plt.plot((df_ind
-              .groupby('household')
-              .count()['id']
+              .groupby('household')['id']
+              .count()
               .value_counts(normalize=True)
               .sort_index(ascending=True)),
         color="red",
@@ -799,15 +798,18 @@ def validate_householdsizes(city, df_ind, plots_folder=None):
 @measure
 def validate_schoolsizes(city, df_ind, plots_folder=None):
     weights = city.schoolsize_weights
-    plt.plot(((df_ind
-               .dropna(subset=['school'])
-               .groupby('school')
-               .count()['id']/100)
-              .astype(int)
-              .value_counts(normalize=True)
-              .sort_index(ascending=True)),
-        color="red",
-        label="Instantiation"
+    df = ((df_ind
+          .dropna(subset=['school'])
+          .groupby('school')['id']
+          .count()/100)
+            .astype(int)
+            .value_counts(normalize=True)
+            .sort_index(ascending=True))
+    plt.bar(df.index, height=df,
+            width=0.5,
+            color="red",
+            alpha=0.5,
+            label="Instantiation"
     )
     plt.plot(weights, label='Data', color="blue")
     
@@ -855,7 +857,7 @@ def validate_commutedistances(city, df_ind, df_work, plots_folder=None):
                      df_work,
                      left_on='workplace',
                      right_on='id'
-                 )[['id_x','lat_x','lon_x','lat_y','lon_y']])
+                 )[['lat_x','lon_x','lat_y','lon_y']])
     df_merged['commute_distance'] = (df_merged.apply(
         lambda row: int(distance(
             row['lat_x'],

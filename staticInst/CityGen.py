@@ -122,10 +122,6 @@ def distance(lat1, lon1, lat2, lon2):
     return d
 
 def workplaces_size_distribution(a=3.26, c=0.97, m_max=2870):
-    count=1
-    a=3.26
-    c=0.97
-    m_max=2870
     p_nplus = np.arange(float(m_max))
     for m in range(m_max):
         p_nplus[m] =  ((( (1+m_max/a)/(1+m/a))**c) -1) / (((1+m_max/a)**c) -1)
@@ -840,9 +836,9 @@ def validate_workplacesizes(city, df_ind, plots_folder=None):
         color="red",
         label="Instantiation"        
     )
-    plt.loglog(np.arange(float(m_max)), p_n, color="blue", label='Data (Zipf)')
+    plt.loglog(np.arange(len(p_n)), p_n, color="blue", label='Data (Zipf)')
     plt.title("Distribution of workplaces sizes")
-    plt.xlim(right=m_max_workplacesize)
+    plt.xlim(right=len(p_n))
     plt.legend()
     plt.grid(True)
     if plots_folder is not None:

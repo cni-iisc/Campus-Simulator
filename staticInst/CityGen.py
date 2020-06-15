@@ -5,7 +5,6 @@
 
 
 import numpy as np
-import random
 import pickle
 
 import json
@@ -59,7 +58,6 @@ outputfiles = {
     "wardCentreDistance":"wardCentreDistance.json",
     "commonArea":"commonArea.json",
     "fractionPopulation":"fractionPopulation.json",
-    "PRG_random_state":"PRG_random_state.bin",
     "PRG_np_random_state":"PRG_np_random_state.bin",
     }
 
@@ -103,9 +101,7 @@ def sampleBinsWeights(bins,weights):
         #This is the last bucket, something like x+. Choosing (x+1) by default.
     elif '-' in s:
         (a,b) = s.split('-')
-        return random.randint(int(a),int(b)) #random.randint has both inclusive
-        # TODO: Consider moving to np.random.random_integer so that we use just
-        # one source of randomness. 
+        return np.random.randint(int(a),int(b)+1) #np.random.randint chooses from halfopen interval
     else:
         return int(s)
 
@@ -122,6 +118,9 @@ def distance(lat1, lon1, lat2, lon2):
     return d
 
 def workplaces_size_distribution(a=3.26, c=0.97, m_max=2870):
+    # Is this this a Zipf law?
+    # This should be improved...
+    
     p_nplus = np.arange(float(m_max))
     for m in range(m_max):
         p_nplus[m] =  ((( (1+m_max/a)/(1+m/a))**c) -1) / (((1+m_max/a)**c) -1)
@@ -141,8 +140,7 @@ def workplaces_size_distribution(a=3.26, c=0.97, m_max=2870):
 
 class City:
     
-    state_numpy = None
-    state_random = None
+    state_np_random = None
     #Default values:
     
     #ppl working at sez and gov (Bangalore data)
@@ -150,7 +148,9 @@ class City:
     max_gov= (2295000*(12.327/66.84)*0.5) /10
     max_ites = 1500000 /10
     max_ites_not_sez=max_ites-max_sez
-
+    # Can we add a reference for these numbers?
+    
+    
     # Feature request: Read these commuter distance params from cityprofile.json
     a_commuter_distance = 4 #parameter in distribution for commuter distance - Thailand paper
     b_commuter_distance = 3.8  #parameter in distribution for commuter distance - Thailand paper
@@ -191,13 +191,10 @@ class City:
     num_workers = None
     
     def save_random_seeds(self):
-        self.state_random = random.getstate()
-        self.state_numpy = np.random.get_state()
+        self.state_np_random = np.random.get_state()
 
     def set_random_seeds(self, folder):
         print(f"Restoring random seeds from {folder}.")
-        with open(os.path.join(folder, outputfiles['PRG_random_state']), 'rb') as f:
-            random.setstate(pickle.load(f))
         with open(os.path.join(folder, outputfiles['PRG_np_random_state']), 'rb') as f:
             np.random.set_state(pickle.load(f))
 
@@ -342,15 +339,15 @@ class City:
         
     def sampleRandomLatLon(self, wardIndex):
         if self.presampled_points is not None:
-            i = random.randint(0,self.presampled_points[wardIndex].shape[0]-1)
+            i = np.random.randint(0,self.presampled_points[wardIndex].shape[0])
             (lat,lon) = self.presampled_points[wardIndex].iloc[i]
             return (lat,lon)
         else:
             assert self.geoDF is not None
             (lon1,lat1,lon2,lat2) = self.geoDF['wardBounds'][wardIndex]
             while True:
-                lat = random.uniform(lat1,lat2)
-                lon = random.uniform(lon1,lon2)
+                lat = np.random.uniform(lat1,lat2)
+                lon = np.random.uniform(lon1,lon2)
                 point = Point(lon,lat) #IMPORTANT: Point takes in order of longitude, latitude
                 if MultiPolygon(self.geoDF['geometry'][wardIndex]).contains(point):
                     return (lat,lon)
@@ -490,7 +487,7 @@ class City:
                             self.age_bins.index("65-69"))
                         ])  #Probability that you are employed given 15 <= age < 65 
 
-                    if(random.uniform(0,1) < eprob_adjusted):
+                    if(np.random.uniform(0,1) < eprob_adjusted):
                         
                         #person is employed
                         p["employed"] = 1
@@ -580,7 +577,7 @@ class City:
                 i = 0
                 while(i < size and len(self.schoolers[wardIndex])>0):
                     pid = self.schoolers[wardIndex].pop(
-                            random.randrange(len(self.schoolers[wardIndex]))
+                            np.random.randint(len(self.schoolers[wardIndex]))
                             )
                     self.individuals[pid]["school"] = sid
                     i+=1
@@ -619,7 +616,7 @@ class City:
 
                 i = 0
                 while(i < s and len(self.workers[wardIndex])>0):
-                    pid = self.workers[wardIndex].pop(random.randrange(len(self.workers[wardIndex])))
+                    pid = self.workers[wardIndex].pop(np.random.randint(len(self.workers[wardIndex])))
                     self.individuals[pid]["workplace"] = wid
                     del self.individuals[pid]["workplaceward"]
                     i+=1
@@ -703,9 +700,7 @@ class City:
         with open(os.path.join(output_dir,outputfiles['wardCentreDistance']), "w+") as f:
             f.write(json.dumps(wardCentreDistances))     
         with open(os.path.join(output_dir,outputfiles['PRG_np_random_state']), "wb+") as f:
-            pickle.dump(self.state_numpy,f)
-        with open(os.path.join(output_dir,outputfiles['PRG_random_state']), "wb+") as f:
-            pickle.dump(self.state_random,f)
+            pickle.dump(self.state_np_random,f)
 
         
     def __init__(self, city, input_dir, random_seed_dir = None):
@@ -723,9 +718,6 @@ class City:
             assert fileExists(
                 os.path.join(random_seed_dir, outputfiles['PRG_np_random_state'])
                 ), f"{os.path.join(random_seed_dir, outputfiles['PRG_np_random_state'])} not found"
-            assert fileExists(
-                os.path.join(random_seed_dir, outputfiles['PRG_random_state'])
-                ), f"{os.path.join(random_seed_dir, outputfiles['PRG_random_state'])} not found"
             self.set_random_seeds(random_seed_dir)
 
         self.save_random_seeds()
@@ -930,7 +922,7 @@ def main():
     print(f"City: {city}")
     print(f"input_folder: {input_dir}")
     print(f"output_folder: {output_dir}")
-    city = City(city, input_dir, restore_randomness = args.s)
+    city = City(city, input_dir, random_seed_dir = args.s)
     city.generate(population)
     city.dump_files(output_dir)
     if args.validate:

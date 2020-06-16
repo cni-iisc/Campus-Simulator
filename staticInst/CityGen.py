@@ -118,21 +118,24 @@ def distance(lat1, lon1, lat2, lon2):
     return d
 
 def workplaces_size_distribution(a=3.26, c=0.97, m_max=2870):
-    # Is this this a Zipf law?
-    # This should be improved...
+    # This is a particular version of the power law:
+    # Pr[ m > x ] is proportional to x^{-c}. 
+    # This is additionally slightly adjusted in this implementation
+    # so that the max workplace size = m_max, and the size is always 
+    # at least 1. 
+    # RP: There is also a scaling by a parameter 'a', which I don't 
+    # follow why, but leaving the implementation as earlier.
+    # RP: should add a reference for why these a,c,m_max were chosen.
     
-    p_nplus = np.arange(float(m_max))
+    mirror_cdf = np.zeros(m_max, dtype=float)   # mirror_cdf[i] = Pr[ size > i]
     for m in range(m_max):
-        p_nplus[m] =  ((( (1+m_max/a)/(1+m/a))**c) -1) / (((1+m_max/a)**c) -1)
-
-    p_nminus = 1.0 - p_nplus
-    p_n = np.arange(float(m_max))
-    prev=0.0
-    for m in range(1, m_max):
-        p_n[m] = p_nminus[m] - prev
-        prev = p_nminus[m]
-
-    return p_n/sum(p_n)
+        mirror_cdf[m] =(  (((1 + (m_max/a))/((1 + (m/a)))**c) - 1) / 
+                        (((1 + (m_max/a))**c)-1))
+    
+    p_n = np.insert((np.diff(mirror_cdf) * (-1)), 0, 0)  
+    # np.diff computes a[i+1] - a[i]. We want a[i] - a[i+1]
+    assert len(p_n)==m_max
+    return p_n / sum(p_n)
 
 
 # In[ ]:

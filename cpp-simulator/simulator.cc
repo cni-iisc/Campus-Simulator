@@ -465,9 +465,9 @@ plot_data_struct run_simulation(){
 	plot_data.cumulative_mean_lambda_fractions["cumulative_mean_fraction_lambda_H"].push_back({time_step,
 																							   {cumulative_mean_lambda_fraction_data.home}});
 	plot_data.cumulative_mean_lambda_fractions["cumulative_mean_fraction_lambda_W"].push_back({time_step,
-																							   {cumulative_mean_lambda_fraction_data.work}});
+																							   {cumulative_mean_lambda_fraction_data.work+cumulative_mean_lambda_fraction_data.project}});
 	plot_data.cumulative_mean_lambda_fractions["cumulative_mean_fraction_lambda_C"].push_back({time_step,
-																							   {cumulative_mean_lambda_fraction_data.community}});
+																							   {cumulative_mean_lambda_fraction_data.community+cumulative_mean_lambda_fraction_data.nbr_cell+cumulative_mean_lambda_fraction_data.random_community}});
 	plot_data.cumulative_mean_lambda_fractions["cumulative_mean_fraction_lambda_T"].push_back({time_step,
 																							   {cumulative_mean_lambda_fraction_data.travel}});
 	plot_data.quarantined_stats["quarantined_stats"].push_back({time_step, {

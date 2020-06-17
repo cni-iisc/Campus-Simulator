@@ -658,8 +658,8 @@ void assign_household_random_community(vector<house>& homes, const vector<commun
 	auto NUM_HOUSEHOLDS = communities[i].households.size();
 	for(count_type j = 0; j < NUM_HOUSEHOLDS; ++j){
 	  count_type current_household = communities[i].households[j];
-	  count_type degree = uniform_count_type_network(GLOBAL.MIN_RANDOM_COMMUNITY_SIZE,
-													 GLOBAL.MAX_RANDOM_COMMUNITY_SIZE);
+	  count_type degree = uniform_count_type_network(GLOBAL.MIN_RANDOM_COMMUNITY_SIZE/2,
+													 GLOBAL.MAX_RANDOM_COMMUNITY_SIZE/2);
 	  set<count_type> chosen;
 	  chosen.clear();
 	  count_type candidate;
@@ -671,9 +671,19 @@ void assign_household_random_community(vector<house>& homes, const vector<commun
 			    homes[current_household].random_households.households.end(), candidate) != homes[current_household].random_households.households.end()));
 		chosen.insert(candidate);
 		homes[current_household].random_households.households.push_back(candidate);
-		homes[candidate].random_households.households.push_back(current_household);
+		//homes[candidate].random_households.households.push_back(current_household);
 	  }
 	}
+  }
+  //symmetrize random network interaction graph. 
+  for(count_type current_house = 0; current_house < homes.size(); ++current_house){
+	  for (count_type j = 0; j < homes[current_house].random_households.households.size(); ++j){
+		  count_type random_contact = homes[current_house].random_households.households[j];
+		  if(std::find(homes[random_contact].random_households.households.begin(),
+			    homes[random_contact].random_households.households.end(), current_house) == homes[random_contact].random_households.households.end()){
+					homes[random_contact].random_households.households.push_back(current_house);
+				}
+	  }
   }
 }
 

@@ -51,7 +51,8 @@ double update_individual_lambda_c(const agent& node, int cur_time){
 	* node.funct_d_ck
 	* (1 + node.severity)
 	* node.kappa_C
-	* mask_factor;
+	* mask_factor
+  * node.zeta_a;
 	// optimised version: return node.lambda_h * node.funct_d_ck;
 }
 
@@ -65,7 +66,8 @@ double update_individual_lambda_nbr_cell(const agent& node, int cur_time){
 	* node.infectiousness
 	* (1 + node.severity)
 	* node.kappa_C
-	* mask_factor;
+	* mask_factor
+  * node.zeta_a;
 }
 
 //Returns whether the node was infected or turned symptomatic in this time step

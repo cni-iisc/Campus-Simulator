@@ -20,18 +20,31 @@ INIT_FRAC_INFECTED=0.0001
 INCUBATION_PERIOD=2.3
 MEAN_ASYMPTOMATIC_PERIOD=0.5
 MEAN_SYMPTOMATIC_PERIOD=5
-SYMPTOMATIC_FRACTION=0.33
+SYMPTOMATIC_FRACTION=0.66
 MEAN_HOSPITAL_REGULAR_PERIOD=8
 MEAN_HOSPITAL_CRITICAL_PERIOD=8
 COMPLIANCE_PROBABILITY=0.9
-F_KERNEL_A= 10.751
-F_KERNEL_B= 5.384
-BETA_H=9
-BETA_W=0.4
-BETA_C=0.6
-BETA_S=0.8
-BETA_TRAVEL=0
-BETA_SCALE=9
+
+city = "mumbai"
+
+if city=="mumbai":
+    F_KERNEL_A= 2.709
+    F_KERNEL_B= 1.278
+    BETA_H=0.816476
+    BETA_W=0.519281
+    BETA_C=0.229229
+    BETA_S=1.03856
+    BETA_TRAVEL=0
+elif city=="bangalore":
+    F_KERNEL_A= 10.751
+    F_KERNEL_B= 5.384
+    BETA_H=9
+    BETA_W=0.4
+    BETA_C=0.6
+    BETA_S=0.8
+    BETA_TRAVEL=0
+    
+BETA_SCALE= 9
 BETA_PROJECT=BETA_SCALE*BETA_W 
 BETA_CLASS=BETA_SCALE*BETA_S
 BETA_NBR_CELLS=BETA_SCALE*BETA_C
@@ -39,8 +52,8 @@ BETA_RANDOM_COMMUNITY=BETA_SCALE*BETA_C
 HD_AREA_FACTOR=2.0
 HD_AREA_EXPONENT=0
 INTERVENTION=0
-output_directory_base="/home/sarathy/Desktop/coronavirus/code/sim_data"
-input_directory="/home/sarathy/Desktop/coronavirus/code/bitbucketrepo/markov_simuls_testing/markov_simuls/simulator/input_files/"
+output_directory_base="../../cpp-simulator/outputs/calibration/2020-06-17_smaller_networks/"
+input_directory="../../staticInst/data/mumbai_1mil_20200617/"
 CALIBRATION_DELAY=0
 DAYS_BEFORE_LOCKDOWN=0
 # Set this to "--SEED_HD_AREA_POPULATION" to seed hd area population
@@ -61,6 +74,7 @@ INTERVENTION=0
 USE_AGE_DEPENDENT_MIXING="true"
 IGNORE_ATTENDANCE_FILE="true"
 EXEC_DIR = "./../../cpp-simulator"
+LOGFILE = output_directory_base + "/calibration.log"
 
 ######################
 def calculate_means_fatalities_CPP(output_directory_base, num_sims,results_dir):
@@ -148,7 +162,7 @@ continue_run = True
 resolution = 4
 num_sims = 6 #cpu_count()/2
 count = 0
-num_cores = 2 #cpu_count()
+num_cores = 12 #cpu_count()
 
 print ('Cpu count: ', num_cores)
 
@@ -174,9 +188,20 @@ while (continue_run):
 
     ##############################################################
     calculate_means_fatalities_CPP(output_directory_base, num_sims,"./data/")
-    calculate_means_lambda_CPP(output_directory_base, num_sims,"./data/") 
+    calculate_means_lambda_CPP(output_directory_base, num_sims,"./data/")
     
-    [flag, BETA_SCALE_FACTOR, step_beta_h, step_beta_w, step_beta_c, delay] = calibrate(resolution,count)
+    [flag, BETA_SCALE_FACTOR, step_beta_h, step_beta_w, step_beta_c, delay, slope_diff, lambda_h_diff, lambda_w_diff, lambda_c_diff] = calibrate(resolution,count)
+    
+    with open(LOGFILE, "a+") as logfile:
+        logfile.write(f"beta_h: {BETA_H}\n")
+        logfile.write(f"beta_w: {BETA_W}\n")
+        logfile.write(f"beta_c: {BETA_C}\n")
+        logfile.write(f"beta_s: {BETA_S}\n")
+        logfile.write(f"slope_diff: {slope_diff}\n")
+        logfile.write(f"lambda_h_diff: {lambda_h_diff}\n")
+        logfile.write(f"lambda_w_diff: {lambda_w_diff}\n")
+        logfile.write(f"lambda_c_diff: {lambda_c_diff}\n\n\n")   
+
     count+=1    
     if flag == True:
         continue_run = False

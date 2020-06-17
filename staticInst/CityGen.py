@@ -25,6 +25,9 @@ from computeDistributions import *
 from functools import wraps
 from time import time
 
+import warnings
+warnings.simplefilter('error')
+
 def measure(func):
     @wraps(func)
     def _time_it(*args, **kwargs):
@@ -143,55 +146,55 @@ def workplaces_size_distribution(a=3.26, c=0.97, m_max=2870):
 
 class City:
     
-    state_np_random = None
-    #Default values:
-    
-    #ppl working at sez and gov (Bangalore data)
-    max_sez=230000 /10
-    max_gov= (2295000*(12.327/66.84)*0.5) /10
-    max_ites = 1500000 /10
-    max_ites_not_sez=max_ites-max_sez
-    # Can we add a reference for these numbers?
-    
-    
-    # Feature request: Read these commuter distance params from cityprofile.json
-    a_commuter_distance = 4 #parameter in distribution for commuter distance - Thailand paper
-    b_commuter_distance = 3.8  #parameter in distribution for commuter distance - Thailand paper
-    m_max_commuter_distance = None
-    
-    nwards = None
-    totalPop = None
-    
-    demographics = None
-    employments = None
-    geoDF = None
-    ODMatrix = None
-    
-    householdsize_bins = None
-    householdsize_weights = None
-    age_bins = None
-    age_weights = None
-    schoolsize_bins = None
-    schoolsize_weights = None
-    
-    has_slums = False
-    
-    presampled_points = None
-    community_centres = None
-    
-    workers = None
-    schoolers = None
-        
-    #This is what we will eventually generate
-    houses = None
-    num_houses = None
-    individuals = None
-    num_individuals = None 
-    workplaces = None
-    num_workplaces = None
-    schools = None
-    num_schools = None    
-    num_workers = None
+    def reset(self):
+        self.state_np_random = None
+        #Default values:
+
+        #ppl working at sez and gov (Bangalore data)
+        self.max_sez=230000 /10
+        self.max_gov= (2295000*(12.327/66.84)*0.5) /10
+        self.max_ites = 1500000 /10
+        self.max_ites_not_sez = self.max_ites- self.max_sez
+        # Can we add a reference for these numbers?
+
+
+        # Feature request: Read these commuter distance params from cityprofile.json
+        self.a_commuter_distance = 4 #parameter in distribution for commuter distance - Thailand paper
+        self.b_commuter_distance = 3.8  #parameter in distribution for commuter distance - Thailand paper
+        self.m_max_commuter_distance = None
+
+        self.nwards = None
+        self.totalPop = None
+
+        self.wardData = None
+        self.ODMatrix = None
+
+        self.householdsize_bins = None
+        self.householdsize_weights = None
+        self.age_bins = None
+        self.age_weights = None
+        self.schoolsize_bins = None
+        self.schoolsize_weights = None
+
+        self.has_slums = False
+
+        self.presampled_points = None
+        self.community_centres = None
+
+        self.workers = None
+        self.schoolers = None
+
+        #This is what we will eventually generate
+        self.houses = None
+        self.num_houses = None
+        self.individuals = None
+        self.num_individuals = None 
+        self.workplaces = None
+        self.num_workplaces = None
+        self.schools = None
+        self.num_schools = None    
+        self.num_workers = None
+
     
     def save_random_seeds(self):
         self.state_np_random = np.random.get_state()
@@ -201,14 +204,6 @@ class City:
         with open(os.path.join(folder, outputfiles['PRG_np_random_state']), 'rb') as f:
             np.random.set_state(pickle.load(f))
 
-    def checkName(self, df, name="df"):
-        assert self.demographics is not None
-        if "wardName" not in df.columns:
-            return
-        for i in range(df.shape[0]):
-            if df["wardName"].iloc[i] != self.demographics['wardName'].iloc[i]:
-                print(f"WARNING: Check if this is a mismatch!")
-                print(f"{i}\t {name}: {df['wardName'].iloc[i]}\t demographics: {self.demographics['wardName'].iloc[i]}")
 
     def checkRows(self, df, name="df"):
         if self.nwards is None:
@@ -218,21 +213,72 @@ class City:
             assert df.shape[0] == self.nwards, f"Mismatch in {name}: num_rows is not {nwards}"
             for i in range(self.nwards):
                 assert df["wardNo"].iloc[i] == i+1,f"Mismatch in {name}: row {i} has wardNo {df['wardNo'].iloc[i]}"
-            if self.demographics is not None:
-                self.checkName(df, name=name)
+
+    def check_merged_df(self, df, name):
+        nrows = df.shape[0]
+        for i in range(nrows):
+            assert df['wardNo_x'].iloc[i] == df['wardNo_y'].iloc[i], f"Merge mismatch in row {i} of {name}"
+    
+    def reorder_wardData_Rows(self):
+        self.wardData = (self.wardData
+                         .sort_values('wardIndex')
+                         .reset_index(drop=True))
+            
+    def set_demographics(self, input_dir):
+        assert fileExists(Path(input_dir, inputfiles["demographics"])), f"{inputfiles['demographics']} missing"
+        
+        demographics = pd.read_csv(Path(input_dir,inputfiles["demographics"]))
+        necessary_cols = ["wardNo", "wardName", "totalPopulation"]
+        for col in necessary_cols:
+            assert col in demographics.columns
+        if "hd_flag" in demographics.columns:
+            self.has_slums = True
+            demographics["hd_flag"] = demographics["hd_flag"].astype(int)
+            necessary_cols += ["hd_flag"]
+        else:
+            self.has_slums = False
+        demographics = demographics[necessary_cols]
+        demographics["wardNo"] = demographics["wardNo"].astype(int)
+        demographics["wardIndex"] = demographics["wardNo"] - 1 # To work with a 0-indexed column
+        demographics['totalPopulation'] = demographics['totalPopulation'].astype(int)
+
+        self.nwards = demographics['wardIndex'].shape[0]
+        self.totalPop = demographics['totalPopulation'].sum()
+        self.wardData = demographics
+                
+    def set_employments(self, input_dir):
+        assert fileExists(Path(input_dir, inputfiles["employment"])), f"{inputfiles['employment']} missing"
+        
+        employments = pd.read_csv(Path(input_dir,inputfiles["employment"]))
+        necessary_cols = ["wardNo", "wardName", "Employed"]
+        for col in necessary_cols:
+            assert col in employments.columns
+        employments = employments[necessary_cols]
+
+        employments["wardNo"] = employments["wardNo"].astype(int)
+        employments['Employed'] = employments['Employed'].astype(int)
+
+        self.wardData = self.wardData.merge(
+            employments, 
+            on="wardName",
+            validate="one_to_one")
+        
+        self.check_merged_df(self.wardData, "employment.csv")
+        self.wardData = (self.wardData
+                             .drop(['wardNo_y'], axis=1)
+                             .rename(columns={'wardNo_x':'wardNo'})
+                            )
     
     def set_geoDF(self, input_dir):
         assert fileExists(Path(input_dir, inputfiles["citygeojson"])), f"{inputfiles['citygeojson']} missing"
         
         geoDF = gpd.read_file(Path(input_dir,inputfiles["citygeojson"]))
-        geoDF['wardNo'] = geoDF['wardNo'].astype(int)
-        geoDF = geoDF.sort_values('wardNo').reset_index(drop=True)
-        geoDF['wardIndex'] = geoDF['wardNo'] - 1   # Just to use an 0-indexed column 
-        
-        geoDF = geoDF[['wardIndex','wardNo', 'wardName', 'geometry']]
+
+        necessary_cols = ['wardNo', 'wardName', 'geometry']
+        for col in necessary_cols:
+            assert col in geoDF.columns
+        geoDF = geoDF[necessary_cols]
         geoDF['wardBounds'] = geoDF.apply(lambda row: MultiPolygon(row['geometry']).bounds, axis=1)
-        self.checkRows(geoDF, "geoDF")
-        ##!! Note that the geojson file has coordinates in (longitude, latitude) order!
         geoDF['wardCentre'] = geoDF.apply(
             lambda row: (
                 MultiPolygon(row['geometry']).centroid.x, 
@@ -240,56 +286,19 @@ class City:
                 ), 
             axis=1
             )
-        self.geoDF = geoDF
-        
-    def set_demographics(self, input_dir):
-        assert fileExists(Path(input_dir, inputfiles["demographics"])), f"{inputfiles['demographics']} missing"
-        
-        demographics = pd.read_csv(Path(input_dir,inputfiles["demographics"]))
-        demographics["wardNo"] = demographics["wardNo"].astype(int)
-        demographics = demographics.sort_values("wardNo").reset_index(drop=True)
-        
-        necessary_cols = ["wardNo", "wardName", "totalPopulation"]
-        for col in necessary_cols:
-            assert col in demographics.columns
-        demographics["wardIndex"] = demographics["wardNo"] - 1
-        necessary_cols += ["wardIndex"]
-        self.checkRows(demographics,"demographics")
-        
-        if "hd_flag" in demographics.columns:
-            self.has_slums = True
-            demographics["hd_flag"] = demographics["hd_flag"].astype(int)
-            necessary_cols += ["hd_flag"]
-        else:
-            self.has_slums = False
+        geoDF['wardNo'] = geoDF['wardNo'].astype(int)
 
-        demographics['totalPopulation'] = demographics['totalPopulation'].astype(int)
+        self.wardData = self.wardData.merge(
+            geoDF, 
+            on="wardName",
+            validate="one_to_one")
+        
+        self.check_merged_df(self.wardData, "city.geojson")
+        self.wardData = (self.wardData
+                             .drop(['wardNo_y'], axis=1)
+                             .rename(columns={'wardNo_x':'wardNo'})
+                            )
 
-        self.nwards = demographics['wardIndex'].shape[0]
-        self.totalPop = demographics['totalPopulation'].sum()
-
-        self.demographics = demographics[necessary_cols]
-        
-        
-    def set_employments(self, input_dir):
-        assert fileExists(Path(input_dir, inputfiles["employment"])), f"{inputfiles['employment']} missing"
-        
-        employments = pd.read_csv(Path(input_dir,inputfiles["employment"]))
-        employments["wardNo"] = employments["wardNo"].astype(int)
-        employments = employments.sort_values('wardNo').reset_index(drop=True)
-        
-        necessary_cols = ["wardNo", "Employed"]
-        for col in necessary_cols:
-            assert col in employments.columns
-        employments["wardIndex"] = employments["wardNo"] - 1
-        necessary_cols += ["wardIndex"]
-        self.checkRows(employments, "employments")
-
-        employments['Employed'] = employments['Employed'].astype(int)
-        
-        self.employments = employments[necessary_cols]
-
-    
     def set_ODMatrix(self, input_dir):
         assert self.nwards is not None
         
@@ -346,25 +355,23 @@ class City:
             (lat,lon) = self.presampled_points[wardIndex].iloc[i]
             return (lat,lon)
         else:
-            assert self.geoDF is not None
-            (lon1,lat1,lon2,lat2) = self.geoDF['wardBounds'][wardIndex]
+            (lon1,lat1,lon2,lat2) = self.wardData['wardBounds'].iloc[wardIndex]
             while True:
                 lat = np.random.uniform(lat1,lat2)
                 lon = np.random.uniform(lon1,lon2)
                 point = Point(lon,lat) #IMPORTANT: Point takes in order of longitude, latitude
-                if MultiPolygon(self.geoDF['geometry'][wardIndex]).contains(point):
+                if MultiPolygon(self.wardData['geometry'].iloc[wardIndex]).contains(point):
                     return (lat,lon)
 
     def rescale(self, n):
-        assert self.demographics is not None 
-        assert self.employments is not None
+        assert self.wardData is not None 
         
         scale = n / self.totalPop
         
-        self.demographics["totalPopulation"] = (self.demographics["totalPopulation"] * scale).astype(int)
-        self.employments["Employed"] = (self.employments["Employed"] * scale).astype(int)
+        self.wardData["totalPopulation"] = (self.wardData["totalPopulation"] * scale).astype(int)
+        self.wardData["Employed"] = (self.wardData["Employed"] * scale).astype(int)
 
-        self.totalPop = self.demographics['totalPopulation'].sum()
+        self.totalPop = self.wardData['totalPopulation'].sum()
         
     def sampleAge(self):
         assert self.age_bins is not None and self.age_weights is not None
@@ -391,8 +398,7 @@ class City:
             if self.presampled_points is not None:
                 (lat,lon) = self.sampleRandomLatLon(wardIndex)
             else:
-                assert self.geoDF is not None
-                (lon,lat) = self.geoDF['wardCentre'].iloc[wardIndex]
+                (lon,lat) = self.wardData['wardCentre'].iloc[wardIndex]
                 #IMPORTANT: shapely works with (lon, lat) order
             community_centres.append((lat,lon))
         self.community_centres = community_centres
@@ -407,7 +413,7 @@ class City:
         self.houses = []
         hid = 0
         for wardIndex in range(self.nwards):
-            pop = self.demographics["totalPopulation"][wardIndex]
+            pop = self.wardData["totalPopulation"][wardIndex]
             currpop = 0
 
             #creating houses
@@ -417,7 +423,7 @@ class City:
                 h["wardIndex"]=wardIndex
 
                 if self.has_slums:
-                    h["slum"] = int(self.demographics["hd_flag"][wardIndex])
+                    h["slum"] = int(self.wardData["hd_flag"][wardIndex])
 
                 s = self.sampleHouseholdSize()
                 h["size"]=s
@@ -440,9 +446,9 @@ class City:
         self.workers = [[] for _ in range(self.nwards)]
         self.schoolers = [[] for _ in range(self.nwards)]
         
-        employed_frac = self.employments["Employed"] / self.demographics["totalPopulation"]
-        self.demographics["generatedPopulation"] = 0
-        self.employments["generatedEmployed"] = 0
+        employed_frac = self.wardData["Employed"] / self.wardData["totalPopulation"]
+        self.wardData["generatedPopulation"] = 0
+        self.wardData["generatedEmployed"] = 0
         generatedPop = 0
         num_workers = 0
         
@@ -503,7 +509,7 @@ class City:
                         p["workplaceType"] = workplacesTypes["office"]
                         self.workers[workplaceward].append(pid)
                         num_workers+=1
-                        self.employments["generatedEmployed"].iloc[wardIndex]+=1
+                        self.wardData.at[wardIndex,"generatedEmployed"]+=1
                     else:
                         p["employed"] = 0
                         if age < 20:
@@ -518,7 +524,7 @@ class City:
                     p["workplaceType"] = workplacesTypes[None]
                     
                 self.individuals.append(p)
-                self.demographics.at[wardIndex,"generatedPopulation"]+=1
+                self.wardData.at[wardIndex,"generatedPopulation"]+=1
                 generatedPop +=1
                 pid+=1
         self.num_individuals = generatedPop
@@ -572,7 +578,7 @@ class City:
                 s["lon"] = lon
                 
                 if self.has_slums:
-                    s["slum"] = int(self.demographics["hd_flag"].iloc[wardIndex])
+                    s["slum"] = int(self.wardData["hd_flag"].iloc[wardIndex])
 
                 size = self.sampleSchoolSize()
 
@@ -640,8 +646,7 @@ class City:
         print("")
 
     def generate(self, n):
-        assert self.demographics is not None
-        assert self.employments is not None
+        assert self.wardData is not None
         assert self.ODMatrix is not None
         
         self.rescale(n)
@@ -676,8 +681,8 @@ class City:
         fractionPopulations = []
         for i in range(self.nwards):
             w = {"wardNo":i+1}
-            w["totalPopulation"] = int(self.demographics["generatedPopulation"].iloc[i])
-            w["fracPopulation"] = float(self.demographics["generatedPopulation"].iloc[i] / self.num_individuals)
+            w["totalPopulation"] = int(self.wardData["generatedPopulation"].iloc[i])
+            w["fracPopulation"] = float(self.wardData["generatedPopulation"].iloc[i] / self.num_individuals)
             fractionPopulations.append(w)
         
         wardCentreDistances = [ {"ID":i+1} for i in range(self.nwards)]
@@ -707,6 +712,8 @@ class City:
 
         
     def __init__(self, city, input_dir, random_seed_dir = None):
+        self.reset()
+        
         if city=="bangalore":
             self.a_commuter_distance = 10.751
             self.b_commuter_distance = 5.384
@@ -726,12 +733,13 @@ class City:
         self.save_random_seeds()
         self.set_demographics(input_dir)
         self.set_employments(input_dir)
-        self.set_city_profile(input_dir)
-        self.set_ODMatrix(input_dir)
         if folderExists(Path(input_dir,'presampled-points')):
             self.set_presampled_points(input_dir)
         else:
             self.set_geoDF(input_dir) 
+        self.reorder_wardData_Rows()
+        self.set_city_profile(input_dir)
+        self.set_ODMatrix(input_dir)
         self.set_community_centres()
 
 
@@ -891,6 +899,44 @@ def validate(city, plots_folder=None):
     validate_schoolsizes(city, df_ind,  plots_folder=plots_folder)
     validate_workplacesizes(city, df_ind, plots_folder=plots_folder)
     validate_commutedistances(city, df_ind, df_work, plots_folder=plots_folder)
+
+
+# In[ ]:
+
+
+city = City('mumbai', 'data/base/mumbai_master')
+city.generate(100000)
+
+
+# In[ ]:
+
+
+
+
+
+# In[ ]:
+
+
+from descartes import PolygonPatch
+from cycler import cycler
+import random
+
+geoDF = gpd.read_file("data/base/mumbai_master/city.geojson")
+df = pd.DataFrame(city.houses)
+
+
+plt.figure(figsize=(20,15))
+ax = plt.gca()
+for w in range(24):
+    ax.add_patch(PolygonPatch(geoDF["geometry"].iloc[w], fc="aliceblue", ec="tomato", linewidth=2,zorder=0))
+    
+for w in range(48):
+    color = next(ax._get_lines.prop_cycler)['color']
+    df_filtered = df[df['wardIndex']==w][['lon', 'lat']]
+    plt.scatter(df_filtered['lon'], df_filtered['lat'], s=1, color=color)
+ax.axis('scaled')
+plt.show()
+
 
 
 # In[ ]:

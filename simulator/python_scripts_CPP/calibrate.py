@@ -35,7 +35,7 @@ def calibrate(resolution,count):
 
     # read data from ecdp file
     country='India'
-    infected = pd.read_csv('/home/nihesh/Documents/covid_19_bangalore/markov_simuls/simulator/python_scripts/python_scripts_CPP/data/ecdp.csv')
+    infected = pd.read_csv('/home/sarathy/Desktop/coronavirus/code/bitbucketrepo/markov_simuls_testing/markov_simuls/simulator/python_scripts_CPP_testing/data/ecdp.csv')
     infected.fillna('Nodata')
     infected = infected.iloc[::-1]
     
@@ -53,7 +53,7 @@ def calibrate(resolution,count):
     dead_data = np.array(dead_data)
        
     # read simulation data and consider data based on threshold
-    dead_simulation = pd.read_csv('/home/nihesh/Documents/covid_19_bangalore/markov_simuls/simulator/python_scripts/python_scripts_CPP/data/dead_mean.csv')['dead'].values
+    dead_simulation = pd.read_csv('/home/sarathy/Desktop/coronavirus/code/bitbucketrepo/markov_simuls_testing/markov_simuls/simulator/python_scripts_CPP_testing/data/dead_mean.csv')['dead'].values
     
     # keep track of the shift in data
     shift_in_data = np.min(np.where(dead_data>=threshold)[0]) - 61 # to make it start from March 1st
@@ -65,7 +65,7 @@ def calibrate(resolution,count):
     plt.grid(True)
     plt.xlabel('Days (starting March 1st)')
     plt.ylabel('Deceased Population')
-    plt.savefig('/home/nihesh/Documents/covid_19_bangalore/markov_simuls/simulator/python_scripts/python_scripts_CPP/data/combined_plot_linear_scale')
+    plt.savefig('/home/sarathy/Desktop/coronavirus/code/bitbucketrepo/markov_simuls_testing/markov_simuls/simulator/python_scripts_CPP_testing/data/combined_plot_linear_scale')
     plt.close()
 
     plt.plot(np.log10(dead_data[61:len(dead_data)]),label='India Data')
@@ -74,7 +74,7 @@ def calibrate(resolution,count):
     plt.grid(True)
     plt.xlabel('Days (starting March 1st)')
     plt.ylabel('log_10 Deceased Population')
-    plt.savefig('/home/nihesh/Documents/covid_19_bangalore/markov_simuls/simulator/python_scripts/python_scripts_CPP/data/combined_plot_log_scale')
+    plt.savefig('/home/sarathy/Desktop/coronavirus/code/bitbucketrepo/markov_simuls_testing/markov_simuls/simulator/python_scripts_CPP_testing/data/combined_plot_log_scale')
     plt.close()      
     # consider data of interest based on threshold
     dead_data = dead_data[dead_data>=threshold][0:16] #Add [0:10] for NY and wuhan! #0:16 for India to cosider death data from 10-200
@@ -86,9 +86,9 @@ def calibrate(resolution,count):
     dead_simulation = np.take(dead_simulation, np.arange(0,len(dead_simulation),resolution))
     
     # read lambda values from the simulation    
-    lambda_h = pd.read_csv('/home/nihesh/Documents/covid_19_bangalore/markov_simuls/simulator/python_scripts/python_scripts_CPP/data/lambda H_mean.csv')['lambda H'].values[-1]
-    lambda_w = pd.read_csv('/home/nihesh/Documents/covid_19_bangalore/markov_simuls/simulator/python_scripts/python_scripts_CPP/data/lambda W_mean.csv')['lambda W'].values[-1]
-    lambda_c = pd.read_csv('/home/nihesh/Documents/covid_19_bangalore/markov_simuls/simulator/python_scripts/python_scripts_CPP/data/lambda C_mean.csv')['lambda C'].values[-1]
+    lambda_h = pd.read_csv('/home/sarathy/Desktop/coronavirus/code/bitbucketrepo/markov_simuls_testing/markov_simuls/simulator/python_scripts_CPP_testing/data/lambda H_mean.csv')['lambda H'].values[-1]
+    lambda_w = pd.read_csv('/home/sarathy/Desktop/coronavirus/code/bitbucketrepo/markov_simuls_testing/markov_simuls/simulator/python_scripts_CPP_testing/data/lambda W_mean.csv')['lambda W'].values[-1]
+    lambda_c = pd.read_csv('/home/sarathy/Desktop/coronavirus/code/bitbucketrepo/markov_simuls_testing/markov_simuls/simulator/python_scripts_CPP_testing/data/lambda C_mean.csv')['lambda C'].values[-1]
     
     lambda_h_diff = (lambda_h-lambda_h_target)
     lambda_w_diff = (lambda_w-lambda_w_target)

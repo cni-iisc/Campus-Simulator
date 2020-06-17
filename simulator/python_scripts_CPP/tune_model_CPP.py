@@ -20,22 +20,27 @@ INIT_FRAC_INFECTED=0.0001
 INCUBATION_PERIOD=2.3
 MEAN_ASYMPTOMATIC_PERIOD=0.5
 MEAN_SYMPTOMATIC_PERIOD=5
-SYMPTOMATIC_FRACTION=0.67
+SYMPTOMATIC_FRACTION=0.33
 MEAN_HOSPITAL_REGULAR_PERIOD=8
 MEAN_HOSPITAL_CRITICAL_PERIOD=8
 COMPLIANCE_PROBABILITY=0.9
 F_KERNEL_A= 10.751
 F_KERNEL_B= 5.384
-BETA_H=1.0304629560864003
-BETA_W=0.5167008726604188
-BETA_C=0.20141643387387292
-BETA_S=1.0334017453208375
+BETA_H=9
+BETA_W=0.4
+BETA_C=0.6
+BETA_S=0.8
 BETA_TRAVEL=0
+BETA_SCALE=9
+BETA_PROJECT=BETA_SCALE*BETA_W 
+BETA_CLASS=BETA_SCALE*BETA_S
+BETA_NBR_CELLS=BETA_SCALE*BETA_C
+BETA_RANDOM_COMMUNITY=BETA_SCALE*BETA_C
 HD_AREA_FACTOR=2.0
 HD_AREA_EXPONENT=0
 INTERVENTION=0
-output_directory_base="/home/nihesh/Documents/covid_19_bangalore/sim_data"
-input_directory="/home/nihesh/Documents/covid_19_bangalore/markov_simuls/simulator/input_files"
+output_directory_base="/home/sarathy/Desktop/coronavirus/code/sim_data"
+input_directory="/home/sarathy/Desktop/coronavirus/code/bitbucketrepo/markov_simuls_testing/markov_simuls/simulator/input_files/"
 CALIBRATION_DELAY=0
 DAYS_BEFORE_LOCKDOWN=0
 # Set this to "--SEED_HD_AREA_POPULATION" to seed hd area population
@@ -53,6 +58,8 @@ SEED_FIXED_NUMBER="--SEED_FIXED_NUMBER"
 #SEED_FIXED_NUMBER=" "
 INIT_FIXED_NUMBER_INFECTED=100
 INTERVENTION=0
+USE_AGE_DEPENDENT_MIXING="true"
+IGNORE_ATTENDANCE_FILE="true"
 EXEC_DIR = "./../../cpp-simulator"
 
 ######################
@@ -117,6 +124,10 @@ def run_sim(num_sims_count, params):
     command+=" --BETA_C " + str(params['betaC'])
     command+=" --BETA_S " + str(params['betaS'])
     command+=" --BETA_TRAVEL " + str(params['betaTravel'])
+    command+=" --BETA_PROJECT " + str(params['betaPROJECT'])
+    command+=" --BETA_CLASS " + str(params['betaCLASS'])
+    command+=" --BETA_NBR_CELLS " + str(params['betaNBR'])
+    command+=" --BETA_RANDOM_COMMUNITY " + str(params['betaRANDCOMM'])
     command+=" --HD_AREA_FACTOR " + str(params['hdAreaFactor'])
     command+=" --HD_AREA_EXPONENT " + str(params['hdAreaExponent'])
     command+=" --INTERVENTION " + str(params['intervention'])
@@ -124,7 +135,8 @@ def run_sim(num_sims_count, params):
     command+=" --input_directory " + str(params['inputDirectory'])
     command+=" --CALIBRATION_DELAY " + str(params['calibrationDelay'])
     command+=" --DAYS_BEFORE_LOCKDOWN " + str(params['daysBeforeLockdown'])
-
+    command+=" --IGNORE_ATTENDANCE_FILE"
+    #command+=" --USE_AGE_DEPENDENT_MIXING"
     print(command)
 
     os.system(command)
@@ -149,6 +161,7 @@ while (continue_run):
                'meanHospitalRegularPeriod': MEAN_HOSPITAL_REGULAR_PERIOD, 'meanHospitalCriticalPeriod': MEAN_HOSPITAL_CRITICAL_PERIOD, 
                'complianceProbability': COMPLIANCE_PROBABILITY, 'FKernelA': F_KERNEL_A, 'FKernelB': F_KERNEL_B, 
                'betaH': BETA_H, 'betaW': BETA_W, 'betaC': BETA_C, 'betaS': BETA_S, 'betaTravel': BETA_TRAVEL,
+               'betaCLASS': BETA_CLASS, 'betaPROJECT' : BETA_PROJECT, 'betaNBR':BETA_NBR_CELLS, 'betaRANDCOMM':BETA_RANDOM_COMMUNITY,
                'hdAreaFactor':HD_AREA_FACTOR, 'hdAreaExponent':HD_AREA_EXPONENT, 'intervention': INTERVENTION, 
                'outputDirectoryBase': output_directory_base, 'inputDirectory': input_directory,
                'calibrationDelay': CALIBRATION_DELAY, 'daysBeforeLockdown': DAYS_BEFORE_LOCKDOWN }
@@ -167,11 +180,16 @@ while (continue_run):
     count+=1    
     if flag == True:
         continue_run = False
+        print ("count:", count, '. BETA_H: ', BETA_H, '. BETA_W: ',BETA_W, '. BETA_S: ', BETA_S, '. BETA_C: ', BETA_C, 'Delay: ', delay )
     else:
         BETA_H = max(BETA_H + step_beta_h,0)*BETA_SCALE_FACTOR
         BETA_W = max(BETA_W + step_beta_w,0)*BETA_SCALE_FACTOR
         BETA_S = BETA_W * 2
         BETA_C = max(BETA_C + step_beta_c,0)*BETA_SCALE_FACTOR
+        BETA_PROJECT = BETA_SCALE*BETA_W
+        BETA_CLASS = BETA_SCALE*BETA_S
+        BETA_NBR_CELLS = BETA_SCALE*BETA_C
+        BETA_RANDOM_COMMUNITY = BETA_SCALE*BETA_C
         #INIT_FRAC_SCALE_FACTOR = INIT_FRAC_SCALE_FACTOR*init_frac_mult_factor
         print ("count:", count, '. BETA_H: ', BETA_H, '. BETA_W: ',BETA_W, '. BETA_S: ', BETA_S, '. BETA_C: ', BETA_C, 'Delay: ', delay )
     #continue_run = False

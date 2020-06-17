@@ -20,27 +20,49 @@ INIT_FRAC_INFECTED=0.0001
 INCUBATION_PERIOD=2.3
 MEAN_ASYMPTOMATIC_PERIOD=0.5
 MEAN_SYMPTOMATIC_PERIOD=5
-SYMPTOMATIC_FRACTION=0.33
+SYMPTOMATIC_FRACTION=0.66
 MEAN_HOSPITAL_REGULAR_PERIOD=8
 MEAN_HOSPITAL_CRITICAL_PERIOD=8
 COMPLIANCE_PROBABILITY=0.9
-F_KERNEL_A= 10.751
-F_KERNEL_B= 5.384
-BETA_H=9
-BETA_W=0.4
-BETA_C=0.6
-BETA_S=0.8
-BETA_TRAVEL=0
-BETA_SCALE=9
-BETA_PROJECT=BETA_SCALE*BETA_W 
-BETA_CLASS=BETA_SCALE*BETA_S
-BETA_NBR_CELLS=BETA_SCALE*BETA_C
-BETA_RANDOM_COMMUNITY=BETA_SCALE*BETA_C
+
+city = "mumbai"
+
+if city=="mumbai":
+    F_KERNEL_A= 2.709
+    F_KERNEL_B= 1.278
+    BETA_H=0.816476
+    BETA_PROJECT=0.519281
+    BETA_NBR_CELLS=0.229229
+    BETA_CLASS=1.03856
+    BETA_TRAVEL=0
+    LAT_S=18.89395643371942
+    LAT_N=19.270176667777736
+    LON_E=72.97973149704592
+    LON_W=72.77633295153348
+elif city=="bangalore":
+    F_KERNEL_A= 10.751
+    F_KERNEL_B= 5.384
+    BETA_H=9
+    BETA_PROJECT=0.4
+    BETA_NBR_CELLS=0.6
+    BETA_CLASS=0.8
+    BETA_TRAVEL=0
+    LAT_S=12.8924010691253
+    LAT_N=13.143666147874784
+    LON_E=77.76003096129057
+    LON_W=77.46010252514884
+    
+BETA_SCALE= 9.0
+BETA_RANDOM_COMMUNITY = BETA_NBR_CELLS
+BETA_W = BETA_PROJECT/BETA_SCALE 
+BETA_S = BETA_CLASS/BETA_SCALE
+BETA_C = BETA_NBR_CELLS/BETA_SCALE
+
 HD_AREA_FACTOR=2.0
 HD_AREA_EXPONENT=0
 INTERVENTION=0
-output_directory_base="/home/sarathy/Desktop/coronavirus/code/sim_data"
-input_directory="/home/sarathy/Desktop/coronavirus/code/bitbucketrepo/markov_simuls_testing/markov_simuls/simulator/input_files/"
+output_directory_base="../../cpp-simulator/outputs/calibration/2020-06-17_smaller_networks/"
+input_directory="../../staticInst/data/mumbai_1mil_20200617/"
 CALIBRATION_DELAY=0
 DAYS_BEFORE_LOCKDOWN=0
 # Set this to "--SEED_HD_AREA_POPULATION" to seed hd area population
@@ -61,6 +83,7 @@ INTERVENTION=0
 USE_AGE_DEPENDENT_MIXING="true"
 IGNORE_ATTENDANCE_FILE="true"
 EXEC_DIR = "./../../cpp-simulator"
+LOGFILE = output_directory_base + "/calibration.log"
 
 ######################
 def calculate_means_fatalities_CPP(output_directory_base, num_sims,results_dir):
@@ -135,6 +158,8 @@ def run_sim(num_sims_count, params):
     command+=" --input_directory " + str(params['inputDirectory'])
     command+=" --CALIBRATION_DELAY " + str(params['calibrationDelay'])
     command+=" --DAYS_BEFORE_LOCKDOWN " + str(params['daysBeforeLockdown'])
+    command+=" --ENABLE_NBR_CELLS "
+    command+=f"--CITY_SW_LAT {LAT_S} --CITY_NE_LAT {LAT_N} --CITY_SW_LON {LON_W} --CITY_NE_LON {LON_E} "
     command+=" --IGNORE_ATTENDANCE_FILE"
     #command+=" --USE_AGE_DEPENDENT_MIXING"
     print(command)
@@ -148,7 +173,7 @@ continue_run = True
 resolution = 4
 num_sims = 6 #cpu_count()/2
 count = 0
-num_cores = 2 #cpu_count()
+num_cores = 12 #cpu_count()
 
 print ('Cpu count: ', num_cores)
 
@@ -174,9 +199,20 @@ while (continue_run):
 
     ##############################################################
     calculate_means_fatalities_CPP(output_directory_base, num_sims,"./data/")
-    calculate_means_lambda_CPP(output_directory_base, num_sims,"./data/") 
+    calculate_means_lambda_CPP(output_directory_base, num_sims,"./data/")
     
-    [flag, BETA_SCALE_FACTOR, step_beta_h, step_beta_w, step_beta_c, delay] = calibrate(resolution,count)
+    [flag, BETA_SCALE_FACTOR, step_beta_h, step_beta_w, step_beta_c, delay, slope_diff, lambda_h_diff, lambda_w_diff, lambda_c_diff] = calibrate(resolution,count)
+    
+    with open(LOGFILE, "a+") as logfile:
+        logfile.write(f"beta_h: {BETA_H}\n")
+        logfile.write(f"beta_w: {BETA_W}\n")
+        logfile.write(f"beta_c: {BETA_C}\n")
+        logfile.write(f"beta_s: {BETA_S}\n")
+        logfile.write(f"slope_diff: {slope_diff}\n")
+        logfile.write(f"lambda_h_diff: {lambda_h_diff}\n")
+        logfile.write(f"lambda_w_diff: {lambda_w_diff}\n")
+        logfile.write(f"lambda_c_diff: {lambda_c_diff}\n\n\n")   
+
     count+=1    
     if flag == True:
         continue_run = False

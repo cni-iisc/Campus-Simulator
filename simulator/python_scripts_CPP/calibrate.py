@@ -105,7 +105,7 @@ def calibrate(resolution,count):
     count_less_than_30 = 5
     if abs(lambda_h_diff)<0.01 and abs(lambda_w_diff)<0.01 and abs(lambda_c_diff)<0.01 and abs(slope_diff)<slope_tolerence: 
         flag = True
-        return [flag, 1, 0, 0, 0, shift_in_data - 1 - indices_of_interest[0][0]/resolution]
+        return [flag, 1, 0, 0, 0, shift_in_data - 1 - indices_of_interest[0][0]/resolution, slope_diff, lambda_h_diff, lambda_w_diff, lambda_c_diff]
     # if not, calibrate for slope
     else:
         step_beta_h = -1*lambda_h_diff/(3+count) 

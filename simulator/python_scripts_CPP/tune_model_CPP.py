@@ -105,8 +105,12 @@ def calculate_means_lambda_CPP(output_directory_base, num_sims,results_dir):
     column_names_lambda_H = ['timestep','lambda H']
     column_names_lambda_W = ['timestep','lambda W']
     column_names_lambda_C = ['timestep','lambda C']
-    column_names = [column_names_lambda_H, column_names_lambda_W, column_names_lambda_C]
-    lambda_array=['lambda_H','lambda_W','lambda_C']
+    column_names_lambda_PROJECT = ['timestep','lambda PROJECT']
+    column_names_lambda_NBR_CELL = ['timestep','lambda NBR_CELL']
+    column_names_lambda_RANDOM_COMMUNITY = ['timestep','lambda RANDOM_COMMUNITY']
+    
+    column_names = [column_names_lambda_H, column_names_lambda_W, column_names_lambda_C, column_names_lambda_PROJECT, column_names_lambda_NBR_CELL, column_names_lambda_RANDOM_COMMUNITY]
+    lambda_array=['lambda_H','lambda_W','lambda_C', 'lambda_PROJECT', 'lambda_NBR_CELL', 'lambda_RANDOM_COMMUNITY']
     for lambda_count,lambda_ in enumerate(lambda_array):
         master_df = pd.DataFrame(columns=column_names[lambda_count])
         val = column_names[lambda_count][1]

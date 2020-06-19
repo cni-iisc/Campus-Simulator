@@ -106,7 +106,7 @@ plot_data_struct run_simulation(){
 	 {"susceptible_lambda_C", {}},
 	 {"susceptible_lambda_T", {}},
 	 {"susceptible_lambda_PROJECT", {}},
-	 {"susceptible_lambda_NRB_CELL", {}},
+	 {"susceptible_lambda_NBR_CELL", {}},
 	 {"susceptible_lambda_RANDOM_COMMUNITY", {}}
 	};
 

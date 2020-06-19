@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[ ]:
+# In[10]:
 
 
 import numpy as np
@@ -41,7 +41,7 @@ def measure(func):
     return _time_it
 
 
-# In[ ]:
+# In[11]:
 
 
 inputfiles = {
@@ -80,7 +80,7 @@ officeType = {
     }
 
 
-# In[ ]:
+# In[12]:
 
 
 def fileExists(path):
@@ -141,7 +141,7 @@ def workplaces_size_distribution(a=3.26, c=0.97, m_max=2870):
     return p_n / sum(p_n)
 
 
-# In[ ]:
+# In[17]:
 
 
 class City:
@@ -151,7 +151,7 @@ class City:
         #Default values:
 
         #ppl working at sez and gov (Bangalore data)
-        self.max_sez=230000 /10
+        self.max_sez= 230000 /10
         self.max_gov= (2295000*(12.327/66.84)*0.5) /10
         self.max_ites = 1500000 /10
         self.max_ites_not_sez = self.max_ites- self.max_sez
@@ -335,6 +335,20 @@ class City:
         with open(Path(input_dir, inputfiles["cityprofile"]),"r") as file:
             cityprofiledata = json.load(file)
         
+        if "city" in cityprofiledata.keys():
+            self.name = cityprofiledata['city']
+        else:
+            self.name = "unknown"
+        
+        if ("distance_kernel_a" in cityprofiledata.keys() 
+            and "distance_kernel_b" in cityprofiledata.keys()):
+            print("(Distance kernel parameters provided.)")
+            self.a_commuter_distance = cityprofiledata['distance_kernel_a']
+            self.b_commuter_distance = cityprofiledata['distance_kernel_b']
+        else:
+            self.a_commuter_distance = 4   # From the Thailand paper
+            self.b_commuter_distance = 3.8 # From the Thailand paper
+            
         self.householdsize_bins = cityprofiledata['householdSize']['bins']
         self.householdsize_weights = normalise(cityprofiledata['householdSize']['weights'])
         assert len(self.householdsize_bins) == len(self.householdsize_weights), "household bins and weights differ in lengths"
@@ -634,7 +648,7 @@ class City:
         self.num_workplaces = count
     
     def describe(self):
-        
+        print(f"City: {self.name}")
         print(f"Population: {self.num_individuals}")
         print(f"Number of wards: {self.nwards}")
         print(f"Has slums: {self.has_slums}")
@@ -711,19 +725,11 @@ class City:
             pickle.dump(self.state_np_random,f)
 
         
-    def __init__(self, city, input_dir, random_seed_dir = None):
+    def __init__(self, input_dir, random_seed_dir = None):
         self.reset()
         
-        if city=="bangalore":
-            self.a_commuter_distance = 10.751
-            self.b_commuter_distance = 5.384
-        elif city=="mumbai":
-            self.a_commuter_distance = 2.709
-            self.b_commuter_distance = 1.278
-        else:
-            self.a_commuter_distance = 4
-            self.b_commuter_distance = 3.8
-        
+        self.set_city_profile(input_dir)
+
         if random_seed_dir is not None:
             assert fileExists(
                 os.path.join(random_seed_dir, outputfiles['PRG_np_random_state'])
@@ -733,17 +739,16 @@ class City:
         self.save_random_seeds()
         self.set_demographics(input_dir)
         self.set_employments(input_dir)
+        self.set_ODMatrix(input_dir)
         if folderExists(Path(input_dir,'presampled-points')):
             self.set_presampled_points(input_dir)
         else:
             self.set_geoDF(input_dir) 
         self.reorder_wardData_Rows()
-        self.set_city_profile(input_dir)
-        self.set_ODMatrix(input_dir)
         self.set_community_centres()
 
 
-# In[ ]:
+# In[18]:
 
 
 @measure
@@ -904,53 +909,13 @@ def validate(city, plots_folder=None):
 # In[ ]:
 
 
-city = City('mumbai', 'data/base/mumbai_master')
-city.generate(100000)
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-from descartes import PolygonPatch
-from cycler import cycler
-import random
-
-geoDF = gpd.read_file("data/base/mumbai_master/city.geojson")
-df = pd.DataFrame(city.houses)
-
-
-plt.figure(figsize=(20,15))
-ax = plt.gca()
-for w in range(24):
-    ax.add_patch(PolygonPatch(geoDF["geometry"].iloc[w], fc="aliceblue", ec="tomato", linewidth=2,zorder=0))
-    
-for w in range(48):
-    color = next(ax._get_lines.prop_cycler)['color']
-    df_filtered = df[df['wardIndex']==w][['lon', 'lat']]
-    plt.scatter(df_filtered['lon'], df_filtered['lat'], s=1, color=color)
-ax.axis('scaled')
-plt.show()
-
-
-
-# In[ ]:
-
-
 def main():
     
     default_pop = 100000
-    default_city = "bangalore"
     default_ibasepath = 'data/base/bangalore/'
     default_obasepath = 'data/bangalore-100K/'
 
     my_parser = argparse.ArgumentParser(description='Create mini-city for COVID-19 simulation')
-    my_parser.add_argument('-c', help='target city', default=default_city)
     my_parser.add_argument('-n', help='target population', default=default_pop)
     my_parser.add_argument('-i', help='input folder', default=default_ibasepath)
     my_parser.add_argument('-o', help='output folder', default=default_obasepath)
@@ -958,7 +923,6 @@ def main():
     my_parser.add_argument('-s', help='[for debug] restore random seed from folder', default=None)
 
     args = my_parser.parse_args()
-    city = (args.c).lower()
     population = int(args.n)
     input_dir = args.i
     output_dir = args.o
@@ -968,10 +932,10 @@ def main():
         my_parser.print_help()
         print("\n Assuming default values.\n")
 
-    print(f"City: {city}")
     print(f"input_folder: {input_dir}")
     print(f"output_folder: {output_dir}")
-    city = City(city, input_dir, random_seed_dir = args.s)
+    print("")
+    city = City(input_dir, random_seed_dir = args.s)
     city.generate(population)
     city.dump_files(output_dir)
     if args.validate:

@@ -104,7 +104,10 @@ plot_data_struct run_simulation(){
 	 {"susceptible_lambda_H", {}},
 	 {"susceptible_lambda_W", {}},
 	 {"susceptible_lambda_C", {}},
-	 {"susceptible_lambda_T", {}}
+	 {"susceptible_lambda_T", {}},
+	 {"susceptible_lambda_PROJECT", {}},
+	 {"susceptible_lambda_NRB_CELL", {}},
+	 {"susceptible_lambda_RANDOM_COMMUNITY", {}}
 	};
 
   plot_data.total_lambda_fractions =
@@ -112,7 +115,10 @@ plot_data_struct run_simulation(){
 	 {"total_fraction_lambda_H", {}},
 	 {"total_fraction_lambda_W", {}},
 	 {"total_fraction_lambda_C", {}},
-	 {"total_fraction_lambda_T", {}}
+	 {"total_fraction_lambda_T", {}},
+	 {"total_fraction_lambda_PROJECT", {}},
+	 {"total_fraction_lambda_NBR_CELL", {}},
+	 {"total_fraction_lambda_RANDOM_COMMUNITY", {}}
 	};
 
   plot_data.mean_lambda_fractions =
@@ -120,7 +126,10 @@ plot_data_struct run_simulation(){
 	 {"mean_fraction_lambda_H", {}},
 	 {"mean_fraction_lambda_W", {}},
 	 {"mean_fraction_lambda_C", {}},
-	 {"mean_fraction_lambda_T", {}}
+	 {"mean_fraction_lambda_T", {}},
+	 {"mean_fraction_lambda_PROJECT", {}},
+	 {"mean_fraction_lambda_NBR_CELL", {}},
+	 {"mean_fraction_lambda_RANDOM_COMMUNITY", {}}
 	};
 
   plot_data.cumulative_mean_lambda_fractions = 
@@ -128,7 +137,10 @@ plot_data_struct run_simulation(){
 	 {"cumulative_mean_fraction_lambda_H", {}},
 	 {"cumulative_mean_fraction_lambda_W", {}},
 	 {"cumulative_mean_fraction_lambda_C", {}},
-	 {"cumulative_mean_fraction_lambda_T", {}}
+	 {"cumulative_mean_fraction_lambda_T", {}},
+	 {"cumulative_mean_fraction_lambda_PROJECT", {}},
+	 {"cumulative_mean_fraction_lambda_NBR_CELL", {}},
+	 {"cumulative_mean_fraction_lambda_RANDOM_COMMUNITY", {}}
 	};
 
   plot_data.quarantined_stats =
@@ -340,8 +352,10 @@ plot_data_struct run_simulation(){
 	  susceptible_lambda_H = 0,
 	  susceptible_lambda_W = 0,
 	  susceptible_lambda_C = 0,
-	  susceptible_lambda_T = 0;
-
+	  susceptible_lambda_T = 0,
+	  susceptible_lambda_PROJECT = 0,
+	  susceptible_lambda_NBR_CELL = 0,
+	  susceptible_lambda_RANDOM_COMMUNITY = 0;
 	double curtailed_interaction = 0, normal_interaction = 0;
 
 #pragma omp parallel for default(none) shared(nodes, GLOBAL)			\
@@ -351,7 +365,8 @@ plot_data_struct run_simulation(){
 			n_recovered, n_affected, n_infective,						\
 			susceptible_lambda, susceptible_lambda_H,					\
 			susceptible_lambda_W, susceptible_lambda_C,					\
-			susceptible_lambda_T,										\
+			susceptible_lambda_T, susceptible_lambda_PROJECT,				\
+			susceptible_lambda_NBR_CELL, susceptible_lambda_RANDOM_COMMUNITY,	 \
 			quarantined_infectious, quarantined_individuals,			\
 			curtailed_interaction, normal_interaction					\
 	)
@@ -363,6 +378,9 @@ plot_data_struct run_simulation(){
 		susceptible_lambda_W += nodes[j].lambda_incoming.work;
 		susceptible_lambda_C += nodes[j].lambda_incoming.community;
 		susceptible_lambda_T += nodes[j].lambda_incoming.travel;
+		susceptible_lambda_PROJECT += nodes[j].lambda_incoming.project;
+		susceptible_lambda_NBR_CELL += nodes[j].lambda_incoming.nbr_cell;
+		susceptible_lambda_RANDOM_COMMUNITY += nodes[j].lambda_incoming.random_community;
 	  }
 	  if(infection_status == Progression::infective
 		 || infection_status == Progression::symptomatic
@@ -374,11 +392,19 @@ plot_data_struct run_simulation(){
 		  		+ nodes[j].kappa_C_incoming * GLOBAL.BETA_C
 				+ ((nodes[j].workplace_type == WorkplaceType::office)?GLOBAL.BETA_W:0)*nodes[j].kappa_W_incoming
 				+ ((nodes[j].workplace_type == WorkplaceType::school)?GLOBAL.BETA_S:0)*nodes[j].kappa_W_incoming
+				+ ((nodes[j].workplace_type == WorkplaceType::office)?GLOBAL.BETA_PROJECT:0)*nodes[j].kappa_W_incoming
+				+ ((nodes[j].workplace_type == WorkplaceType::school)?GLOBAL.BETA_CLASS:0)*nodes[j].kappa_W_incoming
+				+ nodes[j].kappa_C_incoming*GLOBAL.BETA_NBR_CELLS
+				+ nodes[j].kappa_C_incoming*GLOBAL.BETA_RANDOM_COMMUNITY
 				+ ((nodes[j].has_to_travel)?GLOBAL.BETA_TRAVEL:0)*nodes[j].travels());
 		  normal_interaction+=(GLOBAL.BETA_H
 		  		+ GLOBAL.BETA_C
 				+ ((nodes[j].workplace_type == WorkplaceType::office)?GLOBAL.BETA_W:0)
 				+ ((nodes[j].workplace_type == WorkplaceType::school)?GLOBAL.BETA_S:0)
+				+ ((nodes[j].workplace_type == WorkplaceType::office)?GLOBAL.BETA_PROJECT:0)
+				+ ((nodes[j].workplace_type == WorkplaceType::school)?GLOBAL.BETA_CLASS:0)
+				+ GLOBAL.BETA_NBR_CELLS
+				+ GLOBAL.BETA_RANDOM_COMMUNITY
 				+ ((nodes[j].has_to_travel)?GLOBAL.BETA_TRAVEL:0));
 	  }
 	  if(infection_status == Progression::exposed){
@@ -446,6 +472,9 @@ plot_data_struct run_simulation(){
 	plot_data.susceptible_lambdas["susceptible_lambda_W"].push_back({time_step, {susceptible_lambda_W}});
 	plot_data.susceptible_lambdas["susceptible_lambda_C"].push_back({time_step, {susceptible_lambda_C}});
 	plot_data.susceptible_lambdas["susceptible_lambda_T"].push_back({time_step, {susceptible_lambda_T}});
+	plot_data.susceptible_lambdas["susceptible_lambda_PROJECT"].push_back({time_step, {susceptible_lambda_PROJECT}});
+	plot_data.susceptible_lambdas["susceptible_lambda_NBR_CELL"].push_back({time_step, {susceptible_lambda_NBR_CELL}});
+	plot_data.susceptible_lambdas["susceptible_lambda_RANDOM_COMMUNITY"].push_back({time_step, {susceptible_lambda_RANDOM_COMMUNITY}});
 
 	//Convert to fraction
 	auto total_lambda_fraction_data_sum = total_lambda_fraction_data.sum();
@@ -456,20 +485,32 @@ plot_data_struct run_simulation(){
 	plot_data.total_lambda_fractions["total_fraction_lambda_W"].push_back({time_step, {total_lambda_fraction_data.work}});
 	plot_data.total_lambda_fractions["total_fraction_lambda_C"].push_back({time_step, {total_lambda_fraction_data.community}});
 	plot_data.total_lambda_fractions["total_fraction_lambda_T"].push_back({time_step, {total_lambda_fraction_data.travel}});
+	plot_data.total_lambda_fractions["total_fraction_lambda_PROJECT"].push_back({time_step, {total_lambda_fraction_data.project}});
+	plot_data.total_lambda_fractions["total_fraction_lambda_NBR_CELL"].push_back({time_step, {total_lambda_fraction_data.nbr_cell}});
+	plot_data.total_lambda_fractions["total_fraction_lambda_RANDOM_COMMUNITY"].push_back({time_step, {total_lambda_fraction_data.random_community}});
 
 	plot_data.mean_lambda_fractions["mean_fraction_lambda_H"].push_back({time_step, {mean_lambda_fraction_data.home}});
 	plot_data.mean_lambda_fractions["mean_fraction_lambda_W"].push_back({time_step, {mean_lambda_fraction_data.work}});
 	plot_data.mean_lambda_fractions["mean_fraction_lambda_C"].push_back({time_step, {mean_lambda_fraction_data.community}});
 	plot_data.mean_lambda_fractions["mean_fraction_lambda_T"].push_back({time_step, {mean_lambda_fraction_data.travel}});
+	plot_data.mean_lambda_fractions["mean_fraction_lambda_PROJECT"].push_back({time_step, {mean_lambda_fraction_data.project}});
+	plot_data.mean_lambda_fractions["mean_fraction_lambda_NBR_CELL"].push_back({time_step, {mean_lambda_fraction_data.nbr_cell}});
+	plot_data.mean_lambda_fractions["mean_fraction_lambda_RANDOM_COMMUNITY"].push_back({time_step, {mean_lambda_fraction_data.random_community}});
 
 	plot_data.cumulative_mean_lambda_fractions["cumulative_mean_fraction_lambda_H"].push_back({time_step,
 																							   {cumulative_mean_lambda_fraction_data.home}});
 	plot_data.cumulative_mean_lambda_fractions["cumulative_mean_fraction_lambda_W"].push_back({time_step,
-																							   {cumulative_mean_lambda_fraction_data.work+cumulative_mean_lambda_fraction_data.project}});
+																							   {cumulative_mean_lambda_fraction_data.work}});
 	plot_data.cumulative_mean_lambda_fractions["cumulative_mean_fraction_lambda_C"].push_back({time_step,
-																							   {cumulative_mean_lambda_fraction_data.community+cumulative_mean_lambda_fraction_data.nbr_cell+cumulative_mean_lambda_fraction_data.random_community}});
+																							   {cumulative_mean_lambda_fraction_data.community}});
 	plot_data.cumulative_mean_lambda_fractions["cumulative_mean_fraction_lambda_T"].push_back({time_step,
 																							   {cumulative_mean_lambda_fraction_data.travel}});
+	plot_data.cumulative_mean_lambda_fractions["cumulative_mean_fraction_lambda_PROJECT"].push_back({time_step,
+																							   {cumulative_mean_lambda_fraction_data.project}});
+	plot_data.cumulative_mean_lambda_fractions["cumulative_mean_fraction_lambda_NBR_CELL"].push_back({time_step,
+																							   {cumulative_mean_lambda_fraction_data.nbr_cell}});
+	plot_data.cumulative_mean_lambda_fractions["cumulative_mean_fraction_lambda_RANDOM_COMMUNITY"].push_back({time_step,
+																							   {cumulative_mean_lambda_fraction_data.random_community}});
 	plot_data.quarantined_stats["quarantined_stats"].push_back({time_step, {
                  quarantined_individuals,
 				 quarantined_infectious,

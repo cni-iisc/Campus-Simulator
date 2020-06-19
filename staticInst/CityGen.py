@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[10]:
+# In[ ]:
 
 
 import numpy as np
@@ -41,7 +41,7 @@ def measure(func):
     return _time_it
 
 
-# In[11]:
+# In[ ]:
 
 
 inputfiles = {
@@ -80,7 +80,7 @@ officeType = {
     }
 
 
-# In[12]:
+# In[ ]:
 
 
 def fileExists(path):
@@ -141,7 +141,7 @@ def workplaces_size_distribution(a=3.26, c=0.97, m_max=2870):
     return p_n / sum(p_n)
 
 
-# In[17]:
+# In[ ]:
 
 
 class City:
@@ -173,6 +173,7 @@ class City:
         self.householdsize_weights = None
         self.age_bins = None
         self.age_weights = None
+        self.ageGivenHHDist = None
         self.schoolsize_bins = None
         self.schoolsize_weights = None
 
@@ -330,6 +331,20 @@ class City:
             df = pd.read_csv(Path(input_dir,"presampled-points",f"{i}.csv"),names=["lat","lon"]).astype(float)
             self.presampled_points.append(df)
         
+        
+    def processAgeGivenHH(self, input_dir):
+        assert fileExists(Path(input_dir, inputfiles["cityprofile"])), f"{inputfiles['cityprofile']} missing"
+        with open(Path(input_dir, inputfiles["cityprofile"]),"r") as file:
+            cityprofiledata = json.load(file)
+        assert "ageGivenHouseholdSize" in cityprofiledata.keys()
+        
+        ageGivenHHDist = cityprofiledata['ageGivenHouseholdSize']['weights']
+        for i in range(len(ageGivenHHDist)):
+            ageGivenHHDist[i] = normalise(ageGivenHHDist[i])
+            assert len(ageGivenHHDist[i]) == len(self.age_bins)
+        print("(age_given_household_size_distribution provided)")
+        self.ageGivenHHDist = ageGivenHHDist
+        
     def set_city_profile(self, input_dir):
         assert fileExists(Path(input_dir, inputfiles["cityprofile"])), f"{inputfiles['cityprofile']} missing"
         with open(Path(input_dir, inputfiles["cityprofile"]),"r") as file:
@@ -339,7 +354,7 @@ class City:
             self.name = cityprofiledata['city']
         else:
             self.name = "unknown"
-        
+            
         if ("distance_kernel_a" in cityprofiledata.keys() 
             and "distance_kernel_b" in cityprofiledata.keys()):
             print("(Distance kernel parameters provided.)")
@@ -356,6 +371,9 @@ class City:
         self.age_bins = cityprofiledata['age']['bins']
         self.age_weights = normalise(cityprofiledata['age']['weights'])
         assert len(self.age_bins) == len(self.age_weights), "age bins and weights differ in lengths"
+        
+        if "ageGivenHouseholdSize" in cityprofiledata.keys():
+            self.processAgeGivenHH(input_dir)
     
         self.schoolsize_bins = cityprofiledata['schoolsSize']['bins']
         self.schoolsize_weights = normalise(cityprofiledata['schoolsSize']['weights'])
@@ -391,6 +409,16 @@ class City:
         assert self.age_bins is not None and self.age_weights is not None
         return sampleBinsWeights(self.age_bins, self.age_weights)
 
+    def sampleAgeGivenHousehold(self, size):
+        # Assuming that the bins for this are of the form 
+        # [1,2,3,...,m-1,m+]. If not, this has to be modified.
+
+        assert self.ageGivenHHDist is not None
+        size_bucket = min(size, len(self.ageGivenHHDist)) - 1
+        assert size_bucket >= 0
+        
+        return sampleBinsWeights(self.age_bins, self.ageGivenHHDist[size_bucket])
+    
     def sampleHouseholdSize(self):
         assert self.householdsize_bins is not None and self.householdsize_weights is not None
         return sampleBinsWeights(self.householdsize_bins, self.householdsize_weights)
@@ -485,8 +513,13 @@ class City:
 
                 if self.has_slums:
                     p["slum"] = h["slum"]
-
-                age = self.sampleAge()  # Currently, ages of household members chosen independently.
+                
+                if self.ageGivenHHDist is not None:
+                    age = self.sampleAgeGivenHousehold(size)
+                else:
+                    age = self.sampleAge()  
+                # Currently, ages of household members chosen independently.
+                
                 p["age"] = age
 
                 if age < 3:                         # toddlers stay at home
@@ -748,7 +781,7 @@ class City:
         self.set_community_centres()
 
 
-# In[18]:
+# In[ ]:
 
 
 @measure

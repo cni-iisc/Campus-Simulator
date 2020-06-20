@@ -38,9 +38,14 @@ void set_test_request(vector<agent>& nodes, vector<house>& homes, vector<workpla
 	}
 
 	if(nodes[i].test_status.state == test_result::positive && time_since_tested>0 && time_since_tested<=1){
+		bool temp = bernoulli(probabilities.prob_contact_trace_household);
 		for(count_type j=0; j<homes[nodes[i].home].individuals.size(); j++){	
 			if(current_time - nodes[homes[nodes[i].home].individuals[j]].test_status.tested_epoch > GLOBAL.SIM_STEPS_PER_DAY*GLOBAL.MINIMUM_TEST_INTERVAL){
 				nodes[homes[nodes[i].home].individuals[j]].test_status.test_requested = bernoulli(probabilities.prob_test_household_positive);
+				if(temp){
+					nodes[homes[nodes[i].home].individuals[j]].disease_label=DiseaseLabel::primary_contact;
+					nodes[homes[nodes[i].home].individuals[j]].test_status.contact_traced_epoch = current_time;
+				}
 			}
 		}
 	}
@@ -83,6 +88,10 @@ void set_test_request(vector<agent>& nodes, vector<house>& homes, vector<workpla
 			for(count_type j=0; j<workplaces[nodes[i].workplace].projects[nodes[i].workplace_subnetwork].individuals.size(); j++){	
 				if(current_time - nodes[workplaces[nodes[i].workplace].projects[nodes[i].workplace_subnetwork].individuals[j]].test_status.tested_epoch > GLOBAL.SIM_STEPS_PER_DAY*GLOBAL.MINIMUM_TEST_INTERVAL){
 					nodes[workplaces[nodes[i].workplace].projects[nodes[i].workplace_subnetwork].individuals[j]].test_status.test_requested = bernoulli(prob_positive);
+				if(bernoulli(nodes[i].workplace_type==WorkplaceType::school?(probabilities.prob_contact_trace_class):(probabilities.prob_contact_trace_project))){
+					nodes[workplaces[nodes[i].workplace].projects[nodes[i].workplace_subnetwork].individuals[j]].disease_label=DiseaseLabel::primary_contact;
+					nodes[workplaces[nodes[i].workplace].projects[nodes[i].workplace_subnetwork].individuals[j]].test_status.contact_traced_epoch = current_time;
+				}
 				}
 			}
 		}
@@ -113,17 +122,77 @@ void set_test_request(vector<agent>& nodes, vector<house>& homes, vector<workpla
 
 	if(nodes[i].test_status.state == test_result::positive && time_since_tested>0 && time_since_tested<=1){
 		for(count_type k=0; k<homes[nodes[i].home].random_households.households.size(); k++){	
+			bool temp = bernoulli(probabilities.prob_contact_trace_random_community);
 			for(count_type j=0; j<homes[homes[nodes[i].home].random_households.households[k]].individuals.size(); j++){
 				if(current_time - nodes[homes[homes[nodes[i].home].random_households.households[k]].individuals[j]].test_status.tested_epoch > GLOBAL.SIM_STEPS_PER_DAY*GLOBAL.MINIMUM_TEST_INTERVAL){
 					nodes[homes[homes[nodes[i].home].random_households.households[k]].individuals[j]].test_status.test_requested = bernoulli(probabilities.prob_test_random_community_positive);
+					
+				        if(temp){
+						nodes[homes[homes[nodes[i].home].random_households.households[k]].individuals[j]].disease_label=DiseaseLabel::primary_contact;
+						nodes[homes[homes[nodes[i].home].random_households.households[k]].individuals[j]].test_status.contact_traced_epoch = current_time;
+					}
 				}
 			}
 		}
 	}
 
+
+
+// Tese people in neighbourhood cell
+
+	grid_cell my_grid_cell = homes[nodes[i].home].neighbourhood;
+	nbr_cell my_nbr_cell = nbr_cells[my_grid_cell.cell_x][my_grid_cell.cell_y];
+	count_type my_nbr_size = my_nbr_cell.houses_list.size();
+
+	if(nodes[i].infection_status == Progression::symptomatic && time_since_symptomatic >0 && time_since_symptomatic<=1){
+		for(count_type k=0; k<my_nbr_size; k++){
+			for(count_type j=0; j<homes[my_nbr_cell.houses_list[k]].individuals.size(); j++){
+				if(current_time - nodes[homes[my_nbr_cell.houses_list[k]].individuals[j]].test_status.tested_epoch > GLOBAL.SIM_STEPS_PER_DAY*GLOBAL.MINIMUM_TEST_INTERVAL){
+					nodes[homes[my_nbr_cell.houses_list[k]].individuals[j]].test_status.test_requested = bernoulli(probabilities.prob_test_neighbourhood_symptomatic);
+				}
+			}
+		}
+	}
+
+	if(nodes[i].infection_status == Progression::hospitalised && time_since_hospitalised >0 && time_since_hospitalised<=1){
+		for(count_type k=0; k<my_nbr_size; k++){
+			for(count_type j=0; j<homes[my_nbr_cell.houses_list[k]].individuals.size(); j++){
+				if(current_time - nodes[homes[my_nbr_cell.houses_list[k]].individuals[j]].test_status.tested_epoch > GLOBAL.SIM_STEPS_PER_DAY*GLOBAL.MINIMUM_TEST_INTERVAL){
+					nodes[homes[my_nbr_cell.houses_list[k]].individuals[j]].test_status.test_requested = bernoulli(probabilities.prob_test_neighbourhood_hospitalised);
+				}
+			}
+		}
+	}
+
+	if(nodes[i].test_status.state == test_result::positive && time_since_tested>0 && time_since_tested<=1){
+		for(count_type k=0; k<my_nbr_size; k++){
+			bool temp = bernoulli(probabilities.prob_contact_trace_neighbourhood);
+			for(count_type j=0; j<homes[my_nbr_cell.houses_list[k]].individuals.size(); j++){
+				if(current_time - nodes[homes[my_nbr_cell.houses_list[k]].individuals[j]].test_status.tested_epoch > GLOBAL.SIM_STEPS_PER_DAY*GLOBAL.MINIMUM_TEST_INTERVAL){
+					nodes[homes[my_nbr_cell.houses_list[k]].individuals[j]].test_status.test_requested = bernoulli(probabilities.prob_test_neighbourhood_positive);
+				        if(temp){
+						nodes[homes[my_nbr_cell.houses_list[k]].individuals[j]].disease_label=DiseaseLabel::primary_contact;
+						nodes[homes[my_nbr_cell.houses_list[k]].individuals[j]].test_status.contact_traced_epoch = current_time;
+					}
+				}
+			}
+		}
+	}
+					
+
+
+
+// Re-test if somebody is recovered
+	if(nodes[i].test_status.state==test_result::positive && nodes[i].infection_status==Progression::recovered){
+		nodes[i].test_status.test_requested=bernoulli(probabilities.prob_retest_recovered);
+	}
   }
+
+
+
 }
 
+// Not used now, to be removed
 bool should_be_isolated_node_testing(const agent& node, const int current_time, const int quarantine_days){
   double time_since_tested = current_time - node.test_status.tested_epoch;
  return (node.test_status.state==test_result::positive && (node.infection_status==Progression::exposed || node.infection_status==Progression::infective) && 
@@ -136,15 +205,38 @@ node_update_status_testing update_infection_testing(agent& node, vector<agent>& 
   node_update_status_testing temp;
   if(node.test_status.state==test_result::positive){
 	  if(node.infection_status==Progression::symptomatic){
-		  node.infection_status=Progression::hospitalised;
-		  node.infective = false;
-		  node.entered_hospitalised_state = true;
-		  temp.new_hospitalization = true;
-	  }
-	  if(should_be_isolated_node_testing(node, current_time, HOME_QUARANTINE_DAYS)){
-		  for(count_type i=0; i<houses[node.home].individuals.size(); ++i){
-			  modify_kappa_case_isolate_node(nodes[houses[node.home].individuals[i]]);	  
+		  if(node.severity==1){
+		  	node.disease_label = DiseaseLabel::moderate_symptomatic_tested;
 		  }
+		  else{
+		  	node.disease_label = DiseaseLabel::mild_symptomatic_tested;
+		  }
+	  }
+	  else if(node.infection_status==Progression::exposed || node.infection_status==Progression::infective){
+		  node.disease_label = DiseaseLabel::mild_symptomatic_tested;
+	  }
+	  else if(node.infection_status==Progression::hospitalised){
+	  	  node.disease_label=DiseaseLabel::severe_symptomatic_tested;
+	  }
+	  else if(node.infection_status==Progression::critical){
+	  	  node.disease_label=DiseaseLabel::icu;
+	  }
+	  else if(node.infection_status==Progression::recovered){
+		  node.disease_label=DiseaseLabel::recovered;
+	  }
+	  else if(node.infection_status==Progression::dead){
+		  node.disease_label=DiseaseLabel::dead;
+	  }
+
+
+
+  }
+  if(node.disease_label==DiseaseLabel::primary_contact || node.disease_label==DiseaseLabel::mild_symptomatic_tested || node.disease_label==DiseaseLabel::moderate_symptomatic_tested){
+	  if(current_time - node.test_status.contact_traced_epoch <= HOME_QUARANTINE_DAYS*GLOBAL.SIM_STEPS_PER_DAY){
+	  	modify_kappa_case_isolate_node(node);	 
+  	  }
+	  else{
+	        node.disease_label=DiseaseLabel::asymptomatic;
 	  }
   }
   return temp;

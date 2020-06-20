@@ -595,6 +595,7 @@ void update_test_request(vector<agent>& nodes, vector<house>& homes,
 	probabilities.prob_test_household_symptomatic = 0;
 	probabilities.prob_test_household_hospitalised = 1;
 	probabilities.prob_test_household_positive = 1;
+	probabilities.prob_retest_recovered = 1;
 	set_test_request(nodes, homes, workplaces, nbr_cells, communities, probabilities, current_time);
 	break;
   default:

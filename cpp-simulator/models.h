@@ -47,6 +47,13 @@ struct testing_probability{
   double prob_test_school_positive = 0;
   double prob_test_school_hospitalised = 0;
   double prob_test_school_symptomatic = 0;
+  double prob_retest_recovered = 0;
+  double prob_contact_trace_household = 0;
+  double prob_contact_trace_project = 0;
+  double prob_contact_trace_random_community = 0;
+  double prob_contact_trace_neighbourhood = 0;
+  double prob_contact_trace_class = 0;
+
 };
 
   
@@ -441,7 +448,16 @@ enum class Progression {
    dead
 };
 
-
+enum class DiseaseLabel{
+   asymptomatic = 0, //neither contact traced nor tested positive
+   primary_contact, //CCC1
+   mild_symptomatic_tested, //CCC2
+   moderate_symptomatic_tested, //DCHC
+   severe_symptomatic_tested, //DCH
+   icu, //ICU
+   recovered,
+   dead
+};
 
 enum class WorkplaceType{
    home = 0,
@@ -571,6 +587,8 @@ enum class test_result{
 
 struct test_struct{
   int tested_epoch = -7;
+  bool tested_positive = false; // To indicate if the individual is tested positive at sometime in the past
+  count_type contact_traced_epoch = 0;
   bool test_requested = false;
   test_result state = test_result::not_yet_tested;
 };
@@ -684,6 +702,7 @@ struct agent{
   //attendance probability at given time, for the agent
   double get_attendance_probability(count_type time) const;
   test_struct test_status;
+  DiseaseLabel disease_label = DiseaseLabel::asymptomatic;
 };
 
 

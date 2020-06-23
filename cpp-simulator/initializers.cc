@@ -637,7 +637,7 @@ void assign_individual_projects(vector<workplace>& workplaces, vector<agent>& no
 }
 
 
-void assign_household_community(vector<community>& communities, vector<agent>& nodes, vector<house>& homes){
+void assign_household_community(vector<community>& communities, const vector<agent>& nodes, vector<house>& homes){
   for(count_type i=0; i<homes.size(); ++i){
 	if(homes[i].individuals.size()>0){
 	  homes[i].community = nodes[homes[i].individuals[0]].community;
@@ -656,16 +656,17 @@ void assign_household_random_community(vector<house>& homes, const vector<commun
 	  count_type current_household = communities[i].households[j];
 	  count_type degree = uniform_count_type_network(GLOBAL.MIN_RANDOM_COMMUNITY_SIZE/2,
 													 GLOBAL.MAX_RANDOM_COMMUNITY_SIZE/2);
-	  set<count_type> chosen;
-	  chosen.clear();
 	  count_type candidate;
 	  while(homes[current_household].random_households.households.size() < degree){
 		do{
 		  candidate = communities[i].households[uniform_count_type_network(0, NUM_HOUSEHOLDS - 1)];
 		}while(candidate == current_household
-			   || (std::find(homes[current_household].random_households.households.begin(),
-			    homes[current_household].random_households.households.end(), candidate) != homes[current_household].random_households.households.end()));
-		chosen.insert(candidate);
+			   || (std::find(
+							 homes[current_household].random_households.households.begin(),
+							 homes[current_household].random_households.households.end(),
+							 candidate
+							 )
+				   != homes[current_household].random_households.households.end()));
 		homes[current_household].random_households.households.push_back(candidate);
 		//homes[candidate].random_households.households.push_back(current_household);
 	  }
@@ -673,13 +674,15 @@ void assign_household_random_community(vector<house>& homes, const vector<commun
   }
   //symmetrize random network interaction graph. 
   for(count_type current_house = 0; current_house < homes.size(); ++current_house){
-	  for (count_type j = 0; j < homes[current_house].random_households.households.size(); ++j){
-		  count_type random_contact = homes[current_house].random_households.households[j];
-		  if(std::find(homes[random_contact].random_households.households.begin(),
-			    homes[random_contact].random_households.households.end(), current_house) == homes[random_contact].random_households.households.end()){
-					homes[random_contact].random_households.households.push_back(current_house);
-				}
+	for (count_type j = 0; j < homes[current_house].random_households.households.size(); ++j){
+	  count_type random_contact = homes[current_house].random_households.households[j];
+	  if(std::find(homes[random_contact].random_households.households.begin(),
+				   homes[random_contact].random_households.households.end(),
+				   current_house)
+		 == homes[random_contact].random_households.households.end()){
+		homes[random_contact].random_households.households.push_back(current_house);
 	  }
+	}
   }
 }
 
@@ -688,7 +691,7 @@ void assign_homes_nbr_cell(const vector<house>& homes, matrix<nbr_cell>& neighbo
 	if(!GLOBAL.ENABLE_NBR_CELLS){
 		return;
 	}
-	for (count_type home_count = 0; home_count < homes.size(); home_count++){
+	for (count_type home_count = 0; home_count < homes.size(); ++home_count){
 		grid_cell my_nbr_cell = homes[home_count].neighbourhood;
 		neighbourhood_cells[my_nbr_cell.cell_x][my_nbr_cell.cell_y].houses_list.push_back(home_count);
 	}

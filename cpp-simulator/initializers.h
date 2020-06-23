@@ -22,7 +22,7 @@ matrix<double> compute_community_distances_fkernel(const matrix<double>& communi
 void assign_individual_home_community(std::vector<agent>& nodes, std::vector<house>& homes, std::vector<workplace>& workplaces, std::vector<community>& communities);
 void assign_homes_nbr_cell(const std::vector<house>& homes, matrix<nbr_cell>& nbr_cells);
 void assign_individual_projects(std::vector<workplace>& workplaces, std::vector<agent>& nodes);
-void assign_household_community(std::vector<community>& communities, std::vector<agent>& nodes, std::vector<house>& homes);
+void assign_household_community(std::vector<community>& communities, const std::vector<agent>& nodes, std::vector<house>& homes);
 void assign_household_random_community(std::vector<house>& homes, const std::vector<community>& communities);
 
 // Compute scale factors for each home, workplace and community. Done once at the beginning.

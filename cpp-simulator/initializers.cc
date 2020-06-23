@@ -60,10 +60,6 @@ vector<house> init_homes(){
 	  homes[index].cyclic_strategy_class = uniform_count_type(0, GLOBAL.NUMBER_OF_CYCLIC_CLASSES - 1);
 	}
 
-	if(GLOBAL.ENABLE_NBR_CELLS) { 
-		set_nbr_cell(homes[index]);
-	}
-
     homes[index].age_independent_mixing = 0;
 	if(GLOBAL.USE_AGE_DEPENDENT_MIXING){
 	  homes[index].age_dependent_mixing.resize(GLOBAL.NUM_AGE_GROUPS, 0);

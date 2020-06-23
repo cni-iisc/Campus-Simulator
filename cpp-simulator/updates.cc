@@ -554,10 +554,14 @@ void updated_lambda_c_local_random_community(const vector<agent>& nodes, const v
   }
 }
 
-void update_lambda_nbr_cells(vector<agent>& nodes, vector<vector<nbr_cell>>& nbr_cells, vector<house>& houses, vector<community>& communities){
+void update_lambda_nbr_cells(const vector<agent>& nodes, vector<vector<nbr_cell>>& nbr_cells, const vector<house>& houses, const vector<community>& communities){
   for(count_type i=0; i<nbr_cells.size(); ++i){
 	for(count_type j=0; j<nbr_cells[i].size(); ++j){
 	  double sum_values = 0;
+#pragma omp parallel for default(none)					\
+  shared(nbr_cells, communities, nodes,					\
+		 houses, i, j)									\
+  reduction (+: sum_values)
 	  for(count_type h=0; h<nbr_cells[i][j].houses_list.size(); ++h){
 		for(count_type k=0; k<houses[nbr_cells[i][j].houses_list[h]].individuals.size(); ++k){
 		  sum_values += nodes[houses[nbr_cells[i][j].houses_list[h]].individuals[k]].lambda_nbr_cell
@@ -566,7 +570,7 @@ void update_lambda_nbr_cells(vector<agent>& nodes, vector<vector<nbr_cell>>& nbr
 	  }
 	  nbr_cells[i][j].lambda_nbr = nbr_cells[i][j].scale*sum_values;
 	}
-  }		
+  }
 }
 
 

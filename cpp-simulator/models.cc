@@ -206,24 +206,6 @@ void set_compliance(std::vector<agent> & nodes, std::vector<house> & homes,
   }
 }
 
-void set_nbr_cell(house &home){
-  if(!GLOBAL.ENABLE_NBR_CELLS) {
-    return;
-  }
-
-  location loc_temp;
-
-  loc_temp.lon = home.loc.lon;
-  loc_temp.lat = GLOBAL.city_SW.lat;  
-  home.neighbourhood.cell_x
-	= count_type(floor(earth_distance(loc_temp,GLOBAL.city_SW)/GLOBAL.NBR_CELL_SIZE));
-
-  loc_temp.lat = home.loc.lat;
-  loc_temp.lon = GLOBAL.city_SW.lon;
-  home.neighbourhood.cell_y
-	= count_type(floor(earth_distance(loc_temp,GLOBAL.city_SW)/GLOBAL.NBR_CELL_SIZE));
-}
-
 
 double kappa_T(const agent& node, double cur_time){
   double val = 0;
@@ -246,4 +228,23 @@ double kappa_T(const agent& node, double cur_time){
 	}
   }
   return val;
+}
+
+
+void house::set_nbr_cell(){
+  if(!GLOBAL.ENABLE_NBR_CELLS) {
+    return;
+  }
+
+  location loc_temp;
+
+  loc_temp.lon = this->loc.lon;
+  loc_temp.lat = GLOBAL.city_SW.lat;
+  this->neighbourhood.cell_x
+	= count_type(floor(earth_distance(loc_temp,GLOBAL.city_SW)/GLOBAL.NBR_CELL_SIZE));
+
+  loc_temp.lat = this->loc.lat;
+  loc_temp.lon = GLOBAL.city_SW.lon;
+  this->neighbourhood.cell_y
+	= count_type(floor(earth_distance(loc_temp,GLOBAL.city_SW)/GLOBAL.NBR_CELL_SIZE));
 }

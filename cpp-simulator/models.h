@@ -751,7 +751,12 @@ struct house{
     this->loc = {latitude, longitude};
     this->compliant = compliance;
     this->non_compliance_metric = non_compl_metric;
+	if(GLOBAL.ENABLE_NBR_CELLS){
+	  set_nbr_cell();  //Requires location to be set
+	}
   }
+
+  void set_nbr_cell();
 };
 
 

@@ -599,38 +599,35 @@ void assign_individual_home_community(vector<agent>& nodes, vector<house>& homes
 }
 
 void assign_individual_projects(vector<workplace>& workplaces, vector<agent>& nodes){
-  std::vector<int> members;
-  project temp;
-  count_type number_to_be_assigned;
-  count_type project_size;
   for(count_type i=0; i<workplaces.size(); ++i){
-	int project_index = 0;
 	if(workplaces[i].workplace_type==WorkplaceType::office){
-	  count_type count = 0;
-	  members = workplaces[i].individuals;
-	  randomly_shuffle(members);
-	  number_to_be_assigned = members.size();
-	  while(number_to_be_assigned>0){
+	  randomly_shuffle(workplaces[i].individuals);
+	  count_type shuffle_index = 0, project_index = 0;
+	  count_type individuals_to_be_assigned = workplaces[i].individuals.size();
+	  while(individuals_to_be_assigned > 0){
+		project temp;
 		workplaces[i].projects.push_back(temp);
 		workplaces[i].projects[project_index].workplace = i;
-		project_size = uniform_count_type_network(GLOBAL.MIN_PROJECT_SIZE, GLOBAL.MAX_PROJECT_SIZE);
-		project_size = std::min(project_size, number_to_be_assigned);
+		count_type project_size = uniform_count_type_network(GLOBAL.MIN_PROJECT_SIZE, GLOBAL.MAX_PROJECT_SIZE);
+		project_size = std::min(project_size, individuals_to_be_assigned);
 		for(count_type j=0; j<project_size; ++j){
-		  workplaces[i].projects[project_index].individuals.push_back(members[count]);
-		  nodes[members[count]].workplace_subnetwork = project_index;
-		  ++count;
+		  auto individual = workplaces[i].individuals[shuffle_index];
+		  workplaces[i].projects[project_index].individuals.push_back(individual);
+		  nodes[individual].workplace_subnetwork = project_index;
+		  ++shuffle_index;
 		}
 		++project_index;
-		number_to_be_assigned = number_to_be_assigned - project_size; 
+		individuals_to_be_assigned -= project_size;
 	  }
 	}
 	if(workplaces[i].workplace_type==WorkplaceType::school){
 	  workplaces[i].projects.resize(GLOBAL.MAX_CLASS_AGE+1);
-	  for(count_type j=0; j < workplaces[i].individuals.size(); ++j){
-		project_index = nodes[workplaces[i].individuals[j]].workplace_subnetwork;
+	  //for(count_type j=0; j < workplaces[i].individuals.size(); ++j){
+	  for(const auto& individual: workplaces[i].individuals){
+		auto age_index = nodes[individual].workplace_subnetwork;
 		//For agents whose workplace is school, workplace_subnetwork is already
-		//initialized in init_nodes()
-		workplaces[i].projects[project_index].individuals.push_back(workplaces[i].individuals[j]);
+		//initialized in init_nodes(), and is equal to the age of the individual
+		workplaces[i].projects[age_index].individuals.push_back(individual);
 	  }
 	}
   }

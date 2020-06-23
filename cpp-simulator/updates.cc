@@ -532,13 +532,21 @@ void updated_lambda_c_local(const vector<agent>& nodes, community& community){
   //return lambda_age_group;
 }
 
-void updated_lambda_c_local_random_community(const vector<agent>& nodes, vector<community>& communities, vector<house>& houses){
-  for(count_type i = 0; i<houses.size(); ++i){
+void updated_lambda_c_local_random_community(const vector<agent>& nodes, const vector<community>& communities, vector<house>& houses){
+  const auto HOUSES_SIZE = houses.size();
+#pragma omp parallel for default(none) shared(houses, nodes)
+  for(count_type i = 0;  i < HOUSES_SIZE; ++i){
+	double lambda_random_community_outgoing = 0;
+	for(const auto& indiv: houses[i].individuals){
+	  lambda_random_community_outgoing += nodes[indiv].lambda_c;
+	}
+	houses[i].lambda_random_community_outgoing = lambda_random_community_outgoing;
+  }
+#pragma omp parallel for default(none) shared(houses, communities)
+  for(count_type i = 0; i < HOUSES_SIZE; ++i){
 	double sum_value_household = 0;
-	for(count_type j=0; j<houses[i].random_households.households.size(); ++j){
-	  for(count_type k=0; k<houses[houses[i].random_households.households[j]].individuals.size(); ++k){
-		sum_value_household += nodes[houses[houses[i].random_households.households[j]].individuals[k]].lambda_c;
-	  }
+	for(const auto& neighbouring_household: houses[i].random_households.households){
+	  sum_value_household += houses[neighbouring_household].lambda_random_community_outgoing;
 	}
 	houses[i].random_households.lambda_random_community = houses[i].random_households.scale
 	  * sum_value_household

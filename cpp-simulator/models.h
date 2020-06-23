@@ -726,6 +726,8 @@ struct house{
   count_type community; // ward index
   random_community random_households;  //to specify random community network 
 
+  double lambda_random_community_outgoing;
+
   //Cyclic strategy class.
   //
   //If a cyclic workplace strategy is being followed, then every home will get a

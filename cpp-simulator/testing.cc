@@ -27,6 +27,7 @@ void set_test_request(vector<agent>& nodes, vector<house>& homes, vector<workpla
 				nodes[homes[nodes[i].home].individuals[j]].test_status.test_requested = bernoulli(probabilities.prob_test_household_symptomatic);
 			}
 		}
+		nodes[i].test_status.test_requested = bernoulli(probabilities.prob_test_index_symptomatic);
 	}
 
 	if(nodes[i].infection_status == Progression::hospitalised && time_since_hospitalised >0 && time_since_hospitalised<=1){
@@ -35,6 +36,7 @@ void set_test_request(vector<agent>& nodes, vector<house>& homes, vector<workpla
 				nodes[homes[nodes[i].home].individuals[j]].test_status.test_requested = bernoulli(probabilities.prob_test_household_hospitalised);
 			}
 		}
+		nodes[i].test_status.test_requested = bernoulli(probabilities.prob_test_index_hospitalised);
 	}
 
 	if(nodes[i].test_status.state == test_result::positive && time_since_tested>0 && time_since_tested<=1){
@@ -48,6 +50,7 @@ void set_test_request(vector<agent>& nodes, vector<house>& homes, vector<workpla
 				}
 			}
 		}
+		nodes[i].test_status.test_requested = bernoulli(probabilities.prob_test_index_positive);
 	}
 
 // Test people in smaller workplace network
@@ -74,6 +77,7 @@ void set_test_request(vector<agent>& nodes, vector<house>& homes, vector<workpla
 					nodes[workplaces[nodes[i].workplace].projects[nodes[i].workplace_subnetwork].individuals[j]].test_status.test_requested = bernoulli(prob_symptomatic);
 				}
 			}
+			nodes[i].test_status.test_requested = bernoulli(probabilities.prob_test_index_symptomatic);
 		}
 
 		if(nodes[i].infection_status == Progression::hospitalised && time_since_hospitalised >0 && time_since_hospitalised<=1){
@@ -82,6 +86,7 @@ void set_test_request(vector<agent>& nodes, vector<house>& homes, vector<workpla
 					nodes[workplaces[nodes[i].workplace].projects[nodes[i].workplace_subnetwork].individuals[j]].test_status.test_requested = bernoulli(prob_hospitalised);
 				}
 			}
+			nodes[i].test_status.test_requested = bernoulli(probabilities.prob_test_index_hospitalised);
 		}
 
 		if(nodes[i].test_status.state == test_result::positive && time_since_tested>0 && time_since_tested<=1){
@@ -94,6 +99,7 @@ void set_test_request(vector<agent>& nodes, vector<house>& homes, vector<workpla
 				}
 				}
 			}
+			nodes[i].test_status.test_requested = bernoulli(probabilities.prob_test_index_positive);
 		}
 	}
 
@@ -107,6 +113,7 @@ void set_test_request(vector<agent>& nodes, vector<house>& homes, vector<workpla
 				}
 			}
 		}
+		nodes[i].test_status.test_requested = bernoulli(probabilities.prob_test_index_symptomatic);
 	}
 
 	if(nodes[i].infection_status == Progression::hospitalised && time_since_hospitalised >0 && time_since_hospitalised<=1){
@@ -118,6 +125,7 @@ void set_test_request(vector<agent>& nodes, vector<house>& homes, vector<workpla
 				}
 			}
 		}
+		nodes[i].test_status.test_requested = bernoulli(probabilities.prob_test_index_hospitalised);
 	}
 
 	if(nodes[i].test_status.state == test_result::positive && time_since_tested>0 && time_since_tested<=1){
@@ -134,6 +142,7 @@ void set_test_request(vector<agent>& nodes, vector<house>& homes, vector<workpla
 				}
 			}
 		}
+		nodes[i].test_status.test_requested = bernoulli(probabilities.prob_test_index_positive);
 	}
 
 
@@ -152,6 +161,7 @@ void set_test_request(vector<agent>& nodes, vector<house>& homes, vector<workpla
 				}
 			}
 		}
+		nodes[i].test_status.test_requested = bernoulli(probabilities.prob_test_index_symptomatic);
 	}
 
 	if(nodes[i].infection_status == Progression::hospitalised && time_since_hospitalised >0 && time_since_hospitalised<=1){
@@ -162,6 +172,7 @@ void set_test_request(vector<agent>& nodes, vector<house>& homes, vector<workpla
 				}
 			}
 		}
+		nodes[i].test_status.test_requested = bernoulli(probabilities.prob_test_index_hospitalised);
 	}
 
 	if(nodes[i].test_status.state == test_result::positive && time_since_tested>0 && time_since_tested<=1){
@@ -177,6 +188,7 @@ void set_test_request(vector<agent>& nodes, vector<house>& homes, vector<workpla
 				}
 			}
 		}
+		nodes[i].test_status.test_requested = bernoulli(probabilities.prob_test_index_positive);
 	}
 					
 

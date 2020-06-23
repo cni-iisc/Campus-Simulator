@@ -780,9 +780,7 @@ void compute_scale_nbr_cells(vector<agent>& nodes, vector<vector<nbr_cell>>& nbr
 	for(count_type j=0; j<nbr_cells[i].size(); ++j){
 		double sum_values = 0;
 		for(count_type h=0; h<nbr_cells[i][j].houses_list.size(); ++h){
-			if(homes[nbr_cells[i][j].houses_list[h]].individuals.size()>0){ 
-				sum_values += homes[nbr_cells[i][j].houses_list[h]].individuals.size();
-			}
+		  sum_values += homes[nbr_cells[i][j].houses_list[h]].individuals.size();
 		}
 		if(sum_values>0){
 			nbr_cells[i][j].scale = GLOBAL.BETA_NBR_CELLS/sum_values;

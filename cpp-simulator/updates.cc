@@ -552,7 +552,6 @@ void updated_lambda_c_local_random_community(const vector<agent>& nodes, const v
 	  * sum_value_household
 	  * communities[houses[i].community].w_c;
   }
-  //Future: instead of updating lambda for each individual, keep it for each household.
 }
 
 void update_lambda_nbr_cells(vector<agent>& nodes, vector<vector<nbr_cell>>& nbr_cells, vector<house>& houses, vector<community>& communities){

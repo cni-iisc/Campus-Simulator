@@ -34,7 +34,6 @@ enum class Intervention {
 struct testing_probability{
   double prob_test_index_symptomatic = 0;
   double prob_test_index_hospitalised = 0;
-  double prob_test_index_positive = 0;
   double prob_test_household_positive = 0;
   double prob_test_household_hospitalised = 0;
   double prob_test_household_symptomatic = 0;

@@ -50,7 +50,7 @@ void set_test_request(vector<agent>& nodes, vector<house>& homes, vector<workpla
 				}
 			}
 		}
-		nodes[i].test_status.test_requested = bernoulli(probabilities.prob_test_index_positive);
+		nodes[i].test_status.test_requested = false;
 	}
 
 // Test people in smaller workplace network
@@ -99,7 +99,7 @@ void set_test_request(vector<agent>& nodes, vector<house>& homes, vector<workpla
 				}
 				}
 			}
-			nodes[i].test_status.test_requested = bernoulli(probabilities.prob_test_index_positive);
+			nodes[i].test_status.test_requested = false;
 		}
 	}
 
@@ -142,7 +142,7 @@ void set_test_request(vector<agent>& nodes, vector<house>& homes, vector<workpla
 				}
 			}
 		}
-		nodes[i].test_status.test_requested = bernoulli(probabilities.prob_test_index_positive);
+		nodes[i].test_status.test_requested = false;
 	}
 
 
@@ -188,7 +188,7 @@ void set_test_request(vector<agent>& nodes, vector<house>& homes, vector<workpla
 				}
 			}
 		}
-		nodes[i].test_status.test_requested = bernoulli(probabilities.prob_test_index_positive);
+		nodes[i].test_status.test_requested = false;
 	}
 					
 

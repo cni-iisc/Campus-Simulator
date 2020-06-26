@@ -603,6 +603,7 @@ void update_test_request(vector<agent>& nodes, vector<house>& homes,
   case Testing_Protocol::no_testing:
 	break;
   case Testing_Protocol::test_household:
+  probabilities.prob_test_index_hospitalised = 1;
 	probabilities.prob_test_household_symptomatic = 0;
 	probabilities.prob_test_household_hospitalised = 1;
 	probabilities.prob_test_household_positive = 1;

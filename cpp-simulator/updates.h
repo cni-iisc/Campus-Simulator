@@ -40,7 +40,7 @@ void update_lambda_nbr_cells(const std::vector<agent>& nodes, std::vector<std::v
 
 //Update test request and test status
 void update_test_request(std::vector<agent>& nodes, std::vector<house>& homes, std::vector<workplace>& workplaces, std::vector<community>& communities, std::vector<std::vector<nbr_cell>>& nbr_cells, count_type current_time);
-void update_test_status(agent& node, count_type current_time);
+void update_test_status(std::vector<agent>& nodes, count_type current_time);
 
 
 // Age stratification update functions.

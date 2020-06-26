@@ -213,45 +213,46 @@ bool should_be_isolated_node_testing(const agent& node, const int current_time, 
 }
 
 
-node_update_status_testing update_infection_testing(agent& node, vector<agent>& nodes, vector<house>& houses, count_type current_time){
-  node_update_status_testing temp;
-  if(node.test_status.state==test_result::positive){
-	  if(node.infection_status==Progression::symptomatic){
-		  if(node.severity==1){
-		  	node.disease_label = DiseaseLabel::moderate_symptomatic_tested;
-		  }
-		  else{
-		  	node.disease_label = DiseaseLabel::mild_symptomatic_tested;
-		  }
-	  }
-	  else if(node.infection_status==Progression::exposed || node.infection_status==Progression::infective){
-		  node.disease_label = DiseaseLabel::mild_symptomatic_tested;
-	  }
-	  else if(node.infection_status==Progression::hospitalised){
-	  	  node.disease_label=DiseaseLabel::severe_symptomatic_tested;
-	  }
-	  else if(node.infection_status==Progression::critical){
-	  	  node.disease_label=DiseaseLabel::icu;
-	  }
-	  else if(node.infection_status==Progression::recovered){
-		  node.disease_label=DiseaseLabel::recovered;
-	  }
-	  else if(node.infection_status==Progression::dead){
-		  node.disease_label=DiseaseLabel::dead;
-	  }
+void update_infection_testing(vector<agent>& nodes, vector<house>& houses, count_type current_time){
+  for(auto& node: nodes){
+	if(node.test_status.state==test_result::positive){
+		if(node.infection_status==Progression::symptomatic){
+			if(node.severity==1){
+				node.disease_label = DiseaseLabel::moderate_symptomatic_tested;
+			}
+			else{
+				node.disease_label = DiseaseLabel::mild_symptomatic_tested;
+			}
+		}
+		else if(node.infection_status==Progression::exposed || node.infection_status==Progression::infective){
+			node.disease_label = DiseaseLabel::mild_symptomatic_tested;
+		}
+		else if(node.infection_status==Progression::hospitalised){
+			node.disease_label=DiseaseLabel::severe_symptomatic_tested;
+		}
+		else if(node.infection_status==Progression::critical){
+			node.disease_label=DiseaseLabel::icu;
+		}
+		else if(node.infection_status==Progression::recovered){
+			node.disease_label=DiseaseLabel::recovered;
+		}
+		else if(node.infection_status==Progression::dead){
+			node.disease_label=DiseaseLabel::dead;
+		}
 
 
 
-  }
-  if(node.disease_label==DiseaseLabel::primary_contact || node.disease_label==DiseaseLabel::mild_symptomatic_tested || node.disease_label==DiseaseLabel::moderate_symptomatic_tested){
-	  if(current_time - node.test_status.contact_traced_epoch <= HOME_QUARANTINE_DAYS*GLOBAL.SIM_STEPS_PER_DAY){
-	  	modify_kappa_case_isolate_node(node);	 
-  	  }
-	  else{
-	        node.disease_label=DiseaseLabel::asymptomatic;
-	  }
-  }
-  return temp;
+	}
+	if(node.disease_label==DiseaseLabel::primary_contact || node.disease_label==DiseaseLabel::mild_symptomatic_tested || node.disease_label==DiseaseLabel::moderate_symptomatic_tested){
+		if(current_time - node.test_status.contact_traced_epoch <= HOME_QUARANTINE_DAYS*GLOBAL.SIM_STEPS_PER_DAY){
+			modify_kappa_case_isolate_node(node);	 
+		}
+		else{
+				node.disease_label=DiseaseLabel::asymptomatic;
+		}
+	}
+}
+  
 }
 
 

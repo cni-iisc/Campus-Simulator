@@ -202,13 +202,8 @@ plot_data_struct run_simulation(){
 	// Puttting the generator in a critical section can keep it
 	// correct, but slows down the code too much.
 	for(count_type j = 0; j < NUM_PEOPLE; ++j){
-	  auto node_update_status = update_infection(nodes[j], time_step);
-	  auto node_update_testing = update_infection_testing(nodes[j], nodes, homes, time_step); 
+	  auto node_update_status = update_infection(nodes[j], time_step); 
 	  nodes[j].psi_T = psi_T(nodes[j], time_step);
-	  
-	  if(GLOBAL.ENABLE_TESTING){
-	  	update_test_status(nodes[j], time_step);
-	  }
 
 	  if(node_update_status.new_infection){
 		++num_new_infections;
@@ -229,7 +224,7 @@ plot_data_struct run_simulation(){
 	  if(node_update_status.new_symptomatic && nodes[j].quarantined){
 		++quarantined_num_cases;
 	  }
-	  if(node_update_status.new_hospitalization || node_update_testing.new_hospitalization){
+	  if(node_update_status.new_hospitalization){
 		++num_cumulative_hospitalizations;
 	  }
 	  if(node_update_status.new_infective){
@@ -239,7 +234,9 @@ plot_data_struct run_simulation(){
 
 	update_all_kappa(nodes, homes, workplaces, communities, nbr_cells, intv_params, time_step);
 	if(GLOBAL.ENABLE_TESTING){
-	  update_test_request(nodes, homes, workplaces, communities, nbr_cells, time_step);
+		update_test_status(nodes, time_step);
+		update_infection_testing(nodes, homes, time_step);
+	    update_test_request(nodes, homes, workplaces, communities, nbr_cells, time_step);
 	}
 	if(GLOBAL.USE_AGE_DEPENDENT_MIXING){
 	  for (count_type h = 0; h < GLOBAL.num_homes; ++h){

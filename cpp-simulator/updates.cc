@@ -615,30 +615,31 @@ void update_test_request(vector<agent>& nodes, vector<house>& homes,
   }
 }
 
-void update_test_status(agent& node, count_type current_time){
-  if(node.test_status.test_requested==true){
-	if(node.infection_status == Progression::infective
-	   || node.infection_status == Progression::symptomatic
-	   || node.infection_status == Progression::hospitalised
-	   || node.infection_status == Progression::critical){
-	  node.test_status.state = bernoulli(GLOBAL.TEST_FALSE_NEGATIVE)?test_result::negative:test_result::positive;
-	  node.test_status.tested_epoch = current_time;
-	}
-	else if(node.infection_status == Progression::exposed
-			&& current_time-node.time_of_infection > GLOBAL.SIM_STEPS_PER_DAY*GLOBAL.TIME_TO_TEST_POSITIVE){
-	  node.test_status.state = bernoulli(GLOBAL.TEST_FALSE_NEGATIVE)?test_result::negative:test_result::positive;
-	  //We might want to have higher false negative rate here, depending upon updates in the data.
-	  node.test_status.tested_epoch = current_time;
-	}
-	else{
-	  // Test could come positive for a succeptible/recovered/dead person
-	  node.test_status.state = bernoulli(GLOBAL.TEST_FALSE_POSITIVE)?test_result::positive:test_result::negative;
-	  node.test_status.tested_epoch = current_time;
-	}
-	node.test_status.test_requested = false;
-  }
+void update_test_status(vector<agent>& nodes, count_type current_time){
+  for(auto& node: nodes){
+    if(node.test_status.test_requested==true){
+    if(node.infection_status == Progression::infective
+      || node.infection_status == Progression::symptomatic
+      || node.infection_status == Progression::hospitalised
+      || node.infection_status == Progression::critical){
+      node.test_status.state = bernoulli(GLOBAL.TEST_FALSE_NEGATIVE)?test_result::negative:test_result::positive;
+      node.test_status.tested_epoch = current_time;
+    }
+    else if(node.infection_status == Progression::exposed
+        && current_time-node.time_of_infection > GLOBAL.SIM_STEPS_PER_DAY*GLOBAL.TIME_TO_TEST_POSITIVE){
+      node.test_status.state = bernoulli(GLOBAL.TEST_FALSE_NEGATIVE)?test_result::negative:test_result::positive;
+      //We might want to have higher false negative rate here, depending upon updates in the data.
+      node.test_status.tested_epoch = current_time;
+    }
+    else{
+      // Test could come positive for a succeptible/recovered/dead person
+      node.test_status.state = bernoulli(GLOBAL.TEST_FALSE_POSITIVE)?test_result::positive:test_result::negative;
+      node.test_status.tested_epoch = current_time;
+    }
+    node.test_status.test_requested = false;
+    }
+    }
 }
-
 casualty_stats get_infected_community(const vector<agent>& nodes, const community& community){
   count_type affected = 0;
   count_type hd_area_affected = 0;

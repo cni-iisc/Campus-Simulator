@@ -17,7 +17,7 @@ import time
 
 NUM_DAYS=120
 INIT_FRAC_INFECTED=0.0001
-INCUBATION_PERIOD=2.3
+MEAN_INCUBATION_PERIOD=4.6
 MEAN_ASYMPTOMATIC_PERIOD=0.5
 MEAN_SYMPTOMATIC_PERIOD=5
 SYMPTOMATIC_FRACTION=0.66
@@ -137,7 +137,7 @@ def run_sim(num_sims_count, params):
     command+=" --NUM_DAYS "+ str(params['numDays'])
     command+=" --INIT_FRAC_INFECTED " + str(params['initFracInfected'])
     command+=" --INIT_FIXED_NUMBER_INFECTED "+ str(params['initFixedNumberInfected'])
-    command+=" --INCUBATION_PERIOD " +  str(params['incubationPeriod'])
+    command+=" --MEAN_INCUBATION_PERIOD " +  str(params['MeanIncubationPeriod'])
     command+=" --MEAN_ASYMPTOMATIC_PERIOD " +  str(params['MeanAsymptomaticPeriod']) 
     command+=" --MEAN_SYMPTOMATIC_PERIOD " + str(params['MeanSymptomaticPeriod']) 
     command+=" --SYMPTOMATIC_FRACTION " +  str(params['symptomaticFraction']) 
@@ -185,7 +185,7 @@ while (continue_run):
    
     params = { 'execDir': EXEC_DIR,'seedHDAreaPopulation': SEED_HD_AREA_POPULATION, 'seedOnlyNonCommuter': SEED_ONLY_NON_COMMUTER,
                'seedFixedNumber':SEED_FIXED_NUMBER, 'seedFixedNumber':SEED_FIXED_NUMBER, 'numDays': NUM_DAYS, 
-               'initFracInfected': INIT_FRAC_INFECTED, 'initFixedNumberInfected': INIT_FIXED_NUMBER_INFECTED, 'incubationPeriod': INCUBATION_PERIOD, 
+               'initFracInfected': INIT_FRAC_INFECTED, 'initFixedNumberInfected': INIT_FIXED_NUMBER_INFECTED, 'MeanIncubationPeriod': MEAN_INCUBATION_PERIOD, 
                'MeanAsymptomaticPeriod': MEAN_ASYMPTOMATIC_PERIOD, 'MeanSymptomaticPeriod': MEAN_SYMPTOMATIC_PERIOD, 'symptomaticFraction': SYMPTOMATIC_FRACTION, 
                'meanHospitalRegularPeriod': MEAN_HOSPITAL_REGULAR_PERIOD, 'meanHospitalCriticalPeriod': MEAN_HOSPITAL_CRITICAL_PERIOD, 
                'complianceProbability': COMPLIANCE_PROBABILITY, 'FKernelA': F_KERNEL_A, 'FKernelB': F_KERNEL_B, 

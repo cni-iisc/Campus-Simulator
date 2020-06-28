@@ -1682,9 +1682,9 @@ function plot_plotly(data, plot_position, title_text, legends) {
     Plotly.newPlot(plot_position, data_plot, layout, btnRemove);
 }
 
+
 //Main function
 function runSimulations() {
-
     //clear_plots();
 
     //get the inputs from the HTML page
@@ -1763,12 +1763,12 @@ function set_default_values_html() {
     document.getElementById("symtomaticFraction").value = SYMPTOMATIC_FRACTION;
     document.getElementById("meanHospitalPeriod").value = MEAN_HOSPITAL_REGULAR_PERIOD;
     document.getElementById("meanICUPeriod").value = MEAN_HOSPITAL_CRITICAL_PERIOD;
-    document.getElementById("compliance").value = COMPLIANCE_PROBABILITY;
-    document.getElementById("betaHouse").value = BETA_H;
-    document.getElementById("betaWork").value = BETA_W;
-    document.getElementById("betaCommunity").value = BETA_C;
-    document.getElementById("betaSchools").value = BETA_S;
-    document.getElementById("betaPT").value = BETA_PT;
+    // document.getElementById("compliance").value = COMPLIANCE_PROBABILITY;
+    // document.getElementById("betaHouse").value = BETA_H;
+    // document.getElementById("betaWork").value = BETA_W;
+    // document.getElementById("betaCommunity").value = BETA_C;
+    // document.getElementById("betaSchools").value = BETA_S;
+    // document.getElementById("betaPT").value = BETA_PT;
     //document.getElementById("interventions").value = "0";
 
     setCity( document.getElementById("cityname").value );
@@ -1778,11 +1778,51 @@ function set_default_values_html() {
 //
 //}
 
+function setParameters(city){
+    if (city === 'bengaluru'){
+        console.log('dit ij bengaluru');
+        document.getElementById("compliance").value = 0;
+        document.getElementById("betaHouse").value = 0;
+        document.getElementById("betaWork").value = 0;
+        document.getElementById("betaCommunity").value = 0;
+        document.getElementById("betaSchools").value = 0;
+        document.getElementById("betaPT").value = 0;
+    }
+    if (city === 'wuhan'){
+        console.log('dit ij wuhan');
+        document.getElementById("compliance").value = 0;
+        document.getElementById("betaHouse").value = 0;
+        document.getElementById("betaWork").value = 0;
+        document.getElementById("betaCommunity").value = 0;
+        document.getElementById("betaSchools").value = 0;
+        document.getElementById("betaPT").value = 0;
+    }
+    if (city === 'nyc'){
+        console.log('dit ij nyc');
+        document.getElementById("compliance").value = 0;
+        document.getElementById("betaHouse").value = 0;
+        document.getElementById("betaWork").value = 0;
+        document.getElementById("betaCommunity").value = 0;
+        document.getElementById("betaSchools").value = 0;
+        document.getElementById("betaPT").value = 0;
+    }
+    if (city === 'kochi'){
+        console.log('dit ij kochi');
+        document.getElementById("compliance").value = 0;
+        document.getElementById("betaHouse").value = 0;
+        document.getElementById("betaWork").value = 0;
+        document.getElementById("betaCommunity").value = 0;
+        document.getElementById("betaSchools").value = 0;
+        document.getElementById("betaPT").value = 0;
+    }
+}
+
+
 function setCity (city) {
     cityName = city;
-    console.log('City: ', cityName)
     inputPath = INPUTPATHPREFIX + '/' + cityName + '/';
     mapImage.src = IMAGEPREFIX + '/' + cityName + '-wards_v2.png'
+    setParameters(city);
 }
 
 //jquery events for the webUI

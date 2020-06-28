@@ -142,7 +142,7 @@ int main(int argc, char** argv){
     ;
 
   options.add_options("Age-dependent mixing")
-    ("USE_AGE_DEPENDENT_MIXING", "whether age-stratified interacctions are enabled",
+    ("USE_AGE_DEPENDENT_MIXING", "whether age-stratified interactions are enabled",
      cxxopts::value<bool>()->default_value(DEFAULTS.USE_AGE_DEPENDENT_MIXING))
     ("SIGNIFICANT_EIGEN_VALUES",
 	 "number of principal components of the age-stratification matrix to use",
@@ -158,11 +158,13 @@ int main(int argc, char** argv){
      cxxopts::value<std::string>()->default_value(DEFAULTS.attendance_filename))
     ("intervention_filename", "intervention json filename, relative to input_directory",
      cxxopts::value<std::string>()->default_value(DEFAULTS.intervention_params_filename))
-    ("MASK_ACTIVE", "whether masks factor needs to be incorporated",
+    ("MASK_ACTIVE", "whether masks are to be incorporated",
      cxxopts::value<bool>()->default_value(DEFAULTS.MASK_ACTIVE))
+    ("MASK_FACTOR", "whether masks are to be incorporated",
+     cxxopts::value<double>()->default_value(DEFAULTS.MASK_FACTOR))
     ("MASK_START_DELAY", "days after which masks are enforced",
      cxxopts::value<double>()->default_value(DEFAULTS.MASK_START_DELAY))
-    ("ENABLE_TESTING", "the enable_testing parameter",
+    ("ENABLE_TESTING", "enable testing (contact-tracing) functionality",
      cxxopts::value<bool>()->default_value(DEFAULTS.ENABLE_TESTING))
     ;
 
@@ -270,6 +272,10 @@ int main(int argc, char** argv){
   GLOBAL.HOSPITAL_CRITICAL_PERIOD = GLOBAL.MEAN_HOSPITAL_CRITICAL_PERIOD*GLOBAL.SIM_STEPS_PER_DAY;
   
   GLOBAL.MASK_ACTIVE = optvals["MASK_ACTIVE"].count();
+  if(GLOBAL.MASK_ACTIVE){
+    GLOBAL.MASK_FACTOR = optvals["MASK_FACTOR"].as<double>();
+  }
+
   GLOBAL.MASK_START_DATE = GLOBAL.CALIBRATION_DELAY + optvals["MASK_START_DELAY"].as<double>(); //masks starts from April 9
 
   //initialise city bounding box co-ordinates with Bangalore values. Will read from file later.

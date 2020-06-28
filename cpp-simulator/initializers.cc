@@ -215,7 +215,48 @@ vector<intervention_params> init_intervention_params(){
 		  temp.home_quarantine = elem["home_quarantine"]["active"].GetBool();
 		}
 		if(elem.HasMember("lockdown")){
+		  //TODO: collect all these statements in a function.
 		  temp.lockdown = elem["lockdown"]["active"].GetBool();
+		  if(elem["lockdown"].HasMember("kappa_values_compliant")){
+			  if(elem["lockdown"]["kappa_values_compliant"].HasMember("kappa_H")){
+				  temp.lockdown_kappas_compliant.kappa_H = elem["lockdown"]["kappa_values_compliant"]["kappa_H"].GetDouble();
+			  }
+			  if(elem["lockdown"]["kappa_values_compliant"].HasMember("kappa_H_incoming")){
+				  temp.lockdown_kappas_compliant.kappa_H_incoming = elem["lockdown"]["kappa_values_compliant"]["kappa_H_incoming"].GetDouble();
+			  }
+			  if(elem["lockdown"]["kappa_values_compliant"].HasMember("kappa_W")){
+				  temp.lockdown_kappas_compliant.kappa_W = elem["lockdown"]["kappa_values_compliant"]["kappa_W"].GetDouble();
+			  }
+			  if(elem["lockdown"]["kappa_values_compliant"].HasMember("kappa_W_incoming")){
+				  temp.lockdown_kappas_compliant.kappa_W_incoming = elem["lockdown"]["kappa_values_compliant"]["kappa_W_incoming"].GetDouble();
+			  }
+			  if(elem["lockdown"]["kappa_values_compliant"].HasMember("kappa_C")){
+				  temp.lockdown_kappas_compliant.kappa_C = elem["lockdown"]["kappa_values_compliant"]["kappa_C"].GetDouble();
+			  }
+			  if(elem["lockdown"]["kappa_values_compliant"].HasMember("kappa_C_incoming")){
+				  temp.lockdown_kappas_compliant.kappa_C_incoming = elem["lockdown"]["kappa_values_compliant"]["kappa_C_incoming"].GetDouble();
+			  }			  	
+		  }
+		  if(elem["lockdown"].HasMember("kappa_values_non_compliant")){
+			  if(elem["lockdown"]["kappa_values_non_compliant"].HasMember("kappa_H")){
+				  temp.lockdown_kappas_non_compliant.kappa_H = elem["lockdown"]["kappa_values_non_compliant"]["kappa_H"].GetDouble();
+			  }
+			  if(elem["lockdown"]["kappa_values_non_compliant"].HasMember("kappa_H_incoming")){
+				  temp.lockdown_kappas_non_compliant.kappa_H_incoming = elem["lockdown"]["kappa_values_non_compliant"]["kappa_H_incoming"].GetDouble();
+			  }
+			  if(elem["lockdown"]["kappa_values_non_compliant"].HasMember("kappa_W")){
+				  temp.lockdown_kappas_non_compliant.kappa_W = elem["lockdown"]["kappa_values_non_compliant"]["kappa_W"].GetDouble();
+			  }
+			  if(elem["lockdown"]["kappa_values_non_compliant"].HasMember("kappa_W_incoming")){
+				  temp.lockdown_kappas_non_compliant.kappa_W_incoming = elem["lockdown"]["kappa_values_non_compliant"]["kappa_W_incoming"].GetDouble();
+			  }
+			  if(elem["lockdown"]["kappa_values_non_compliant"].HasMember("kappa_C")){
+				  temp.lockdown_kappas_non_compliant.kappa_C = elem["lockdown"]["kappa_values_non_compliant"]["kappa_C"].GetDouble();
+			  }
+			  if(elem["lockdown"]["kappa_values_non_compliant"].HasMember("kappa_C_incoming")){
+				  temp.lockdown_kappas_non_compliant.kappa_C_incoming = elem["lockdown"]["kappa_values_non_compliant"]["kappa_C_incoming"].GetDouble();
+			  }			  	
+		  }
 		}
 		if(elem.HasMember("social_dist_elderly")){
 		  temp.social_dist_elderly = elem["social_dist_elderly"]["active"].GetBool();

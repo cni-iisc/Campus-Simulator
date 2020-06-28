@@ -8,7 +8,7 @@ struct defaults{
   std::string NUM_DAYS = "120";
   std::string INIT_FRAC_INFECTED = "0.0001";
   std::string INIT_FIXED_NUMBER_INFECTED = "100";
-  std::string INCUBATION_PERIOD = "2.25";
+  std::string MEAN_INCUBATION_PERIOD = "4.50";
   std::string MEAN_ASYMPTOMATIC_PERIOD = "0.5";
   std::string MEAN_SYMPTOMATIC_PERIOD = "5";
   std::string SYMPTOMATIC_FRACTION = "0.67";

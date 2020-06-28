@@ -47,8 +47,8 @@ int main(int argc, char** argv){
     ;
 
   options.add_options("Disease progression")
-    ("INCUBATION_PERIOD", "incubation period",
-     cxxopts::value<double>()->default_value(DEFAULTS.INCUBATION_PERIOD))
+    ("MEAN_INCUBATION_PERIOD", "mean incubation period",
+     cxxopts::value<double>()->default_value(DEFAULTS.MEAN_INCUBATION_PERIOD))
     ("MEAN_ASYMPTOMATIC_PERIOD", "mean asymptomatic period",
      cxxopts::value<double>()->default_value(DEFAULTS.MEAN_ASYMPTOMATIC_PERIOD))
     ("MEAN_SYMPTOMATIC_PERIOD", "mean symptomatic period",
@@ -192,7 +192,7 @@ int main(int argc, char** argv){
   GLOBAL.NUM_DAYS = optvals["NUM_DAYS"].as<count_type>();
   GLOBAL.INIT_FRAC_INFECTED = optvals["INIT_FRAC_INFECTED"].as<double>();
   GLOBAL.INIT_FIXED_NUMBER_INFECTED = optvals["INIT_FIXED_NUMBER_INFECTED"].as<count_type>();
-  GLOBAL.INCUBATION_PERIOD = optvals["INCUBATION_PERIOD"].as<double>();
+  GLOBAL.MEAN_INCUBATION_PERIOD = optvals["MEAN_INCUBATION_PERIOD"].as<double>();
   GLOBAL.MEAN_ASYMPTOMATIC_PERIOD = optvals["MEAN_ASYMPTOMATIC_PERIOD"].as<double>();
   GLOBAL.MEAN_SYMPTOMATIC_PERIOD = optvals["MEAN_SYMPTOMATIC_PERIOD"].as<double>();
   GLOBAL.SYMPTOMATIC_FRACTION = optvals["SYMPTOMATIC_FRACTION"].as<double>();
@@ -264,7 +264,7 @@ int main(int argc, char** argv){
   GLOBAL.COMMUNITY_LOCK_THRESHOLD = optvals["COMMUNITY_LOCK_THRESHOLD"].as<double>();
   //Compute parametrs based on options
   GLOBAL.NUM_TIMESTEPS = GLOBAL.NUM_DAYS*GLOBAL.SIM_STEPS_PER_DAY;
-  GLOBAL.INCUBATION_PERIOD_SCALE = GLOBAL.INCUBATION_PERIOD*GLOBAL.SIM_STEPS_PER_DAY;
+  GLOBAL.INCUBATION_PERIOD_SCALE = GLOBAL.MEAN_INCUBATION_PERIOD*GLOBAL.SIM_STEPS_PER_DAY / GLOBAL.INCUBATION_PERIOD_SHAPE;
 
   GLOBAL.ASYMPTOMATIC_PERIOD = GLOBAL.MEAN_ASYMPTOMATIC_PERIOD*GLOBAL.SIM_STEPS_PER_DAY;
   GLOBAL.SYMPTOMATIC_PERIOD = GLOBAL.MEAN_SYMPTOMATIC_PERIOD*GLOBAL.SIM_STEPS_PER_DAY;

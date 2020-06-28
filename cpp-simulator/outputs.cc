@@ -167,7 +167,7 @@ void output_global_params(const string& output_dir){
   fout << "#Actual number of initial infections: " << GLOBAL.INIT_ACTUALLY_INFECTED << ";" << endl;
 
   
-  fout << "INCUBATION_PERIOD: " << GLOBAL.INCUBATION_PERIOD << ";" << endl; 
+  fout << "MEAN_INCUBATION_PERIOD: " << GLOBAL.MEAN_INCUBATION_PERIOD << ";" << endl; 
   fout << "MEAN_ASYMPTOMATIC_PERIOD: " << GLOBAL.MEAN_ASYMPTOMATIC_PERIOD << ";" << endl; 
   fout << "MEAN_SYMPTOMATIC_PERIOD: " << GLOBAL.MEAN_SYMPTOMATIC_PERIOD << ";" << endl; 
   fout << "MEAN_HOSPITAL_REGULAR_PERIOD: " << GLOBAL.MEAN_HOSPITAL_REGULAR_PERIOD << ";" << endl; 
@@ -233,7 +233,7 @@ void output_global_params(const string& output_dir){
   fout << "WARD_CONTAINMENT_THRESHOLD:" <<GLOBAL.WARD_CONTAINMENT_THRESHOLD << ";"<< endl;
   fout << "ENABLE_CONTAINMENT:" <<GLOBAL.ENABLE_CONTAINMENT << ";"<< endl;
   fout << "ENABLE_NBR_CELLS:" <<GLOBAL.ENABLE_NBR_CELLS << ";"<< endl;
-
+  fout << "ENABLE_TESTING:" << GLOBAL.ENABLE_TESTING << ";" <<endl;
   fout.close();
 
   //Copy the attendance file

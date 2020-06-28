@@ -278,7 +278,7 @@ struct global_params{
   count_type NUM_TIMESTEPS = NUM_DAYS*SIM_STEPS_PER_DAY; //
   double INIT_FRAC_INFECTED = 0.0001; // Initial number of people infected
 
-  double INCUBATION_PERIOD = 2.25;
+  double MEAN_INCUBATION_PERIOD = 4.50;
   double MEAN_ASYMPTOMATIC_PERIOD = 0.5;
   double MEAN_SYMPTOMATIC_PERIOD = 5;
   double MEAN_HOSPITAL_REGULAR_PERIOD = 8;
@@ -293,7 +293,7 @@ struct global_params{
 	
   
   const double INCUBATION_PERIOD_SHAPE = 2.0; //Fixing this back to 2.0. To change incubation period, change incubation scale.
-  double INCUBATION_PERIOD_SCALE = INCUBATION_PERIOD*SIM_STEPS_PER_DAY;// 2.29 days
+  double INCUBATION_PERIOD_SCALE = MEAN_INCUBATION_PERIOD*SIM_STEPS_PER_DAY / INCUBATION_PERIOD_SHAPE;// 2.29 days
 
   //Gamma with mean 1 and shape 0.25, as per Imperial College 16 March Report
   double INFECTIOUSNESS_SHAPE = 0.25;

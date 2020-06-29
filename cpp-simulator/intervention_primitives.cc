@@ -26,6 +26,7 @@ void set_kappa_base_node(agent& node, double community_factor, const int cur_tim
 
 void set_kappa_lockdown_node(agent& node, const int cur_time, const intervention_params intv_params){
   node.kappa_T = kappa_T(node, cur_time);
+  node.quarantined = true; //lockdown implies quarantined
   if(node.workplace_type==WorkplaceType::office){
     node.kappa_W = intv_params.lockdown_kappas_compliant.kappa_W;
     node.kappa_W_incoming = intv_params.lockdown_kappas_compliant.kappa_W_incoming;

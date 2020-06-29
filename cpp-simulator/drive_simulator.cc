@@ -64,7 +64,8 @@ int main(int argc, char** argv){
   options.add_options("City")
     ("COMPLIANCE_PROBABILITY", "default compliance probability",
      cxxopts::value<double>()->default_value(DEFAULTS.COMPLIANCE_PROBABILITY))
-    ("HD_COMPLIANCE_PROBABILITY", "default compliance probability for high-density areas")
+    ("HD_COMPLIANCE_PROBABILITY", "default compliance probability for high-density areas",
+     cxxopts::value<double>()->default_value(DEFAULTS.COMPLIANCE_PROBABILITY))      
     ("F_KERNEL_A", "the 'a' parameter in the distance kernel, for distance in km",
      cxxopts::value<double>()->default_value(DEFAULTS.F_KERNEL_A))
     ("F_KERNEL_B", "the 'b' parameter in the distance kernel, for distance in km",
@@ -201,7 +202,7 @@ int main(int argc, char** argv){
   GLOBAL.MEAN_HOSPITAL_CRITICAL_PERIOD = optvals["MEAN_HOSPITAL_CRITICAL_PERIOD"].as<double>();
   GLOBAL.COMPLIANCE_PROBABILITY = optvals["COMPLIANCE_PROBABILITY"].as<double>();
   if(optvals["HD_COMPLIANCE_PROBABILITY"].count()){
-	GLOBAL.HD_COMPLIANCE_PROBABILITY = optvals["HD_COMPLIANCE_PROBABILITY"].as<double>();
+	  GLOBAL.HD_COMPLIANCE_PROBABILITY = optvals["HD_COMPLIANCE_PROBABILITY"].as<double>();
   } else {
 	//If HD_COMPLIANCE_PROBABILITY is not provided then set it equal to whatever
 	//value was provided for COMPLIANCE_PROBABILITY

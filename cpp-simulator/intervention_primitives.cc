@@ -10,6 +10,7 @@ using std::min;
 
 void set_kappa_base_node(agent& node, double community_factor, const int cur_time){
   //set the basic kappa values for this node according to current time
+  node.quarantined=false;
   node.kappa_T = kappa_T(node, cur_time);
   node.kappa_H = 1.0;
   node.kappa_H_incoming = 1.0;

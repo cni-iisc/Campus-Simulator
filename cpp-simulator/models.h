@@ -34,22 +34,44 @@ enum class Intervention {
 struct testing_probability{
   double prob_test_index_symptomatic = 0;
   double prob_test_index_hospitalised = 0;
-  double prob_test_household_positive = 0;
-  double prob_test_household_hospitalised = 0;
-  double prob_test_household_symptomatic = 0;
-  double prob_test_workplace_positive = 0;
-  double prob_test_workplace_hospitalised = 0;
-  double prob_test_workplace_symptomatic = 0;
-  double prob_test_random_community_positive = 0;
-  double prob_test_random_community_hospitalised = 0;
-  double prob_test_random_community_symptomatic = 0;
-  double prob_test_neighbourhood_positive = 0;
-  double prob_test_neighbourhood_hospitalised = 0;
-  double prob_test_neighbourhood_symptomatic = 0;
-  double prob_test_school_positive = 0;
-  double prob_test_school_hospitalised = 0;
-  double prob_test_school_symptomatic = 0;
+
+  double prob_test_household_positive_symptomatic = 0; // network_indexcase_contact
+  double prob_test_household_hospitalised_symptomatic = 0;
+  double prob_test_household_symptomatic_symptomatic = 0;
+  double prob_test_household_positive_asymptomatic = 0;
+  double prob_test_household_hospitalised_asymptomatic = 0;
+  double prob_test_household_symptomatic_asymptomatic = 0;
+
+  double prob_test_workplace_positive_symptomatic = 0;
+  double prob_test_workplace_hospitalised_symptomatic = 0;
+  double prob_test_workplace_symptomatic_symptomatic = 0;  
+  double prob_test_workplace_positive_asymptomatic = 0;
+  double prob_test_workplace_hospitalised_asymptomatic = 0;
+  double prob_test_workplace_symptomatic_asymptomatic = 0;
+  
+  double prob_test_random_community_positive_symptomatic = 0;
+  double prob_test_random_community_hospitalised_symptomatic = 0;
+  double prob_test_random_community_symptomatic_symptomatic = 0;
+  double prob_test_random_community_positive_asymptomatic = 0;
+  double prob_test_random_community_hospitalised_asymptomatic = 0;
+  double prob_test_random_community_symptomatic_asymptomatic = 0;
+
+  double prob_test_neighbourhood_positive_symptomatic = 0;
+  double prob_test_neighbourhood_hospitalised_symptomatic = 0;
+  double prob_test_neighbourhood_symptomatic_symptomatic = 0;
+  double prob_test_neighbourhood_positive_asymptomatic = 0;
+  double prob_test_neighbourhood_hospitalised_asymptomatic = 0;
+  double prob_test_neighbourhood_symptomatic_asymptomatic = 0;
+ 
+  double prob_test_school_positive_symptomatic = 0;
+  double prob_test_school_hospitalised_symptomatic = 0;
+  double prob_test_school_symptomatic_symptomatic = 0;
+  double prob_test_school_positive_asymptomatic = 0;
+  double prob_test_school_hospitalised_asymptomatic = 0;
+  double prob_test_school_symptomatic_asymptomatic = 0;
+ 
   double prob_retest_recovered = 0;
+  
   double prob_contact_trace_household = 0;
   double prob_contact_trace_project = 0;
   double prob_contact_trace_random_community = 0;

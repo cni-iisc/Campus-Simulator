@@ -24,7 +24,14 @@ void set_test_request(vector<agent>& nodes, vector<house>& homes, vector<workpla
 	if(nodes[i].infection_status == Progression::symptomatic && time_since_symptomatic >0 && time_since_symptomatic<=1){
 		for(count_type j=0; j<homes[nodes[i].home].individuals.size(); j++){
 			if(current_time - nodes[homes[nodes[i].home].individuals[j]].test_status.tested_epoch > GLOBAL.SIM_STEPS_PER_DAY*GLOBAL.MINIMUM_TEST_INTERVAL){
-				nodes[homes[nodes[i].home].individuals[j]].test_status.test_requested = bernoulli(probabilities.prob_test_household_symptomatic);
+				if(nodes[homes[nodes[i].home].individuals[j]].infection_status == Progression::symptomatic){
+					nodes[homes[nodes[i].home].individuals[j]].test_status.test_requested = bernoulli(probabilities.prob_test_household_symptomatic_symptomatic);
+				}
+				else if(nodes[homes[nodes[i].home].individuals[j]].infection_status == Progression::susceptible || 
+						nodes[homes[nodes[i].home].individuals[j]].infection_status == Progression::exposed ||
+						nodes[homes[nodes[i].home].individuals[j]].infection_status == Progression::infective){
+					nodes[homes[nodes[i].home].individuals[j]].test_status.test_requested = bernoulli(probabilities.prob_test_household_symptomatic_asymptomatic);
+				}
 			}
 		}
 		nodes[i].test_status.test_requested = bernoulli(probabilities.prob_test_index_symptomatic);
@@ -33,7 +40,14 @@ void set_test_request(vector<agent>& nodes, vector<house>& homes, vector<workpla
 	if(nodes[i].infection_status == Progression::hospitalised && time_since_hospitalised >0 && time_since_hospitalised<=1){
 		for(count_type j=0; j<homes[nodes[i].home].individuals.size(); j++){
 			if(current_time - nodes[homes[nodes[i].home].individuals[j]].test_status.tested_epoch > GLOBAL.SIM_STEPS_PER_DAY*GLOBAL.MINIMUM_TEST_INTERVAL){
-				nodes[homes[nodes[i].home].individuals[j]].test_status.test_requested = bernoulli(probabilities.prob_test_household_hospitalised);
+				if(nodes[homes[nodes[i].home].individuals[j]].infection_status == Progression::symptomatic){
+					nodes[homes[nodes[i].home].individuals[j]].test_status.test_requested = bernoulli(probabilities.prob_test_household_hospitalised_symptomatic);
+				}
+				else if(nodes[homes[nodes[i].home].individuals[j]].infection_status == Progression::susceptible || 
+						nodes[homes[nodes[i].home].individuals[j]].infection_status == Progression::exposed ||
+						nodes[homes[nodes[i].home].individuals[j]].infection_status == Progression::infective){
+					nodes[homes[nodes[i].home].individuals[j]].test_status.test_requested = bernoulli(probabilities.prob_test_household_hospitalised_asymptomatic);
+				}
 			}
 		}
 		nodes[i].test_status.test_requested = bernoulli(probabilities.prob_test_index_hospitalised);
@@ -43,7 +57,14 @@ void set_test_request(vector<agent>& nodes, vector<house>& homes, vector<workpla
 		bool temp = bernoulli(probabilities.prob_contact_trace_household);
 		for(count_type j=0; j<homes[nodes[i].home].individuals.size(); j++){	
 			if(current_time - nodes[homes[nodes[i].home].individuals[j]].test_status.tested_epoch > GLOBAL.SIM_STEPS_PER_DAY*GLOBAL.MINIMUM_TEST_INTERVAL){
-				nodes[homes[nodes[i].home].individuals[j]].test_status.test_requested = bernoulli(probabilities.prob_test_household_positive);
+				if(nodes[homes[nodes[i].home].individuals[j]].infection_status == Progression::symptomatic){
+					nodes[homes[nodes[i].home].individuals[j]].test_status.test_requested = bernoulli(probabilities.prob_test_household_positive_symptomatic);
+				}
+				else if(nodes[homes[nodes[i].home].individuals[j]].infection_status == Progression::susceptible || 
+						nodes[homes[nodes[i].home].individuals[j]].infection_status == Progression::exposed ||
+						nodes[homes[nodes[i].home].individuals[j]].infection_status == Progression::infective){
+					nodes[homes[nodes[i].home].individuals[j]].test_status.test_requested = bernoulli(probabilities.prob_test_household_positive_asymptomatic);
+				}
 				if(temp){
 					nodes[homes[nodes[i].home].individuals[j]].disease_label=DiseaseLabel::primary_contact;
 					nodes[homes[nodes[i].home].individuals[j]].test_status.contact_traced_epoch = current_time;
@@ -56,25 +77,44 @@ void set_test_request(vector<agent>& nodes, vector<house>& homes, vector<workpla
 // Test people in smaller workplace network
 
 	if(nodes[i].workplace_type==WorkplaceType::school || nodes[i].workplace_type==WorkplaceType::office){
-		double prob_symptomatic = 0;
-		double prob_hospitalised = 0;
-		double prob_positive = 0;
+		double prob_symptomatic_symptomatic = 0;
+		double prob_hospitalised_symptomatic = 0;
+		double prob_positive_symptomatic = 0;
+		double prob_symptomatic_asymptomatic = 0;
+		double prob_hospitalised_asymptomatic = 0;
+		double prob_positive_asymptomatic = 0;
 		if(nodes[i].workplace_type==WorkplaceType::school){
-			prob_symptomatic = probabilities.prob_test_school_symptomatic;  
-			prob_hospitalised = probabilities.prob_test_school_hospitalised; 
-			prob_positive = probabilities.prob_test_school_positive; 
+			prob_symptomatic_symptomatic = probabilities.prob_test_school_symptomatic_symptomatic;  
+			prob_hospitalised_symptomatic = probabilities.prob_test_school_hospitalised_symptomatic; 
+			prob_positive_symptomatic = probabilities.prob_test_school_positive_symptomatic; 
+
+			prob_symptomatic_asymptomatic = probabilities.prob_test_school_symptomatic_asymptomatic;  
+			prob_hospitalised_asymptomatic = probabilities.prob_test_school_hospitalised_asymptomatic; 
+			prob_positive_asymptomatic = probabilities.prob_test_school_positive_asymptomatic; 
+
 		}
 		else if(nodes[i].workplace_type==WorkplaceType::office){
-			prob_symptomatic = probabilities.prob_test_workplace_symptomatic;  
-			prob_hospitalised = probabilities.prob_test_workplace_hospitalised; 
-			prob_positive = probabilities.prob_test_workplace_positive; 
+			prob_symptomatic_symptomatic = probabilities.prob_test_workplace_symptomatic_symptomatic;  
+			prob_hospitalised_symptomatic = probabilities.prob_test_workplace_hospitalised_symptomatic; 
+			prob_positive_symptomatic = probabilities.prob_test_workplace_positive_symptomatic;
+
+			prob_symptomatic_asymptomatic = probabilities.prob_test_workplace_symptomatic_asymptomatic;  
+			prob_hospitalised_asymptomatic = probabilities.prob_test_workplace_hospitalised_asymptomatic; 
+			prob_positive_asymptomatic = probabilities.prob_test_workplace_positive_asymptomatic; 
 		}
 
 
 		if(nodes[i].infection_status == Progression::symptomatic && time_since_symptomatic >0 && time_since_symptomatic<=1){
 			for(count_type j=0; j<workplaces[nodes[i].workplace].projects[nodes[i].workplace_subnetwork].individuals.size(); j++){
 				if(current_time - nodes[workplaces[nodes[i].workplace].projects[nodes[i].workplace_subnetwork].individuals[j]].test_status.tested_epoch > GLOBAL.SIM_STEPS_PER_DAY*GLOBAL.MINIMUM_TEST_INTERVAL){
-					nodes[workplaces[nodes[i].workplace].projects[nodes[i].workplace_subnetwork].individuals[j]].test_status.test_requested = bernoulli(prob_symptomatic);
+					if(nodes[workplaces[nodes[i].workplace].projects[nodes[i].workplace_subnetwork].individuals[j]].infection_status == Progression::symptomatic){
+						nodes[workplaces[nodes[i].workplace].projects[nodes[i].workplace_subnetwork].individuals[j]].test_status.test_requested = bernoulli(prob_symptomatic_symptomatic);
+					}
+					else if(nodes[workplaces[nodes[i].workplace].projects[nodes[i].workplace_subnetwork].individuals[j]].infection_status == Progression::susceptible || 
+							nodes[workplaces[nodes[i].workplace].projects[nodes[i].workplace_subnetwork].individuals[j]].infection_status == Progression::exposed ||
+							nodes[workplaces[nodes[i].workplace].projects[nodes[i].workplace_subnetwork].individuals[j]].infection_status == Progression::infective){
+						nodes[workplaces[nodes[i].workplace].projects[nodes[i].workplace_subnetwork].individuals[j]].test_status.test_requested = bernoulli(prob_symptomatic_asymptomatic);
+					}
 				}
 			}
 			nodes[i].test_status.test_requested = bernoulli(probabilities.prob_test_index_symptomatic);
@@ -83,7 +123,14 @@ void set_test_request(vector<agent>& nodes, vector<house>& homes, vector<workpla
 		if(nodes[i].infection_status == Progression::hospitalised && time_since_hospitalised >0 && time_since_hospitalised<=1){
 			for(count_type j=0; j<workplaces[nodes[i].workplace].projects[nodes[i].workplace_subnetwork].individuals.size(); j++){
 				if(current_time - nodes[workplaces[nodes[i].workplace].projects[nodes[i].workplace_subnetwork].individuals[j]].test_status.tested_epoch > GLOBAL.SIM_STEPS_PER_DAY*GLOBAL.MINIMUM_TEST_INTERVAL){
-					nodes[workplaces[nodes[i].workplace].projects[nodes[i].workplace_subnetwork].individuals[j]].test_status.test_requested = bernoulli(prob_hospitalised);
+					if(nodes[workplaces[nodes[i].workplace].projects[nodes[i].workplace_subnetwork].individuals[j]].infection_status == Progression::symptomatic){
+						nodes[workplaces[nodes[i].workplace].projects[nodes[i].workplace_subnetwork].individuals[j]].test_status.test_requested = bernoulli(prob_hospitalised_symptomatic);
+					}
+					else if(nodes[workplaces[nodes[i].workplace].projects[nodes[i].workplace_subnetwork].individuals[j]].infection_status == Progression::susceptible || 
+							nodes[workplaces[nodes[i].workplace].projects[nodes[i].workplace_subnetwork].individuals[j]].infection_status == Progression::exposed ||
+							nodes[workplaces[nodes[i].workplace].projects[nodes[i].workplace_subnetwork].individuals[j]].infection_status == Progression::infective){
+						nodes[workplaces[nodes[i].workplace].projects[nodes[i].workplace_subnetwork].individuals[j]].test_status.test_requested = bernoulli(prob_hospitalised_asymptomatic);
+					}				
 				}
 			}
 			nodes[i].test_status.test_requested = bernoulli(probabilities.prob_test_index_hospitalised);
@@ -92,7 +139,14 @@ void set_test_request(vector<agent>& nodes, vector<house>& homes, vector<workpla
 		if(nodes[i].test_status.state == test_result::positive && time_since_tested>0 && time_since_tested<=1){
 			for(count_type j=0; j<workplaces[nodes[i].workplace].projects[nodes[i].workplace_subnetwork].individuals.size(); j++){	
 				if(current_time - nodes[workplaces[nodes[i].workplace].projects[nodes[i].workplace_subnetwork].individuals[j]].test_status.tested_epoch > GLOBAL.SIM_STEPS_PER_DAY*GLOBAL.MINIMUM_TEST_INTERVAL){
-					nodes[workplaces[nodes[i].workplace].projects[nodes[i].workplace_subnetwork].individuals[j]].test_status.test_requested = bernoulli(prob_positive);
+					if(nodes[workplaces[nodes[i].workplace].projects[nodes[i].workplace_subnetwork].individuals[j]].infection_status == Progression::symptomatic){
+						nodes[workplaces[nodes[i].workplace].projects[nodes[i].workplace_subnetwork].individuals[j]].test_status.test_requested = bernoulli(prob_positive_symptomatic);
+					}
+					else if(nodes[workplaces[nodes[i].workplace].projects[nodes[i].workplace_subnetwork].individuals[j]].infection_status == Progression::susceptible || 
+							nodes[workplaces[nodes[i].workplace].projects[nodes[i].workplace_subnetwork].individuals[j]].infection_status == Progression::exposed ||
+							nodes[workplaces[nodes[i].workplace].projects[nodes[i].workplace_subnetwork].individuals[j]].infection_status == Progression::infective){
+						nodes[workplaces[nodes[i].workplace].projects[nodes[i].workplace_subnetwork].individuals[j]].test_status.test_requested = bernoulli(prob_positive_asymptomatic);
+					}
 				if(bernoulli(nodes[i].workplace_type==WorkplaceType::school?(probabilities.prob_contact_trace_class):(probabilities.prob_contact_trace_project))){
 					nodes[workplaces[nodes[i].workplace].projects[nodes[i].workplace_subnetwork].individuals[j]].disease_label=DiseaseLabel::primary_contact;
 					nodes[workplaces[nodes[i].workplace].projects[nodes[i].workplace_subnetwork].individuals[j]].test_status.contact_traced_epoch = current_time;
@@ -109,7 +163,14 @@ void set_test_request(vector<agent>& nodes, vector<house>& homes, vector<workpla
 		for(count_type k=0; k<homes[nodes[i].home].random_households.households.size(); k++){
 			for(count_type j=0; j<homes[homes[nodes[i].home].random_households.households[k]].individuals.size(); j++){
 				if(current_time - nodes[homes[homes[nodes[i].home].random_households.households[k]].individuals[j]].test_status.tested_epoch > GLOBAL.SIM_STEPS_PER_DAY*GLOBAL.MINIMUM_TEST_INTERVAL){
-					nodes[homes[homes[nodes[i].home].random_households.households[k]].individuals[j]].test_status.test_requested = bernoulli(probabilities.prob_test_random_community_symptomatic);
+					if(nodes[homes[homes[nodes[i].home].random_households.households[k]].individuals[j]].infection_status == Progression::symptomatic){
+						nodes[homes[homes[nodes[i].home].random_households.households[k]].individuals[j]].test_status.test_requested = bernoulli(probabilities.prob_test_random_community_symptomatic_symptomatic);
+					}
+					else if(nodes[homes[homes[nodes[i].home].random_households.households[k]].individuals[j]].infection_status == Progression::susceptible || 
+							nodes[homes[homes[nodes[i].home].random_households.households[k]].individuals[j]].infection_status == Progression::exposed ||
+							nodes[homes[homes[nodes[i].home].random_households.households[k]].individuals[j]].infection_status == Progression::infective){
+						nodes[homes[homes[nodes[i].home].random_households.households[k]].individuals[j]].test_status.test_requested = bernoulli(probabilities.prob_test_random_community_symptomatic_asymptomatic);
+					}
 				}
 			}
 		}
@@ -120,7 +181,14 @@ void set_test_request(vector<agent>& nodes, vector<house>& homes, vector<workpla
 		for(count_type k=0; k<homes[nodes[i].home].random_households.households.size(); k++){
 			for(count_type j=0; j<homes[homes[nodes[i].home].random_households.households[k]].individuals.size(); j++){
 				if(current_time - nodes[homes[homes[nodes[i].home].random_households.households[k]].individuals[j]].test_status.tested_epoch > GLOBAL.SIM_STEPS_PER_DAY*GLOBAL.MINIMUM_TEST_INTERVAL){
-					nodes[homes[homes[nodes[i].home].random_households.households[k]].individuals[j]].test_status.test_requested = bernoulli(probabilities.prob_test_random_community_hospitalised);
+					if(nodes[homes[homes[nodes[i].home].random_households.households[k]].individuals[j]].infection_status == Progression::symptomatic){
+						nodes[homes[homes[nodes[i].home].random_households.households[k]].individuals[j]].test_status.test_requested = bernoulli(probabilities.prob_test_random_community_hospitalised_symptomatic);
+					}
+					else if(nodes[homes[homes[nodes[i].home].random_households.households[k]].individuals[j]].infection_status == Progression::susceptible || 
+							nodes[homes[homes[nodes[i].home].random_households.households[k]].individuals[j]].infection_status == Progression::exposed ||
+							nodes[homes[homes[nodes[i].home].random_households.households[k]].individuals[j]].infection_status == Progression::infective){
+						nodes[homes[homes[nodes[i].home].random_households.households[k]].individuals[j]].test_status.test_requested = bernoulli(probabilities.prob_test_random_community_hospitalised_asymptomatic);
+					}
 
 				}
 			}
@@ -133,9 +201,15 @@ void set_test_request(vector<agent>& nodes, vector<house>& homes, vector<workpla
 			bool temp = bernoulli(probabilities.prob_contact_trace_random_community);
 			for(count_type j=0; j<homes[homes[nodes[i].home].random_households.households[k]].individuals.size(); j++){
 				if(current_time - nodes[homes[homes[nodes[i].home].random_households.households[k]].individuals[j]].test_status.tested_epoch > GLOBAL.SIM_STEPS_PER_DAY*GLOBAL.MINIMUM_TEST_INTERVAL){
-					nodes[homes[homes[nodes[i].home].random_households.households[k]].individuals[j]].test_status.test_requested = bernoulli(probabilities.prob_test_random_community_positive);
-					
-				        if(temp){
+					if(nodes[homes[homes[nodes[i].home].random_households.households[k]].individuals[j]].infection_status == Progression::symptomatic){
+						nodes[homes[homes[nodes[i].home].random_households.households[k]].individuals[j]].test_status.test_requested = bernoulli(probabilities.prob_test_random_community_positive_symptomatic);
+					}
+					else if(nodes[homes[homes[nodes[i].home].random_households.households[k]].individuals[j]].infection_status == Progression::susceptible || 
+							nodes[homes[homes[nodes[i].home].random_households.households[k]].individuals[j]].infection_status == Progression::exposed ||
+							nodes[homes[homes[nodes[i].home].random_households.households[k]].individuals[j]].infection_status == Progression::infective){
+						nodes[homes[homes[nodes[i].home].random_households.households[k]].individuals[j]].test_status.test_requested = bernoulli(probabilities.prob_test_random_community_positive_asymptomatic);
+					}
+					if(temp){
 						nodes[homes[homes[nodes[i].home].random_households.households[k]].individuals[j]].disease_label=DiseaseLabel::primary_contact;
 						nodes[homes[homes[nodes[i].home].random_households.households[k]].individuals[j]].test_status.contact_traced_epoch = current_time;
 					}
@@ -157,7 +231,14 @@ void set_test_request(vector<agent>& nodes, vector<house>& homes, vector<workpla
 		for(count_type k=0; k<my_nbr_size; k++){
 			for(count_type j=0; j<homes[my_nbr_cell.houses_list[k]].individuals.size(); j++){
 				if(current_time - nodes[homes[my_nbr_cell.houses_list[k]].individuals[j]].test_status.tested_epoch > GLOBAL.SIM_STEPS_PER_DAY*GLOBAL.MINIMUM_TEST_INTERVAL){
-					nodes[homes[my_nbr_cell.houses_list[k]].individuals[j]].test_status.test_requested = bernoulli(probabilities.prob_test_neighbourhood_symptomatic);
+					if(nodes[homes[my_nbr_cell.houses_list[k]].individuals[j]].infection_status == Progression::symptomatic){
+						nodes[homes[my_nbr_cell.houses_list[k]].individuals[j]].test_status.test_requested = bernoulli(probabilities.prob_test_neighbourhood_symptomatic_symptomatic);
+					}
+					else if(nodes[homes[my_nbr_cell.houses_list[k]].individuals[j]].infection_status == Progression::susceptible || 
+							nodes[homes[my_nbr_cell.houses_list[k]].individuals[j]].infection_status == Progression::exposed ||
+							nodes[homes[my_nbr_cell.houses_list[k]].individuals[j]].infection_status == Progression::infective){
+						nodes[homes[my_nbr_cell.houses_list[k]].individuals[j]].test_status.test_requested = bernoulli(probabilities.prob_test_neighbourhood_symptomatic_asymptomatic);
+					}
 				}
 			}
 		}
@@ -168,7 +249,14 @@ void set_test_request(vector<agent>& nodes, vector<house>& homes, vector<workpla
 		for(count_type k=0; k<my_nbr_size; k++){
 			for(count_type j=0; j<homes[my_nbr_cell.houses_list[k]].individuals.size(); j++){
 				if(current_time - nodes[homes[my_nbr_cell.houses_list[k]].individuals[j]].test_status.tested_epoch > GLOBAL.SIM_STEPS_PER_DAY*GLOBAL.MINIMUM_TEST_INTERVAL){
-					nodes[homes[my_nbr_cell.houses_list[k]].individuals[j]].test_status.test_requested = bernoulli(probabilities.prob_test_neighbourhood_hospitalised);
+					if(nodes[homes[my_nbr_cell.houses_list[k]].individuals[j]].infection_status == Progression::symptomatic){
+						nodes[homes[my_nbr_cell.houses_list[k]].individuals[j]].test_status.test_requested = bernoulli(probabilities.prob_test_neighbourhood_hospitalised_symptomatic);
+					}
+					else if(nodes[homes[my_nbr_cell.houses_list[k]].individuals[j]].infection_status == Progression::susceptible || 
+							nodes[homes[my_nbr_cell.houses_list[k]].individuals[j]].infection_status == Progression::exposed ||
+							nodes[homes[my_nbr_cell.houses_list[k]].individuals[j]].infection_status == Progression::infective){
+						nodes[homes[my_nbr_cell.houses_list[k]].individuals[j]].test_status.test_requested = bernoulli(probabilities.prob_test_neighbourhood_hospitalised_asymptomatic);
+					}
 				}
 			}
 		}
@@ -180,8 +268,15 @@ void set_test_request(vector<agent>& nodes, vector<house>& homes, vector<workpla
 			bool temp = bernoulli(probabilities.prob_contact_trace_neighbourhood);
 			for(count_type j=0; j<homes[my_nbr_cell.houses_list[k]].individuals.size(); j++){
 				if(current_time - nodes[homes[my_nbr_cell.houses_list[k]].individuals[j]].test_status.tested_epoch > GLOBAL.SIM_STEPS_PER_DAY*GLOBAL.MINIMUM_TEST_INTERVAL){
-					nodes[homes[my_nbr_cell.houses_list[k]].individuals[j]].test_status.test_requested = bernoulli(probabilities.prob_test_neighbourhood_positive);
-				        if(temp){
+					if(nodes[homes[my_nbr_cell.houses_list[k]].individuals[j]].infection_status == Progression::symptomatic){
+						nodes[homes[my_nbr_cell.houses_list[k]].individuals[j]].test_status.test_requested = bernoulli(probabilities.prob_test_neighbourhood_positive_symptomatic);
+					}
+					else if(nodes[homes[my_nbr_cell.houses_list[k]].individuals[j]].infection_status == Progression::susceptible || 
+							nodes[homes[my_nbr_cell.houses_list[k]].individuals[j]].infection_status == Progression::exposed ||
+							nodes[homes[my_nbr_cell.houses_list[k]].individuals[j]].infection_status == Progression::infective){
+						nodes[homes[my_nbr_cell.houses_list[k]].individuals[j]].test_status.test_requested = bernoulli(probabilities.prob_test_neighbourhood_positive_asymptomatic);
+					}
+					if(temp){
 						nodes[homes[my_nbr_cell.houses_list[k]].individuals[j]].disease_label=DiseaseLabel::primary_contact;
 						nodes[homes[my_nbr_cell.houses_list[k]].individuals[j]].test_status.contact_traced_epoch = current_time;
 					}

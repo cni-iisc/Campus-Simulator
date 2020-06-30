@@ -149,6 +149,10 @@ plot_data_struct run_simulation(){
 	 {"curtailment_stats", {}}
 	};
 	   
+  plot_data.disease_label_stats = 
+	{
+		{"disease_label_stats", {}},
+	};
   for(auto& elem: plot_data.susceptible_lambdas){
 	elem.second.reserve(GLOBAL.NUM_TIMESTEPS);
   }
@@ -345,6 +349,12 @@ plot_data_struct run_simulation(){
 	  quarantined_individuals = 0,
 	  quarantined_infectious = 0;
 
+	count_type n_primary_contact = 0, 
+	  n_mild_symptomatic_tested = 0, //CCC2
+   	  n_moderate_symptomatic_tested = 0, //DCHC
+      n_severe_symptomatic_tested = 0, //DCH
+      n_icu = 0;
+	  
 	double susceptible_lambda = 0,
 	  susceptible_lambda_H = 0,
 	  susceptible_lambda_W = 0,
@@ -365,8 +375,12 @@ plot_data_struct run_simulation(){
 			susceptible_lambda_T, susceptible_lambda_PROJECT,				\
 			susceptible_lambda_NBR_CELL, susceptible_lambda_RANDOM_COMMUNITY,	 \
 			quarantined_infectious, quarantined_individuals,			\
-			curtailed_interaction, normal_interaction					\
-	)
+			curtailed_interaction, normal_interaction, 					\
+	   		n_primary_contact, \
+	  		n_mild_symptomatic_tested,  \
+   	  		n_moderate_symptomatic_tested,  \
+      		n_severe_symptomatic_tested, \
+      		n_icu)
 	for(count_type j = 0; j < NUM_PEOPLE; ++j){
 	  auto infection_status = nodes[j].infection_status;
 	  if(infection_status == Progression::susceptible){
@@ -437,6 +451,22 @@ plot_data_struct run_simulation(){
 								  || infection_status == Progression::critical)){
 		quarantined_infectious += 1;
 	  }
+
+	  if(nodes[j].disease_label == DiseaseLabel::primary_contact){
+		  n_primary_contact +=1;
+	  }
+	  if(nodes[j].disease_label == DiseaseLabel::mild_symptomatic_tested){
+		  n_mild_symptomatic_tested +=1;
+	  }
+	  if(nodes[j].disease_label == DiseaseLabel::moderate_symptomatic_tested){
+		  n_moderate_symptomatic_tested +=1;
+	  }
+      if(nodes[j].disease_label == DiseaseLabel::severe_symptomatic_tested){
+		  n_severe_symptomatic_tested +=1;
+	  }
+	  if(nodes[j].disease_label == DiseaseLabel::icu){
+		  n_icu +=1;
+	  }
 	}
 
 	//Apportion new expected infections (in next time step) to currently
@@ -472,6 +502,11 @@ plot_data_struct run_simulation(){
 	plot_data.susceptible_lambdas["susceptible_lambda_PROJECT"].push_back({time_step, {susceptible_lambda_PROJECT}});
 	plot_data.susceptible_lambdas["susceptible_lambda_NBR_CELL"].push_back({time_step, {susceptible_lambda_NBR_CELL}});
 	plot_data.susceptible_lambdas["susceptible_lambda_RANDOM_COMMUNITY"].push_back({time_step, {susceptible_lambda_RANDOM_COMMUNITY}});
+
+	// disease label stats
+	plot_data.disease_label_stats["disease_label_stats"].push_back({time_step, {n_primary_contact,
+							n_mild_symptomatic_tested, n_moderate_symptomatic_tested, 
+							n_severe_symptomatic_tested, n_icu}});
 
 	//Convert to fraction
 	auto total_lambda_fraction_data_sum = total_lambda_fraction_data.sum();

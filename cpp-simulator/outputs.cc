@@ -400,4 +400,16 @@ void output_csv_files(const std::string& output_directory,
             "curtailed_interactions"},
     csvfile_path, elem.second);
   }
+  for(const auto& elem: plot_data.disease_label_stats){
+    std::string csvfile_name = elem.first + ".csv";
+    std::string csvfile_path = output_directory + "/" + csvfile_name;
+    //This file contains quarantine_stats
+    output_timed_csv({"primary_contact",
+            "mild_symptomatic_tested",
+            "moderate_symptomatic_tested",
+            "severe_symptomatic_tested",
+            "icu"},
+    csvfile_path, elem.second);
+  }
+
 }

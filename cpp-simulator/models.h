@@ -72,12 +72,23 @@ struct testing_probability{
  
   double prob_retest_recovered = 0;
   
-  double prob_contact_trace_household = 0;
-  double prob_contact_trace_project = 0;
-  double prob_contact_trace_random_community = 0;
-  double prob_contact_trace_neighbourhood = 0;
-  double prob_contact_trace_class = 0;
+  double prob_contact_trace_household_symptomatic = 0;
+  double prob_contact_trace_project_symptomatic = 0;
+  double prob_contact_trace_random_community_symptomatic = 0;
+  double prob_contact_trace_neighbourhood_symptomatic = 0;
+  double prob_contact_trace_class_symptomatic = 0;
 
+  double prob_contact_trace_household_hospitalised = 0;
+  double prob_contact_trace_project_hospitalised = 0;
+  double prob_contact_trace_random_community_hospitalised = 0;
+  double prob_contact_trace_neighbourhood_hospitalised = 0;
+  double prob_contact_trace_class_hospitalised = 0;
+
+  double prob_contact_trace_household_positive = 0;
+  double prob_contact_trace_project_positive = 0;
+  double prob_contact_trace_random_community_positive = 0;
+  double prob_contact_trace_neighbourhood_positive = 0;
+  double prob_contact_trace_class_positive = 0;
 };
 
   

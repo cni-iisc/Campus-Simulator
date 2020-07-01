@@ -355,7 +355,8 @@ plot_data_struct run_simulation(){
 	  n_mild_symptomatic_tested = 0, //CCC2
    	  n_moderate_symptomatic_tested = 0, //DCHC
       n_severe_symptomatic_tested = 0, //DCH
-      n_icu = 0;
+      n_icu = 0,
+	  n_requested_tests = 0;
 	  
 	double susceptible_lambda = 0,
 	  susceptible_lambda_H = 0,
@@ -382,7 +383,7 @@ plot_data_struct run_simulation(){
 	  		n_mild_symptomatic_tested,  \
    	  		n_moderate_symptomatic_tested,  \
       		n_severe_symptomatic_tested, \
-      		n_icu)
+      		n_icu, n_requested_tests)
 	for(count_type j = 0; j < NUM_PEOPLE; ++j){
 	  auto infection_status = nodes[j].infection_status;
 	  if(infection_status == Progression::susceptible){
@@ -469,6 +470,9 @@ plot_data_struct run_simulation(){
 	  if(nodes[j].disease_label == DiseaseLabel::icu){
 		  n_icu +=1;
 	  }
+	  if(nodes[j].test_status.test_requested){
+		  n_requested_tests +=1;
+	  }
 	}
 
 	//Apportion new expected infections (in next time step) to currently
@@ -508,7 +512,7 @@ plot_data_struct run_simulation(){
 	// disease label stats
 	plot_data.disease_label_stats["disease_label_stats"].push_back({time_step, {n_primary_contact,
 							n_mild_symptomatic_tested, n_moderate_symptomatic_tested, 
-							n_severe_symptomatic_tested, n_icu}});
+							n_severe_symptomatic_tested, n_icu, n_requested_tests}});
 
 	//Convert to fraction
 	auto total_lambda_fraction_data_sum = total_lambda_fraction_data.sum();

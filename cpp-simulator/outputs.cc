@@ -415,7 +415,7 @@ void output_csv_files(const std::string& output_directory,
             "mild_symptomatic_tested",
             "moderate_symptomatic_tested",
             "severe_symptomatic_tested",
-            "icu"},
+            "icu","requested_tests"},
     csvfile_path, elem.second);
   }
 

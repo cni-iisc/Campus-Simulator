@@ -3,10 +3,11 @@
 #include "models.h"
 #include "testing.h"
 #include "intervention_primitives.h"
+#include <cassert>
 using std::vector;
 
 
-void set_test_request(vector<agent>& nodes, vector<house>& homes, vector<workplace>& workplaces, vector<vector<nbr_cell>>& nbr_cells, vector<community>& communities, testing_probability probabilities, count_type current_time){
+void set_test_request(vector<agent>& nodes, const vector<house>& homes, const vector<workplace>& workplaces, const vector<vector<nbr_cell>>& nbr_cells, const vector<community>& communities, const testing_probability probabilities, const count_type current_time){
   for(count_type i=0; i<nodes.size(); ++i){
 	double time_since_hospitalised = current_time
                 - (nodes[i].time_of_infection
@@ -439,4 +440,28 @@ void update_infection_testing(vector<agent>& nodes, vector<house>& houses, count
 	}
 }
 
+}
+
+
+void set_test_request_fileread(vector<agent>& nodes, const vector<house>& homes,
+						 const vector<workplace>& workplaces, const matrix<nbr_cell>& nbr_cells,
+						 const vector<community>& communities,						 
+						 const vector<testing_probability>& testing_probability_vector, const int cur_time){
+  count_type time_threshold = GLOBAL.NUM_DAYS_BEFORE_INTERVENTIONS;
+  count_type cur_day = cur_time/GLOBAL.SIM_STEPS_PER_DAY; //get current day. Division to avoid multiplication inside for loop.
+  const auto SIZE = testing_probability_vector.size();
+
+  assert(SIZE > 0);
+  assert(cur_day >= time_threshold);
+  count_type intv_index = 0;
+
+  for (count_type count = 0; count < SIZE - 1; ++count){
+	time_threshold += testing_probability_vector[count].num_days;
+	if(cur_day >= time_threshold){
+	  ++intv_index;
+	} else {
+	  break;
+	}
+  }
+  set_test_request(nodes, homes, workplaces, nbr_cells, communities, testing_probability_vector[intv_index], cur_time);
 }

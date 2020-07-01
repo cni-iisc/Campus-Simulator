@@ -595,36 +595,41 @@ void update_lambda_c_global(vector<community>& communities,
   }
 }
 
-void update_test_request(vector<agent>& nodes, vector<house>& homes,
-						 vector<workplace>& workplaces, vector<community>& communities,
-						 vector<vector<nbr_cell>>& nbr_cells, count_type current_time){
+void update_test_request(vector<agent>& nodes, const vector<house>& homes,
+						 const vector<workplace>& workplaces, const vector<community>& communities,
+						 const vector<vector<nbr_cell>>& nbr_cells, const count_type current_time, const vector<testing_probability>& testing_protocol){
   testing_probability probabilities;
-  switch(GLOBAL.TESTING_PROTOCOL){
-  case Testing_Protocol::no_testing:
-	break;
-  case Testing_Protocol::test_household:
-	probabilities.prob_test_index_hospitalised = 1;
-	probabilities.prob_test_household_symptomatic_symptomatic = 0;
-	probabilities.prob_test_household_symptomatic_asymptomatic = 0;
+  if(current_time >= GLOBAL.NUM_DAYS_BEFORE_INTERVENTIONS*GLOBAL.SIM_STEPS_PER_DAY){
+	switch(GLOBAL.TESTING_PROTOCOL){
+	case Testing_Protocol::no_testing:
+		break;
+	case Testing_Protocol::test_household:
+		probabilities.prob_test_index_hospitalised = 1;
+		probabilities.prob_test_household_symptomatic_symptomatic = 0;
+		probabilities.prob_test_household_symptomatic_asymptomatic = 0;
 
-	probabilities.prob_test_household_hospitalised_symptomatic = 1;
-	probabilities.prob_test_household_hospitalised_asymptomatic = 0;
-	probabilities.prob_test_household_positive_symptomatic = 1;
-	probabilities.prob_test_household_positive_asymptomatic = 0;
+		probabilities.prob_test_household_hospitalised_symptomatic = 1;
+		probabilities.prob_test_household_hospitalised_asymptomatic = 0;
+		probabilities.prob_test_household_positive_symptomatic = 1;
+		probabilities.prob_test_household_positive_asymptomatic = 0;
 
-	probabilities.prob_test_neighbourhood_hospitalised_symptomatic = 0;
-	probabilities.prob_test_neighbourhood_hospitalised_asymptomatic = 0;
-	probabilities.prob_test_neighbourhood_positive_symptomatic = 0;
-	probabilities.prob_test_neighbourhood_positive_asymptomatic = 0;
+		probabilities.prob_test_neighbourhood_hospitalised_symptomatic = 0;
+		probabilities.prob_test_neighbourhood_hospitalised_asymptomatic = 0;
+		probabilities.prob_test_neighbourhood_positive_symptomatic = 0;
+		probabilities.prob_test_neighbourhood_positive_asymptomatic = 0;
 
-	probabilities.prob_contact_trace_household_hospitalised = 1;
-	probabilities.prob_contact_trace_household_positive = 1;
+		probabilities.prob_contact_trace_household_hospitalised = 1;
+		probabilities.prob_contact_trace_household_positive = 1;
 
-	probabilities.prob_retest_recovered = 1;
-	set_test_request(nodes, homes, workplaces, nbr_cells, communities, probabilities, current_time);
-	break;
-  default:
-	break;
+		probabilities.prob_retest_recovered = 1;
+		set_test_request(nodes, homes, workplaces, nbr_cells, communities, probabilities, current_time);
+		break;
+	case Testing_Protocol::testing_protocol_file_read:
+		set_test_request_fileread(nodes, homes, workplaces, nbr_cells, communities, testing_protocol, current_time);
+		break;
+	default:
+		break;
+	}
   }
 }
 

@@ -30,73 +30,6 @@ enum class Intervention {
    intv_Mum_cyclic=17
 };
 
-
-struct testing_probability{
-  double prob_test_index_symptomatic = 0;
-  double prob_test_index_hospitalised = 0;
-
-  double prob_test_household_positive_symptomatic = 0; // network_indexcase_contact
-  double prob_test_household_hospitalised_symptomatic = 0;
-  double prob_test_household_symptomatic_symptomatic = 0;
-  double prob_test_household_positive_asymptomatic = 0;
-  double prob_test_household_hospitalised_asymptomatic = 0;
-  double prob_test_household_symptomatic_asymptomatic = 0;
-
-  double prob_test_workplace_positive_symptomatic = 0;
-  double prob_test_workplace_hospitalised_symptomatic = 0;
-  double prob_test_workplace_symptomatic_symptomatic = 0;  
-  double prob_test_workplace_positive_asymptomatic = 0;
-  double prob_test_workplace_hospitalised_asymptomatic = 0;
-  double prob_test_workplace_symptomatic_asymptomatic = 0;
-  
-  double prob_test_random_community_positive_symptomatic = 0;
-  double prob_test_random_community_hospitalised_symptomatic = 0;
-  double prob_test_random_community_symptomatic_symptomatic = 0;
-  double prob_test_random_community_positive_asymptomatic = 0;
-  double prob_test_random_community_hospitalised_asymptomatic = 0;
-  double prob_test_random_community_symptomatic_asymptomatic = 0;
-
-  double prob_test_neighbourhood_positive_symptomatic = 0;
-  double prob_test_neighbourhood_hospitalised_symptomatic = 0;
-  double prob_test_neighbourhood_symptomatic_symptomatic = 0;
-  double prob_test_neighbourhood_positive_asymptomatic = 0;
-  double prob_test_neighbourhood_hospitalised_asymptomatic = 0;
-  double prob_test_neighbourhood_symptomatic_asymptomatic = 0;
- 
-  double prob_test_school_positive_symptomatic = 0;
-  double prob_test_school_hospitalised_symptomatic = 0;
-  double prob_test_school_symptomatic_symptomatic = 0;
-  double prob_test_school_positive_asymptomatic = 0;
-  double prob_test_school_hospitalised_asymptomatic = 0;
-  double prob_test_school_symptomatic_asymptomatic = 0;
- 
-  double prob_retest_recovered = 0;
-  
-  double prob_contact_trace_household_symptomatic = 0;
-  double prob_contact_trace_project_symptomatic = 0;
-  double prob_contact_trace_random_community_symptomatic = 0;
-  double prob_contact_trace_neighbourhood_symptomatic = 0;
-  double prob_contact_trace_class_symptomatic = 0;
-
-  double prob_contact_trace_household_hospitalised = 0;
-  double prob_contact_trace_project_hospitalised = 0;
-  double prob_contact_trace_random_community_hospitalised = 0;
-  double prob_contact_trace_neighbourhood_hospitalised = 0;
-  double prob_contact_trace_class_hospitalised = 0;
-
-  double prob_contact_trace_household_positive = 0;
-  double prob_contact_trace_project_positive = 0;
-  double prob_contact_trace_random_community_positive = 0;
-  double prob_contact_trace_neighbourhood_positive = 0;
-  double prob_contact_trace_class_positive = 0;
-};
-
-  
-enum class Testing_Protocol{
-  no_testing,
-  test_household,
-};
-
 enum class Cycle_Type {
   home = 0,
   individual = 1
@@ -183,22 +116,74 @@ const double STATE_TRAN[][3] =
    {0.2430000,   0.4320000,   0.5000000},
    {0.2730000,   0.7090000,   0.5000000}
   };
-/*
-struct intervention_params{
-    count_type num_days = 0;
-    double compliance = 0.9;
-    bool case_isolation = false;
-    bool home_quarantine = false;
-    bool lockdown = false;
-    bool social_dist_elderly = false; 
-    bool school_closed = false;
-    bool workplace_odd_even = false;
-    double SC_factor = 0;
-    double community_factor = 1;
-    bool neighbourhood_containment = false;
-    bool ward_containment = false;
+
+struct testing_probability{
+  count_type num_days = 0; //number of days for which this a protocol is active.
+  double prob_test_index_symptomatic = 0;
+  double prob_test_index_hospitalised = 0;
+
+  double prob_test_household_positive_symptomatic = 0; // network_indexcase_contact
+  double prob_test_household_hospitalised_symptomatic = 0;
+  double prob_test_household_symptomatic_symptomatic = 0;
+  double prob_test_household_positive_asymptomatic = 0;
+  double prob_test_household_hospitalised_asymptomatic = 0;
+  double prob_test_household_symptomatic_asymptomatic = 0;
+
+  double prob_test_workplace_positive_symptomatic = 0;
+  double prob_test_workplace_hospitalised_symptomatic = 0;
+  double prob_test_workplace_symptomatic_symptomatic = 0;  
+  double prob_test_workplace_positive_asymptomatic = 0;
+  double prob_test_workplace_hospitalised_asymptomatic = 0;
+  double prob_test_workplace_symptomatic_asymptomatic = 0;
+  
+  double prob_test_random_community_positive_symptomatic = 0;
+  double prob_test_random_community_hospitalised_symptomatic = 0;
+  double prob_test_random_community_symptomatic_symptomatic = 0;
+  double prob_test_random_community_positive_asymptomatic = 0;
+  double prob_test_random_community_hospitalised_asymptomatic = 0;
+  double prob_test_random_community_symptomatic_asymptomatic = 0;
+
+  double prob_test_neighbourhood_positive_symptomatic = 0;
+  double prob_test_neighbourhood_hospitalised_symptomatic = 0;
+  double prob_test_neighbourhood_symptomatic_symptomatic = 0;
+  double prob_test_neighbourhood_positive_asymptomatic = 0;
+  double prob_test_neighbourhood_hospitalised_asymptomatic = 0;
+  double prob_test_neighbourhood_symptomatic_asymptomatic = 0;
+ 
+  double prob_test_school_positive_symptomatic = 0;
+  double prob_test_school_hospitalised_symptomatic = 0;
+  double prob_test_school_symptomatic_symptomatic = 0;
+  double prob_test_school_positive_asymptomatic = 0;
+  double prob_test_school_hospitalised_asymptomatic = 0;
+  double prob_test_school_symptomatic_asymptomatic = 0;
+ 
+  double prob_retest_recovered = 0;
+  
+  double prob_contact_trace_household_symptomatic = 0;
+  double prob_contact_trace_project_symptomatic = 0;
+  double prob_contact_trace_random_community_symptomatic = 0;
+  double prob_contact_trace_neighbourhood_symptomatic = 0;
+  double prob_contact_trace_class_symptomatic = 0;
+
+  double prob_contact_trace_household_hospitalised = 0;
+  double prob_contact_trace_project_hospitalised = 0;
+  double prob_contact_trace_random_community_hospitalised = 0;
+  double prob_contact_trace_neighbourhood_hospitalised = 0;
+  double prob_contact_trace_class_hospitalised = 0;
+
+  double prob_contact_trace_household_positive = 0;
+  double prob_contact_trace_project_positive = 0;
+  double prob_contact_trace_random_community_positive = 0;
+  double prob_contact_trace_neighbourhood_positive = 0;
+  double prob_contact_trace_class_positive = 0;
 };
-*/
+
+  
+enum class Testing_Protocol{
+  no_testing,
+  test_household,
+  testing_protocol_file_read
+};
 
 struct svd {
   matrix<double> u, vT;
@@ -462,6 +447,7 @@ struct global_params{
   Testing_Protocol TESTING_PROTOCOL=Testing_Protocol::test_household;
   double TIME_TO_TEST_POSITIVE = 3;
   int MINIMUM_TEST_INTERVAL = 7; //Minumum duration between two consecutive tests
+  std::string testing_protocol_filename = "testing_protocol.json";
 
 };
 extern global_params GLOBAL;

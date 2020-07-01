@@ -235,6 +235,7 @@ void output_global_params(const string& output_dir){
   fout << "ENABLE_CONTAINMENT:" <<GLOBAL.ENABLE_CONTAINMENT << ";"<< endl;
   fout << "ENABLE_NBR_CELLS:" <<GLOBAL.ENABLE_NBR_CELLS << ";"<< endl;
   fout << "ENABLE_TESTING:" << GLOBAL.ENABLE_TESTING << ";" <<endl;
+  fout << "TESTING_PROTOCOL: " << static_cast<count_type>(GLOBAL.TESTING_PROTOCOL) << ";" <<endl;
   fout.close();
 
   //Copy the attendance file
@@ -247,6 +248,12 @@ void output_global_params(const string& output_dir){
   if(GLOBAL.INTERVENTION==Intervention::intv_file_read){
 	output_copy_file(GLOBAL.input_base + GLOBAL.intervention_filename,
 					 output_dir + "/intervention_params.json");
+  }
+
+  //Copy testing protocol file
+  if(GLOBAL.TESTING_PROTOCOL==Testing_Protocol::testing_protocol_file_read){
+	output_copy_file(GLOBAL.input_base + GLOBAL.testing_protocol_filename,
+					 output_dir + "/testing_protocol.json");
   }
 
 }

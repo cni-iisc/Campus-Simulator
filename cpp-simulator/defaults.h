@@ -61,6 +61,8 @@ struct defaults{
   std::string BETA_RANDOM_COMMUNITY = "0";
   std::string BETA_NBR_CELLS = "0";
   std::string ENABLE_TESTING = "false";
+  std::string TESTING_PROTOCOL = "0";
+  std::string testing_protocol_filename = "testing_protocol.json";
 } DEFAULTS;
 
 #endif

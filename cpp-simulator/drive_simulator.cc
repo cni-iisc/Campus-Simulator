@@ -166,8 +166,15 @@ int main(int argc, char** argv){
      cxxopts::value<double>()->default_value(DEFAULTS.MASK_FACTOR))
     ("MASK_START_DELAY", "days after which masks are enforced",
      cxxopts::value<double>()->default_value(DEFAULTS.MASK_START_DELAY))
+    ;
+
+    options.add_options("Testing and contact tracing")
     ("ENABLE_TESTING", "enable testing (contact-tracing) functionality",
      cxxopts::value<bool>()->default_value(DEFAULTS.ENABLE_TESTING))
+    ("testing_protocol_filename", "intervention json filename, relative to input_directory",
+    cxxopts::value<std::string>()->default_value(DEFAULTS.testing_protocol_filename))
+    ("TESTING_PROTOCOL", "index of testing protocol",
+     cxxopts::value<count_type>()->default_value(DEFAULTS.TESTING_PROTOCOL))
     ;
 
   auto optvals = options.parse(argc, argv);
@@ -182,7 +189,8 @@ int main(int argc, char** argv){
 			       "Intervention - soft containment zones",
 			       "Intervention - neighbourhood containment",
 			       "Age-dependent mixing",
-			       "Other"
+			       "Other",
+             "Testing and contact tracing"
       }) << std::endl;
     return 0;
   }
@@ -226,6 +234,7 @@ int main(int argc, char** argv){
   
   GLOBAL.INTERVENTION
 	= static_cast<Intervention>(optvals["INTERVENTION"].as<count_type>());
+  GLOBAL.intervention_filename = optvals["intervention_filename"].as<std::string>();
 
   GLOBAL.CALIBRATION_DELAY = optvals["CALIBRATION_DELAY"].as<double>();
   GLOBAL.DAYS_BEFORE_LOCKDOWN = optvals["DAYS_BEFORE_LOCKDOWN"].as<double>();
@@ -298,9 +307,11 @@ int main(int argc, char** argv){
   GLOBAL.WARD_CONTAINMENT_THRESHOLD = optvals["WARD_CONTAINMENT_THRESHOLD"].as<count_type>();
 
   GLOBAL.ENABLE_TESTING = optvals["ENABLE_TESTING"].count();
-  GLOBAL.intervention_filename = optvals["intervention_filename"].as<std::string>();
   GLOBAL.ENABLE_NBR_CELLS = GLOBAL.ENABLE_NBR_CELLS || GLOBAL.ENABLE_CONTAINMENT;
 
+  GLOBAL.TESTING_PROTOCOL
+	= static_cast<Testing_Protocol>(optvals["TESTING_PROTOCOL"].as<count_type>());
+  GLOBAL.testing_protocol_filename = optvals["testing_protocol_filename"].as<std::string>();
 
   if(GLOBAL.input_base != ""
 	 && GLOBAL.input_base[GLOBAL.input_base.size() - 1] != '/'){ 

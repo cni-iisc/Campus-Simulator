@@ -41,6 +41,8 @@ plot_data_struct run_simulation(){
   auto nodes = init_nodes();
   auto nbr_cells = init_nbr_cells();
   auto intv_params = init_intervention_params();
+  auto testing_protocol_file_read = init_testing_protocol();
+
 
   auto community_dist_matrix = compute_community_distances(communities);
   auto community_fk_matrix = compute_community_distances_fkernel(community_dist_matrix);
@@ -240,7 +242,7 @@ plot_data_struct run_simulation(){
 	if(GLOBAL.ENABLE_TESTING){
 		update_test_status(nodes, time_step);
 		update_infection_testing(nodes, homes, time_step);
-	    update_test_request(nodes, homes, workplaces, communities, nbr_cells, time_step);
+	    update_test_request(nodes, homes, workplaces, communities, nbr_cells, time_step,testing_protocol_file_read);
 	}
 	if(GLOBAL.USE_AGE_DEPENDENT_MIXING){
 	  for (count_type h = 0; h < GLOBAL.num_homes; ++h){

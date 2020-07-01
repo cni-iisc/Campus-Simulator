@@ -14,6 +14,7 @@ std::vector<community> init_community();
 std::vector<agent> init_nodes();
 matrix<nbr_cell> init_nbr_cells();
 std::vector<intervention_params> init_intervention_params();
+std::vector<testing_probability> init_testing_protocol();
 
 matrix<double> compute_community_distances(const std::vector<community>& communities);
 matrix<double> compute_community_distances_fkernel(const matrix<double>& community_distances);

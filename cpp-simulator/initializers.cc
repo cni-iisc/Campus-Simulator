@@ -313,6 +313,195 @@ vector<intervention_params> init_intervention_params(){
 }
 
 
+vector<testing_probability> init_testing_protocol(){
+  vector<testing_probability> testing_protocol;
+  if(GLOBAL.TESTING_PROTOCOL==Testing_Protocol::testing_protocol_file_read){
+	std::cout<<std::endl<<"Inside init_testing_protocol";
+	auto testProtJSON = readJSONFile(GLOBAL.input_base + GLOBAL.testing_protocol_filename);
+	//auto num_intervention_periods = intvJSON.GetArray().Size();
+	//intv_params.resize(num_intervention_periods);
+
+	int index = 0;
+	for (auto &elem: testProtJSON.GetArray()){
+	  testing_probability temp;
+	  if((elem.HasMember("num_days")) && (elem["num_days"].GetInt() > 0)){
+		temp.num_days = elem["num_days"].GetInt();
+		if(elem.HasMember("prob_test_index_symptomatic")){
+		  temp.prob_test_index_symptomatic = elem["prob_test_index_symptomatic"].GetDouble();
+		}
+		if(elem.HasMember("prob_test_index_hospitalised")){
+		  temp.prob_test_index_hospitalised = elem["prob_test_index_hospitalised"].GetDouble();
+		}
+		
+		//Testing probabilities for household networks
+		if(elem.HasMember("prob_test_household_positive_symptomatic")){
+		  temp.prob_test_household_positive_symptomatic = elem["prob_test_household_positive_symptomatic"].GetDouble();
+		}
+		if(elem.HasMember("prob_test_household_hospitalised_symptomatic")){
+		  temp.prob_test_household_hospitalised_symptomatic = elem["prob_test_household_hospitalised_symptomatic"].GetDouble();
+		}
+		if(elem.HasMember("prob_test_household_symptomatic_symptomatic")){
+		  temp.prob_test_household_symptomatic_symptomatic = elem["prob_test_household_symptomatic_symptomatic"].GetDouble();
+		}
+		if(elem.HasMember("prob_test_household_positive_asymptomatic")){
+		  temp.prob_test_household_positive_asymptomatic = elem["prob_test_household_positive_asymptomatic"].GetDouble();
+		}
+		if(elem.HasMember("prob_test_household_hospitalised_asymptomatic")){
+		  temp.prob_test_household_hospitalised_asymptomatic = elem["prob_test_household_hospitalised_asymptomatic"].GetDouble();
+		}
+		if(elem.HasMember("prob_test_household_symptomatic_asymptomatic")){
+		  temp.prob_test_household_symptomatic_asymptomatic = elem["prob_test_household_symptomatic_asymptomatic"].GetDouble();
+		}
+
+		//Testing probabilities for workplace networks
+		if(elem.HasMember("prob_test_workplace_positive_symptomatic")){
+		  temp.prob_test_workplace_positive_symptomatic = elem["prob_test_workplace_positive_symptomatic"].GetDouble();
+		}
+		if(elem.HasMember("prob_test_workplace_hospitalised_symptomatic")){
+		  temp.prob_test_workplace_hospitalised_symptomatic = elem["prob_test_workplace_hospitalised_symptomatic"].GetDouble();
+		}
+		if(elem.HasMember("prob_test_workplace_symptomatic_symptomatic")){
+		  temp.prob_test_workplace_symptomatic_symptomatic = elem["prob_test_workplace_symptomatic_symptomatic"].GetDouble();
+		}
+		if(elem.HasMember("prob_test_workplace_positive_asymptomatic")){
+		  temp.prob_test_workplace_positive_asymptomatic = elem["prob_test_workplace_positive_asymptomatic"].GetDouble();
+		}
+		if(elem.HasMember("prob_test_workplace_hospitalised_asymptomatic")){
+		  temp.prob_test_workplace_hospitalised_asymptomatic = elem["prob_test_workplace_hospitalised_asymptomatic"].GetDouble();
+		}
+		if(elem.HasMember("prob_test_workplace_symptomatic_asymptomatic")){
+		  temp.prob_test_workplace_symptomatic_asymptomatic = elem["prob_test_workplace_symptomatic_asymptomatic"].GetDouble();
+		}
+
+		//Testing probabilities for school networks
+		if(elem.HasMember("prob_test_school_positive_symptomatic")){
+		  temp.prob_test_school_positive_symptomatic = elem["prob_test_school_positive_symptomatic"].GetDouble();
+		}
+		if(elem.HasMember("prob_test_school_hospitalised_symptomatic")){
+		  temp.prob_test_school_hospitalised_symptomatic = elem["prob_test_school_hospitalised_symptomatic"].GetDouble();
+		}
+		if(elem.HasMember("prob_test_school_symptomatic_symptomatic")){
+		  temp.prob_test_school_symptomatic_symptomatic = elem["prob_test_school_symptomatic_symptomatic"].GetDouble();
+		}
+		if(elem.HasMember("prob_test_school_positive_asymptomatic")){
+		  temp.prob_test_school_positive_asymptomatic = elem["prob_test_school_positive_asymptomatic"].GetDouble();
+		}
+		if(elem.HasMember("prob_test_school_hospitalised_asymptomatic")){
+		  temp.prob_test_school_hospitalised_asymptomatic = elem["prob_test_school_hospitalised_asymptomatic"].GetDouble();
+		}
+		if(elem.HasMember("prob_test_school_symptomatic_asymptomatic")){
+		  temp.prob_test_school_symptomatic_asymptomatic = elem["prob_test_school_symptomatic_asymptomatic"].GetDouble();
+		}
+
+		//Testing probabilities for random community networks
+		if(elem.HasMember("prob_test_random_community_positive_symptomatic")){
+		  temp.prob_test_random_community_positive_symptomatic = elem["prob_test_random_community_positive_symptomatic"].GetDouble();
+		}
+		if(elem.HasMember("prob_test_random_community_hospitalised_symptomatic")){
+		  temp.prob_test_random_community_hospitalised_symptomatic = elem["prob_test_random_community_hospitalised_symptomatic"].GetDouble();
+		}
+		if(elem.HasMember("prob_test_random_community_symptomatic_symptomatic")){
+		  temp.prob_test_random_community_symptomatic_symptomatic = elem["prob_test_random_community_symptomatic_symptomatic"].GetDouble();
+		}
+		if(elem.HasMember("prob_test_random_community_positive_asymptomatic")){
+		  temp.prob_test_random_community_positive_asymptomatic = elem["prob_test_random_community_positive_asymptomatic"].GetDouble();
+		}
+		if(elem.HasMember("prob_test_random_community_hospitalised_asymptomatic")){
+		  temp.prob_test_random_community_hospitalised_asymptomatic = elem["prob_test_random_community_hospitalised_asymptomatic"].GetDouble();
+		}
+		if(elem.HasMember("prob_test_random_community_symptomatic_asymptomatic")){
+		  temp.prob_test_random_community_symptomatic_asymptomatic = elem["prob_test_random_community_symptomatic_asymptomatic"].GetDouble();
+		}
+
+		//Testing probabilities for random community networks
+		if(elem.HasMember("prob_test_neighbourhood_positive_symptomatic")){
+		  temp.prob_test_neighbourhood_positive_symptomatic = elem["prob_test_neighbourhood_positive_symptomatic"].GetDouble();
+		}
+		if(elem.HasMember("prob_test_neighbourhood_hospitalised_symptomatic")){
+		  temp.prob_test_neighbourhood_hospitalised_symptomatic = elem["prob_test_neighbourhood_hospitalised_symptomatic"].GetDouble();
+		}
+		if(elem.HasMember("prob_test_neighbourhood_symptomatic_symptomatic")){
+		  temp.prob_test_neighbourhood_symptomatic_symptomatic = elem["prob_test_neighbourhood_symptomatic_symptomatic"].GetDouble();
+		}
+		if(elem.HasMember("prob_test_neighbourhood_positive_asymptomatic")){
+		  temp.prob_test_neighbourhood_positive_asymptomatic = elem["prob_test_neighbourhood_positive_asymptomatic"].GetDouble();
+		}
+		if(elem.HasMember("prob_test_neighbourhood_hospitalised_asymptomatic")){
+		  temp.prob_test_neighbourhood_hospitalised_asymptomatic = elem["prob_test_neighbourhood_hospitalised_asymptomatic"].GetDouble();
+		}
+		if(elem.HasMember("prob_test_neighbourhood_symptomatic_asymptomatic")){
+		  temp.prob_test_neighbourhood_symptomatic_asymptomatic = elem["prob_test_neighbourhood_symptomatic_asymptomatic"].GetDouble();
+		}
+
+		//Contact trace probabilities for in networks for symptomatic index patient.
+		if(elem.HasMember("prob_contact_trace_household_symptomatic")){
+		  temp.prob_contact_trace_household_symptomatic = elem["prob_contact_trace_household_symptomatic"].GetDouble();
+		}
+		if(elem.HasMember("prob_contact_trace_project_symptomatic")){
+		  temp.prob_contact_trace_project_symptomatic = elem["prob_contact_trace_project_symptomatic"].GetDouble();
+		}
+		if(elem.HasMember("prob_contact_trace_random_community_symptomatic")){
+		  temp.prob_contact_trace_random_community_symptomatic = elem["prob_contact_trace_random_community_symptomatic"].GetDouble();
+		}
+		if(elem.HasMember("prob_contact_trace_neighbourhood_symptomatic")){
+		  temp.prob_contact_trace_neighbourhood_symptomatic = elem["prob_contact_trace_neighbourhood_symptomatic"].GetDouble();
+		}
+		if(elem.HasMember("prob_contact_trace_class_symptomatic")){
+		  temp.prob_contact_trace_class_symptomatic = elem["prob_contact_trace_class_symptomatic"].GetDouble();
+		}
+
+		//Contact trace probabilities for in networks for hospitalised index patient.
+		if(elem.HasMember("prob_contact_trace_household_hospitalised")){
+		  temp.prob_contact_trace_household_hospitalised = elem["prob_contact_trace_household_hospitalised"].GetDouble();
+		}
+		if(elem.HasMember("prob_contact_trace_project_hospitalised")){
+		  temp.prob_contact_trace_project_hospitalised = elem["prob_contact_trace_project_hospitalised"].GetDouble();
+		}
+		if(elem.HasMember("prob_contact_trace_random_community_hospitalised")){
+		  temp.prob_contact_trace_random_community_hospitalised = elem["prob_contact_trace_random_community_hospitalised"].GetDouble();
+		}
+		if(elem.HasMember("prob_contact_trace_neighbourhood_hospitalised")){
+		  temp.prob_contact_trace_neighbourhood_hospitalised = elem["prob_contact_trace_neighbourhood_hospitalised"].GetDouble();
+		}
+		if(elem.HasMember("prob_contact_trace_class_hospitalised")){
+		  temp.prob_contact_trace_class_hospitalised = elem["prob_contact_trace_class_hospitalised"].GetDouble();
+		}
+
+		//Contact trace probabilities for in networks for positive index patient.
+		if(elem.HasMember("prob_contact_trace_household_positive")){
+		  temp.prob_contact_trace_household_positive = elem["prob_contact_trace_household_positive"].GetDouble();
+		}
+		if(elem.HasMember("prob_contact_trace_project_positive")){
+		  temp.prob_contact_trace_project_positive = elem["prob_contact_trace_project_positive"].GetDouble();
+		}
+		if(elem.HasMember("prob_contact_trace_random_community_positive")){
+		  temp.prob_contact_trace_random_community_positive = elem["prob_contact_trace_random_community_positive"].GetDouble();
+		}
+		if(elem.HasMember("prob_contact_trace_neighbourhood_positive")){
+		  temp.prob_contact_trace_neighbourhood_positive = elem["prob_contact_trace_neighbourhood_positive"].GetDouble();
+		}
+		if(elem.HasMember("prob_contact_trace_class_positive")){
+		  temp.prob_contact_trace_class_positive = elem["prob_contact_trace_class_positive"].GetDouble();
+		}
+
+
+		if(elem.HasMember("prob_retest_recovered")){
+		  temp.prob_retest_recovered = elem["prob_retest_recovered"].GetDouble();
+		}
+
+		testing_protocol.push_back(temp);
+		++index;
+	  }else{
+		std::cout<<std::endl<<"num_days not specified or less than 1. Skipping current index.";
+		assert(false);
+	  }
+	}
+  }
+  std::cout<<std::endl<<"Intervention params size = "<<testing_protocol.size();
+  return testing_protocol;
+}
+
+
 
 vector<double> compute_prob_infection_given_community(double infection_probability, bool set_uniform){
   auto fracPopJSON = readJSONFile(GLOBAL.input_base + "fractionPopulation.json");

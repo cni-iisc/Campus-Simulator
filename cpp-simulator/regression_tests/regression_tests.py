@@ -220,6 +220,7 @@ test_options['--BETA_PROJECT']=0.1
 test_options['--BETA_RANDOM_COMMUNITY']=0.1
 test_options['--BETA_NBR_CELLS']=0.1
 test_options['--PROVIDE_INITIAL_SEED_GRAPH']=4123
+
 test_flags = default_flags.copy()
 test_flags['--ENABLE_CONTAINMENT'] = True
 test_flags['--ENABLE_NBR_CELLS'] = True
@@ -236,7 +237,7 @@ regression_tests.append(current_test)
 ## configure a new regression text
 #7
 current_test={}
-test_id = 'smaller_networks_testing'
+test_id = 'smaller_networks_testing_001'
 
 test_options = default_options.copy()
 test_options['--output_directory'] += test_id
@@ -247,6 +248,10 @@ test_options['--BETA_PROJECT']=0.1
 test_options['--BETA_RANDOM_COMMUNITY']=0.1
 test_options['--BETA_NBR_CELLS']=0.1
 test_options['--PROVIDE_INITIAL_SEED_GRAPH']=4123
+test_options['--TESTING_PROTOCOL']=2
+test_options['--testing_protocol_filename']='../../../../cpp-simulator/regression_tests/input_files/testing_protocol_001.json'
+
+
 test_flags = default_flags.copy()
 test_flags['--ENABLE_CONTAINMENT'] = True
 test_flags['--ENABLE_NBR_CELLS'] = True
@@ -260,7 +265,36 @@ current_test['test_flags'] = test_flags
 regression_tests.append(current_test)
 ## end of regresstion test addition
 
+## configure a new regression text
+#7
+current_test={}
+test_id = 'smaller_networks_testing_002'
 
+test_options = default_options.copy()
+test_options['--output_directory'] += test_id
+test_options['--INTERVENTION'] = 15
+test_options['--WARD_CONTAINMENT_THRESHOLD'] = 0
+test_options['--BETA_CLASS']=0.1
+test_options['--BETA_PROJECT']=0.1
+test_options['--BETA_RANDOM_COMMUNITY']=0.1
+test_options['--BETA_NBR_CELLS']=0.1
+test_options['--PROVIDE_INITIAL_SEED_GRAPH']=4123
+test_options['--TESTING_PROTOCOL']=2
+test_options['--testing_protocol_filename']='../../../../cpp-simulator/regression_tests/input_files/testing_protocol_002.json'
+
+
+test_flags = default_flags.copy()
+test_flags['--ENABLE_CONTAINMENT'] = True
+test_flags['--ENABLE_NBR_CELLS'] = True
+test_flags['--ENABLE_TESTING'] = True
+
+
+current_test['test_id'] = test_id
+current_test['test_options'] = test_options
+current_test['test_flags'] = test_flags
+
+regression_tests.append(current_test)
+## end of regresstion test addition
 
 
 

@@ -194,8 +194,8 @@ vector<intervention_params> init_intervention_params(){
   if(GLOBAL.INTERVENTION==Intervention::intv_file_read){
 	std::cout<<std::endl<<"Inside init_intervention_params";
 	auto intvJSON = readJSONFile(GLOBAL.input_base + GLOBAL.intervention_filename);
-	//auto num_intervention_periods = intvJSON.GetArray().Size();
-	//intv_params.resize(num_intervention_periods);
+
+	intv_params.reserve(intvJSON.GetArray().Size());
 
 	int index = 0;
 	for (auto &elem: intvJSON.GetArray()){
@@ -318,10 +318,9 @@ vector<testing_probability> init_testing_protocol(){
   if(GLOBAL.TESTING_PROTOCOL==Testing_Protocol::testing_protocol_file_read){
 	std::cout<<std::endl<<"Inside init_testing_protocol";
 	auto testProtJSON = readJSONFile(GLOBAL.input_base + GLOBAL.testing_protocol_filename);
-	//auto num_intervention_periods = intvJSON.GetArray().Size();
-	//intv_params.resize(num_intervention_periods);
 
-	int index = 0;
+	testing_protocol.reserve(testProtJSON.GetArray().Size());
+
 	for (auto &elem: testProtJSON.GetArray()){
 	  testing_probability temp;
 	  if((elem.HasMember("num_days")) && (elem["num_days"].GetInt() > 0)){
@@ -490,7 +489,7 @@ vector<testing_probability> init_testing_protocol(){
 		}
 
 		testing_protocol.push_back(temp);
-		++index;
+
 	  }else{
 		std::cout<<std::endl<<"num_days not specified or less than 1. Skipping current index.";
 		assert(false);

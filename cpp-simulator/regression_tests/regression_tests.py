@@ -222,6 +222,28 @@ current_test['test_options'] = test_options
 current_test['test_flags'] = test_flags
 
 regression_tests.append(current_test)
+
+## configure a new regression test
+# attendance file based test
+current_test={}
+test_id = 'attendance_file_002'
+
+test_options = default_options.copy()
+test_options['--output_directory'] += test_id
+test_options['--INTERVENTION'] = 8
+test_options['--LOCKED_COMMUNITY_LEAKAGE'] = 0.25
+test_options['--attendance_filename']='../../../../cpp-simulator/regression_tests/input_files/attendance_file_002.json'
+
+test_flags = default_flags.copy()
+test_flags['--ENABLE_CONTAINMENT'] = True
+test_flags['--IGNORE_ATTENDANCE_FILE'] = False
+
+current_test['test_id'] = test_id
+current_test['test_options'] = test_options
+current_test['test_flags'] = test_flags
+
+regression_tests.append(current_test)
+
 ## end of regresstion test addition
 
 

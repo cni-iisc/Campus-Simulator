@@ -1428,10 +1428,26 @@ function run_simulation() {
     call_plotly(plot_tuple);
     document.getElementById("in-progress").style.display = 'none';
     document.getElementById('plots-area').style.display = 'block';
+    
+    let cumul_days = 0;
+    let interv_ind = 0;
 
     const interval = setInterval(function () {
         console.log("inside the interval stuff. time_step = ", time_step);
         document.getElementById("status").innerHTML = "Calculating Simulation for Day: " + time_step / SIM_STEPS_PER_DAY;
+	// Days after intervention commencement
+        let days = time_step / SIM_STEPS_PER_DAY;
+
+        // Checking if allowed
+        if (
+            interv_ind < INTERVENTIONS.length &&
+            days >= NUM_DAYS_BEFORE_INTERVENTIONS + cumul_days
+        ) {
+            cumul_days += INTERVENTIONS[interv_ind].time;
+            INTERVENTION = INTERVENTIONS[interv_ind].value;
+            interv_ind++;
+        }
+        console.log({ days, INTERVENTION });
         time_step = run_simday(time_step + 1, homes, workplaces, communities, public_transports, nodes, community_distance_matrix, seed_array,
             days_num_affected, days_num_critical, days_num_exposed, days_num_fatalities, days_num_hospitalised, days_num_infected, days_num_recovered, lambda_evolution);
         call_plotly(plot_tuple);
@@ -1720,6 +1736,24 @@ function runSimulations() {
 
     //INTERVENTION = parseInt(document.getElementById("interventions").value);
     INTERVENTION = parseInt(document.querySelector('input[name="interventions2"]:checked').value);
+
+    li_interventions = document.getElementsByClassName("interv-li");
+
+    INTERVENTIONS = [];
+
+    for (let i = 0; i < li_interventions.length; i++) {
+        div = li_interventions[i].children[0];
+        value = div.children[0].value;
+        console.log(2);
+        time = div.children[1].value;
+        console.log(3);
+        INTERVENTIONS.push({
+            value: parseInt(value),
+            time: parseInt(time),
+        });
+    }
+
+    INTERVENTION = NO_INTERVENTION;
 
     console.log(NUM_DAYS, INIT_FRAC_INFECTED, INTERVENTION);
     console.log("INTERVENTION = ", INTERVENTION);

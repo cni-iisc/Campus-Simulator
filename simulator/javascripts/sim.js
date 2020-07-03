@@ -1813,7 +1813,9 @@ function set_default_values_html() {
 //}
 
 function setParameters(city){
+    $("#customIntv").hide();
     if (city === 'bengaluru'){
+        $("input[name=interventions2][value='0']").prop("checked",true);
         document.getElementById("compliance").value = 0.9;
         document.getElementById("betaHouse").value = 0.9632;
         document.getElementById("betaWork").value = 0.5518;
@@ -1822,8 +1824,6 @@ function setParameters(city){
         document.getElementById("betaPT").value = 0;
         CALIBRATION_DELAY = 0; //// Assuming the simulator starts on March 1.
         NUM_DAYS_BEFORE_INTERVENTIONS = 15 + CALIBRATION_DELAY;
-        $("#customIntv").hide();
-
     }
     if (city === 'wuhan'){
         document.getElementById("compliance").value = 0.9;
@@ -1850,6 +1850,7 @@ function setParameters(city){
         $("#customIntv").show();
     }
     if (city === 'kochi'){
+        $("input[name=interventions2][value='0']").prop("checked",true);
         document.getElementById("compliance").value = 0.9;
         document.getElementById("betaHouse").value = 1.065;
         document.getElementById("betaWork").value = 0.532;
@@ -1860,6 +1861,7 @@ function setParameters(city){
         NUM_DAYS_BEFORE_INTERVENTIONS = 15 + CALIBRATION_DELAY;
     }
     if (city === 'mumbai'){
+        $("input[name=interventions2][value='0']").prop("checked",true);
         document.getElementById("compliance").value = 0.9;
         document.getElementById("betaHouse").value = 0.911;
         document.getElementById("betaWork").value = 0.488;

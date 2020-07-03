@@ -1186,6 +1186,7 @@ let csvContent_alltogether = "data:text/csv;charset=utf-8,";
 
 function update_all_kappa(nodes, homes, workplaces, communities, cur_time) {
     var current_time = cur_time;
+    console.log(NUM_DAYS_BEFORE_INTERVENTIONS);
     if (current_time < NUM_DAYS_BEFORE_INTERVENTIONS * SIM_STEPS_PER_DAY) {
         get_kappa_no_intervention(nodes, homes, workplaces, communities, current_time);
     } else {
@@ -1709,7 +1710,6 @@ function runSimulations() {
 
     // initFrac is actually number Exposed, now input as percentage instead of fraction
     INIT_FRAC_INFECTED = parseFloat(document.getElementById("initFrac").value) / 100.0;
-//	COMPLIANCE_PROBABILITY = document.getElementById("compliance").value;
 
     INCUBATION_PERIOD = parseFloat(document.getElementById("Incubation").value) / 2;
     INCUBATION_PERIOD_SCALE = INCUBATION_PERIOD * SIM_STEPS_PER_DAY; // 2.29 days
@@ -1734,26 +1734,31 @@ function runSimulations() {
     BETA_S = document.getElementById("betaSchools").value;
     BETA_PT = document.getElementById("betaPT").value;
 
-    //INTERVENTION = parseInt(document.getElementById("interventions").value);
-    INTERVENTION = parseInt(document.querySelector('input[name="interventions2"]:checked').value);
-
-    li_interventions = document.getElementsByClassName("interv-li");
-
     INTERVENTIONS = [];
-
-    for (let i = 0; i < li_interventions.length; i++) {
-        div = li_interventions[i].children[0];
-        value = div.children[0].value;
-        console.log(2);
-        time = div.children[1].value;
-        console.log(3);
-        INTERVENTIONS.push({
-            value: parseInt(value),
-            time: parseInt(time),
-        });
-    }
-
     INTERVENTION = NO_INTERVENTION;
+    //INTERVENTION = parseInt(document.getElementById("interventions").value);
+    if (parseInt(document.querySelector('input[name="interventions2"]:checked').value) == 11){
+        li_interventions = document.getElementsByClassName("interv-li");
+        NUM_DAYS_BEFORE_INTERVENTIONS = 0;
+
+        for (let i = 0; i < li_interventions.length; i++) {
+            div = li_interventions[i].children[0];
+            value = div.children[0].value;
+            console.log(2);
+            time = div.children[1].value;
+            console.log(3);
+            INTERVENTIONS.push({
+                value: parseInt(value),
+                time: parseInt(time),
+            });
+        }
+    }
+    else{
+        INTERVENTION = parseInt(document.querySelector('input[name="interventions2"]:checked').value);
+    }
+  
+
+
 
     console.log(NUM_DAYS, INIT_FRAC_INFECTED, INTERVENTION);
     console.log("INTERVENTION = ", INTERVENTION);
@@ -1809,40 +1814,60 @@ function set_default_values_html() {
 
 function setParameters(city){
     if (city === 'bengaluru'){
-        console.log('dit ij bengaluru');
-        document.getElementById("compliance").value = COMPLIANCE_PROBABILITY;
-        document.getElementById("betaHouse").value = BETA_H;
-        document.getElementById("betaWork").value = BETA_W;
-        document.getElementById("betaCommunity").value = BETA_C;
-        document.getElementById("betaSchools").value = BETA_S;
-        document.getElementById("betaPT").value = BETA_PT;
+        document.getElementById("compliance").value = 0.9;
+        document.getElementById("betaHouse").value = 0.9632;
+        document.getElementById("betaWork").value = 0.5518;
+        document.getElementById("betaCommunity").value = 0.2035;
+        document.getElementById("betaSchools").value = 1.1036;
+        document.getElementById("betaPT").value = 0;
+        CALIBRATION_DELAY = 0; //// Assuming the simulator starts on March 1.
+        NUM_DAYS_BEFORE_INTERVENTIONS = 15 + CALIBRATION_DELAY;
+        $("#customIntv").hide();
+
     }
     if (city === 'wuhan'){
-        console.log('dit ij wuhan');
-        document.getElementById("compliance").value = 0;
-        document.getElementById("betaHouse").value = 0;
-        document.getElementById("betaWork").value = 0;
-        document.getElementById("betaCommunity").value = 0;
-        document.getElementById("betaSchools").value = 0;
+        document.getElementById("compliance").value = 0.9;
+        document.getElementById("betaHouse").value = 1;
+        document.getElementById("betaWork").value = 0.65;
+        document.getElementById("betaCommunity").value = 0.353;
+        document.getElementById("betaSchools").value = 1.3;
         document.getElementById("betaPT").value = 0;
+        CALIBRATION_DELAY = 0; //// Assuming the simulator starts on March 1.
+        NUM_DAYS_BEFORE_INTERVENTIONS = 22 + CALIBRATION_DELAY;
+        $("input[name=interventions2][value='11']").prop("checked",true);
+        $("#customIntv").show();
     }
     if (city === 'nyc'){
-        console.log('dit ij nyc');
-        document.getElementById("compliance").value = 0;
-        document.getElementById("betaHouse").value = 0;
-        document.getElementById("betaWork").value = 0;
-        document.getElementById("betaCommunity").value = 0;
-        document.getElementById("betaSchools").value = 0;
+        document.getElementById("compliance").value = 0.9;
+        document.getElementById("betaHouse").value = 1.902;
+        document.getElementById("betaWork").value = 1.583;
+        document.getElementById("betaCommunity").value = 0.625;
+        document.getElementById("betaSchools").value = 3.167;
         document.getElementById("betaPT").value = 0;
+        CALIBRATION_DELAY = 0; //// Assuming the simulator starts on March 1.
+        NUM_DAYS_BEFORE_INTERVENTIONS = 8 + CALIBRATION_DELAY;
+        $("input[name=interventions2][value='11']").prop("checked",true);
+        $("#customIntv").show();
     }
     if (city === 'kochi'){
-        console.log('dit ij kochi');
-        document.getElementById("compliance").value = 0;
-        document.getElementById("betaHouse").value = 0;
-        document.getElementById("betaWork").value = 0;
-        document.getElementById("betaCommunity").value = 0;
-        document.getElementById("betaSchools").value = 0;
+        document.getElementById("compliance").value = 0.9;
+        document.getElementById("betaHouse").value = 1.065;
+        document.getElementById("betaWork").value = 0.532;
+        document.getElementById("betaCommunity").value = 0.207;
+        document.getElementById("betaSchools").value = 1.064;
         document.getElementById("betaPT").value = 0;
+        CALIBRATION_DELAY = 0; //// Assuming the simulator starts on March 1.
+        NUM_DAYS_BEFORE_INTERVENTIONS = 15 + CALIBRATION_DELAY;
+    }
+    if (city === 'mumbai'){
+        document.getElementById("compliance").value = 0.9;
+        document.getElementById("betaHouse").value = 0.911;
+        document.getElementById("betaWork").value = 0.488;
+        document.getElementById("betaCommunity").value = 0.22;
+        document.getElementById("betaSchools").value = 0.976;
+        document.getElementById("betaPT").value = 0;
+        CALIBRATION_DELAY = 0; //// Assuming the simulator starts on March 1.
+        NUM_DAYS_BEFORE_INTERVENTIONS = 15 + CALIBRATION_DELAY;
     }
 }
 

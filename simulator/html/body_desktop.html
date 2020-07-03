@@ -126,19 +126,19 @@
 				<div class="form-group row">
 					<label class="col-sm-8 form-label" for="Incubation">Mean Incubation Period (days)</label>
 					<div class="col-sm-4">
-						<input class="form-control" type="number" min="0" max="30" value="4.58" step="0.25" id="Incubation">
+						<input class="form-control" type="number" min="0" max="30" value="4.58" step="0.01" id="Incubation">
 					</div>
 				</div>
 				<div class="form-group row">
 					<label for="asymptomaticMean" class="col-sm-8 form-label">Mean Asymptomatic/Pre Symptomatic Period (days)</label>
 					<div class="col-sm-4">
-						<input class="form-control" type="number" min="0" max="30" value="0.5" step="0.25" id="asymptomaticMean">
+						<input class="form-control" type="number" min="0" max="30" value="0.5" step="0.01" id="asymptomaticMean">
 					</div>
 				</div>
 				<div class="form-group row">
 					<label for="symptomaticMean" class="col-sm-8 form-label">Mean Symptomatic Period (days)</label>
 					<div class="col-sm-4">
-						<input class="form-control" type="number" min="0" max="30" value="5" step="0.25" id="symptomaticMean">
+						<input class="form-control" type="number" min="0" max="30" value="5" step="0.01" id="symptomaticMean">
 					</div>
 				</div>
 				<div class="form-group row">
@@ -150,13 +150,13 @@
 				<div class="form-group row">
 					<label for="meanHospitalPeriod" class="col-sm-8 form-label">Mean Hospital Stay (days)</label>
 					<div class="col-sm-4">
-						<input class="form-control" type="number" min="0" max="30" value="8" step="0.25" id="meanHospitalPeriod">
+						<input class="form-control" type="number" min="0" max="30" value="8" step="0.01" id="meanHospitalPeriod">
 					</div>
 				</div>
 				<div class="form-group row">
 					<label for="meanICUPeriod" class="col-sm-8 form-label">Mean ICU Stay (days)</label>
 					<div class="col-sm-4">
-						<input class="form-control" type="number" min="0" max="30" value="8" step="0.25" id="meanICUPeriod">
+						<input class="form-control" type="number" min="0" max="30" value="8" step="0.01" id="meanICUPeriod">
 					</div>
 				</div>
 				<p class="section-title">Transmission Coefficients</p>
@@ -201,7 +201,7 @@
 				<div class="form-group row">
 					<label for="initFrac" class="col-sm-8 form-label">Fraction Infected</label>
 					<div class="col-sm-4">
-						<input class="form-control" type="number" min="0" max="1" value="0.001" id="initFrac">
+						<input class="form-control" type="number" min="0" max="1" value="0.001" step="0.001"  id="initFrac">
 					</div>
 				</div>
 				<!--
@@ -249,18 +249,10 @@
                   font-size: 14px;
                   cursor: pointer;" class="glyphicon glyphicon-info-sign toggleInfo" data-field="Intervention" aria-hidden="true"></span>
 				</p>
-				<!-- <p >Simulations under all scenarios are assumed to begin on March 1, 2020. Interventions begin on March 25, aligned with the national lockdown start date. 
+				<!-- <p >Simulations under all scenarios are assumed to begin on March 1, 2020. Interventions begin on March 1, aligned with the national lockdown start date. 
                   They continue for the indicated duration (or indefinitely if not specified).</p> -->
 				<hr class="line-separator" />
-				<div class="form-group row">
-				    <div class="col-sm-12">
-				        <!--<legend class="w-auto" style="font-size: large; font-weight:bold;">Intervention Method</legend>-->
 
-				        <div id="interv">
-				        </div>
-				    </div>
-				    <button class="add-interv" onclick=newInterv()>Add Intervention</button>
-				</div>
 				<div class="form-group row">
 					<div class="col-sm-12">
 						<!--<legend class="w-auto" style="font-size: large; font-weight:bold;">Intervention Method</legend>-->
@@ -314,6 +306,18 @@
 								<input type="radio" name="interventions2" value="10">40 days of lockdown followed by 30 days of [home quarantine of infected households, school-college closures, and offices working at half strength], case isolation thereafter</input>
 							</label>
 						</div>
+						<div class="radio">
+							<label>
+								<input type="radio" name="interventions2" value="11">Set-up a custom Intervention</input>
+							</label>
+							
+						</div>
+						<div class="form-group row" id="customIntv">
+							<div class="col-sm-12">
+								<div id="interv">Click the "add intervention" button to set-up the simulator. the last intervention continues till simulation ends</div>
+							</div>
+							<button id="intvButton" class="add-interv" onclick=newInterv()>Add Intervention</button>
+						</div>
 					</div>
 				</div>
 				<!-- <label for="intervention">Intervention Method</label> -->
@@ -338,7 +342,7 @@
 				<div class="form-group row">
 					<label for="compliance" class="col-sm-8 form-label">Compliance Probability</label>
 					<div class="col-sm-4">
-						<input class="form-control" type="number" min="0" max="1" value="0.9" id="compliance">
+						<input class="form-control" type="number" min="0" max="1" value="0.9"  id="compliance">
 					</div>
 				</div>
 			</form>
@@ -404,66 +408,77 @@
 </div>
 
 <script>
-    // Create a new list itemwhen clicking on the "Add"button
+	    $("#customIntv").hide();
 
-    const mapping = {
-        "0": "No Intervention (NI)",
-        "1": "Case Isolation (CI)",
-        "2": "Home Quarantine (HQ)",
-        "3": "Lockdown (LD)",
-        "4": "CI and HQ of infected household (CIHQI)",
-        "5": "CIHQI and social distancing of those above 65 years of age"
-    }
+$('input[type="radio"]').click(function(){
+	if ($(this).is(':checked'))
+	{
+		var value = $(this).val();
+		if (value == 11){$("#customIntv").show();}
+		else{$("#customIntv").hide();}
+	}
+});
 
-    let count = 0
+// Create a new list itemwhen clicking on the "Add"button
 
-    function newInterv() {
-        let li = document.createElement("li");
-        li.number = count
-        li.className = "interv-li"
-        /*
-        let intervCode = document.getElementById("interv-choice").value;
-        let intervTime = document.getElementById("interv-time").value;
-        let intervName = mapping[intervCode];
-        */
+const mapping = {
+	"0": "No Intervention (NI)",
+	"1": "Case Isolation (CI)",
+	"2": "Home Quarantine (HQ)",
+	"3": "Lockdown (LD)",
+	"4": "CI and HQ of infected household (CIHQI)",
+	"5": "CIHQI and social distancing of those above 65 years of age"
+}
 
-        // Create li div for everything
-        let liDiv = document.createElement("div");
-        liDiv.className = "li-interv-div"
-        let selectInterv = document.createElement("select")
-        const createOption = (value, text) => {
-            let option = document.createElement("option");
-            option.appendChild(document.createTextNode(text))
-            option.value = String(value)
-            return option;
-        }
+let count = 0
 
-        for (let code in mapping) {
-            selectInterv.appendChild(createOption(code, mapping[code]))
-        }
-        selectInterv.className = "li-interv-select"
+function newInterv() {
+	let li = document.createElement("li");
+	li.number = count
+	li.className = "interv-li"
+	/*
+	let intervCode = document.getElementById("interv-choice").value;
+	let intervTime = document.getElementById("interv-time").value;
+	let intervName = mapping[intervCode];
+	*/
 
-        let input = document.createElement("input")
-        input.className = "li-interv-time"
-        input.type = "text"
-        input.placeholder = "Duration in days"
+	// Create li div for everything
+	let liDiv = document.createElement("div");
+	liDiv.className = "li-interv-div"
+	let selectInterv = document.createElement("select")
+	const createOption = (value, text) => {
+		let option = document.createElement("option");
+		option.appendChild(document.createTextNode(text))
+		option.value = String(value)
+		return option;
+	}
 
-        liDiv.appendChild(selectInterv)
-        liDiv.appendChild(input)
+	for (let code in mapping) {
+		selectInterv.appendChild(createOption(code, mapping[code]))
+	}
+	selectInterv.className = "li-interv-select"
 
-        li.appendChild(liDiv);
+	let input = document.createElement("input")
+	input.className = "li-interv-time"
+	input.type = "text"
+	input.placeholder = "Duration in days"
 
-        let close = document.createElement("input");
-        close.type = "button"
-        close.value = "\u2715"
-        liDiv.appendChild(close);
-        close.onclick = () => {
-            li.parentNode.removeChild(li);
-        }
+	liDiv.appendChild(selectInterv)
+	liDiv.appendChild(input)
+
+	li.appendChild(liDiv);
+
+	let close = document.createElement("input");
+	close.type = "button"
+	close.value = "\u2715"
+	liDiv.appendChild(close);
+	close.onclick = () => {
+		li.parentNode.removeChild(li);
+	}
 
 
-        document.getElementById("interv").appendChild(li);
+	document.getElementById("interv").appendChild(li);
 
-        count++
-    }
+	count++
+};
 </script>

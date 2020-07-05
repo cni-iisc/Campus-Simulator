@@ -197,9 +197,9 @@ function compliance() {
 function compute_prob_infection_given_community(infection_probability, set_uniform) {
 
     var prob_infec_given_community = [];
-    var communities_population_json = JSON.parse(loadJSON_001(inputPath + 'fractionPopulation.json'));
+    var communities_population_json = JSON.parse(loadJSON(inputPath + 'fractionPopulation.json'));
     if (!set_uniform) {
-        var communities_frac_quarantined_json = JSON.parse(loadJSON_001(inputPath + 'quarantinedPopulation.json'));
+        var communities_frac_quarantined_json = JSON.parse(loadJSON(inputPath + 'quarantinedPopulation.json'));
     }
 
     var num_communities = communities_population_json.length;
@@ -233,8 +233,8 @@ function get_age_group(age) {
 // Initialise the nodes with various features.
 function init_nodes() {
 
-    var individuals_json = JSON.parse(loadJSON_001(inputPath + 'individuals.json'));
-    var workplace_json = JSON.parse(loadJSON_001(inputPath + 'workplaces.json'));
+    var individuals_json = JSON.parse(loadJSON(inputPath + 'individuals.json'));
+    var workplace_json = JSON.parse(loadJSON(inputPath + 'workplaces.json'));
     //console.log(individuals_json.length,individuals_json[0]);
     NUM_PEOPLE = individuals_json.length;
     NUM_WORKPLACES = workplace_json.length;
@@ -324,7 +324,7 @@ function init_nodes() {
 
 function load_infection_seed_json(seed_scaling_factor) {
     var seed_array = [];
-    var infection_seeds_json = JSON.parse(loadJSON_001(inputPath + 'infection_seeds.json'));
+    var infection_seeds_json = JSON.parse(loadJSON(inputPath + 'infection_seeds.json'));
     var infection_seeds_json_array = Object.values(infection_seeds_json['seed_fit']);
     var num_seed_days = infection_seeds_json_array.length;
     for (var count = 0; count < num_seed_days * SIM_STEPS_PER_DAY; count++) {
@@ -540,7 +540,7 @@ function compute_scale_public_transport(nodes, public_transports) {
 
 function init_homes() {
 
-    var houses_json = JSON.parse(loadJSON_001(inputPath + 'houses.json'));
+    var houses_json = JSON.parse(loadJSON(inputPath + 'houses.json'));
     NUM_HOMES = houses_json.length;
 
     var homes = [];
@@ -566,8 +566,8 @@ function init_homes() {
 
 // Both schools and offices are treated as workspaces with some differences
 function init_workplaces() {
-    var workplaces_json = JSON.parse(loadJSON_001(inputPath + 'workplaces.json'));
-    var schools_json = JSON.parse(loadJSON_001(inputPath + 'schools.json'));
+    var workplaces_json = JSON.parse(loadJSON(inputPath + 'workplaces.json'));
+    var schools_json = JSON.parse(loadJSON(inputPath + 'schools.json'));
     NUM_WORKPLACES = workplaces_json.length;
     NUM_SCHOOLS = schools_json.length;
 
@@ -627,7 +627,7 @@ function compare_wards(a, b) {
 
 function init_community() {
 
-    var communities_json = JSON.parse(loadJSON_001(inputPath + 'commonArea.json'));
+    var communities_json = JSON.parse(loadJSON(inputPath + 'commonArea.json'));
     communities_json.sort(compare_wards);
     NUM_COMMUNITIES = communities_json.length;
 
@@ -694,7 +694,7 @@ function euclidean(loc1, loc2) {
 
 
 function compute_community_distances(communities) {
-    var inter_ward_distances_json = JSON.parse(loadJSON_001(inputPath + 'wardCentreDistance.json'));
+    var inter_ward_distances_json = JSON.parse(loadJSON(inputPath + 'wardCentreDistance.json'));
 
     var community_dist_matrix = math.zeros([communities.length, communities.length]);
     /// console.log(community_dist_matrix)
@@ -887,9 +887,9 @@ function update_lambda_h_old(nodes, home) {
 
 function get_age_dependent_mixing_matrix_household() {
 
-    var sigma_json = JSON.parse(loadJSON_001(inputPath + 'Sigma_household.json'));
-    var U_matrix_json = JSON.parse(loadJSON_001(inputPath + 'U_household.json'));
-    var V_matrix_json = JSON.parse(loadJSON_001(inputPath + 'Vtranspose_household.json'));
+    var sigma_json = JSON.parse(loadJSON(inputPath + 'Sigma_household.json'));
+    var U_matrix_json = JSON.parse(loadJSON(inputPath + 'U_household.json'));
+    var V_matrix_json = JSON.parse(loadJSON(inputPath + 'Vtranspose_household.json'));
 
     SIGMA_H = math.zeros([NUM_AGE_GROUPS]);
     U_MATRIX_H = math.zeros([NUM_AGE_GROUPS, NUM_AGE_GROUPS]);
@@ -970,9 +970,9 @@ function update_lambda_w_old(nodes, workplace) {
 }
 
 function get_age_dependent_mixing_matrix_workplace() {
-    var sigma_json = JSON.parse(loadJSON_001(inputPath + 'Sigma_workplace.json'));
-    var U_matrix_json = JSON.parse(loadJSON_001(inputPath + 'U_workplace.json'));
-    var V_matrix_json = JSON.parse(loadJSON_001(inputPath + 'Vtranspose_workplace.json'));
+    var sigma_json = JSON.parse(loadJSON(inputPath + 'Sigma_workplace.json'));
+    var U_matrix_json = JSON.parse(loadJSON(inputPath + 'U_workplace.json'));
+    var V_matrix_json = JSON.parse(loadJSON(inputPath + 'Vtranspose_workplace.json'));
 
     SIGMA_OFFICE = math.zeros([NUM_AGE_GROUPS]);
     U_MATRIX_OFFICE = math.zeros([NUM_AGE_GROUPS, NUM_AGE_GROUPS]);
@@ -991,9 +991,9 @@ function get_age_dependent_mixing_matrix_workplace() {
 
     }
 
-    var sigma_json = JSON.parse(loadJSON_001(inputPath + 'Sigma_school.json'));
-    var U_matrix_json = JSON.parse(loadJSON_001(inputPath + 'U_school.json'));
-    var V_matrix_json = JSON.parse(loadJSON_001(inputPath + 'Vtranspose_school.json'));
+    var sigma_json = JSON.parse(loadJSON(inputPath + 'Sigma_school.json'));
+    var U_matrix_json = JSON.parse(loadJSON(inputPath + 'U_school.json'));
+    var V_matrix_json = JSON.parse(loadJSON(inputPath + 'Vtranspose_school.json'));
 
     SIGMA_SCHOOL = math.zeros([NUM_AGE_GROUPS]);
     U_MATRIX_SCHOOL = math.zeros([NUM_AGE_GROUPS, NUM_AGE_GROUPS]);
@@ -1881,9 +1881,11 @@ function setCity (city) {
     setParameters(city);
 }
 
+
 //jquery events for the webUI
 //
 $(document).ready(function () {
+    fetch("simulator/javascripts/customIntervention.js")
     if (window.matchMedia("(max-width: 767px)").matches)  {
     fetch("simulator/html/body_mobile.html")
   .then(response => {
@@ -1914,6 +1916,8 @@ else {
   });
 }
 });
+
+
 
 function initListner() {
     
@@ -2001,6 +2005,26 @@ function initListner() {
       if(!$('body').hasClass('mobile')) {
       $(window).resize();
       }
+
+      $("#customIntv").hide();
+      $('input[type="radio"]').on('click, change, input', function(){
+          if ($(this).is(':checked'))
+          {
+              var value = $(this).val();
+              if (value == 11){
+                  $("#customIntv").show();
+                  // Create a new list itemwhen clicking on the "Add" button
+                  $("#intvButton").on('click', function(){
+                      //console.log(interventionMap)
+                      newInterv()
+                  });
+              }
+              else{
+                  $("#customIntv").hide();
+              }
+          }
+  
+      });
 }
 
 
@@ -2017,3 +2041,59 @@ $(window).resize(function() {
     }
 })
 
+
+function newInterv() {
+    let count = 0
+
+    const mapping =  {
+        "0": "No Intervention (NI)",
+        "1": "Case Isolation (CI)",
+        "2": "Home Quarantine (HQ)",
+        "3": "Lockdown (LD)",
+        "4": "CI and HQ of infected household (CIHQI)",
+        "5": "CIHQI and social distancing of those above 65 years of age"
+    };
+
+	let li = document.createElement("li");
+	li.number = count
+	li.className = "interv-li"
+
+	// Create li div for everything
+	let liDiv = document.createElement("div");
+	liDiv.className = "li-interv-div"
+	let selectInterv = document.createElement("select")
+	const createOption = (value, text) => {
+		let option = document.createElement("option");
+		option.appendChild(document.createTextNode(text))
+		option.value = String(value)
+		return option;
+	}
+
+	for (let code in mapping) {
+		selectInterv.appendChild(createOption(code, mapping[code]))
+	}
+	selectInterv.className = "li-interv-select"
+
+	let input = document.createElement("input")
+	input.className = "li-interv-time"
+	input.type = "text"
+	input.placeholder = "Duration in days"
+
+	liDiv.appendChild(selectInterv)
+	liDiv.appendChild(input)
+
+	li.appendChild(liDiv);
+
+	let close = document.createElement("input");
+	close.type = "button"
+	close.value = "\u2715"
+	liDiv.appendChild(close);
+	close.onclick = () => {
+		li.parentNode.removeChild(li);
+	}
+
+
+	document.getElementById("interv").appendChild(li);
+
+	count++;
+};

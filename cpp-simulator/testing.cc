@@ -188,8 +188,8 @@ void set_test_request_fileread(vector<agent>& nodes, const vector<house>& homes,
 
 
 void test_contact_trace_household(count_type node_index, vector<agent>& nodes, const vector<house>& homes, double probability_contact_trace, double probability_test_symptomatic, double probability_test_asymptomatic, const count_type current_time ){
-	if(bernoulli(probability_contact_trace)){
-		for(auto household_member: homes[nodes[node_index].home].individuals){
+	for(auto household_member: homes[nodes[node_index].home].individuals){
+		if(bernoulli(probability_contact_trace)){//contact trace a household individual with this probability.
 		  nodes[household_member].test_status.contact_traced_epoch = current_time;
 		  // Do we need to put it insdie the if condition. If not, some people can potentially be in quarantine for a very long time!
 		  if(nodes[household_member].disease_label == DiseaseLabel::asymptomatic){
@@ -212,8 +212,8 @@ void test_contact_trace_household(count_type node_index, vector<agent>& nodes, c
 }
 
 void test_contact_trace_project(count_type node_index, vector<agent>& nodes, const vector<workplace>& workplaces, double probability_contact_trace, double probability_test_symptomatic, double probability_test_asymptomatic, const count_type current_time ){
-	if(bernoulli(probability_contact_trace)){
-		for(const auto colleague_index: workplaces[nodes[node_index].workplace].projects[nodes[node_index].workplace_subnetwork].individuals){
+	for(const auto colleague_index: workplaces[nodes[node_index].workplace].projects[nodes[node_index].workplace_subnetwork].individuals){
+		if(bernoulli(probability_contact_trace)){
 			nodes[colleague_index].test_status.contact_traced_epoch = current_time;
 			// Do we need to put it insdie the if condition. If not, some people can potentially be in quarantine for a very long time!
 			if(nodes[colleague_index].disease_label == DiseaseLabel::asymptomatic){
@@ -237,8 +237,8 @@ void test_contact_trace_project(count_type node_index, vector<agent>& nodes, con
 }
 
 void test_contact_trace_random_community(count_type node_index, vector<agent>& nodes, const vector<house>& homes, double probability_contact_trace, double probability_test_symptomatic, double probability_test_asymptomatic, const count_type current_time ){
-	if(bernoulli(probability_contact_trace)){
-		for(count_type k=0; k<homes[nodes[node_index].home].random_households.households.size(); k++){
+	for(count_type k=0; k<homes[nodes[node_index].home].random_households.households.size(); k++){
+		if(bernoulli(probability_contact_trace)){//Within random community, we think of household connections, to model say family friends.
 		  for(const auto cohabitant_index: homes[homes[nodes[node_index].home].random_households.households[k]].individuals){
 			nodes[cohabitant_index].test_status.contact_traced_epoch = current_time;
 			// Do we need to put it insdie the if condition. If not, some people can potentially be in quarantine for a very long time!
@@ -266,9 +266,9 @@ void test_contact_trace_neighbourhood_cell(count_type node_index, vector<agent>&
 	grid_cell my_grid_cell = homes[nodes[node_index].home].neighbourhood;
 	nbr_cell my_nbr_cell = nbr_cells[my_grid_cell.cell_x][my_grid_cell.cell_y];
 	count_type my_nbr_size = my_nbr_cell.houses_list.size();
-	if(bernoulli(probability_contact_trace)){
-		for(count_type k=0; k<my_nbr_size; k++){
-			for(const auto neighbor_index: homes[my_nbr_cell.houses_list[k]].individuals){
+	for(count_type k=0; k<my_nbr_size; k++){
+		for(const auto neighbor_index: homes[my_nbr_cell.houses_list[k]].individuals){
+			if(bernoulli(probability_contact_trace)){ //Within a neighbourhood we think of individuals connections rather than household connections.
 				nodes[neighbor_index].test_status.contact_traced_epoch = current_time;
 				// Do we need to put it insdie the if condition. If not, some people can potentially be in quarantine for a very long time!
 				if(nodes[neighbor_index].disease_label == DiseaseLabel::asymptomatic){

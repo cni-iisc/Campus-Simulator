@@ -185,7 +185,9 @@ plot_data_struct run_simulation(){
   const auto NUM_PEOPLE = GLOBAL.num_people;
 
   for(count_type time_step = 0; time_step < GLOBAL.NUM_TIMESTEPS; ++time_step){
-
+#ifdef DEBUG
+	auto start_time_timestep = std::chrono::high_resolution_clock::now();
+#endif
 	total_lambda_fraction_data.set_zero();
 	mean_lambda_fraction_data.set_zero();
 
@@ -562,7 +564,11 @@ plot_data_struct run_simulation(){
 				 normal_interaction,
 				 curtailed_interaction
                   }});
-	
+#ifdef DEBUG
+	cerr<<std::endl<<"time_step: "<<time_step;
+	auto end_time_timestep = std::chrono::high_resolution_clock::now();
+  	cerr << "Time step: simulation time (ms): " << duration(start_time_timestep, end_time_timestep) << "\n";
+#endif
   }
 
   //Create CSV data out of the date for infections per new infective node

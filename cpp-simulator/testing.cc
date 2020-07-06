@@ -6,6 +6,7 @@
 #include <cassert>
 using std::vector;
 
+//#define CONTACT_TRACE_NBR_CELLS
 
 void set_test_request(vector<agent>& nodes, const vector<house>& homes, const vector<workplace>& workplaces, const vector<vector<nbr_cell>>& nbr_cells, const vector<community>& communities, const testing_probability probabilities, const count_type current_time){
   for(count_type i=0; i<nodes.size(); ++i){
@@ -82,8 +83,8 @@ void set_test_request(vector<agent>& nodes, const vector<house>& homes, const ve
 		test_contact_trace_random_community(i,nodes,homes,probabilities.prob_contact_trace_random_community_positive,probabilities.prob_test_random_community_positive_symptomatic,probabilities.prob_test_random_community_positive_asymptomatic, current_time);
 	}
 
+#ifndef DISABLE_CONTACT_TRACE_NBR_CELLS
 	// Test people in neighbourhood cell
-
 
 	if(nodes[i].infection_status == Progression::symptomatic && time_since_symptomatic >0 && time_since_symptomatic<=1){
 		test_contact_trace_neighbourhood_cell(i,nodes,homes,nbr_cells,probabilities.prob_contact_trace_neighbourhood_symptomatic,probabilities.prob_test_neighbourhood_symptomatic_symptomatic,probabilities.prob_test_neighbourhood_symptomatic_asymptomatic, current_time);
@@ -96,6 +97,7 @@ void set_test_request(vector<agent>& nodes, const vector<house>& homes, const ve
 	if(nodes[i].test_status.state == test_result::positive && time_since_tested>0 && time_since_tested<=1){
 		test_contact_trace_neighbourhood_cell(i,nodes,homes,nbr_cells,probabilities.prob_contact_trace_neighbourhood_positive,probabilities.prob_test_neighbourhood_positive_symptomatic,probabilities.prob_test_neighbourhood_positive_asymptomatic, current_time);
 	}
+#endif
 
 	//Finally, set test_requested for current agent
 	if(nodes[i].infection_status == Progression::symptomatic && time_since_symptomatic > 0 && time_since_symptomatic <= 1){

@@ -632,12 +632,22 @@ enum class test_result{
   negative,
 };
 
+enum class test_trigger{
+  not_yet_requested,
+  symptomatic,
+  hospitalised,
+  contact_traced,
+  re_test
+};
+
 struct test_struct{
-  int tested_epoch = -7;
+  int tested_epoch = -28; // This is reset in init_nodes
   bool tested_positive = false; // To indicate if the individual is tested positive at sometime in the past
   count_type contact_traced_epoch = 0;
   bool test_requested = false;
   test_result state = test_result::not_yet_tested;
+  bool triggered_contact_trace = false;
+  test_trigger node_test_trigger=test_trigger::not_yet_requested;
 };
 
 struct agent{

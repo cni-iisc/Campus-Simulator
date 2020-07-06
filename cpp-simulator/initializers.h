@@ -39,5 +39,6 @@ svd init_school_age_interaction_matrix();
 svd init_workplace_age_interaction_matrix();
 svd init_community_age_interaction_matrix();
 
+void print_testing_protocol(const int index, const testing_probability probabilities);
 
 #endif

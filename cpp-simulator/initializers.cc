@@ -312,7 +312,68 @@ vector<intervention_params> init_intervention_params(){
   return intv_params;
 }
 
+void print_testing_protocol(const int index, const testing_probability probabilities){
+  std::cout<<std::endl<<"Index : "<<index<<". num_days = "<<probabilities.num_days;
+  std::cout<<".  prob_test_index_symptomatic:  "<<probabilities.prob_test_index_symptomatic;
+  std::cout<<".  prob_test_index_hospitalised:  "<<probabilities.prob_test_index_hospitalised;
 
+  std::cout<<".  prob_test_household_positive_symptomatic:  "<<probabilities.prob_test_household_positive_symptomatic;
+  std::cout<<".  prob_test_household_hospitalised_symptomatic:  "<<probabilities.prob_test_household_hospitalised_symptomatic;
+  std::cout<<".  prob_test_household_symptomatic_symptomatic:  "<<probabilities.prob_test_household_symptomatic_symptomatic;
+  std::cout<<".  prob_test_household_positive_asymptomatic:  "<<probabilities.prob_test_household_positive_asymptomatic;
+  std::cout<<".  prob_test_household_hospitalised_asymptomatic:  "<<probabilities.prob_test_household_hospitalised_asymptomatic;
+  std::cout<<".  prob_test_household_symptomatic_asymptomatic:  "<<probabilities.prob_test_household_symptomatic_asymptomatic;
+
+  std::cout<<".  prob_test_workplace_positive_symptomatic:  "<<probabilities.prob_test_workplace_positive_symptomatic;
+  std::cout<<".  prob_test_workplace_hospitalised_symptomatic:  "<<probabilities.prob_test_workplace_hospitalised_symptomatic;
+  std::cout<<".  prob_test_workplace_symptomatic_symptomatic:  "<<probabilities.prob_test_workplace_symptomatic_symptomatic;
+  std::cout<<".  prob_test_workplace_positive_asymptomatic:  "<<probabilities.prob_test_workplace_positive_asymptomatic;
+  std::cout<<".  prob_test_workplace_hospitalised_asymptomatic:  "<<probabilities.prob_test_workplace_hospitalised_asymptomatic;
+  std::cout<<".  prob_test_workplace_symptomatic_asymptomatic:  "<<probabilities.prob_test_workplace_symptomatic_asymptomatic;
+  
+  std::cout<<".  prob_test_random_community_positive_symptomatic:  "<<probabilities.prob_test_random_community_positive_symptomatic;
+  std::cout<<".  prob_test_random_community_hospitalised_symptomatic:  "<<probabilities.prob_test_random_community_hospitalised_symptomatic;
+  std::cout<<".  prob_test_random_community_symptomatic_symptomatic:  "<<probabilities.prob_test_random_community_symptomatic_symptomatic;
+  std::cout<<".  prob_test_random_community_positive_asymptomatic:  "<<probabilities.prob_test_random_community_positive_asymptomatic;
+  std::cout<<".  prob_test_random_community_hospitalised_asymptomatic:  "<<probabilities.prob_test_random_community_hospitalised_asymptomatic;
+  std::cout<<".  prob_test_random_community_symptomatic_asymptomatic:  "<<probabilities.prob_test_random_community_symptomatic_asymptomatic;
+
+  std::cout<<".  prob_test_neighbourhood_positive_symptomatic:  "<<probabilities.prob_test_neighbourhood_positive_symptomatic;
+  std::cout<<".  prob_test_neighbourhood_hospitalised_symptomatic:  "<<probabilities.prob_test_neighbourhood_hospitalised_symptomatic;
+  std::cout<<".  prob_test_neighbourhood_symptomatic_symptomatic:  "<<probabilities.prob_test_neighbourhood_symptomatic_symptomatic;
+  std::cout<<".  prob_test_neighbourhood_positive_asymptomatic:  "<<probabilities.prob_test_neighbourhood_positive_asymptomatic;
+  std::cout<<".  prob_test_neighbourhood_hospitalised_asymptomatic:  "<<probabilities.prob_test_neighbourhood_hospitalised_asymptomatic;
+  std::cout<<".  prob_test_neighbourhood_symptomatic_asymptomatic:  "<<probabilities.prob_test_neighbourhood_symptomatic_asymptomatic;
+ 
+  std::cout<<".  prob_test_school_positive_symptomatic:  "<<probabilities.prob_test_school_positive_symptomatic;
+  std::cout<<".  prob_test_school_hospitalised_symptomatic:  "<<probabilities.prob_test_school_hospitalised_symptomatic;
+  std::cout<<".  prob_test_school_symptomatic_symptomatic:  "<<probabilities.prob_test_school_symptomatic_symptomatic;
+  std::cout<<".  prob_test_school_positive_asymptomatic:  "<<probabilities.prob_test_school_positive_asymptomatic;
+  std::cout<<".  prob_test_school_hospitalised_asymptomatic:  "<<probabilities.prob_test_school_hospitalised_asymptomatic;
+  std::cout<<".  prob_test_school_symptomatic_asymptomatic:  "<<probabilities.prob_test_school_symptomatic_asymptomatic;
+ 
+  std::cout<<".  prob_retest_recovered:  "<<probabilities.prob_retest_recovered;
+  
+  std::cout<<".  prob_contact_trace_household_symptomatic:  "<<probabilities.prob_contact_trace_household_symptomatic;
+  std::cout<<".  prob_contact_trace_project_symptomatic:  "<<probabilities.prob_contact_trace_project_symptomatic;
+  std::cout<<".  prob_contact_trace_random_community_symptomatic:  "<<probabilities.prob_contact_trace_random_community_symptomatic;
+  std::cout<<".  prob_contact_trace_neighbourhood_symptomatic:  "<<probabilities.prob_contact_trace_neighbourhood_symptomatic;
+  std::cout<<".  prob_contact_trace_class_symptomatic:  "<<probabilities.prob_contact_trace_class_symptomatic;
+
+  std::cout<<".  prob_contact_trace_household_hospitalised:  "<<probabilities.prob_contact_trace_household_hospitalised;
+  std::cout<<".  prob_contact_trace_project_hospitalised:  "<<probabilities.prob_contact_trace_project_hospitalised;
+  std::cout<<".  prob_contact_trace_random_community_hospitalised:  "<<probabilities.prob_contact_trace_random_community_hospitalised;
+  std::cout<<".  prob_contact_trace_neighbourhood_hospitalised:  "<<probabilities.prob_contact_trace_neighbourhood_hospitalised;
+  std::cout<<".  prob_contact_trace_class_hospitalised:  "<<probabilities.prob_contact_trace_class_hospitalised;
+
+  std::cout<<".  prob_contact_trace_household_positive:  "<<probabilities.prob_contact_trace_household_positive;
+  std::cout<<".  prob_contact_trace_project_positive:  "<<probabilities.prob_contact_trace_project_positive;
+  std::cout<<".  prob_contact_trace_random_community_positive:  "<<probabilities.prob_contact_trace_random_community_positive;
+  std::cout<<".  prob_contact_trace_neighbourhood_positive:  "<<probabilities.prob_contact_trace_neighbourhood_positive;
+  std::cout<<".  prob_contact_trace_class_positive:  "<<probabilities.prob_contact_trace_class_positive;
+
+}
+  
 vector<testing_probability> init_testing_protocol(){
   vector<testing_probability> testing_protocol;
   if(GLOBAL.TESTING_PROTOCOL==Testing_Protocol::testing_protocol_file_read){
@@ -320,7 +381,7 @@ vector<testing_probability> init_testing_protocol(){
 	auto testProtJSON = readJSONFile(GLOBAL.input_base + GLOBAL.testing_protocol_filename);
 
 	testing_protocol.reserve(testProtJSON.GetArray().Size());
-
+	count_type index = 0;
 	for (auto &elem: testProtJSON.GetArray()){
 	  testing_probability temp;
 	  if((elem.HasMember("num_days")) && (elem["num_days"].GetInt() > 0)){
@@ -489,7 +550,8 @@ vector<testing_probability> init_testing_protocol(){
 		}
 
 		testing_protocol.push_back(temp);
-
+		print_testing_protocol(index, temp);
+		++index;
 	  }else{
 		std::cout<<std::endl<<"num_days not specified or less than 1. Skipping current index.";
 		assert(false);
@@ -676,7 +738,7 @@ vector<agent> init_nodes(){
 							   i, elem,
 							   seed_candidates);
 
-	nodes[i].test_status.tested_epoch = -1*GLOBAL.MINIMUM_TEST_INTERVAL;
+	nodes[i].test_status.tested_epoch = -1*GLOBAL.MINIMUM_TEST_INTERVAL*GLOBAL.SIM_STEPS_PER_DAY;
 	
 	++i;
   }

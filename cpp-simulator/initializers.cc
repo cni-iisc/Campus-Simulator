@@ -386,6 +386,12 @@ vector<testing_probability> init_testing_protocol(){
 	  testing_probability temp;
 	  if((elem.HasMember("num_days")) && (elem["num_days"].GetInt() > 0)){
 		temp.num_days = elem["num_days"].GetInt();
+		if(elem.HasMember("test_false_positive")){
+		  GLOBAL.TEST_FALSE_POSITIVE = elem["test_false_positive"].GetDouble();
+		}
+		if(elem.HasMember("test_false_negative")){
+		  GLOBAL.TEST_FALSE_NEGATIVE = elem["test_false_negative"].GetDouble();
+		}
 		if(elem.HasMember("prob_test_index_symptomatic")){
 		  temp.prob_test_index_symptomatic = elem["prob_test_index_symptomatic"].GetDouble();
 		}

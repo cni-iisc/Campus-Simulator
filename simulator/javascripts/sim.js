@@ -1885,7 +1885,6 @@ function setCity (city) {
 //jquery events for the webUI
 //
 $(document).ready(function () {
-    fetch("simulator/javascripts/customIntervention.js")
     if (window.matchMedia("(max-width: 767px)").matches)  {
     fetch("simulator/html/body_mobile.html")
   .then(response => {
@@ -2050,8 +2049,8 @@ function newInterv() {
         "1": "Case Isolation (CI)",
         "2": "Home Quarantine (HQ)",
         "3": "Lockdown (LD)",
-        "4": "CI and HQ of infected household (CIHQI)",
-        "5": "CIHQI and social distancing of those above 65 years of age"
+        "4": "CI and HQ of infected household (CIHQ)",
+        "5": "CIHQ and social distancing of those above 65 years of age"
     };
 
 	let li = document.createElement("li");
@@ -2085,6 +2084,7 @@ function newInterv() {
 	li.appendChild(liDiv);
 
 	let close = document.createElement("input");
+	close.className = "li-close"
 	close.type = "button"
 	close.value = "\u2715"
 	liDiv.appendChild(close);

@@ -701,39 +701,48 @@ void initialize_office_attendance(){
 
   //constexpr count_type NUMBER_OF_OFFICE_TYPES = 6;
   auto attendanceJSON = readJSONFile(GLOBAL.input_base + GLOBAL.attendance_filename);
-  ATTENDANCE.number_of_entries = attendanceJSON.GetArray().Size();
-  ATTENDANCE.probabilities.reserve(ATTENDANCE.number_of_entries);
+  ATTENDANCE.number_of_entries = attendanceJSON.GetArray().Size(); //will change for new file type
+  ATTENDANCE.probabilities.reserve(ATTENDANCE.number_of_entries); //will change for new file type
   count_type index = 0;
   for(auto& elem: attendanceJSON.GetArray()){
-    ATTENDANCE.probabilities.push_back(vector<double>(GLOBAL.NUMBER_OF_OFFICE_TYPES));
-    count_type val;
-    std::string val_s;
+	count_type num_days = 1;
+	if(elem.HasMember("num_days")){
+		num_days = elem["num_days"].GetInt();
+		ATTENDANCE.attendance_new_file_type = true;
+	}
+	for (count_type day = 0; day < num_days; ++day){
 
-    val = static_cast<count_type>(OfficeType::other);
-    val_s = std::to_string(val);
-    ATTENDANCE.probabilities[index].at(val) = elem[val_s.c_str()].GetDouble();
-    
-    val = static_cast<count_type>(OfficeType::sez);
-    val_s = std::to_string(val);
-    ATTENDANCE.probabilities[index].at(val) = elem[val_s.c_str()].GetDouble();
-    
-    val = static_cast<count_type>(OfficeType::government);
-    val_s = std::to_string(val);
-    ATTENDANCE.probabilities[index].at(val) = elem[val_s.c_str()].GetDouble();
-    
-    val = static_cast<count_type>(OfficeType::it);
-    val_s = std::to_string(val);
-    ATTENDANCE.probabilities[index].at(val) = elem[val_s.c_str()].GetDouble();
-    
-    val = static_cast<count_type>(OfficeType::construction);
-    val_s = std::to_string(val);
-    ATTENDANCE.probabilities[index].at(val) = elem[val_s.c_str()].GetDouble();
-    
-    val = static_cast<count_type>(OfficeType::hospital);
-    val_s = std::to_string(val);
-    ATTENDANCE.probabilities[index].at(val) = elem[val_s.c_str()].GetDouble();
-      
-    ++index;
+		ATTENDANCE.probabilities.push_back(vector<double>(GLOBAL.NUMBER_OF_OFFICE_TYPES));
+		count_type val;
+		std::string val_s;
+
+		val = static_cast<count_type>(OfficeType::other);
+		val_s = std::to_string(val);
+		ATTENDANCE.probabilities[index].at(val) = elem[val_s.c_str()].GetDouble();
+		
+		val = static_cast<count_type>(OfficeType::sez);
+		val_s = std::to_string(val);
+		ATTENDANCE.probabilities[index].at(val) = elem[val_s.c_str()].GetDouble();
+		
+		val = static_cast<count_type>(OfficeType::government);
+		val_s = std::to_string(val);
+		ATTENDANCE.probabilities[index].at(val) = elem[val_s.c_str()].GetDouble();
+		
+		val = static_cast<count_type>(OfficeType::it);
+		val_s = std::to_string(val);
+		ATTENDANCE.probabilities[index].at(val) = elem[val_s.c_str()].GetDouble();
+		
+		val = static_cast<count_type>(OfficeType::construction);
+		val_s = std::to_string(val);
+		ATTENDANCE.probabilities[index].at(val) = elem[val_s.c_str()].GetDouble();
+		
+		val = static_cast<count_type>(OfficeType::hospital);
+		val_s = std::to_string(val);
+		ATTENDANCE.probabilities[index].at(val) = elem[val_s.c_str()].GetDouble();
+		
+		++index;
+	}
   }
-  assert(index == ATTENDANCE.number_of_entries);
+  ATTENDANCE.number_of_entries = index;
+  //assert(index == ATTENDANCE.number_of_entries);
 }

@@ -85,6 +85,12 @@ double agent::get_attendance_probability(count_type time) const{
 	  return 1;
 	  //Let the other features handle these workplaces
 	} else {
+    if(ATTENDANCE.attendance_new_file_type){
+      if(time < GLOBAL.NUM_DAYS_BEFORE_INTERVENTIONS*GLOBAL.SIM_STEPS_PER_DAY){
+        return 1;
+      }
+      day = (time-GLOBAL.NUM_DAYS_BEFORE_INTERVENTIONS*GLOBAL.SIM_STEPS_PER_DAY)/GLOBAL.SIM_STEPS_PER_DAY; //For new attendance file, we assume attendance modulation starts only after interventions start.      
+    }
 	  if (day >= ATTENDANCE.number_of_entries){
 		day = ATTENDANCE.number_of_entries - 1;
 		//Just use the last entry

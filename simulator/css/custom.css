@@ -77,6 +77,7 @@ body {
 }
 .right-pane {
 }
+
 .status-bar {
   border: 1px solid #009933;
   border-radius: 6px;
@@ -272,9 +273,11 @@ input[type="color"], input[type="date"], input[type="datetime"], input[type="dat
 
 /*close button to delete intervention*/
 .li-close{
-	background-color:red;
+  padding-left: 2%;
+	background-color:gray;
 	color: white;
-	font-weight: 900;
+  font-weight: 900;
+  height: 34px;
 }
 
 /*list item of each custom intervention*/
@@ -284,13 +287,16 @@ input[type="color"], input[type="date"], input[type="datetime"], input[type="dat
 
 /*drop-down list for intervention*/ 
 .li-interv-select{
-	width:300px;	
+  width:300px;	
+  height: 34px;
+  padding-right: 2%;
 }
 
 
 /*time text box*/
 .li-interv-time{
-	width: 130px;
+  width: 130px;
+  height: 34px;
 }
 
 

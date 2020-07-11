@@ -1752,6 +1752,11 @@ function runSimulations() {
                 time: parseInt(time),
             });
         }
+        //Set the no intervention after all custom interventions are done
+        INTERVENTIONS.push({
+            value: 0,
+            time: 1,
+        });
     }
     else{
         INTERVENTION = parseInt(document.querySelector('input[name="interventions2"]:checked').value);
@@ -1947,6 +1952,11 @@ function initListner() {
 
     $('#compliance').tooltip({'trigger':'focus', 'title': 'What fraction of households are likely to follow the restrictions specified in the chosen intervention?'});
 
+    $('#li-interv-time').tooltip({'trigger':'focus', 'title': 'How long does the chosen intervention last?'});
+    
+    $('#li-interv-select').tooltip({'trigger':'focus', 'title': 'What intervention would you want to select?'});
+    
+
     $('.selectpicker').on('change', function () {
         var selectedItem = $('.selectpicker').val();
         setCity(selectedItem);
@@ -1960,7 +1970,7 @@ function initListner() {
                 htmlInner =  '<img width="100%" src="'+ IMAGEPREFIX +'/InfectionProgression-v2.png" />'
                 break;
             case 'Intervention':
-                htmlInner = `<span>Simulations under all scenarios are assumed to begin on March 1, 2020. Interventions begin on March 25, aligned with the national lockdown start date. They continue for the indicated duration (or indefinitely if not specified)
+                htmlInner = `<span>Simulations under all scenarios are assumed to begin on March 1, 2020. Interventions begin on March 25, aligned with the India lockdown start date.  They continue for the indicated duration (or indefinitely if not specified)
                     <br></br>
                 <b>Case Isolation</b>: One day after onset of symptoms, the individual is assumed to stay isolated at home for a period of seven days.
                 <br></br>
@@ -2011,11 +2021,14 @@ function initListner() {
           {
               var value = $(this).val();
               if (value == 11){
+                  var msg = "Click the 'Add Intervention' button to set-up the simulator to run a custom intervention.<br> The simulations with custom interventions, start with 100 infected individuals by default on Day 0. After the last intervention we switch to No Intervention scenario.";
+
+                  $("#interv").html(msg);
                   $("#customIntv").show();
                   // Create a new list itemwhen clicking on the "Add" button
                   $("#intvButton").on('click', function(){
-                      //console.log(interventionMap)
-                      newInterv()
+                        console.log("custom intervention added")
+                        newInterv()
                   });
               }
               else{

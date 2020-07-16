@@ -41,6 +41,8 @@ struct defaults{
   std::string OE_SECOND_PERIOD = "30";
   std::string LOCKED_COMMUNITY_LEAKAGE = "1.0";
   std::string COMMUNITY_LOCK_THRESHOLD = "0.001";
+  std::string LOCKED_NEIGHBORHOOD_LEAKAGE = "1.0";
+  std::string NEIGHBORHOOD_LOCK_THRESHOLD = "0.001";
   std::string MASK_ACTIVE = "false";
   std::string MASK_FACTOR = "0.8";
   std::string MASK_START_DELAY = "40";
@@ -54,6 +56,7 @@ struct defaults{
   std::string NBR_CELL_SIZE = "0.178"; // in km
   std::string ENABLE_CONTAINMENT = "false";
   std::string ENABLE_NBR_CELLS = "false";
+  std::string ENABLE_NEIGHBORHOOD_SOFT_CONTAINMENT = "false";
   std::string WARD_CONTAINMENT_THRESHOLD  = "0";
   std::string intervention_params_filename = "intervention_params.json";
   std::string BETA_PROJECT = "0";

@@ -381,6 +381,12 @@ struct global_params{
   //crosses this fraction
   double COMMUNITY_LOCK_THRESHOLD = 1E-3; //0.1%
   double LOCKED_COMMUNITY_LEAKAGE = 1.0;
+
+  // Lockdown thresholds for neighborhood cells
+  double NEIGHBORHOOD_LOCK_THRESHOLD = 1E-3; //0.1%
+  double LOCKED_NEIGHBORHOOD_LEAKAGE = 1.0;
+  bool ENABLE_NEIGHBORHOOD_SOFT_CONTAINMENT = false;
+
   count_type WARD_CONTAINMENT_THRESHOLD = 1; // threshold of hospitalised individuals in ward, beyond which the ward is quarantined.
   //Switches
   //If this is false, the file quarantinedPopulation.json is needed
@@ -701,6 +707,10 @@ struct agent{
   //infectiousness from home, workplace, community, travel as seen by
   //individual
 
+  //Neighborhood cell containment
+  double neighborhood_access_factor = 1.0;
+  //access_factor for the neighborhood cell in which this node lives
+  //set to 1 in case neighborhood cell is not enabled.
 
   bool compliant = true;
   
@@ -796,6 +806,11 @@ struct house{
   double age_independent_mixing;
   std::vector<double> age_dependent_mixing;
 
+  //Neighborhood cell containment
+  double neighborhood_access_factor = 1.0;
+  //access_factor for the neighborhood cell in which this house is located. Set
+  //to 1 in case neighborhood cell is not enabled.
+
   //age_dependent_mixing not added yet, since it is unused
   house(){}
   house(double latitude, double longitude, bool compliance):
@@ -880,6 +895,10 @@ struct nbr_cell {
   bool quarantined = false;
   double lambda_nbr = 0;
   double scale = 0;
+
+  count_type population = 0;
+  count_type num_active_hospitalisations = 0;
+  double access_factor = 1.0; //Corresponds to w_c in the implementation of wardwise containment
 };
 
 struct office_attendance{

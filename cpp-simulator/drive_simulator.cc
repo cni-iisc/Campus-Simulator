@@ -121,7 +121,13 @@ int main(int argc, char** argv){
      cxxopts::value<double>()->default_value(DEFAULTS.LOCKED_COMMUNITY_LEAKAGE))
     ("COMMUNITY_LOCK_THRESHOLD", "hospitalisation fraction in a ward beyond which the ward will be cordoned off.",
      cxxopts::value<double>()->default_value(DEFAULTS.COMMUNITY_LOCK_THRESHOLD))
-    ;
+	("LOCKED_NEIGHBORHOOD_LEAKAGE", "minimum neighborhood cell infection leakage under containment",
+	 cxxopts::value<double>()->default_value(DEFAULTS.LOCKED_NEIGHBORHOOD_LEAKAGE))
+    ("NEIGHBORHOOD_LOCK_THRESHOLD", "hospitalisation fraction in a neighbourhood cell beyond which the neighbourhood cell will be cordoned off.",
+     cxxopts::value<double>()->default_value(DEFAULTS.NEIGHBORHOOD_LOCK_THRESHOLD))
+	("ENABLE_NEIGHBORHOOD_SOFT_CONTAINMENT", "whether neighborhood soft containment is enabled (false if neighborhood cells are not enabled)",
+     cxxopts::value<bool>()->default_value(DEFAULTS.ENABLE_NEIGHBORHOOD_SOFT_CONTAINMENT))
+	;
 
   options.add_options("Intervention - neighbourhood containment")
     ("ENABLE_CONTAINMENT", "enable neighborhood containment",
@@ -276,10 +282,11 @@ int main(int argc, char** argv){
 	SEED_RNG_GRAPH(); //No Initial seed was provided
   }
 
-  //Done saving options
-  
   GLOBAL.LOCKED_COMMUNITY_LEAKAGE = optvals["LOCKED_COMMUNITY_LEAKAGE"].as<double>();
   GLOBAL.COMMUNITY_LOCK_THRESHOLD = optvals["COMMUNITY_LOCK_THRESHOLD"].as<double>();
+  GLOBAL.LOCKED_NEIGHBORHOOD_LEAKAGE = optvals["LOCKED_NEIGHBORHOOD_LEAKAGE"].as<double>();
+  GLOBAL.NEIGHBORHOOD_LOCK_THRESHOLD = optvals["NEIGHBORHOOD_LOCK_THRESHOLD"].as<double>();
+
   //Compute parametrs based on options
   GLOBAL.NUM_TIMESTEPS = GLOBAL.NUM_DAYS*GLOBAL.SIM_STEPS_PER_DAY;
   GLOBAL.INCUBATION_PERIOD_SCALE = GLOBAL.MEAN_INCUBATION_PERIOD*GLOBAL.SIM_STEPS_PER_DAY / GLOBAL.INCUBATION_PERIOD_SHAPE;
@@ -304,6 +311,11 @@ int main(int argc, char** argv){
   GLOBAL.NBR_CELL_SIZE = optvals["NBR_CELL_SIZE"].as<double>();
   GLOBAL.ENABLE_CONTAINMENT = optvals["ENABLE_CONTAINMENT"].count();
   GLOBAL.ENABLE_NBR_CELLS = optvals["ENABLE_NBR_CELLS"].count();
+  if(GLOBAL.ENABLE_NBR_CELLS){
+	GLOBAL.ENABLE_NEIGHBORHOOD_SOFT_CONTAINMENT = optvals["ENABLE_NEIGHBORHOOD_SOFT_CONTAINMENT"].count();
+  } else {
+	GLOBAL.ENABLE_NEIGHBORHOOD_SOFT_CONTAINMENT = false;
+  }
   GLOBAL.WARD_CONTAINMENT_THRESHOLD = optvals["WARD_CONTAINMENT_THRESHOLD"].as<count_type>();
 
   GLOBAL.ENABLE_TESTING = optvals["ENABLE_TESTING"].count();

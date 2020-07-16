@@ -525,11 +525,12 @@ void updated_lambda_c_local(const vector<agent>& nodes, community& community){
 
 #pragma omp parallel for default(none) shared(nodes, community) reduction (+: sum_value)
   for(count_type i = 0; i < SIZE; ++i){
-	sum_value += nodes[community.individuals[i]].lambda_c;
+	sum_value
+	  += nodes[community.individuals[i]].lambda_c
+	  * std::min(community.w_c,
+				 nodes[community.individuals[i]].neighborhood_access_factor);
   }
-  community.lambda_community = community.scale*sum_value*community.w_c;
-  //std::fill(lambda_age_group.begin(), lambda_age_group.end(), community.scale*sum_value*community.w_c);
-  //return lambda_age_group;
+  community.lambda_community = community.scale*sum_value;
 }
 
 void updated_lambda_c_local_random_community(const vector<agent>& nodes, const vector<community>& communities, vector<house>& houses){
@@ -550,7 +551,7 @@ void updated_lambda_c_local_random_community(const vector<agent>& nodes, const v
 	}
 	houses[i].random_households.lambda_random_community = houses[i].random_households.scale
 	  * sum_value_household
-	  * communities[houses[i].community].w_c;
+	  * std::min(communities[houses[i].community].w_c, houses[i].neighborhood_access_factor);
   }
 }
 
@@ -566,6 +567,12 @@ void update_lambda_nbr_cells(const vector<agent>& nodes, vector<vector<nbr_cell>
 		for(count_type k=0; k<houses[nbr_cells[i][j].houses_list[h]].individuals.size(); ++k){
 		  sum_values += nodes[houses[nbr_cells[i][j].houses_list[h]].individuals[k]].lambda_nbr_cell
 			* communities[houses[nbr_cells[i][j].houses_list[h]].community].w_c;
+		  //Since we are measuring here the effect of the nighborhood cell on a
+		  //particular individual, we expect ward-wide containment factros (w_c)
+		  //to have an effect.  However, even if the neighborhood cell has
+		  //containment applied to it, this should not reflect in the
+		  //interactions between individuals living inside the neighborhood
+		  //cell.  Thus, we do not use the neighborhood access_factor here.
 		}
 	  }
 	  nbr_cells[i][j].lambda_nbr = nbr_cells[i][j].scale*sum_values;
@@ -836,4 +843,44 @@ casualty_stats get_infected_community(const vector<agent>& nodes, const communit
 
   return stat;
   // Populate it afterwards...
+}
+
+void update_grid_cell_statistics(matrix<nbr_cell>& nbr_cells,
+								 vector<house>& homes,
+								 vector<agent>& nodes,
+								 const double locked_neighborhood_leakage,
+								 const double locked_neighborhood_threshold) {
+  for(auto& nbr_cell_row: nbr_cells){
+	for(auto& nbr_cell: nbr_cell_row){
+
+	  const auto SIZE = nbr_cell.houses_list.size();
+	  count_type num_active_hospitalisations = 0;
+
+#pragma omp parallel for shared(homes, nodes, nbr_cell) \
+  reduction(+: num_active_hospitalisations)
+	  for(count_type i = 0; i < SIZE; ++i){
+		for(const auto individual_index: homes[nbr_cell.houses_list[i]].individuals){
+		  if(nodes[individual_index].infection_status
+			 == Progression::hospitalised){
+			++num_active_hospitalisations;
+		  }
+		}
+	  }
+	  nbr_cell.num_active_hospitalisations = num_active_hospitalisations;
+	  nbr_cell.access_factor = interpolate(1.0, locked_neighborhood_leakage,
+										   double(nbr_cell.num_active_hospitalisations)/double(nbr_cell.population),
+										   locked_neighborhood_threshold);
+
+#pragma omp parallel for shared(homes, nodes, nbr_cell)
+	  for(count_type i = 0; i < SIZE; ++i){
+		homes[nbr_cell.houses_list[i]].neighborhood_access_factor
+		  = nbr_cell.access_factor;
+		for(const auto individual_index: homes[nbr_cell.houses_list[i]].individuals){
+		  nodes[individual_index].neighborhood_access_factor
+			= nbr_cell.access_factor;
+		}
+	  }
+
+	}
+  }
 }

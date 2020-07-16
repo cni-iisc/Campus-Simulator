@@ -996,6 +996,8 @@ void assign_homes_nbr_cell(const vector<house>& homes, matrix<nbr_cell>& neighbo
 	for (count_type home_count = 0; home_count < homes.size(); ++home_count){
 		grid_cell my_nbr_cell = homes[home_count].neighbourhood;
 		neighbourhood_cells[my_nbr_cell.cell_x][my_nbr_cell.cell_y].houses_list.push_back(home_count);
+		neighbourhood_cells[my_nbr_cell.cell_x][my_nbr_cell.cell_y].population
+		  += homes[home_count].individuals.size();
 	}
 }
 

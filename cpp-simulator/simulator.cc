@@ -66,6 +66,7 @@ plot_data_struct run_simulation(){
 #endif
 
   assign_individual_home_community(nodes, homes, workplaces, communities);
+  //assign_individual_home_community must be called before assign_homes_nbr_cell
   assign_homes_nbr_cell(homes,nbr_cells);
   assign_individual_projects(workplaces, nodes);
   assign_household_community(communities, nodes, homes);
@@ -196,7 +197,8 @@ plot_data_struct run_simulation(){
     if (time_step % GLOBAL.SIM_STEPS_PER_DAY == 0){
       for(count_type j = 0; j < GLOBAL.num_people; ++j){
         nodes[j].attending =
-          bernoulli(communities[nodes[j].community].w_c
+          bernoulli(std::min(communities[nodes[j].community].w_c,
+							 nodes[j].neighborhood_access_factor)
                     * nodes[j].get_attendance_probability(time_step));
 		nodes[j].forced_to_take_train = GLOBAL.TRAINS_RUNNING
 		  && bernoulli(GLOBAL.FRACTION_FORCED_TO_TAKE_TRAIN);
@@ -280,6 +282,12 @@ plot_data_struct run_simulation(){
 		updated_lambda_project(nodes, workplaces[w]);
 		//FEATURE_PROPOSAL: make the mixing dependent on node.age_group;
 	  }
+	}
+
+	if(GLOBAL.ENABLE_NEIGHBORHOOD_SOFT_CONTAINMENT){
+	  update_grid_cell_statistics(nbr_cells, homes, nodes,
+								  GLOBAL.LOCKED_NEIGHBORHOOD_LEAKAGE,
+								  GLOBAL.NEIGHBORHOOD_LOCK_THRESHOLD);
 	}
 
 	for (count_type c = 0; c < GLOBAL.num_communities; ++c){

@@ -87,4 +87,10 @@ struct casualty_stats{
 
 casualty_stats get_infected_community(const std::vector<agent>& nodes, const community& community);
 
+void update_grid_cell_statistics(matrix<nbr_cell>& nbr_cells,
+								 std::vector<house>& homes,
+								 std::vector<agent>& nodes,
+								 double locked_neighborhood_leakage,
+								 double locked_neighborhood_threshold);
+
 #endif

@@ -567,8 +567,8 @@ void update_lambda_nbr_cells(const vector<agent>& nodes, vector<vector<nbr_cell>
 		for(count_type k=0; k<houses[nbr_cells[i][j].houses_list[h]].individuals.size(); ++k){
 		  sum_values += nodes[houses[nbr_cells[i][j].houses_list[h]].individuals[k]].lambda_nbr_cell
 			* communities[houses[nbr_cells[i][j].houses_list[h]].community].w_c;
-		  //Since we are measuring here the effect of the nighborhood cell on a
-		  //particular individual, we expect ward-wide containment factros (w_c)
+		  //Since we are measuring here the effect of the neighborhood cell on a
+		  //particular individual, we expect ward-wide containment factors (w_c)
 		  //to have an effect.  However, even if the neighborhood cell has
 		  //containment applied to it, this should not reflect in the
 		  //interactions between individuals living inside the neighborhood

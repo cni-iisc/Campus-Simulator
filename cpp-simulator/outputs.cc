@@ -231,9 +231,18 @@ void output_global_params(const string& output_dir){
   fout << "MASK_FACTOR: " << GLOBAL.MASK_FACTOR << ";" << endl;
   fout << "MASK_START_DATE: " << GLOBAL.MASK_START_DATE << ";" << endl;
 
-  fout << "WARD_CONTAINMENT_THRESHOLD:" <<GLOBAL.WARD_CONTAINMENT_THRESHOLD << ";"<< endl;
-  fout << "ENABLE_CONTAINMENT:" <<GLOBAL.ENABLE_CONTAINMENT << ";"<< endl;
-  fout << "ENABLE_NBR_CELLS:" <<GLOBAL.ENABLE_NBR_CELLS << ";"<< endl;
+  fout << "WARD_CONTAINMENT_THRESHOLD: " <<GLOBAL.WARD_CONTAINMENT_THRESHOLD << ";"<< endl;
+  fout << "ENABLE_CONTAINMENT: " <<GLOBAL.ENABLE_CONTAINMENT << ";"<< endl;
+  fout << "ENABLE_NBR_CELLS: " <<GLOBAL.ENABLE_NBR_CELLS << ";"<< endl;
+
+  //Neighborhood containment
+  fout << "ENABLE_NEIGHBORHOOD_SOFT_CONTAINMENT: "
+	   << GLOBAL.ENABLE_NEIGHBORHOOD_SOFT_CONTAINMENT << ";" << endl;
+  fout << "LOCKED_NEIGHBORHOOD_LEAKAGE: "
+	   << GLOBAL.LOCKED_NEIGHBORHOOD_LEAKAGE << ";" << endl;
+  fout << "NEIGHBORHOOD_LOCK_THRESHOLD: "
+	   << GLOBAL.NEIGHBORHOOD_LOCK_THRESHOLD << ";" << endl;
+
   fout << "ENABLE_TESTING:" << GLOBAL.ENABLE_TESTING << ";" <<endl;
   fout << "TESTING_PROTOCOL: " << static_cast<count_type>(GLOBAL.TESTING_PROTOCOL) << ";" <<endl;
   fout.close();

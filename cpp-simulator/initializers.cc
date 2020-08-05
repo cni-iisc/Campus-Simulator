@@ -958,6 +958,7 @@ void assign_household_random_community(vector<house>& homes, const vector<commun
 	  count_type current_household = communities[i].households[j];
 	  count_type degree = uniform_count_type_network(GLOBAL.MIN_RANDOM_COMMUNITY_SIZE/2,
 													 GLOBAL.MAX_RANDOM_COMMUNITY_SIZE/2);
+	  degree = (degree > NUM_HOUSEHOLDS-1)?NUM_HOUSEHOLDS-1:degree;
 	  count_type candidate;
 	  while(homes[current_household].random_households.households.size() < degree){
 		do{

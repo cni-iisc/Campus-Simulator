@@ -904,6 +904,8 @@ struct nbr_cell {
 struct office_attendance{
   count_type number_of_entries;
   matrix<double> probabilities;
+  bool attendance_new_file_type = false; //new file type gives attendance in intervals rather than in days
+                                         //+ it assumes full attendance for days before intervention.
 };
 
 extern office_attendance ATTENDANCE;

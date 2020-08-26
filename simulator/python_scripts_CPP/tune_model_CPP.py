@@ -7,7 +7,7 @@
 
 
 #from calculate_means_CPP import calculate_means
-from calculate_r0 import calculate_r0
+#from calculate_r0 import calculate_r0
 from calibrate import calibrate
 from joblib import Parallel, delayed
 import os
@@ -25,7 +25,7 @@ MEAN_HOSPITAL_REGULAR_PERIOD=8
 MEAN_HOSPITAL_CRITICAL_PERIOD=8
 COMPLIANCE_PROBABILITY=0.9
 
-city = "mumbai"
+city = "Delhi"
 
 if city=="mumbai":
     F_KERNEL_A= 2.709
@@ -51,18 +51,30 @@ elif city=="bangalore":
     LAT_N=13.143666147874784
     LON_E=77.76003096129057
     LON_W=77.46010252514884
-    
+elif city=="Delhi":                                             
+    F_KERNEL_A= 4.153                                               
+    F_KERNEL_B= 1.224                                               
+    BETA_H=1.2                                                        
+    BETA_PROJECT=0.23*9                                                
+    BETA_NBR_CELLS=0.02*9                                             
+    BETA_CLASS=BETA_PROJECT*2                                                  
+    BETA_TRAVEL=0                                                   
+    LAT_S=28.40                                                     
+    LAT_N=28.90                                                     
+    LON_E=77.40                                                     
+    LON_W=76.84      
 BETA_SCALE= 9.0
 BETA_RANDOM_COMMUNITY = BETA_NBR_CELLS
 BETA_W = BETA_PROJECT/BETA_SCALE 
 BETA_S = BETA_CLASS/BETA_SCALE
 BETA_C = BETA_NBR_CELLS/BETA_SCALE
 
+
 HD_AREA_FACTOR=2.0
 HD_AREA_EXPONENT=0
 INTERVENTION=0
-output_directory_base="../../cpp-simulator/outputs/calibration/2020-06-17_smaller_networks/"
-input_directory="../../staticInst/data/mumbai_1mil_20200617/"
+output_directory_base="./2020-08-10_smaller_networks_Delhi/"
+input_directory="/mnt/lustre/rbc/rbcsri/cityfiles/delhi-1M/"
 CALIBRATION_DELAY=0
 DAYS_BEFORE_LOCKDOWN=0
 # Set this to "--SEED_HD_AREA_POPULATION" to seed hd area population
@@ -82,7 +94,7 @@ INIT_FIXED_NUMBER_INFECTED=100
 INTERVENTION=0
 USE_AGE_DEPENDENT_MIXING="true"
 IGNORE_ATTENDANCE_FILE="true"
-EXEC_DIR = "./../../cpp-simulator"
+EXEC_DIR = "/mnt/lustre/rbc/rbcnidh/mysims/markov_simuls/cpp-simulator/"
 LOGFILE = output_directory_base + "/calibration.log"
 
 ######################
@@ -175,9 +187,9 @@ def run_sim(num_sims_count, params):
 ###########################
 continue_run = True
 resolution = 4
-num_sims = 6 #cpu_count()/2
+num_sims = 10 #cpu_count()/2
 count = 0
-num_cores = 12 #cpu_count()
+num_cores = num_sims #cpu_count()
 
 print ('Cpu count: ', num_cores)
 
@@ -202,10 +214,10 @@ while (continue_run):
     print ('Execution time: ',time.time()-start_time, ' seconds') 
 
     ##############################################################
-    calculate_means_fatalities_CPP(output_directory_base, num_sims,"./data/")
-    calculate_means_lambda_CPP(output_directory_base, num_sims,"./data/")
+    calculate_means_fatalities_CPP(output_directory_base, num_sims,output_directory_base)
+    calculate_means_lambda_CPP(output_directory_base, num_sims,output_directory_base)
     
-    [flag, BETA_SCALE_FACTOR, step_beta_h, step_beta_w, step_beta_c, delay, slope_diff, lambda_h_diff, lambda_w_diff, lambda_c_diff] = calibrate(resolution,count)
+    [flag, BETA_SCALE_FACTOR, step_beta_h, step_beta_w, step_beta_c, delay, slope_diff, lambda_h_diff, lambda_w_diff, lambda_c_diff] = calibrate(resolution,count,output_directory_base)
     
     with open(LOGFILE, "a+") as logfile:
         logfile.write(f"beta_h: {BETA_H}\n")

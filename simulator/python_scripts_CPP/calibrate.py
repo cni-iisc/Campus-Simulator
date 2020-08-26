@@ -19,7 +19,7 @@ def find_slope_from_regression(data):
         return (param[1]+param[0]*np.arange(0,n)) - data    
     return least_squares(obj_fn,param0).x[0]
 
-def calibrate(resolution,count):
+def calibrate(resolution,count,output_dir='./data'):
     #calibrate the model to match the deceased curve
     
     threshold = 10 # lower threshold on dead_data
@@ -53,7 +53,7 @@ def calibrate(resolution,count):
     dead_data = np.array(dead_data)
        
     # read simulation data and consider data based on threshold
-    dead_simulation = pd.read_csv('data/dead_mean.csv')['dead'].values
+    dead_simulation = pd.read_csv(output_dir+'/dead_mean.csv')['dead'].values
     
     # keep track of the shift in data
     shift_in_data = np.min(np.where(dead_data>=threshold)[0]) - 61 # to make it start from March 1st
@@ -65,7 +65,7 @@ def calibrate(resolution,count):
     plt.grid(True)
     plt.xlabel('Days (starting March 1st)')
     plt.ylabel('Deceased Population')
-    plt.savefig('data/combined_plot_linear_scale')
+    plt.savefig(output_dir+'/combined_plot_linear_scale')
     plt.close()
 
     plt.plot(np.log10(dead_data[61:len(dead_data)]),label='India Data')
@@ -74,7 +74,7 @@ def calibrate(resolution,count):
     plt.grid(True)
     plt.xlabel('Days (starting March 1st)')
     plt.ylabel('log_10 Deceased Population')
-    plt.savefig('data/combined_plot_log_scale')
+    plt.savefig(output_dir+'/combined_plot_log_scale')
     plt.close()      
     # consider data of interest based on threshold
     dead_data = dead_data[dead_data>=threshold][0:16] #Add [0:10] for NY and wuhan! #0:16 for India to cosider death data from 10-200
@@ -86,9 +86,9 @@ def calibrate(resolution,count):
     dead_simulation = np.take(dead_simulation, np.arange(0,len(dead_simulation),resolution))
     
     # read lambda values from the simulation    
-    lambda_h = pd.read_csv('data/lambda H_mean.csv')['lambda H'].values[-1]
-    lambda_w = pd.read_csv('data/lambda W_mean.csv')['lambda W'].values[-1]+pd.read_csv('data/lambda PROJECT_mean.csv')['lambda PROJECT'].values[-1]
-    lambda_c = pd.read_csv('data/lambda C_mean.csv')['lambda C'].values[-1]+pd.read_csv('data/lambda NBR_CELL_mean.csv')['lambda NBR_CELL'].values[-1]+pd.read_csv('data/lambda RANDOM_COMMUNITY_mean.csv')['lambda RANDOM_COMMUNITY'].values[-1]
+    lambda_h = pd.read_csv(output_dir+'/lambda H_mean.csv')['lambda H'].values[-1]
+    lambda_w = pd.read_csv(output_dir+'/lambda W_mean.csv')['lambda W'].values[-1]+pd.read_csv(output_dir+'/lambda PROJECT_mean.csv')['lambda PROJECT'].values[-1]
+    lambda_c = pd.read_csv(output_dir+'/lambda C_mean.csv')['lambda C'].values[-1]+pd.read_csv(output_dir+'/lambda NBR_CELL_mean.csv')['lambda NBR_CELL'].values[-1]+pd.read_csv(output_dir+'/lambda RANDOM_COMMUNITY_mean.csv')['lambda RANDOM_COMMUNITY'].values[-1]
     
     lambda_h_diff = (lambda_h-lambda_h_target)
     lambda_w_diff = (lambda_w-lambda_w_target)

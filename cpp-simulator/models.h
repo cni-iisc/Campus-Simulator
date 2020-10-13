@@ -8,6 +8,7 @@
 #include <cmath>
 #include <string>
 #include <algorithm>
+#include <unordered_map>
 
 enum class Intervention {
    no_intervention = 0,
@@ -669,6 +670,10 @@ struct agent{
   int home; //index of household
   int workplace;
 
+  int hostel;
+  int dept;
+  int type;
+
   int community;
   double time_of_infection = 0;
   // time_of_infection is initialized to zero before seeding
@@ -679,6 +684,11 @@ struct agent{
 
   // for recovered nodes, what was the last stage before recovery?
   Progression state_before_recovery = Progression::recovered;
+
+  std::unordered_map<int, double> kappa;
+  std::vector<std::unordered_map< int , double>> interaction_strength;
+
+  double lambda_campus;
 
   bool infective = false;
   count_type time_became_infective = 0;

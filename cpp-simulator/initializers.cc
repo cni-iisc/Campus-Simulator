@@ -12,6 +12,7 @@
 #include <string>
 #include <cmath>
 #include <set>
+#include <memory>
 
 #include "models.h"
 #include "initializers.h"
@@ -766,8 +767,44 @@ vector<agent> init_nodes(){
 									 -uniform_real(0, nodes[seed_candidates[j]].incubation_period));
 	}
   }
+ 
+  auto indivJSON_001 = readJSONFile("./individual.json");
+	count_type var1 = 0;
+ 	for(auto &elem: indivJSON_001.GetArray()){
+ 			int day = 0;
+ 			for (auto &i: elem["Interaction_spaces"].GetArray()){
+ 				for(auto &j: i.GetObject()){
+ 					std::cout<<j.name.GetString()<<" "<<j.value.GetDouble()<<"\n";
+ 					nodes[var1].interaction_strength[day][std::stoi(j.name.GetString())] = j.value.GetDouble();
+ 					//nodes[var1].interaction_strength[day][j.value.GetDouble()];
+ 				//nodes[j].interaction_strength = elem["interaction_strength"].GetArray();
+ 				}
+ 			day++;
+ 			}
+		var1++;
+ 	}
+
+	//TODO: Finish this up 
+	/*auto interactionJSON = readJSONFile("./interaction_spaces.json");
+	for(auto& elem: interactionJSON.GetArray()){
+		std::cout<<elem["id"].GetInt();
+		std::cout<<elem["type"].GetInt();
+		std::cout<<elem["beta"].GetInt();
+		std::cout<<elem["alpha"].GetInt();
+		std::cout<<elem["active_duration"].GetInt();
+		std::cout<<elem["lat"].GetInt();
+		std::cout<<elem["lon"].GetInt();
+	}*/
+
+  //auto indivJSON_001 = readJSONFile("./individual.json");
+ 
+   /*for (auto &elem: indivJSON_001.GetArray()){
+ 		std::cout<<elem["id"].GetInt();
+ 	}*/
   return nodes;
 }
+
+
 
 vector<double> read_JSON_convert_array(const string& file_name){
   vector<double> return_object;

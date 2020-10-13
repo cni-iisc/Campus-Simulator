@@ -4,6 +4,7 @@
 #include "outputs.h"
 #include "defaults.h"
 #include "initializers.h"
+#include "campus_simulator.h"
 #include <cassert>
 #include <iostream>
 #include <fstream>
@@ -339,11 +340,11 @@ int main(int argc, char** argv){
   gnuplot gnuplot(output_dir);
 
   //Run simulations
-  auto plot_data = run_simulation();
+  auto plot_data = run_campus_simulator();
 
   //Start output
-  output_global_params(output_dir);
+  //output_global_params(output_dir);
 
-  output_csv_files(output_dir, gnuplot, plot_data);
+  //output_csv_files(output_dir, gnuplot, plot_data);
   return 0;
 }

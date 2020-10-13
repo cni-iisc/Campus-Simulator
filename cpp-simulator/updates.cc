@@ -179,10 +179,10 @@ node_update_status update_infection(agent& node, int cur_time){
 	  node.infective = false;
 	}
   }
-  node.lambda_h = update_individual_lambda_h(node,cur_time);
-  node.lambda_w = update_individual_lambda_w(node,cur_time);
-  node.lambda_c = update_individual_lambda_c(node,cur_time);
-  node.lambda_nbr_cell = update_individual_lambda_nbr_cell(node,cur_time);
+  //node.lambda_h = update_individual_lambda_h(node,cur_time);
+  //node.lambda_w = update_individual_lambda_w(node,cur_time);
+  //node.lambda_c = update_individual_lambda_c(node,cur_time);
+  //node.lambda_nbr_cell = update_individual_lambda_nbr_cell(node,cur_time);
 
   return update_status;
 }

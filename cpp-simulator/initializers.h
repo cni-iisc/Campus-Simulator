@@ -40,5 +40,9 @@ svd init_workplace_age_interaction_matrix();
 svd init_community_age_interaction_matrix();
 
 void print_testing_protocol(const int index, const testing_probability probabilities);
+template <class T>
+void set_node_initial_infection(agent& node,double community_infection_probability,int node_index,const T& elem,std::vector<count_type>& seed_candidates);
+void seed_initial_infection_at_node(agent& node, double time_of_infection);
+
 
 #endif

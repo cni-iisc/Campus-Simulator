@@ -793,8 +793,7 @@ vector<agent> init_nodes(){
 		std::cout<<elem["alpha"].GetInt();
 		std::cout<<elem["active_duration"].GetInt();
 		std::cout<<elem["lat"].GetInt();
-		std::cout<<elem["lon"].GetInt();
-	}*/
+		*/
 
   //auto indivJSON_001 = readJSONFile("./individual.json");
  

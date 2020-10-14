@@ -11,8 +11,8 @@
 #include <cmath>
 #include <set>
 
-#include "campus_models.h"
-#include "initializers.h"
+#include "models.h"
+//#include "initializers.h"
 
 auto readJSONFile(std::string filename){
   std::ifstream ifs(filename, std::ifstream::in);
@@ -27,6 +27,51 @@ auto prettyJSON(const rapidjson::Document& d){
   rapidjson::PrettyWriter<rapidjson::StringBuffer> writer(buffer);
   d.Accept(writer);
   return buffer.GetString();
+}
+
+void seed_initial_infection_at_node(agent& node, double time_of_infection){
+  node.infection_status = Progression::exposed;
+  node.time_of_infection = time_of_infection;
+  ++GLOBAL.INIT_ACTUALLY_INFECTED;
+}
+
+template <class T>
+void set_node_initial_infection(agent& node,
+								double community_infection_probability,
+								int node_index,
+								const T& elem,
+								std::vector<count_type>& seed_candidates
+								){
+  if(SEED_INFECTION_FROM_FILE){
+#ifdef DEBUG
+	assert(elem["infection_status"].IsInt());
+#endif
+	if(elem["infection_status"].GetInt()){
+	  seed_initial_infection_at_node(node, -elem["time_since_infected"].GetDouble());
+	}
+  }
+  else {
+	//Infections not being seeded from file
+	bool seed_candidate =
+	  (GLOBAL.SEED_HD_AREA_POPULATION || !node.hd_area_resident)
+	  && !(GLOBAL.SEED_ONLY_NON_COMMUTER && node.has_to_travel);
+
+	if(GLOBAL.SEED_FIXED_NUMBER){
+	  if(seed_candidate){
+		seed_candidates.push_back(node_index);
+	  }
+	}
+	else {
+	  if(seed_candidate
+		 && bernoulli(community_infection_probability)){
+		// Always seed non-high-density-ares residents
+		// High-density-area residents seeded based on global flag.
+		seed_initial_infection_at_node(node, -uniform_real(0, node.incubation_period));
+	  }
+	}
+  }
+  // node.infective = (node.infection_status == Progression::infective);
+  
 }
 
 
@@ -58,10 +103,23 @@ std::vector<agent> init_nodes_campus(){
     nodes[i].infectiousness = gamma(GLOBAL.INFECTIOUSNESS_SHAPE,
                                     GLOBAL.INFECTIOUSNESS_SCALE);
     nodes[i].severity = bernoulli(GLOBAL.SEVERITY_RATE)?1:0;
+
+  //auto indivJSON_001 = readJSONFile("./individual.json");
+	  //count_type var1 = 0;
+ 		int day = 0;
+ 		for (auto &x: elem["Interaction_spaces"].GetArray()){
+ 			for(auto &j: x.GetObject()){
+ 				std::cout<<j.name.GetString()<<" "<<j.value.GetDouble()<<"\n";
+ 				nodes[i].interaction_strength[day][std::stoi(j.name.GetString())] = j.value.GetDouble();
+ 				//nodes[var1].interaction_strength[day][j.value.GetDouble()];
+ 				//nodes[j].interaction_strength = elem["interaction_strength"].GetArray();
+ 			}
+ 		day++;
+		}
     
-#ifdef DEBUG
-    assert(elem["household"].IsInt());
-#endif
+//#ifdef DEBUG
+//    assert(elem["household"].IsInt());
+//#endif
     //change the nodes data structure
     //include type, hostel, department, interaction strength
     //nodes[i].hostel = elem["hostel"].GetInt();
@@ -96,9 +154,9 @@ std::vector<agent> init_nodes_campus(){
         break;
       }
     }*/
-#ifdef DEBUG
-    assert(elem["wardNo"].IsInt());
-#endif
+//#ifdef DEBUG
+//    assert(elem["wardNo"].IsInt());
+//#endif
     //count_type community = elem["wardNo"].GetInt() - 1;
     //minus 1 for 0-based indexing. PB: Might need to use
     //"wardIndex" instead, because that is the one actually sent by
@@ -171,7 +229,7 @@ std::vector<agent> init_nodes_campus(){
 
 
 std::vector<Interaction_Space> init_interaction_spaces(){
-    auto interactionJSON = readJSONFile("interaction_spaces.json");
+    auto interactionJSON = readJSONFile(GLOBAL.input_base+"interaction_spaces.json");
 
     auto interactionSize = interactionJSON.GetArray().Size();
     //GLOBAL.num_workplaces = interactionSize;
@@ -361,3 +419,4 @@ node_update_status update_infection(agent& node, int cur_time){
 
   return update_status;
 }
+

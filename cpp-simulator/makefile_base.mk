@@ -22,7 +22,7 @@ endif
 include_paths = -Ilibs/ -Ilibs/cxxopts-2.2.0/include/
 #obj = initializers.o models.o interventions.o intervention_primitives.o updates.o simulator.o testing.o outputs.o drive_simulator.o
 
-obj = initializers.o campus_simulator.o drive_simulator.o outputs.o campus_interaction_spaces.o
+obj = models.o campus_simulator.o drive_simulator.o outputs.o campus_interaction_spaces.o
 DEPFLAGS = -MMD -MP -MF $*.d
 
 CXX = g++

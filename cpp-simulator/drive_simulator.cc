@@ -334,7 +334,7 @@ int main(int argc, char** argv){
   }
 
   //Initialize the attendance probability
-  initialize_office_attendance();
+  //initialize_office_attendance();
 
   //Initialize output folders
   gnuplot gnuplot(output_dir);

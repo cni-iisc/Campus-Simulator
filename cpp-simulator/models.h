@@ -528,6 +528,14 @@ enum class OfficeType{
    hospital = 5
 };
 
+enum class InteractionType {
+  classroom = 0,
+  hostel = 1,
+  mess = 2,
+  cafeteria = 3,
+  lab = 4
+};
+
 //Default workplace value for homebound individuals.
 const int WORKPLACE_HOME = -1;
 
@@ -848,6 +856,63 @@ struct project{
   std::vector<double> age_dependent_mixing;
 };
 
+enum class cur_day{
+  Monday = 0,
+  Tuesday = 1,
+  Wednesday = 2,
+  Thursday = 4,
+  Friday = 5,
+  Saturday = 6,
+  Sunday = 7,
+};
+
+struct Interaction_Space{
+
+  //location loc;
+  double lat,lon;
+  //int individual_id;
+  InteractionType interaction_type;
+
+  double alpha;
+  double beta;
+  double lambda;
+
+  //std::vector<int> individual_ids;
+
+  std::vector<int> individuals;
+
+  int id;
+
+  //bool quarantined = false;
+  //double age_independent_mixing;
+  double active_duration; 
+  Interaction_Space(){}
+  //Interaction_Space(double latitude, double longitude):
+	 // loc{latitude, longitude} {}
+
+  void set(double latitude, double longitude){
+	this->lat = latitude;
+  this->lon = longitude;
+  }
+
+  void set_active_duration(double active){
+    this->active_duration = active;
+  }
+
+  void set_id(int id_indi){
+    this->id = id_indi;
+  }
+
+  void set_alpha(double ALPHA){
+    this -> alpha = ALPHA;
+  }
+
+  void set_beta(double BETA){
+    this -> beta = BETA;
+  }
+};
+
+
 
 struct workplace {
   location loc;
@@ -935,4 +1000,12 @@ void set_nbr_cell(house &home);
 
 //kappa_T severity calculation
 double kappa_T(const agent&node, double cur_time);
+
+struct node_update_status{
+  bool new_infection = false;
+  bool new_symptomatic = false;
+  bool new_hospitalization = false;
+  bool new_infective = false;
+};
 #endif
+

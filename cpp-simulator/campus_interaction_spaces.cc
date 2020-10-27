@@ -1,7 +1,7 @@
-#include <rapidjson/document.h>
-#include <rapidjson/istreamwrapper.h>
-#include <rapidjson/prettywriter.h>
-#include <rapidjson/stringbuffer.h>
+#include "rapidjson/document.h"
+#include "rapidjson/istreamwrapper.h"
+#include "rapidjson/prettywriter.h"
+#include "rapidjson/stringbuffer.h"
 #include <algorithm>
 #include <iostream>
 #include <fstream>
@@ -107,10 +107,15 @@ std::vector<agent> init_nodes_campus(){
   //auto indivJSON_001 = readJSONFile("./individual.json");
 	  //count_type var1 = 0;
  		int day = 0;
- 		for (auto &x: elem["Interaction_spaces"].GetArray()){
+    nodes[i].interaction_strength.resize(1);
+ 		for (auto &x: elem["interaction_strength"].GetArray()){
+       //nodes.push_back();
  			for(auto &j: x.GetObject()){
- 				std::cout<<j.name.GetString()<<" "<<j.value.GetDouble()<<"\n";
+ 				//std::cout<<j.name.GetString()<<" "<<j.value.GetDouble()<<"\n";
  				nodes[i].interaction_strength[day][std::stoi(j.name.GetString())] = j.value.GetDouble();
+         //std::cout<<nodes[i].interaction_strength[day][std::stoi(j.name.GetString())];
+        nodes[i].kappa[std::stoi(j.name.GetString())] = 1;
+        //nodes[i].interaction_strength[day].insert({std::stoi(j.name.GetString()),j.value.GetDouble()});
  				//nodes[var1].interaction_strength[day][j.value.GetDouble()];
  				//nodes[j].interaction_strength = elem["interaction_strength"].GetArray();
  			}
@@ -245,7 +250,7 @@ std::vector<Interaction_Space> init_interaction_spaces(){
         interaction_spaces[index].set(elem["lat"].GetDouble(),
                         elem["lon"].GetDouble());
         
-        interaction_spaces[index].interaction_type = static_cast<InteractionType>(elem["Type"].GetInt());
+        interaction_spaces[index].interaction_type = static_cast<InteractionType>(elem["type"].GetInt());
         interaction_spaces[index].set_active_duration(elem["active_duration"].GetDouble());
         interaction_spaces[index].set_id(elem["id"].GetInt());
         interaction_spaces[index].set_alpha(elem["alpha"].GetDouble());
@@ -258,10 +263,11 @@ std::vector<Interaction_Space> init_interaction_spaces(){
 }
 
 double update_interaction_spaces(agent& node,int cur_time, Interaction_Space& i_space){
-  return (node.infective?1.0:0.0)
+  //std::cout<<(node.kappa[i_space.id])<<"\n";
+  return ((node.infective?1.0:0.0)
 	* node.kappa[i_space.id]
 	* node.infectiousness
-	* node.interaction_strength[cur_time][i_space.id]; 
+	* node.interaction_strength[cur_time][i_space.id]); 
 }
 
 double update_n_k(agent& node, int cur_time, Interaction_Space& i_space){
@@ -280,6 +286,7 @@ void update_interaction_space_lambda(std::vector<agent> nodes,  std::vector<Inte
     N_k = (1/i_space.active_duration)*sum_n_k;
     Lam_k_t = i_space.beta*(pow(N_k, -i_space.alpha))*(1/i_space.active_duration)*sum_value;
     i_space.lambda = Lam_k_t;
+    //std::cout<<N_k<<" "<<Lam_k_t<<"\n";
   } 
 }
 //Take care of cur_time
@@ -291,7 +298,7 @@ void update_individual_lambda(std::vector<agent>& nodes, std::vector<Interaction
     for(auto& ispace: node.interaction_strength[cur_day]){
       sum+=ispace.second*node.kappa[ispace.first]*i_spaces[ispace.first].lambda;
     }
-    node.lambda_campus = sum;
+    node.lambda = sum;  
   }
 }
 
@@ -333,7 +340,7 @@ node_update_status update_infection(agent& node, int cur_time){
   else if(node.infection_status==Progression::infective
 		  && (double(cur_time) - node.time_of_infection
 			  > (node.incubation_period
-				 + node.asymptomatic_period))){
+				 + node.asymptomatic_period)) ){
 	//#pragma omp critical
 	{
 	  transition = bernoulli(GLOBAL.SYMPTOMATIC_FRACTION);
@@ -416,7 +423,9 @@ node_update_status update_infection(agent& node, int cur_time){
   //node.lambda_w = update_individual_lambda_w(node,cur_time);
   //node.lambda_c = update_individual_lambda_c(node,cur_time);
   //node.lambda_nbr_cell = update_individual_lambda_nbr_cell(node,cur_time);
-
+  //std::cout<<update_status.new_infective<<"\n";
   return update_status;
 }
+
+
 

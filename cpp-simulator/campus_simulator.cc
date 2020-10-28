@@ -10,6 +10,7 @@
 #include "models.h"
 #include "campus_updates.h"
 #include "campus_simulator.h"
+//#include "outputs.h"
 
 plot_data_struct run_campus_simulator(){
 	#ifdef TIMING
@@ -70,27 +71,28 @@ plot_data_struct run_campus_simulator(){
   
   //This needs to be done after the initilization.
   plot_data_struct plot_data;
-  /*plot_data.nums =
+  plot_data.nums =
 	{
-	 {"num_infected", {}},
-	 {"num_exposed", {}},
-	 {"num_hospitalised", {}},
-	 {"num_symptomatic", {}},
-	 {"num_critical", {}},
-	 {"num_fatalities", {}},
-	 {"num_recovered", {}},
+	 //{"num_infected", {}},
+	 //{"num_exposed", {}},
+	 //{"num_hospitalised", {}},
+	 //{"num_symptomatic", {}},
+	 //{"num_critical", {}},
+	 //{"num_fatalities", {}},
+	 //{"num_recovered", {}},
 	 {"num_affected", {}},
-	 {"num_cases", {}},
-	 {"num_cumulative_hospitalizations", {}},
-	 {"num_cumulative_infective", {}}
+	 //{"num_cases", {}},
+	 //{"num_cumulative_hospitalizations", {}},
+	 //{"num_cumulative_infective", {}}
 	};
   for(auto& elem: plot_data.nums){
 	elem.second.reserve(GLOBAL.NUM_TIMESTEPS);
   }
-  plot_data.nums["csvContent"] = {};
-  plot_data.nums["csvContent"].reserve(GLOBAL.NUM_TIMESTEPS * GLOBAL.num_communities);
+  //plot_data.nums["csvContent"] = {};
+  //plot_data.nums["csvContent"].reserve(GLOBAL.NUM_TIMESTEPS * GLOBAL.num_communities);
 
-  plot_data.susceptible_lambdas =
+
+  /*plot_data.susceptible_lambdas =
 	{
 	 {"susceptible_lambda", {}},
 	 {"susceptible_lambda_H", {}},
@@ -174,6 +176,8 @@ plot_data_struct run_campus_simulator(){
 
   const auto NUM_PEOPLE = GLOBAL.num_people;*/
 
+		
+
   for(count_type time_step = 0; time_step < GLOBAL.NUM_TIMESTEPS; ++time_step){
 	  //TODO: Call update_interaction_spaces_lambda
 	  //update_interaction_space_lambda();
@@ -204,14 +208,53 @@ plot_data_struct run_campus_simulator(){
 		// global state, parallelizing this loop is not straightforward.
 		// Puttting the generator in a critical section can keep it
 		// correct, but slows down the code too much.
+		//int n_affected = 0;
+		//int n_fatalities = 0;
+		//int n_infective = 0;
+		//int n_recovered = 0;
+		//int n_cases = 0;
+		count_type n_affected = 0;
+		count_type n_fatalities = 0;
+		count_type n_infective = 0;
+		count_type n_recovered = 0;
+		count_type n_cases = 0;
+		
 		for(count_type j = 0; j < nodes.size(); ++j){
 	  		auto node_update_status = update_infection(nodes[j], time_step); 
 	  		nodes[j].psi_T = psi_T(nodes[j], time_step);
+			if(nodes[j].infection_status != Progression::susceptible){
+				n_affected += 1;
+	  		}
+			  /*
+			if(nodes[j].infection_status == Progression::recovered){
+				n_recovered += 1;
+	  		}
+			if(nodes[j].infection_status == Progression::infective){
+				n_infective += 1;
+	  		}
+			if(nodes[j].infection_status == Progression::dead){
+				n_fatalities += 1;
+	  		}
+			if(node_update_status.new_infection){
+			++n_cases;
+	  		}
+			n_cases = n_fatalities+n_recovered;
+			*/
     	}
+		/*node_update_status update_status;
+		if (update_status.new_symptomatic)
+		{
+			++n_cases;	
+		}*/
+		std::cout<<"Number of affected"<<"\t"<<n_affected<<"\n";
+		//std::cout<<"Number of cases: "<<n_cases<<"\t"<<"Number of affected: "<<n_affected<<"\t"<<"Number of fatalities: "<<n_fatalities<<"\n";
     	update_interaction_space_lambda(nodes, interaction_spaces, day);
     	update_individual_lambda(nodes, interaction_spaces, day);
-    	/*
-	  if(node_update_status.new_infection){
+    	//plot_data.nums["num_fatalities"].push_back({time_step, {n_fatalities}});
+		//plot_data.nums["num_recovered"].push_back({time_step, {n_recovered}});
+		plot_data.nums["num_affected"].push_back({time_step, {n_affected}});
+		//plot_data.nums["num_cases"].push_back({time_step, {n_cases}});
+	  /*if(node_update_status.new_infection){
 			++num_new_infections;
 			++num_total_infections;
 		  
@@ -589,6 +632,12 @@ plot_data_struct run_campus_simulator(){
   		cerr << "simulator: simulation time (ms): " << duration(start_time, end_time) << "\n";
 	#endif
   */
+
+ 	//plot_data.nums["num_infected"].push_back({time_step, {n_infected}});
+	//plot_data.nums["num_exposed"].push_back({time_step, {n_exposed}});
+	//plot_data.nums["num_hospitalised"].push_back({time_step, {n_hospitalised}});
+	//plot_data.nums["num_symptomatic"].push_back({time_step, {n_symptomatic}});
+	//plot_data.nums["num_critical"].push_back({time_step, {n_critical}});
   return plot_data;
 }
 

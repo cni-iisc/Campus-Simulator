@@ -345,6 +345,6 @@ int main(int argc, char** argv){
   //Start output
   //output_global_params(output_dir);
 
-  //output_csv_files(output_dir, gnuplot, plot_data);
+  output_csv_files(output_dir, gnuplot, plot_data);
   return 0;
 }

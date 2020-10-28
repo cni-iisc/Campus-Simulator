@@ -10,6 +10,7 @@
 #include <string>
 #include <cmath>
 #include <set>
+#include <cstdio>
 
 #include "models.h"
 //#include "initializers.h"
@@ -307,8 +308,16 @@ void assign_individual_campus(std::vector<agent>& nodes, std::vector<Interaction
   for(count_type i = 0; i < nodes.size(); ++i){
     for(auto& ispace: nodes[i].interaction_strength[cur_day]){
       interaction_space[ispace.first].individuals.push_back(i);
+      //std::cout<<interaction_space[ispace];
     }
   }
+  /*
+  for(auto& ispace: interaction_space){
+    std::cout<<"\n"<<ispace.id<<"\t";
+    for(auto& allindi: ispace.individuals){
+      std::cout<<allindi<<"\t";
+    }
+  }*/
 }
 
 node_update_status update_infection(agent& node, int cur_time){

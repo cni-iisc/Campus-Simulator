@@ -1,5 +1,7 @@
 //Copyright [2020] [Indian Institute of Science, Bangalore & Tata Institute of Fundamental Research, Mumbai]
 //SPDX-License-Identifier: Apache-2.0
+//Copyright [2020] [Indian Institute of Science, Bangalore & Tata Institute of Fundamental Research, Mumbai]
+//SPDX-License-Identifier: Apache-2.0
 #include "models.h"
 #include "outputs.h"
 #include <fstream>
@@ -116,7 +118,7 @@ void output_timed_csv(const std::vector<std::string>& field_row, const std::stri
   fout.close();
 }
 
-void output_copy_file(const string& input_file, const string& output_file){
+/*void output_copy_file(const string& input_file, const string& output_file){
   std::ofstream fout(output_file, std::ios::out | std::ios::binary);
   check_stream(fout, output_file);
 
@@ -133,9 +135,9 @@ void output_copy_file(const string& input_file, const string& output_file){
 
   fin.close();
   fout.close();
-}
+}*/
 
-void output_global_params(const string& output_dir){
+/*void output_global_params(const string& output_dir){
   std::string global_params_path = output_dir + "/global_params.txt";
   std::ofstream fout(global_params_path, std::ios::out);
   check_stream(fout, global_params_path);
@@ -265,7 +267,7 @@ void output_global_params(const string& output_dir){
 					 output_dir + "/testing_protocol.json");
   }
 
-}
+}*/
 
 
 gnuplot::gnuplot(const std::string& output_directory){
@@ -282,10 +284,10 @@ gnuplot::gnuplot(const std::string& output_directory){
   fout << "set term png" << std::endl;
   fout << "set termoption noenhanced" << std::endl;
   auto intervention = intervention_rep(GLOBAL.INTERVENTION);
-  html_out << "<html>\n<head><title>Plots: Intervention = "
-		   << intervention
+  html_out << "<html>\n<head><title>Plots are as follows "
+		  // << intervention
 		   << "</title></head>\n<body>\n"
-	       << "<h1>Intervention = " << intervention << "</h1>\n";
+	       << "<h1>The Plots are in log scale</h1>\n";
 }
 
 void gnuplot::plot_data(const string& name){
@@ -311,55 +313,54 @@ void output_csv_files(const std::string& output_directory,
 	std::string csvfile_path = output_directory + "/" + csvfile_name;
 	if(elem.first == "csvContent"){
 	  //This file contains everything!
-	  output_timed_csv({"community",
-						"affected",
-						"susceptible",
-						"exposed",
-						"infective",
-						"symptomatic",
-						"hospitalised",
-						"critical",
-						"dead",
-						"recovered",
-						"recovered_from_infective",
-						"recovered_from_symptomatic",
-						"recovered_from_hospitalised",
-						"recovered_from_critical",
-						"hd_area_affected",
-						"hd_area_susceptible",
-						"hd_area_exposed",
-                        "hd_area_infective",
-						"hd_area_symptomatic",
-                        "hd_area_hospitalised",
-                        "hd_area_critical",
-                        "hd_area_dead",
-						"hd_area_recovered",
-						"hd_area_recovered_from_infective",
-						"hd_area_recovered_from_symptomatic",
-						"hd_area_recovered_from_hospitalised",
-						"hd_area_recovered_from_critical"
+	  output_timed_csv({"affected",          //Removed community
+		//				"susceptible",
+		//				"exposed",
+		//				"infective",
+		//				"symptomatic",
+		//				"hospitalised",
+		//				"critical",
+		//				"dead",
+		//				"recovered",
+		//				"recovered_from_infective",
+		//				"recovered_from_symptomatic",
+		//				"recovered_from_hospitalised",
+		//				"recovered_from_critical",
+		//				"hd_area_affected",
+		//				"hd_area_susceptible",
+		//				"hd_area_exposed",
+    //                   "hd_area_infective",
+		//				"hd_area_symptomatic",
+    //                    "hd_area_hospitalised",
+    //                    "hd_area_critical",
+    //                    "hd_area_dead",
+		//				"hd_area_recovered",
+		//				"hd_area_recovered_from_infective",
+		//				"hd_area_recovered_from_symptomatic",
+		//				"hd_area_recovered_from_hospitalised",
+		//				"hd_area_recovered_from_critical"
 		},
 		csvfile_path, elem.second);
 	} else {
 	  output_timed_csv({elem.first},
 					   csvfile_path,
 					   elem.second);
+        }
 	  gnuplot.plot_data(elem.first);
-	}
   }
 
   //Now output lambdas
-  for(const auto& elem: plot_data.susceptible_lambdas){
+  /*for(const auto& elem: plot_data.susceptible_lambdas){
 	std::string csvfile_name = elem.first + ".csv";
 	std::string csvfile_path = output_directory + "/" + csvfile_name;
 	output_timed_csv({elem.first},
 					 csvfile_path,
 					 elem.second);
 	gnuplot.plot_data(elem.first);
-  }
+  }*/
 
   //Now output fractional lambda contributions: total version
-  for(const auto& elem: plot_data.total_lambda_fractions){
+  /*for(const auto& elem: plot_data.total_lambda_fractions){
 	std::string csvfile_name = elem.first + ".csv";
 	std::string csvfile_path = output_directory + "/" + csvfile_name;
 	output_timed_csv({elem.first},
@@ -426,6 +427,6 @@ void output_csv_files(const std::string& output_directory,
             "severe_symptomatic_tested",
             "icu","requested_tests","cumulative_positive_cases"},
     csvfile_path, elem.second);
-  }
+  }*/
 
 }

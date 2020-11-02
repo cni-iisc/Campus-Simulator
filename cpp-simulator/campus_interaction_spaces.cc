@@ -116,6 +116,10 @@ std::vector<agent> init_nodes_campus(){
  				nodes[i].interaction_strength[day][std::stoi(j.name.GetString())] = j.value.GetDouble();
          //std::cout<<nodes[i].interaction_strength[day][std::stoi(j.name.GetString())];
         nodes[i].kappa[std::stoi(j.name.GetString())] = 1;
+        /*
+        if(i == 9){
+          std::cout<<j.name.GetString()<<"\t"<<j.value.GetDouble()<<"\t";
+        }*/
         //nodes[i].interaction_strength[day].insert({std::stoi(j.name.GetString()),j.value.GetDouble()});
  				//nodes[var1].interaction_strength[day][j.value.GetDouble()];
  				//nodes[j].interaction_strength = elem["interaction_strength"].GetArray();
@@ -249,7 +253,7 @@ std::vector<Interaction_Space> init_interaction_spaces(){
 
     for (auto &elem: interactionJSON.GetArray()){
         interaction_spaces[index].set(elem["lat"].GetDouble(),
-                        elem["lon"].GetDouble());
+                      elem["lon"].GetDouble());
         
         interaction_spaces[index].interaction_type = static_cast<InteractionType>(elem["type"].GetInt());
         interaction_spaces[index].set_active_duration(elem["active_duration"].GetDouble());
@@ -271,23 +275,34 @@ double update_interaction_spaces(agent& node,int cur_time, Interaction_Space& i_
 	* node.interaction_strength[cur_time][i_space.id]); 
 }
 
-double update_n_k(agent& node, int cur_time, Interaction_Space& i_space){
+double update_n_k(agent& node, int cur_time, Interaction_Space& i_space, int x){
+  /*
+  if(i_space.id == 85 && x == 9){
+    std::cout<<x<<":"<<"\t";
+    for(auto& isp: node.interaction_strength[cur_time]){
+      std::cout<<isp.first<<"\t"<<isp.second<<"\t";
+    }
+  }*/
   return node.interaction_strength[cur_time][i_space.id];
 }
 
-void update_interaction_space_lambda(std::vector<agent> nodes,  std::vector<Interaction_Space>& i_spaces, int cur_day){
+void update_interaction_space_lambda(std::vector<agent> nodes, std::vector<Interaction_Space>& i_spaces, int cur_day){
   for(auto& i_space: i_spaces){
       double sum_value = 0;
       double sum_n_k = 0;
       double N_k, Lam_k_t;
     for (auto& individual: i_space.individuals){
       sum_value += update_interaction_spaces(nodes[individual], cur_day, i_space);
-      sum_n_k += update_n_k(nodes[individual], cur_day, i_space); 
+      sum_n_k += update_n_k(nodes[individual], cur_day, i_space, individual); 
+      /*
+      if (i_space.id == 85){
+        std::cout<<individual<<"\t"<<sum_value<<"\t"<<sum_n_k<<"\n";
+      }*/
     }
     N_k = (1/i_space.active_duration)*sum_n_k;
     Lam_k_t = i_space.beta*(pow(N_k, -i_space.alpha))*(1/i_space.active_duration)*sum_value;
     i_space.lambda = Lam_k_t;
-    //std::cout<<N_k<<" "<<Lam_k_t<<"\n";
+    //std::cout<<i_space.id<<"\t"<<Lam_k_t<<"\t"<<i_space.active_duration<<"\t"<<sum_n_k<<"\t"<<sum_value<<"\n";
   } 
 }
 //Take care of cur_time
@@ -312,13 +327,18 @@ void assign_individual_campus(std::vector<agent>& nodes, std::vector<Interaction
     }
   }
   /*
+  int count = 0;
   for(auto& ispace: interaction_space){
-    std::cout<<"\n"<<ispace.id<<"\t";
-    for(auto& allindi: ispace.individuals){
-      std::cout<<allindi<<"\t";
+    if(ispace.id == 1){
+      std::cout<<"\n"<<ispace.id<<"\n";
+        for(auto& allindi: ispace.individuals){
+          std::cout<<allindi<<"\t";
+          count++;
+        }
     }
   }*/
 }
+
 
 node_update_status update_infection(agent& node, int cur_time){
   int age_index = node.age_index;
@@ -326,6 +346,7 @@ node_update_status update_infection(agent& node, int cur_time){
   node_update_status update_status;
   //console.log(1-Math.exp(-node['lambda']/SIM_STEPS_PER_DAY))
   ///TODO: Parametrise transition times
+  //printf(node.infection_status)
   if (node.infection_status==Progression::susceptible){
 	//#pragma omp critical
 	{

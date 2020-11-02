@@ -78,10 +78,10 @@ plot_data_struct run_campus_simulator(){
 	 //{"num_hospitalised", {}},
 	 //{"num_symptomatic", {}},
 	 //{"num_critical", {}},
-	 //{"num_fatalities", {}},
-	 //{"num_recovered", {}},
+	 {"num_fatalities", {}},
+	 {"num_recovered", {}},
 	 {"num_affected", {}},
-	 //{"num_cases", {}},
+	 {"num_cases", {}},
 	 //{"num_cumulative_hospitalizations", {}},
 	 //{"num_cumulative_infective", {}}
 	};
@@ -225,7 +225,6 @@ plot_data_struct run_campus_simulator(){
 			if(nodes[j].infection_status != Progression::susceptible){
 				n_affected += 1;
 	  		}
-			  /*
 			if(nodes[j].infection_status == Progression::recovered){
 				n_recovered += 1;
 	  		}
@@ -239,21 +238,21 @@ plot_data_struct run_campus_simulator(){
 			++n_cases;
 	  		}
 			n_cases = n_fatalities+n_recovered;
-			*/
+			
     	}
 		/*node_update_status update_status;
 		if (update_status.new_symptomatic)
 		{
 			++n_cases;	
 		}*/
-		std::cout<<"Number of affected"<<"\t"<<n_affected<<"\n";
+		//std::cout<<"Number of affected"<<"\t"<<n_affected<<"\n";
 		//std::cout<<"Number of cases: "<<n_cases<<"\t"<<"Number of affected: "<<n_affected<<"\t"<<"Number of fatalities: "<<n_fatalities<<"\n";
     	update_interaction_space_lambda(nodes, interaction_spaces, day);
     	update_individual_lambda(nodes, interaction_spaces, day);
-    	//plot_data.nums["num_fatalities"].push_back({time_step, {n_fatalities}});
-		//plot_data.nums["num_recovered"].push_back({time_step, {n_recovered}});
+    	plot_data.nums["num_fatalities"].push_back({time_step, {n_fatalities}});
+		plot_data.nums["num_recovered"].push_back({time_step, {n_recovered}});
 		plot_data.nums["num_affected"].push_back({time_step, {n_affected}});
-		//plot_data.nums["num_cases"].push_back({time_step, {n_cases}});
+		plot_data.nums["num_cases"].push_back({time_step, {n_cases}});
 	  /*if(node_update_status.new_infection){
 			++num_new_infections;
 			++num_total_infections;

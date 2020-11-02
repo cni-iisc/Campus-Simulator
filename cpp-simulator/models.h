@@ -529,11 +529,10 @@ enum class OfficeType{
 };
 
 enum class InteractionType {
-  classroom = 0,
-  hostel = 1,
-  mess = 2,
-  cafeteria = 3,
-  lab = 4
+  day_scholar = 0,
+  classroom = 1,
+  hostel = 2,
+  mess = 3,
 };
 
 //Default workplace value for homebound individuals.
@@ -696,7 +695,9 @@ struct agent{
   std::unordered_map<int, double> kappa;
   std::vector<std::unordered_map< int , double>> interaction_strength;
 
-  double lambda_campus;
+  //double lambda_campus;
+
+  //double lambda_individual;
 
   bool infective = false;
   count_type time_became_infective = 0;

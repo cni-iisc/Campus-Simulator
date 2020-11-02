@@ -1,7 +1,7 @@
 //Copyright [2020] [Indian Institute of Science, Bangalore & Tata Institute of Fundamental Research, Mumbai]
 //SPDX-License-Identifier: Apache-2.0
-#ifndef OUTPUTS_H_
-#define OUTPUTS_H_
+#ifndef CAMPUS_OUTPUTS_H_
+#define CAMPUS_OUTPUTS_H_
 #include "models.h"
 #include <iostream>
 #include <fstream>

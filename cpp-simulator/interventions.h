@@ -1,7 +1,7 @@
 //Copyright [2020] [Indian Institute of Science, Bangalore & Tata Institute of Fundamental Research, Mumbai]
 //SPDX-License-Identifier: Apache-2.0
-#ifndef INTERVENTIONS_H_
-#define INTERVENTIONS_H_
+#ifndef CAMPUS_INTERVENTIONS_H_
+#define CAMPUS_INTERVENTIONS_H_
 #include "models.h"
 #include <vector>
 
@@ -43,7 +43,7 @@ void get_kappa_containment(std::vector<agent>& nodes, std::vector<house>& homes,
 
 void get_kappa_file_read(std::vector<agent>& nodes, std::vector<house>& homes, const std::vector<workplace>& workplaces, std::vector<community>& communities, const matrix<nbr_cell>& nbr_cells, const std::vector<intervention_params>& intv_params_vector, int cur_time);
 
-void get_kappa_custom_modular(std::vector<agent>& nodes, std::vector<house>& homes, const std::vector<workplace>& workplaces, std::vector<community>& communities, const matrix<nbr_cell>& nbr_cells, const int cur_time, const intervention_params intv_params);
+void get_kappa_custom_modular(std::vector<agent>& nodes, std::vector<house>& homes, const std::vector<workplace>& workplaces, std::vector<community>& communities, const Interaction_Space& i_space, const matrix<nbr_cell>& nbr_cells, const int cur_time, const intervention_params intv_params);
 
 void get_kappa_Mumbai_alternative_version(std::vector<agent>& nodes, std::vector<house>& homes, const std::vector<workplace>& workplaces, std::vector<community>& communities, const matrix<nbr_cell>& nbr_cells, int cur_time, double FIRST_PERIOD, double SECOND_PERIOD);
 

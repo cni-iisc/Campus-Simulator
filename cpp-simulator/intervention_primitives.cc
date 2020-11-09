@@ -1,6 +1,6 @@
 //Copyright [2020] [Indian Institute of Science, Bangalore & Tata Institute of Fundamental Research, Mumbai]
 //SPDX-License-Identifier: Apache-2.0
-#include "models.h"
+#include "campus_models.h"
 #include "intervention_primitives.h"
 #include <algorithm>
 #include <vector>
@@ -8,21 +8,26 @@
 using std::vector;
 using std::min;
 
-void set_kappa_base_node(agent& node, double community_factor, const int cur_time){
+void set_kappa_base_node(agent& node, const int cur_time, const Interaction_Space& i_space ){
   //set the basic kappa values for this node according to current time
   node.quarantined=false;
-  node.kappa_T = kappa_T(node, cur_time);
-  node.kappa_H = 1.0;
-  node.kappa_H_incoming = 1.0;
-  node.kappa_W = 1.0;
-  node.kappa_W_incoming = 1.0;
+  //node.kappa_T = kappa_T(node, cur_time);
+  //node.kappa_H = 1.0;
+  //node.kappa_H_incoming = 1.0;
+  //node.kappa_W = 1.0;
+  //node.kappa_W_incoming = 1.0;
+
+  for (auto& individual: i_space.individuals){
+    node.kappa[i_space.id] = 1;
+  }
+  /*
   if(node.compliant){
     node.kappa_C = community_factor;
     node.kappa_C_incoming = community_factor;
   }else{
     node.kappa_C = 1.0;
     node.kappa_C_incoming = 1.0;
-  }
+  }*/
 }
 
 void set_kappa_lockdown_node(agent& node, const int cur_time, const intervention_params intv_params){
@@ -80,14 +85,28 @@ void reset_home_quarantines(vector<house>& homes){
   }
 }
 
-void modify_kappa_case_isolate_node(agent& node){
-  node.quarantined = true;
-  node.kappa_H = min(0.75, node.kappa_H);
-  node.kappa_W = min(0.0, node.kappa_W);
-  node.kappa_C = min(0.1, node.kappa_C);
-  node.kappa_H_incoming = min(0.75, node.kappa_H_incoming);
-  node.kappa_W_incoming = min(0.0, node.kappa_W_incoming);
-  node.kappa_C_incoming = min(0.1, node.kappa_C_incoming);
+void modify_kappa_case_isolate_node(agent& node, Interaction_Space& i_spaces){
+  for (auto& individual: i_spaces.individuals){
+    node.quarantined = true;
+    switch(i_spaces.interaction_type){
+      case InteractionType ::classroom :
+         node.kappa[i_spaces.id] = 0.0;
+        break; 
+      case InteractionType::hostel :
+        node.kappa[i_spaces.id] = 0.5;
+        break;
+      case InteractionType::mess :
+        node.kappa[i_spaces.id] = 0.2;
+        break;
+    }
+  }
+  //node.quarantined = true;
+  //node.kappa_H = min(0.75, node.kappa_H);
+  //node.kappa_W = min(0.0, node.kappa_W);
+  //node.kappa_C = min(0.1, node.kappa_C);
+  //node.kappa_H_incoming = min(0.75, node.kappa_H_incoming);
+  //node.kappa_W_incoming = min(0.0, node.kappa_W_incoming);
+  //node.kappa_C_incoming = min(0.1, node.kappa_C_incoming);
 }
 
 void modify_kappa_ward_containment(agent& node){

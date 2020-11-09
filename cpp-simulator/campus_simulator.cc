@@ -10,6 +10,7 @@
 #include "models.h"
 #include "campus_updates.h"
 #include "campus_simulator.h"
+#include "campus_interventions.h"
 //#include "outputs.h"
 
 plot_data_struct run_campus_simulator(){
@@ -27,7 +28,7 @@ plot_data_struct run_campus_simulator(){
    //TODO: In init_nodes, read individuals.json
   //TODO: Read interaction_spaces.json and assign it to interaction spaces
   //auto nbr_cells = init_nbr_cells(); 
-  //auto intv_params = init_intervention_params();
+  auto intv_params = init_intervention_params();
   //auto testing_protocol_file_read = init_testing_protocol();
 
 
@@ -176,9 +177,9 @@ plot_data_struct run_campus_simulator(){
 
   const auto NUM_PEOPLE = GLOBAL.num_people;*/
 
-		
+  int time_step = 0;
 
-  for(count_type time_step = 0; time_step < GLOBAL.NUM_TIMESTEPS; ++time_step){
+  for(time_step = 0; time_step < GLOBAL.NUM_TIMESTEPS; ++time_step){
 	  //TODO: Call update_interaction_spaces_lambda
 	  //update_interaction_space_lambda();
 	  //TODO: Call update_individuals_lambda
@@ -279,9 +280,9 @@ plot_data_struct run_campus_simulator(){
 			++num_cumulative_infective;
 	  	}*/
 	}
-
-	/*update_all_kappa(nodes, homes, workplaces, communities, nbr_cells, intv_params, time_step);
-	if(GLOBAL.ENABLE_TESTING){
+	///TODO: Check update kappa function call here.
+	update_all_kappa(nodes, interaction_spaces, intv_params, time_step);
+	/*if(GLOBAL.ENABLE_TESTING){
 		update_test_status(nodes, time_step);
 		update_infection_testing(nodes, homes, time_step);
 	    update_test_request(nodes, homes, workplaces, communities, nbr_cells, time_step,testing_protocol_file_read);

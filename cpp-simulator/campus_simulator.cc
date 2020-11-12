@@ -142,13 +142,13 @@ plot_data_struct run_campus_simulator(){
 	{
 	 {"quarantined_stats", {}},
 	 {"curtailment_stats", {}}
-	};
+	};*/
 	   
   plot_data.disease_label_stats = 
 	{
 		{"disease_label_stats", {}},
 	};
-  for(auto& elem: plot_data.susceptible_lambdas){
+  /*for(auto& elem: plot_data.susceptible_lambdas){
 	elem.second.reserve(GLOBAL.NUM_TIMESTEPS);
   }
 
@@ -219,6 +219,7 @@ plot_data_struct run_campus_simulator(){
 		count_type n_infective = 0;
 		count_type n_recovered = 0;
 		count_type n_cases = 0;
+		//count_type n_symptomatic = 0;
 		
 		for(count_type j = 0; j < nodes.size(); ++j){
 	  		auto node_update_status = update_infection(nodes[j], time_step); 
@@ -235,10 +236,13 @@ plot_data_struct run_campus_simulator(){
 			if(nodes[j].infection_status == Progression::dead){
 				n_fatalities += 1;
 	  		}
-			if(node_update_status.new_infection){
+			/*if(node_update_status.new_infection){
 			++n_cases;
-	  		}
-			n_cases = n_fatalities+n_recovered;
+	  		}*/
+			if(node_update_status.new_symptomatic){
+				n_cases +=1;
+			}
+			//n_cases = n_fatalities+n_recovered;
 			
     	}
 		/*node_update_status update_status;
@@ -253,7 +257,8 @@ plot_data_struct run_campus_simulator(){
     	plot_data.nums["num_fatalities"].push_back({time_step, {n_fatalities}});
 		plot_data.nums["num_recovered"].push_back({time_step, {n_recovered}});
 		plot_data.nums["num_affected"].push_back({time_step, {n_affected}});
-		plot_data.nums["num_cases"].push_back({time_step, {n_cases}});
+		plot_data.nums["num_cases"].push_back({time_step, {n_symptomatic}});
+		//plot_data.nums["num_symptomatic"].push_back({time_step, {n_symptomatic}});
 	  /*if(node_update_status.new_infection){
 			++num_new_infections;
 			++num_total_infections;

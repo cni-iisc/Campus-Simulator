@@ -284,12 +284,32 @@ gnuplot::gnuplot(const std::string& output_directory){
   fout << "set term png" << std::endl;
   fout << "set termoption noenhanced" << std::endl;
   auto intervention = intervention_rep(GLOBAL.INTERVENTION);
+  html_out << "<html>\n<head><title>Plots: Intervention = "
+		   << intervention
+		   << "</title></head>\n<body>\n"
+	       << "<h1>Intervention = " << intervention << "</h1>\n";
+}
+/*
+gnuplot::gnuplot(const std::string& output_directory){
+  std::string gnuplot_script_path = output_directory + "/gnuplot_script.gnuplot";
+  fout.open(gnuplot_script_path);
+  check_stream(fout, gnuplot_script_path);
+
+  std::string plots_path = output_directory + "/plots.html";
+  html_out.open(plots_path);
+  check_stream(html_out, plots_path);
+  
+  fout << "set datafile separator ','" << std::endl;
+  fout << "set key autotitle columnhead" << std::endl;
+  fout << "set term png" << std::endl;
+  fout << "set termoption noenhanced" << std::endl;
+  auto intervention = intervention_rep(GLOBAL.INTERVENTION);
   html_out << "<html>\n<head><title>Plots are as follows "
 		  // << intervention
 		   << "</title></head>\n<body>\n"
 	       << "<h1>The Plots are in log scale</h1>\n";
 }
-
+*/
 void gnuplot::plot_data(const string& name){
   auto image_name = name + ".png";
   fout << "set output \"" << image_name << "\"" << std::endl;
@@ -314,14 +334,14 @@ void output_csv_files(const std::string& output_directory,
 	if(elem.first == "csvContent"){
 	  //This file contains everything!
 	  output_timed_csv({"affected",          //Removed community
-		//				"susceptible",
-		//				"exposed",
-		//				"infective",
-		//				"symptomatic",
+						"susceptible",
+						"exposed",
+						"infective",
+						"symptomatic",
 		//				"hospitalised",
 		//				"critical",
 		//				"dead",
-		//				"recovered",
+						"recovered",
 		//				"recovered_from_infective",
 		//				"recovered_from_symptomatic",
 		//				"recovered_from_hospitalised",
@@ -416,7 +436,8 @@ void output_csv_files(const std::string& output_directory,
     output_timed_csv({"normal_interactions",
             "curtailed_interactions"},
     csvfile_path, elem.second);
-  }
+  }*/
+  /*
   for(const auto& elem: plot_data.disease_label_stats){
     std::string csvfile_name = elem.first + ".csv";
     std::string csvfile_path = output_directory + "/" + csvfile_name;

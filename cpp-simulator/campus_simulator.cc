@@ -257,7 +257,7 @@ plot_data_struct run_campus_simulator(){
     	plot_data.nums["num_fatalities"].push_back({time_step, {n_fatalities}});
 		plot_data.nums["num_recovered"].push_back({time_step, {n_recovered}});
 		plot_data.nums["num_affected"].push_back({time_step, {n_affected}});
-		plot_data.nums["num_cases"].push_back({time_step, {n_symptomatic}});
+		plot_data.nums["num_cases"].push_back({time_step, {n_cases}});
 		//plot_data.nums["num_symptomatic"].push_back({time_step, {n_symptomatic}});
 	  /*if(node_update_status.new_infection){
 			++num_new_infections;
@@ -284,9 +284,9 @@ plot_data_struct run_campus_simulator(){
 	  	if(node_update_status.new_infective){
 			++num_cumulative_infective;
 	  	}*/
+		update_all_kappa(nodes, interaction_spaces, intv_params, time_step);
 	}
 	///TODO: Check update kappa function call here.
-	update_all_kappa(nodes, interaction_spaces, intv_params, time_step);
 	/*if(GLOBAL.ENABLE_TESTING){
 		update_test_status(nodes, time_step);
 		update_infection_testing(nodes, homes, time_step);

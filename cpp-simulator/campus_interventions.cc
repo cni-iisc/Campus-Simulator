@@ -1,6 +1,11 @@
 //Copyright [2020] [Indian Institute of Science, Bangalore & Tata Institute of Fundamental Research, Mumbai]
 //SPDX-License-Identifier: Apache-2.0
 #include <cassert>
+#include <cstdio>
+#include<stdio.h>
+#include<stdlib.h>
+#include<iostream>
+
 
 #include "models.h"
 //#include "intervention_primitives.h"
@@ -40,10 +45,10 @@ void modify_kappa_case_isolate_node(agent& node, const std::vector<Interaction_S
          node.kappa[ispace.first] = 0.0;
         break; 
       case InteractionType::hostel :
-        node.kappa[ispace.first] = 0.5;
+        node.kappa[ispace.first] = 0.0;
         break;
       case InteractionType::mess :
-        node.kappa[ispace.first] = 0.2;
+        node.kappa[ispace.first] = 0.1;
         break;
     }
   }
@@ -91,6 +96,9 @@ bool should_be_isolated_node(const agent& node, const int cur_time, const int qu
                               - (node.time_of_infection
                               + node.incubation_period
                               + node.asymptomatic_period);
+  //std::cout<<time_since_symptoms<<"\t"<<node.entered_symptomatic_state<<"\t"<<cur_time<<"\n";
+  //std::cout<<std::boolalpha<<(node.entered_symptomatic_state && (time_since_symptoms > NUM_DAYS_TO_RECOG_SYMPTOMS*GLOBAL.SIM_STEPS_PER_DAY) && (time_since_symptoms <= (NUM_DAYS_TO_RECOG_SYMPTOMS + quarantine_days)*GLOBAL.SIM_STEPS_PER_DAY))<<"\t"<<std::boolalpha<<node.infective<<"\t";
+  //printf("%boolalpha", "%boolalpha" ,(node.entered_symptomatic_state && (time_since_symptoms > NUM_DAYS_TO_RECOG_SYMPTOMS*GLOBAL.SIM_STEPS_PER_DAY) && (time_since_symptoms <= (NUM_DAYS_TO_RECOG_SYMPTOMS + quarantine_days)*GLOBAL.SIM_STEPS_PER_DAY)), &node.infective);
   return (node.entered_symptomatic_state &&
    (time_since_symptoms > NUM_DAYS_TO_RECOG_SYMPTOMS*GLOBAL.SIM_STEPS_PER_DAY) &&
    (time_since_symptoms <= (NUM_DAYS_TO_RECOG_SYMPTOMS + quarantine_days)*GLOBAL.SIM_STEPS_PER_DAY));
@@ -144,9 +152,22 @@ void get_kappa_custom_modular(std::vector<agent>& nodes,
     /*if(intv_params.school_closed){
       modify_kappa_SC_node(nodes[count], intv_params.SC_factor);
     }*/
+    /*std::cout<<"Outside case isolation code block"<<"\n";
+    for(auto& node: nodes){
+      for(auto& ispace: node.interaction_strength[0]){
+        std::cout<<node.kappa[ispace.first]<<" ";
+        }
+    }*/
     if(intv_params.case_isolation){
+      //std::cout<<"Inside CI if statement\n";
       if(nodes[count].compliant && should_be_isolated_node(nodes[count], cur_time, SELF_ISOLATION_DAYS)){
         modify_kappa_case_isolate_node(nodes[count], i_spaces);
+        //std::cout<<"Inside case isolation code block"<<"\n";
+        /*for(auto& node: nodes){
+          for(auto& ispace: node.interaction_strength[0]){
+            std::cout<<node.kappa[ispace.first]<<" ";
+          }
+        }*/
       }
     }
 	/*if(homes[nodes[count].home].quarantined

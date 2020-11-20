@@ -110,7 +110,7 @@ std::vector<agent> init_nodes_campus(){
   //auto indivJSON_001 = readJSONFile("./individual.json");
 	  //count_type var1 = 0;
  		int day = 0;
-    nodes[i].interaction_strength.resize(1);
+    nodes[i].interaction_strength.resize(1); //Resize acc to days
  		for (auto &x: elem["interaction_strength"].GetArray()){
        //nodes.push_back();
  			for(auto &j: x.GetObject()){
@@ -273,7 +273,7 @@ void print_intervention_params(const int index, const intervention_params intv_p
 	std::cout<<std::endl<<"Index : "<<index<<". num_days = "<<	intv_params.num_days;
 	std::cout<<". Case Isolation : " << intv_params.case_isolation;
 	//std::cout<<". Home Quarantine : " << intv_params.home_quarantine;
-	std::cout<<". Lockdown : " << intv_params.lockdown;
+	//std::cout<<". Lockdown : " << intv_params.lockdown;
 	//std::cout<<". SDO : " << intv_params.social_dist_elderly;
 	//std::cout<<". School Closed : " << intv_params.school_closed;
 	//std::cout<<". workplace_odd_even : " << intv_params.workplace_odd_even;
@@ -289,10 +289,10 @@ void print_intervention_params(const int index, const intervention_params intv_p
 
 std::vector<intervention_params> init_intervention_params(){
   std::vector<intervention_params> intv_params;
-  std::cout<<int(GLOBAL.INTERVENTION);
+  //std::cout<<int(GLOBAL.INTERVENTION);
   if(GLOBAL.INTERVENTION==Intervention::intv_file_read){
 	std::cout<<std::endl<<"Inside init_intervention_params";
-	auto intvJSON = readJSONFile(GLOBAL.input_base + "campus_interventions_01.json");
+	auto intvJSON = readJSONFile(GLOBAL.input_base + "campus_interventions_00.json");
 
 	intv_params.reserve(intvJSON.GetArray().Size());
 
@@ -413,7 +413,8 @@ std::vector<intervention_params> init_intervention_params(){
 }
 
 double update_interaction_spaces(agent& node, int cur_time, Interaction_Space& i_space){
-  //std::cout<<(node.kappa[i_space.id])<<"\n";
+  //std::cout<<(node.kappa[i_space.id])<<"\t"<<node.infective<<"\t";
+  //std::cout<<node.infective<<"\n";
   return ((node.infective?1.0:0.0)
 	* node.kappa[i_space.id]
 	* node.infectiousness
@@ -463,7 +464,7 @@ void update_individual_lambda(std::vector<agent>& nodes, std::vector<Interaction
   }
 }
 
-
+//Update assign individual to take in more days
 void assign_individual_campus(std::vector<agent>& nodes, std::vector<Interaction_Space>& interaction_space, int cur_time){
   for(count_type i = 0; i < nodes.size(); ++i){
     for(auto& ispace: nodes[i].interaction_strength[cur_time]){

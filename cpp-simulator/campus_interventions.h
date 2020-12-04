@@ -11,9 +11,11 @@
 
 void modify_kappa_case_isolate_node(agent& node, const std::vector<Interaction_Space>& i_spaces);
 
+void modify_kappa_class_isolate_node(agent& node, const std::vector<Interaction_Space>& i_spaces, std::vector<agent>& nodes);
+
 void set_kappa_base_value(agent& node, const std::vector<Interaction_Space>& i_spaces);
 
-void set_kappa_lockdown_node(agent& node, const int cur_time, const intervention_params intv_params);
+void set_kappa_lockdown_node(agent& node, const int cur_time, const intervention_params intv_params, const std::vector<Interaction_Space>& i_spaces);
 
 bool should_be_isolated_node(const agent& node, const int cur_time, const int quarantine_days);
 

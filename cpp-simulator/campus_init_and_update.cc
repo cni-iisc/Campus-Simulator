@@ -273,7 +273,7 @@ void print_intervention_params(const int index, const intervention_params intv_p
 	std::cout<<std::endl<<"Index : "<<index<<". num_days = "<<	intv_params.num_days;
 	std::cout<<". Case Isolation : " << intv_params.case_isolation;
 	//std::cout<<". Home Quarantine : " << intv_params.home_quarantine;
-	//std::cout<<". Lockdown : " << intv_params.lockdown;
+	std::cout<<". Lockdown : " << intv_params.lockdown;
 	//std::cout<<". SDO : " << intv_params.social_dist_elderly;
 	//std::cout<<". School Closed : " << intv_params.school_closed;
 	//std::cout<<". workplace_odd_even : " << intv_params.workplace_odd_even;
@@ -281,131 +281,87 @@ void print_intervention_params(const int index, const intervention_params intv_p
 	//std::cout<<". community_factor : " << intv_params.community_factor;
 	//std::cout<<". neighbourhood_containment : " << intv_params.neighbourhood_containment;
 	//std::cout<<". ward_containment : " << intv_params.ward_containment;
-	std::cout<<". compliance : " << intv_params.compliance;
+	//std::cout<<". compliance : " << intv_params.compliance;
 	//std::cout<<". compliance_hd : " << intv_params.compliance_hd;
 	//std::cout<<". trains_active : " << intv_params.trains_active;
 	//std::cout<<". fraction_forced_to_take_train : " << intv_params.fraction_forced_to_take_train;
+  std::cout<<". Class Isolation : " << intv_params.class_isolation;
 }
 
 std::vector<intervention_params> init_intervention_params(){
   std::vector<intervention_params> intv_params;
   //std::cout<<int(GLOBAL.INTERVENTION);
   if(GLOBAL.INTERVENTION==Intervention::intv_file_read){
-	std::cout<<std::endl<<"Inside init_intervention_params";
-	auto intvJSON = readJSONFile(GLOBAL.input_base + "campus_interventions_00.json");
+	  std::cout<<std::endl<<"Inside init_intervention_params";
+	  auto intvJSON = readJSONFile(GLOBAL.input_base + "campus_interventions_00.json");
 
-	intv_params.reserve(intvJSON.GetArray().Size());
+	  intv_params.reserve(intvJSON.GetArray().Size());
 
-	int index = 0;
-	for (auto &elem: intvJSON.GetArray()){
-	  intervention_params temp;
-	  if((elem.HasMember("num_days")) && (elem["num_days"].GetInt() > 0)){
-		temp.num_days = elem["num_days"].GetInt();
-		if(elem.HasMember("compliance")){
-		  temp.compliance = elem["compliance"].GetDouble();
-          temp.compliance_hd = elem["compliance"].GetDouble();
-          //By default, compliance = compliance_hd. Can be reset below
-		} else{
-		  temp.compliance = GLOBAL.COMPLIANCE_PROBABILITY;
-          temp.compliance_hd = GLOBAL.COMPLIANCE_PROBABILITY;
-          //By default, compliance = compliance_hd. Can be reset below
-		}
-        if(elem.HasMember("compliance_hd")){
-		  temp.compliance_hd = elem["compliance_hd"].GetDouble();
-		} else{
-		  temp.compliance_hd = GLOBAL.COMPLIANCE_PROBABILITY;
-		}
-		if(elem.HasMember("case_isolation")){
-		  temp.case_isolation = elem["case_isolation"]["active"].GetBool();
-		}
-		/*if(elem.HasMember("home_quarantine")){
-		  temp.home_quarantine = elem["home_quarantine"]["active"].GetBool();
-		}*/
-		if(elem.HasMember("lockdown")){
-		  //TODO: collect all these statements in a function.
-		  temp.lockdown = elem["lockdown"]["active"].GetBool();
-		  if(elem["lockdown"].HasMember("kappa_values_compliant")){
-			  if(elem["lockdown"]["kappa_values_compliant"].HasMember("kappa_H")){
-				  temp.lockdown_kappas_compliant.kappa_H = elem["lockdown"]["kappa_values_compliant"]["kappa_H"].GetDouble();
-			  }
-			  if(elem["lockdown"]["kappa_values_compliant"].HasMember("kappa_H_incoming")){
-				  temp.lockdown_kappas_compliant.kappa_H_incoming = elem["lockdown"]["kappa_values_compliant"]["kappa_H_incoming"].GetDouble();
-			  }
-			  if(elem["lockdown"]["kappa_values_compliant"].HasMember("kappa_W")){
-				  temp.lockdown_kappas_compliant.kappa_W = elem["lockdown"]["kappa_values_compliant"]["kappa_W"].GetDouble();
-			  }
-			  if(elem["lockdown"]["kappa_values_compliant"].HasMember("kappa_W_incoming")){
-				  temp.lockdown_kappas_compliant.kappa_W_incoming = elem["lockdown"]["kappa_values_compliant"]["kappa_W_incoming"].GetDouble();
-			  }
-			  if(elem["lockdown"]["kappa_values_compliant"].HasMember("kappa_C")){
-				  temp.lockdown_kappas_compliant.kappa_C = elem["lockdown"]["kappa_values_compliant"]["kappa_C"].GetDouble();
-			  }
-			  if(elem["lockdown"]["kappa_values_compliant"].HasMember("kappa_C_incoming")){
-				  temp.lockdown_kappas_compliant.kappa_C_incoming = elem["lockdown"]["kappa_values_compliant"]["kappa_C_incoming"].GetDouble();
-			  }			  	
-		  }
-		  if(elem["lockdown"].HasMember("kappa_values_non_compliant")){
-			  if(elem["lockdown"]["kappa_values_non_compliant"].HasMember("kappa_H")){
-				  temp.lockdown_kappas_non_compliant.kappa_H = elem["lockdown"]["kappa_values_non_compliant"]["kappa_H"].GetDouble();
-			  }
-			  if(elem["lockdown"]["kappa_values_non_compliant"].HasMember("kappa_H_incoming")){
-				  temp.lockdown_kappas_non_compliant.kappa_H_incoming = elem["lockdown"]["kappa_values_non_compliant"]["kappa_H_incoming"].GetDouble();
-			  }
-			  if(elem["lockdown"]["kappa_values_non_compliant"].HasMember("kappa_W")){
-				  temp.lockdown_kappas_non_compliant.kappa_W = elem["lockdown"]["kappa_values_non_compliant"]["kappa_W"].GetDouble();
-			  }
-			  if(elem["lockdown"]["kappa_values_non_compliant"].HasMember("kappa_W_incoming")){
-				  temp.lockdown_kappas_non_compliant.kappa_W_incoming = elem["lockdown"]["kappa_values_non_compliant"]["kappa_W_incoming"].GetDouble();
-			  }
-			  if(elem["lockdown"]["kappa_values_non_compliant"].HasMember("kappa_C")){
-				  temp.lockdown_kappas_non_compliant.kappa_C = elem["lockdown"]["kappa_values_non_compliant"]["kappa_C"].GetDouble();
-			  }
-			  if(elem["lockdown"]["kappa_values_non_compliant"].HasMember("kappa_C_incoming")){
-				  temp.lockdown_kappas_non_compliant.kappa_C_incoming = elem["lockdown"]["kappa_values_non_compliant"]["kappa_C_incoming"].GetDouble();
-			  }			  	
-		  }
-		}
-		/*if(elem.HasMember("social_dist_elderly")){
-		  temp.social_dist_elderly = elem["social_dist_elderly"]["active"].GetBool();
-		}*/
-		/*if(elem.HasMember("school_closed")){
-		  temp.school_closed = elem["school_closed"]["active"].GetBool();
-		  if(elem["school_closed"].HasMember("SC_factor")){
-			temp.SC_factor = elem["school_closed"]["SC_factor"].GetDouble();
-		  }
-		}*/
-		/*if(elem.HasMember("workplace_odd_even")){
-		  temp.workplace_odd_even = elem["workplace_odd_even"]["active"].GetBool();
-		}*/
-		/*if(elem.HasMember("community_factor")){
-		  temp.community_factor = elem["community_factor"].GetDouble();
-		}*/
-    /*    if(elem.HasMember("trains")){
-          temp.trains_active = elem["trains"]["active"].GetBool();
-          if(elem["trains"].HasMember("fraction_forced_to_take_train")){
-            temp.fraction_forced_to_take_train = elem["trains"]["fraction_forced_to_take_train"].GetDouble();
-          }
-        }*/
-		/*if(elem.HasMember("neighbourhood_containment")){
-		  temp.neighbourhood_containment = elem["neighbourhood_containment"]["active"].GetBool() && GLOBAL.ENABLE_CONTAINMENT;
-		  if(!GLOBAL.ENABLE_CONTAINMENT){
-			std::cout<<std::endl<<"To enable containment strategies, add  --ENABLE_CONTAINMENT to argument list. Ignoring neighbourhood containment.";
-		  }
-		}*/
-		/*if(elem.HasMember("ward_containment")){
-		  temp.ward_containment = elem["ward_containment"]["active"].GetBool() && GLOBAL.ENABLE_CONTAINMENT;
-		  if(!GLOBAL.ENABLE_CONTAINMENT){
-			std::cout<<std::endl<<"To enable containment strategies, add  --ENABLE_CONTAINMENT to argument list. Ignoring ward containment.";
-		  }
-		}*/
-		print_intervention_params(index, temp);
-		intv_params.push_back(temp);
-		++index;
-	  }else{
-		std::cout<<std::endl<<"num_days not specified or less than 1. Skipping current index.";
-		assert(false);
-	  }
-	}
+	  int index = 0;
+	  for (auto &elem: intvJSON.GetArray()){
+	    intervention_params temp;
+	    if((elem.HasMember("num_days")) && (elem["num_days"].GetInt() > 0)){
+		    temp.num_days = elem["num_days"].GetInt();
+		  if(elem.HasMember("compliance")){
+		    temp.compliance = elem["compliance"].GetDouble();
+        temp.compliance_hd = elem["compliance"].GetDouble();
+        //By default, compliance = compliance_hd. Can be reset below
+		  } 
+      else{
+        temp.compliance = GLOBAL.COMPLIANCE_PROBABILITY;
+        temp.compliance_hd = GLOBAL.COMPLIANCE_PROBABILITY;
+        //By default, compliance = compliance_hd. Can be reset below
+      }
+      if(elem.HasMember("compliance_hd")){
+        temp.compliance_hd = elem["compliance_hd"].GetDouble();
+      } 
+      else{
+        temp.compliance_hd = GLOBAL.COMPLIANCE_PROBABILITY;
+      }
+      if(elem.HasMember("case_isolation")){
+        temp.case_isolation = elem["case_isolation"]["active"].GetBool();
+      }
+      if(elem.HasMember("class_isolation")){
+        temp.class_isolation = elem["class_isolation"]["active"].GetBool();
+      }
+      if(elem.HasMember("lockdown")){
+        //TODO: collect all these statements in a function.
+        temp.lockdown = elem["lockdown"]["active"].GetBool(); 
+      }
+      
+      /*if(elem.HasMember("workplace_odd_even")){
+        temp.workplace_odd_even = elem["workplace_odd_even"]["active"].GetBool();
+      }*/
+      /*if(elem.HasMember("community_factor")){
+        temp.community_factor = elem["community_factor"].GetDouble();
+      }*/
+      /*    if(elem.HasMember("trains")){
+            temp.trains_active = elem["trains"]["active"].GetBool();
+            if(elem["trains"].HasMember("fraction_forced_to_take_train")){
+              temp.fraction_forced_to_take_train = elem["trains"]["fraction_forced_to_take_train"].GetDouble();
+            }
+          }*/
+      /*if(elem.HasMember("neighbourhood_containment")){
+        temp.neighbourhood_containment = elem["neighbourhood_containment"]["active"].GetBool() && GLOBAL.ENABLE_CONTAINMENT;
+        if(!GLOBAL.ENABLE_CONTAINMENT){
+        std::cout<<std::endl<<"To enable containment strategies, add  --ENABLE_CONTAINMENT to argument list. Ignoring neighbourhood containment.";
+        }
+      }*/
+      /*if(elem.HasMember("ward_containment")){
+        temp.ward_containment = elem["ward_containment"]["active"].GetBool() && GLOBAL.ENABLE_CONTAINMENT;
+        if(!GLOBAL.ENABLE_CONTAINMENT){
+        std::cout<<std::endl<<"To enable containment strategies, add  --ENABLE_CONTAINMENT to argument list. Ignoring ward containment.";
+        }
+      }*/
+      print_intervention_params(index, temp);
+      intv_params.push_back(temp);
+      ++index;
+      }
+      else{
+      std::cout<<std::endl<<"num_days not specified or less than 1. Skipping current index.";
+      assert(false);
+      }
+    }
   }
   std::cout<<std::endl<<"Intervention params size = "<<intv_params.size();
   //std::cout<<std::endl<<"GLOBAL INTERVENTION: "<<GLOBAL.INTERVENTION;

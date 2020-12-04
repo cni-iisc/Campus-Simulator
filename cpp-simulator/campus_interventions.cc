@@ -39,55 +39,53 @@ void modify_kappa_case_isolate_node(agent& node, const std::vector<Interaction_S
   node.quarantined = true;
   for (auto& ispace: node.interaction_strength[0]){ 
     ///TODO: Put day as input in interaction_strength
-    //node.quarantined = true;
     switch(i_spaces[ispace.first].interaction_type){
       case InteractionType ::classroom :
          node.kappa[ispace.first] = 0.0;
+         //std::cout<<node.kappa[ispace.first];
         break; 
       case InteractionType::hostel :
-        node.kappa[ispace.first] = 0.0;
+        node.kappa[ispace.first] = 0.2;
         break;
       case InteractionType::mess :
         node.kappa[ispace.first] = 0.1;
         break;
     }
   }
-  //node.quarantined = true;
-  //node.kappa_H = min(0.75, node.kappa_H);
-  //node.kappa_W = min(0.0, node.kappa_W);
-  //node.kappa_C = min(0.1, node.kappa_C);
-  //node.kappa_H_incoming = min(0.75, node.kappa_H_incoming);
-  //node.kappa_W_incoming = min(0.0, node.kappa_W_incoming);
-  //node.kappa_C_incoming = min(0.1, node.kappa_C_incoming);
 }
+
+void modify_kappa_class_isolate_node(agent& node, const std::vector<Interaction_Space>& i_spaces, std::vector<agent>& nodes){
+  node.quarantined = true;
+  //std::cout<<std::boolalpha<<node.quarantined<<"\t";
+  for(auto& elem: node.interaction_strength[0]){
+    if(i_spaces[elem.first].interaction_type == InteractionType::classroom){
+      for(auto& person: i_spaces[elem.first].individuals){
+        modify_kappa_case_isolate_node(nodes[person], i_spaces);
+        //for(auto &temp: nodes[person].interaction_strength[0]){
+        //  std::cout<<"Inside modify class isolate"<<"\n";
+        //  std::cout<<"\n"<<temp.first<<"\t"<<person<<"\t"<<nodes[person].kappa[temp.first]<<"\t";
+          //std::cout<<"Inside modify class isolate"<<"\t"<<nodes[person].kappa[temp.first]<<"\t";
+        //}
+      }
+    }
+  }
+}
+
 void set_kappa_base_value(agent& node, const std::vector<Interaction_Space>& i_spaces){
 	for(auto& ispace: node.interaction_strength[0]){
 		node.kappa[ispace.first] = 1;
 	}
 }
 
-void set_kappa_lockdown_node(agent& node, const int cur_time, const intervention_params intv_params){
-  node.kappa_T = kappa_T(node, cur_time);
+void set_kappa_lockdown_node(agent& node, const int cur_time, const intervention_params intv_params, const std::vector<Interaction_Space>& i_spaces){
   node.quarantined = true; //lockdown implies quarantined
-  if(node.workplace_type==WorkplaceType::office){
-    node.kappa_W = intv_params.lockdown_kappas_compliant.kappa_W;
-    node.kappa_W_incoming = intv_params.lockdown_kappas_compliant.kappa_W_incoming;
-  }else{
-	//Schools and colleges are assumed closed in all lockdowns
-    node.kappa_W = 0.0;
-    node.kappa_W_incoming = 0.0;
-  }
-
-  if(node.compliant){
-    node.kappa_H = intv_params.lockdown_kappas_compliant.kappa_H;
-    node.kappa_H_incoming = intv_params.lockdown_kappas_compliant.kappa_H_incoming;
-    node.kappa_C = intv_params.lockdown_kappas_compliant.kappa_C;
-    node.kappa_C_incoming = intv_params.lockdown_kappas_compliant.kappa_C_incoming;
-  }else{
-    node.kappa_H = intv_params.lockdown_kappas_non_compliant.kappa_H;
-    node.kappa_H_incoming = intv_params.lockdown_kappas_non_compliant.kappa_H_incoming;
-    node.kappa_C = intv_params.lockdown_kappas_non_compliant.kappa_C;
-    node.kappa_C_incoming = intv_params.lockdown_kappas_non_compliant.kappa_C_incoming;
+  for (auto& elem: node.interaction_strength[0]){
+    if(i_spaces[elem.first].interaction_type == InteractionType :: hostel) {
+      node.kappa[elem.first] = 0.2;
+    }
+    else {
+      node.kappa[elem.first] = 0.0;
+    }
   }
 }
 
@@ -135,7 +133,10 @@ void get_kappa_custom_modular(std::vector<agent>& nodes,
   for (count_type count = 0; count < nodes.size(); ++count){
     //choose base kappas
     if(intv_params.lockdown){
-      set_kappa_lockdown_node(nodes[count], cur_time, intv_params);
+      set_kappa_lockdown_node(nodes[count], cur_time, intv_params, i_spaces);
+      //for(auto& ispace: nodes[count].interaction_strength[0]){
+      //    std::cout<<"\n"<<ispace.first<<"\t"<<cur_time<<"\t"<<count<<"\t"<<nodes[count].kappa[ispace.first]<<"\t";
+      //  }
     }else{
       set_kappa_base_value(nodes[count], i_spaces);
     }
@@ -168,6 +169,16 @@ void get_kappa_custom_modular(std::vector<agent>& nodes,
             std::cout<<node.kappa[ispace.first]<<" ";
           }
         }*/
+      }
+    }
+    if(intv_params.class_isolation){
+      //std::cout<<"Inside class isolation 1st loop\n";
+      if(nodes[count].compliant && should_be_isolated_node(nodes[count], cur_time, SELF_ISOLATION_DAYS)){
+        //std::cout<<"Inside class isolation 2nd loop\n";
+        modify_kappa_class_isolate_node(nodes[count], i_spaces, nodes);
+        //for(auto& ispace: nodes[count].interaction_strength[0]){
+        //  std::cout<<"\n"<<ispace.first<<"\t"<<cur_time<<"\t"<<count<<"\t"<<nodes[count].kappa[ispace.first]<<"\t";
+        //}
       }
     }
 	/*if(homes[nodes[count].home].quarantined

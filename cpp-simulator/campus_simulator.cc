@@ -25,6 +25,7 @@ plot_data_struct run_campus_simulator(){
   	auto interaction_spaces = init_interaction_spaces();
   	auto nodes = init_nodes_campus();
   	int day =0;
+	int periodicity = nodes[0].interaction_strength.size();
    //TODO: In init_nodes, read individuals.json
   //TODO: Read interaction_spaces.json and assign it to interaction spaces
   //auto nbr_cells = init_nbr_cells(); 
@@ -52,8 +53,8 @@ plot_data_struct run_campus_simulator(){
 	cerr << "simulator: time for JSON reads (ms): " << duration(start_time, end_time) << "\n";
 	start_time = std::chrono::high_resolution_clock::now();
 	#endif*/
-  
-  	assign_individual_campus(nodes, interaction_spaces, day);
+	
+  	assign_individual_campus(nodes, interaction_spaces, periodicity);
   //assign_individual_home_community(nodes, homes, workplaces, communities);
   //assign_individual_home_community must be called before assign_homes_nbr_cell
   //assign_homes_nbr_cell(homes,nbr_cells);
@@ -220,9 +221,9 @@ plot_data_struct run_campus_simulator(){
 		count_type n_recovered = 0;
 		count_type n_cases = 0;
 		//count_type n_symptomatic = 0;
-		
+		day = time_step%periodicity;
 		for(count_type j = 0; j < nodes.size(); ++j){
-	  		auto node_update_status = update_infection(nodes[j], time_step); 
+	  		auto node_update_status = update_infection(nodes[j], time_step, day); 
 	  		nodes[j].psi_T = psi_T(nodes[j], time_step);
 			if(nodes[j].infection_status != Progression::susceptible){
 				n_affected += 1;
@@ -250,10 +251,20 @@ plot_data_struct run_campus_simulator(){
 		{
 			++n_cases;	
 		}*/
+		
 		//std::cout<<"Number of affected"<<"\t"<<n_affected<<"\n";
-		//std::cout<<"Number of cases: "<<n_cases<<"\t"<<"Number of affected: "<<n_affected<<"\t"<<"Number of fatalities: "<<n_fatalities<<"\n";
+		std::cout<<"Number of cases: "<<n_cases<<"\t"<<"Number of affected: "<<n_affected<<"\t"<<"Number of fatalities: "<<n_fatalities<<"\n";
     	update_interaction_space_lambda(nodes, interaction_spaces, day);
+		// for (auto& ispace: interaction_spaces){
+		// 	int x = 0;
+		// 	for (int i = 0; i< periodicity; i++){
+		// 		std::cout<<"ID: "<<ispace.id<<"\t"<<"Day: "<<x<<"\t"<<"Lambda: "<<ispace.lambda[i]<<"\n";
+		// 		x++;
+		// 	}
+		// }
     	update_individual_lambda(nodes, interaction_spaces, day);
+		//print_interaction_strength(nodes[10], interaction_spaces, day);
+		//print_interaction_strength(nodes[10], interaction_spaces, 1);
     	plot_data.nums["num_fatalities"].push_back({time_step, {n_fatalities}});
 		plot_data.nums["num_recovered"].push_back({time_step, {n_recovered}});
 		plot_data.nums["num_affected"].push_back({time_step, {n_affected}});
@@ -284,7 +295,7 @@ plot_data_struct run_campus_simulator(){
 	  	if(node_update_status.new_infective){
 			++num_cumulative_infective;
 	  	}*/
-		update_all_kappa(nodes, interaction_spaces, intv_params, time_step);
+		update_all_kappa(nodes, interaction_spaces, intv_params, time_step, day);
 	}
 	///TODO: Check update kappa function call here.
 	/*if(GLOBAL.ENABLE_TESTING){

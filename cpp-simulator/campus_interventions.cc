@@ -35,9 +35,9 @@ using std::min;
   }
 }*/
 
-void modify_kappa_case_isolate_node(agent& node, const std::vector<Interaction_Space>& i_spaces){
+void modify_kappa_case_isolate_node(agent& node, const std::vector<Interaction_Space>& i_spaces, int day){
   node.quarantined = true;
-  for (auto& ispace: node.interaction_strength[0]){ 
+  for (auto& ispace: node.interaction_strength[day]){ 
     ///TODO: Put day as input in interaction_strength
     switch(i_spaces[ispace.first].interaction_type){
       case InteractionType ::classroom :
@@ -54,32 +54,34 @@ void modify_kappa_case_isolate_node(agent& node, const std::vector<Interaction_S
   }
 }
 
-void modify_kappa_class_isolate_node(agent& node, const std::vector<Interaction_Space>& i_spaces, std::vector<agent>& nodes){
+void modify_kappa_class_isolate_node(agent& node, const std::vector<Interaction_Space>& i_spaces, std::vector<agent>& nodes, int day){
   node.quarantined = true;
   //std::cout<<std::boolalpha<<node.quarantined<<"\t";
-  for(auto& elem: node.interaction_strength[0]){
+  for(auto& elem: node.interaction_strength[day]){
     if(i_spaces[elem.first].interaction_type == InteractionType::classroom){
-      for(auto& person: i_spaces[elem.first].individuals){
-        modify_kappa_case_isolate_node(nodes[person], i_spaces);
-        //for(auto &temp: nodes[person].interaction_strength[0]){
-        //  std::cout<<"Inside modify class isolate"<<"\n";
-        //  std::cout<<"\n"<<temp.first<<"\t"<<person<<"\t"<<nodes[person].kappa[temp.first]<<"\t";
-          //std::cout<<"Inside modify class isolate"<<"\t"<<nodes[person].kappa[temp.first]<<"\t";
-        //}
+      for (auto individual: i_spaces[elem.first].individuals) {
+        for(auto& person: individual){
+          modify_kappa_case_isolate_node(nodes[person], i_spaces, day);
+          //for(auto &temp: nodes[person].interaction_strength[0]){
+          //  std::cout<<"Inside modify class isolate"<<"\n";
+          //  std::cout<<"\n"<<temp.first<<"\t"<<person<<"\t"<<nodes[person].kappa[temp.first]<<"\t";
+            //std::cout<<"Inside modify class isolate"<<"\t"<<nodes[person].kappa[temp.first]<<"\t";
+          //}
+        }
       }
     }
   }
 }
 
-void set_kappa_base_value(agent& node, const std::vector<Interaction_Space>& i_spaces){
-	for(auto& ispace: node.interaction_strength[0]){
+void set_kappa_base_value(agent& node, const std::vector<Interaction_Space>& i_spaces, int day){
+	for(auto& ispace: node.interaction_strength[day]){
 		node.kappa[ispace.first] = 1;
 	}
 }
 
-void set_kappa_lockdown_node(agent& node, const int cur_time, const intervention_params intv_params, const std::vector<Interaction_Space>& i_spaces){
+void set_kappa_lockdown_node(agent& node, const int cur_time, const intervention_params intv_params, const std::vector<Interaction_Space>& i_spaces, int day){
   node.quarantined = true; //lockdown implies quarantined
-  for (auto& elem: node.interaction_strength[0]){
+  for (auto& elem: node.interaction_strength[day]){
     if(i_spaces[elem.first].interaction_type == InteractionType :: hostel) {
       node.kappa[elem.first] = 0.2;
     }
@@ -104,7 +106,7 @@ bool should_be_isolated_node(const agent& node, const int cur_time, const int qu
 
 void get_kappa_custom_modular(std::vector<agent>& nodes, 
 							  const std::vector<Interaction_Space>& i_spaces,
-							  const int cur_time, const intervention_params intv_params){
+							  const int cur_time, const intervention_params intv_params, int day){
   /*if(intv_params.trains_active){
     GLOBAL.TRAINS_RUNNING = true;
     GLOBAL.FRACTION_FORCED_TO_TAKE_TRAIN = intv_params.fraction_forced_to_take_train;
@@ -133,12 +135,12 @@ void get_kappa_custom_modular(std::vector<agent>& nodes,
   for (count_type count = 0; count < nodes.size(); ++count){
     //choose base kappas
     if(intv_params.lockdown){
-      set_kappa_lockdown_node(nodes[count], cur_time, intv_params, i_spaces);
+      set_kappa_lockdown_node(nodes[count], cur_time, intv_params, i_spaces, day);
       //for(auto& ispace: nodes[count].interaction_strength[0]){
       //    std::cout<<"\n"<<ispace.first<<"\t"<<cur_time<<"\t"<<count<<"\t"<<nodes[count].kappa[ispace.first]<<"\t";
       //  }
     }else{
-      set_kappa_base_value(nodes[count], i_spaces);
+      set_kappa_base_value(nodes[count], i_spaces, day);
     }
 
     //modifiers begin
@@ -162,7 +164,7 @@ void get_kappa_custom_modular(std::vector<agent>& nodes,
     if(intv_params.case_isolation){
       //std::cout<<"Inside CI if statement\n";
       if(nodes[count].compliant && should_be_isolated_node(nodes[count], cur_time, SELF_ISOLATION_DAYS)){
-        modify_kappa_case_isolate_node(nodes[count], i_spaces);
+        modify_kappa_case_isolate_node(nodes[count], i_spaces, day);
         //std::cout<<"Inside case isolation code block"<<"\n";
         /*for(auto& node: nodes){
           for(auto& ispace: node.interaction_strength[0]){
@@ -175,7 +177,7 @@ void get_kappa_custom_modular(std::vector<agent>& nodes,
       //std::cout<<"Inside class isolation 1st loop\n";
       if(nodes[count].compliant && should_be_isolated_node(nodes[count], cur_time, SELF_ISOLATION_DAYS)){
         //std::cout<<"Inside class isolation 2nd loop\n";
-        modify_kappa_class_isolate_node(nodes[count], i_spaces, nodes);
+        modify_kappa_class_isolate_node(nodes[count], i_spaces, nodes, day);
         //for(auto& ispace: nodes[count].interaction_strength[0]){
         //  std::cout<<"\n"<<ispace.first<<"\t"<<cur_time<<"\t"<<count<<"\t"<<nodes[count].kappa[ispace.first]<<"\t";
         //}
@@ -200,7 +202,7 @@ void get_kappa_custom_modular(std::vector<agent>& nodes,
 
 void get_kappa_file_read(std::vector<agent>& nodes, 
 						 const std::vector<Interaction_Space>& i_spaces,
-						 const std::vector<intervention_params>& intv_params_vector, int cur_time){
+						 const std::vector<intervention_params>& intv_params_vector, int cur_time, int day){
   count_type time_threshold = GLOBAL.NUM_DAYS_BEFORE_INTERVENTIONS;
   count_type cur_day = cur_time/GLOBAL.SIM_STEPS_PER_DAY; //get current day. Division to avoid multiplication inside for loop.
   const auto SIZE = intv_params_vector.size();
@@ -221,14 +223,14 @@ void get_kappa_file_read(std::vector<agent>& nodes,
   //set_compliance(nodes, homes, intv_params_vector[intv_index].compliance,
 	//			 intv_params_vector[intv_index].compliance_hd);
 
-  get_kappa_custom_modular(nodes, i_spaces, cur_time, intv_params_vector[intv_index]);
+  get_kappa_custom_modular(nodes, i_spaces, cur_time, intv_params_vector[intv_index], day);
 }
 
-void update_all_kappa(std::vector<agent>& nodes, const std::vector<Interaction_Space>& i_spaces, std::vector<intervention_params>& intv_params, int cur_time){
+void update_all_kappa(std::vector<agent>& nodes, const std::vector<Interaction_Space>& i_spaces, std::vector<intervention_params>& intv_params, int cur_time, int day){
   intervention_params intv_params_local;
   if(cur_time < GLOBAL.NUM_DAYS_BEFORE_INTERVENTIONS*GLOBAL.SIM_STEPS_PER_DAY){
     //get_kappa_no_intervention(nodes, homes, workplaces, communities,cur_time);
-    get_kappa_custom_modular(nodes, i_spaces, cur_time, intv_params_local);
+    get_kappa_custom_modular(nodes, i_spaces, cur_time, intv_params_local, day);
   }
   else{
     switch(GLOBAL.INTERVENTION){
@@ -305,11 +307,11 @@ void update_all_kappa(std::vector<agent>& nodes, const std::vector<Interaction_S
       get_kappa_containment(nodes, homes, workplaces, communities, nbr_cells, cur_time, GLOBAL.FIRST_PERIOD, Intervention::intv_ward_containment);
       break;*/
     case Intervention::intv_file_read:
-      get_kappa_file_read(nodes, i_spaces, intv_params, cur_time);
+      get_kappa_file_read(nodes, i_spaces, intv_params, cur_time, day);
       break;
     default:
       //get_kappa_no_intervention(nodes, homes, workplaces, communities, cur_time);
-      get_kappa_custom_modular(nodes, i_spaces, cur_time, intv_params_local);
+      get_kappa_custom_modular(nodes, i_spaces, cur_time, intv_params_local, day);
       break;
     }
   }

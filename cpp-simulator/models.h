@@ -28,7 +28,8 @@ enum class Intervention {
    intv_nbr_containment=14,
    intv_ward_containment=15,
    intv_file_read=16,
-   intv_Mum_cyclic=17
+   intv_Mum_cyclic=17,
+   class_isolation = 18
 };
 
 enum class Cycle_Type {
@@ -215,6 +216,7 @@ struct intervention_params {
   bool neighbourhood_containment = false;
   bool ward_containment = false;
   bool trains_active = false;
+  bool class_isolation = false;
   double fraction_forced_to_take_train = 1;
   kappa_values lockdown_kappas_compliant;
   kappa_values lockdown_kappas_non_compliant;
@@ -265,6 +267,10 @@ struct intervention_params {
   intervention_params& set_community_factor(double c){
 	this->community_factor = c;
 	return *this;
+  }
+  intervention_params& set_class_isolation(bool c){
+  this->class_isolation = c;
+  return *this;
   }
 };
 
@@ -710,7 +716,7 @@ struct agent{
   //individuals contribution to his community
   double lambda_nbr_cell = 0;
   //individuals contribution to neighbourhood cell
-  double lambda = 0;
+  double lambda;
 
   double kappa_T = 1;
   double psi_T = 0;
@@ -877,10 +883,12 @@ struct Interaction_Space{
   double alpha;
   double beta;
   double lambda;
-
+  //std::vector<double> lambda;
   //std::vector<int> individual_ids;
 
-  std::vector<int> individuals;
+  //std::vector<int> individual;
+  std::vector<std::vector<int>> individuals;
+  //std::vector<individual> individuals;
 
   int id;
 

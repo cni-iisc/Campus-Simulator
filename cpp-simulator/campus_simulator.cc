@@ -23,6 +23,7 @@ plot_data_struct run_campus_simulator(){
   //auto workplaces = init_workplaces();
   //auto communities = init_community();
   	auto interaction_spaces = init_interaction_spaces();
+	init_transmission_coefficients(interaction_spaces);
   	auto nodes = init_nodes_campus();
   	int day =0;
 	int periodicity = nodes[0].interaction_strength.size();
@@ -253,7 +254,7 @@ plot_data_struct run_campus_simulator(){
 		}*/
 		
 		//std::cout<<"Number of affected"<<"\t"<<n_affected<<"\n";
-		std::cout<<"Number of cases: "<<n_cases<<"\t"<<"Number of affected: "<<n_affected<<"\t"<<"Number of fatalities: "<<n_fatalities<<"\n";
+		//std::cout<<"Number of cases: "<<n_cases<<"\t"<<"Number of affected: "<<n_affected<<"\t"<<"Number of fatalities: "<<n_fatalities<<"\n";
     	update_interaction_space_lambda(nodes, interaction_spaces, day);
 		// for (auto& ispace: interaction_spaces){
 		// 	int x = 0;

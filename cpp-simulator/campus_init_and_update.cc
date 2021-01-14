@@ -274,8 +274,8 @@ std::vector<Interaction_Space> init_interaction_spaces()
     interaction_spaces[index].interaction_type = static_cast<InteractionType>(elem["type"].GetInt());
     interaction_spaces[index].set_active_duration(elem["active_duration"].GetDouble());
     interaction_spaces[index].set_id(elem["id"].GetInt());
-    interaction_spaces[index].set_alpha(elem["alpha"].GetDouble());
-    interaction_spaces[index].set_beta(elem["beta"].GetDouble());
+    //interaction_spaces[index].set_alpha(elem["alpha"].GetDouble());
+    //interaction_spaces[index].set_beta(elem["beta"].GetDouble());
     ++index;
   }
   //xassert(index == GLOBAL.num_workplaces);
@@ -283,10 +283,52 @@ std::vector<Interaction_Space> init_interaction_spaces()
   return interaction_spaces;
 }
 
+void init_transmission_coefficients(std::vector<Interaction_Space> &interaction_spaces){
+  auto transmission_coefficients_json = readJSONFile(GLOBAL.input_base + "transmission_coefficients.json");
+  auto transmission_coefficients_json_size = transmission_coefficients_json.GetArray().Size();
+
+  auto size = transmission_coefficients_json_size;
+  std::vector<Interaction_Space> transmission_coefficients(size);
+  count_type index = 0;
+  for (auto &elem: transmission_coefficients_json.GetArray()){
+    transmission_coefficients[index].interaction_type = static_cast<InteractionType>(elem["type"].GetInt());
+    transmission_coefficients[index].set_alpha(elem["alpha"].GetDouble());
+    transmission_coefficients[index].set_beta(elem["beta"].GetDouble());
+    ++index;
+  }
+  for (auto &i_space : interaction_spaces){
+    switch (i_space.interaction_type)
+    {
+    case InteractionType ::day_scholar :
+      i_space.set_alpha(transmission_coefficients[0].alpha);
+      i_space.set_beta(transmission_coefficients[0].beta);
+      break;
+
+    case InteractionType ::classroom :
+      i_space.set_alpha(transmission_coefficients[1].alpha);
+      i_space.set_beta(transmission_coefficients[1].beta);
+      break;
+
+    case InteractionType :: hostel : 
+      i_space.set_alpha(transmission_coefficients[2].alpha);
+      i_space.set_beta(transmission_coefficients[2].beta);
+      break;
+    
+    case InteractionType :: mess : 
+      i_space.set_alpha(transmission_coefficients[3].alpha);
+      i_space.set_beta(transmission_coefficients[3].beta);
+      break;
+
+    default:
+      break;
+    }
+    // i_space.set_alpha(transmission_coefficients[i_space.interaction_type].alpha);
+  }
+}
+
 void print_intervention_params(const int index, const intervention_params intv_params)
 {
-  std::cout << std::endl
-            << "Index : " << index << ". num_days = " << intv_params.num_days;
+  std::cout << std::endl<< "Index : " << index << ". num_days = " << intv_params.num_days;
   std::cout << ". Case Isolation : " << intv_params.case_isolation;
   //std::cout<<". Home Quarantine : " << intv_params.home_quarantine;
   std::cout << ". Lockdown : " << intv_params.lockdown;
@@ -312,7 +354,7 @@ std::vector<intervention_params> init_intervention_params()
   {
     std::cout << std::endl
               << "Inside init_intervention_params";
-    auto intvJSON = readJSONFile(GLOBAL.input_base + "campus_interventions_03.json");
+    auto intvJSON = readJSONFile(GLOBAL.input_base + "campus_interventions_00.json");
 
     intv_params.reserve(intvJSON.GetArray().Size());
 
@@ -424,6 +466,14 @@ double update_n_k(agent &node, int cur_time, Interaction_Space &i_space)
 void update_interaction_space_lambda(std::vector<agent> &nodes, std::vector<Interaction_Space> &i_spaces, int day)
 {
   //std::cout<<"Inside update interaction space lambda function"<<"\n";
+
+  // for (auto& node: nodes){
+  //   if(day == 0){
+  //     for(auto& ispace: node.interaction_strength[day]){
+  //       ispace.second = 0;
+  //     }
+  //   }
+  // }
   for (auto &i_space : i_spaces)
   {
     double sum_value = 0;
@@ -440,6 +490,7 @@ void update_interaction_space_lambda(std::vector<agent> &nodes, std::vector<Inte
     }
     N_k = (1 / i_space.active_duration) * sum_n_k;
     Lam_k_t = i_space.beta * (pow(N_k, -i_space.alpha)) * (1 / i_space.active_duration) * sum_value;
+    std::cout<<"Beta: "<<i_space.beta<<"\t";
     i_space.lambda = (Lam_k_t);
     //std::cout<<"Day: "<<cur_day<<"\n";
     // for(auto& lam: i_space.lambda){
@@ -464,6 +515,13 @@ void update_individual_lambda(std::vector<agent> &nodes, std::vector<Interaction
   // 		}
   // 	}
   //int i = 0;
+  // for (auto& node: nodes){
+  //   if(day == 0){
+  //     for(auto& ispace: node.interaction_strength[day]){
+  //       ispace.second = 0;
+  //     }
+  //   }
+  // }
   for (auto &node : nodes)
   {
     //std::cout<<"Inside first for loop\n";

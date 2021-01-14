@@ -21,7 +21,8 @@ outputfiles = {
     "interaction_spaces" : "interaction_spaces.json"
 }
 
-file_dir = "/Users/Minhaas/CODING/iisc/campus-simulator/markov_simuls/staticInst/data/campus_data/"
+input_file_dir = "/Users/Minhaas/CODING/iisc/rough/campus_input_csv/"
+output_file_dir = "/Users/Minhaas/CODING/iisc/campus-simulator/markov_simuls/staticInst/data/campus_data/"
 
 class NpEncoder(json.JSONEncoder):
     def default(self, obj):
@@ -34,11 +35,11 @@ class NpEncoder(json.JSONEncoder):
         else:
             return super(NpEncoder, self).default(obj)
 
-student_df = pd.read_csv(inputfiles["students"])
-class_df = pd.read_csv(inputfiles["class"])
-staff_df = pd.read_csv(inputfiles["staff"])
-mess_df = pd.read_csv(inputfiles["mess"])
-timetable_df = pd.read_csv(inputfiles["timetable"])
+student_df = pd.read_csv(input_file_dir + inputfiles["students"])
+class_df = pd.read_csv(input_file_dir + inputfiles["class"])
+staff_df = pd.read_csv(input_file_dir + inputfiles["staff"])
+mess_df = pd.read_csv(input_file_dir + inputfiles["mess"])
+timetable_df = pd.read_csv(input_file_dir + inputfiles["timetable"])
 
 student_id = [int(x) for x in student_df["id"]]
 student_age = [int(x) for x in student_df["age"]]
@@ -191,7 +192,7 @@ for i in range(staff_pop):
     staff_dict["interaction_strength"] = int_st 
     individual.append(staff_dict)
 
-f = open(file_dir+outputfiles['individuals'], "w+")
+f = open(output_file_dir+outputfiles['individuals'], "w+")
 f.write(json.dumps(individual, cls = NpEncoder))
 f.close
 print("Done.")
@@ -250,7 +251,7 @@ for i in range(num_mess):
 
 #Need to have a validaton script for csv and json files
 
-f = open(file_dir+outputfiles['interaction_spaces'], "w+")
+f = open(output_file_dir+outputfiles['interaction_spaces'], "w+")
 f.write(json.dumps(interaction_spaces, cls = NpEncoder))
 f.close
 print("Done.")

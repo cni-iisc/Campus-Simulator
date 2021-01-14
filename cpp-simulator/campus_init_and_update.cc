@@ -467,13 +467,13 @@ void update_interaction_space_lambda(std::vector<agent> &nodes, std::vector<Inte
 {
   //std::cout<<"Inside update interaction space lambda function"<<"\n";
 
-  // for (auto& node: nodes){
-  //   if(day == 0){
-  //     for(auto& ispace: node.interaction_strength[day]){
-  //       ispace.second = 0;
-  //     }
-  //   }
-  // }
+  for (auto& node: nodes){
+    if(day <= 3){
+      for(auto& ispace: node.interaction_strength[day]){
+        ispace.second = 0;
+      }
+    }
+  }
   for (auto &i_space : i_spaces)
   {
     double sum_value = 0;
@@ -515,13 +515,13 @@ void update_individual_lambda(std::vector<agent> &nodes, std::vector<Interaction
   // 		}
   // 	}
   //int i = 0;
-  // for (auto& node: nodes){
-  //   if(day == 0){
-  //     for(auto& ispace: node.interaction_strength[day]){
-  //       ispace.second = 0;
-  //     }
-  //   }
-  // }
+  for (auto& node: nodes){
+    if(day <= 3){
+      for(auto& ispace: node.interaction_strength[day]){
+        ispace.second = 0;
+      }
+    }
+  }
   for (auto &node : nodes)
   {
     //std::cout<<"Inside first for loop\n";
@@ -546,7 +546,7 @@ void update_individual_lambda(std::vector<agent> &nodes, std::vector<Interaction
 //  }
 
 //Update assign individual to take in more days
-void assign_individual_campus(std::vector<agent> &nodes, std::vector<Interaction_Space> &interaction_space, int day = 2)
+void assign_individual_campus(std::vector<agent> &nodes, std::vector<Interaction_Space> &interaction_space, int day)
 {
 
   std::vector<int> person;

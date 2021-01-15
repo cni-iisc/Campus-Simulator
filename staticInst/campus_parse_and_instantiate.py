@@ -1,12 +1,14 @@
-from numpy.core.numeric import indices
 import pandas as pd
 import numpy as np 
 import json 
 import warnings
 from collections import Counter
+import os 
 warnings.filterwarnings('ignore')
 
 DEBUG = False
+markov_simuls = True
+sim_test = True
 
 inputfiles = {
     "students" : "student.csv",
@@ -21,8 +23,17 @@ outputfiles = {
     "interaction_spaces" : "interaction_spaces.json"
 }
 
+#file_dir = "/Users/Minhaas/CODING/iisc/campus-simulator/markov_simuls/staticInst/data/campus_data/"
+#file_dir = "/Users/Minhaas/CODING/iisc/rough/"
 input_file_dir = "/Users/Minhaas/CODING/iisc/rough/campus_input_csv/"
-output_file_dir = "/Users/Minhaas/CODING/iisc/campus-simulator/markov_simuls/staticInst/data/campus_data/"
+
+if markov_simuls: 
+    output_file_dir = "/Users/Minhaas/CODING/iisc/campus-simulator/markov_simuls/staticInst/data/campus_data/"
+else: 
+    output_file_dir = "/Users/Minhaas/CODING/iisc/rough/campus_input_csv/json_files/"
+
+if not os.path.exists(output_file_dir):
+    os.makedirs(output_file_dir)
 
 class NpEncoder(json.JSONEncoder):
     def default(self, obj):
@@ -35,11 +46,13 @@ class NpEncoder(json.JSONEncoder):
         else:
             return super(NpEncoder, self).default(obj)
 
+column_names = [i for i in range(24)]
 student_df = pd.read_csv(input_file_dir + inputfiles["students"])
 class_df = pd.read_csv(input_file_dir + inputfiles["class"])
+
 staff_df = pd.read_csv(input_file_dir + inputfiles["staff"])
 mess_df = pd.read_csv(input_file_dir + inputfiles["mess"])
-timetable_df = pd.read_csv(input_file_dir + inputfiles["timetable"])
+timetable_df = pd.read_csv(input_file_dir + inputfiles["timetable"], header=None, names = column_names)
 
 student_id = [int(x) for x in student_df["id"]]
 student_age = [int(x) for x in student_df["age"]]
@@ -54,6 +67,7 @@ staff_type = [int(x) for x in staff_df["dept_associated"]]
 staff_dept = [int(x) for x in staff_df["interaction_space"]]
 faculty = [float(x) for x in class_df["faculty_id"]] 
 
+faculty_pop = 27
 student_pop = student_df["id"].count()
 hostel_pop  = np.bincount(student_df["hostel"])
 staff_pop = staff_df["staff_id"].count()
@@ -72,46 +86,16 @@ mess_list = unique(student_mess)
 duration_sum = 0
 mess_active_duration = 0.33
 class_active_duration = 0.04
+weekends = range(2)
 
 time_table = timetable_df.values.tolist()
-num_days = time_table[1].count(-1)
-periodicity = num_days
+for i in range(len(time_table)):
+    time_table[i] = [x for x in time_table[i] if str(x)!='nan']
 
-def active_duration(timetable, hostel_active_duration):
-    num_days = [i for i, x in enumerate(timetable) if x == -1]
-    active_duration_hostel = []
-    total_days = range(len(num_days))
-    for day in total_days:
-        hostel_duration = hostel_active_duration
-        if day == 0:
-            for ispace in range(1,num_days[day]):
-                if DEBUG : print(timetable[ispace])
-                if timetable[ispace] != -1:
-                    if DEBUG: print("Not -1")
-                    if timetable[ispace] in class_list:
-                        if DEBUG : print("In class list")
-                        hostel_duration -= class_active_duration
-                else: 
-                    if DEBUG : print("-1 encountered")
-                    continue
-            hostel_duration -= mess_active_duration
-            active_duration_hostel.append(hostel_duration)
-        else : 
-            for ispace in range(num_days[day-1], num_days[day]):
-                if DEBUG : print(timetable[ispace])
-                if timetable[ispace] != -1:
-                    if DEBUG: print("Not -1")
-                    if timetable[ispace] in class_list:
-                        if DEBUG : print("In class list")
-                        hostel_duration -= class_active_duration
-                else: 
-                    if DEBUG : print("-1 encountered")
-                    continue
-            hostel_duration -= mess_active_duration
-            active_duration_hostel.append(hostel_duration)
-    return active_duration_hostel
+num_days = time_table[1].count(-1) + 2 #To bring 7 day periodicity
+periodicity = 7
 
-
+print("Instantiating students...")
 for i in range(student_pop):
     person = {}
     person["id"] = student_id[i]
@@ -121,57 +105,114 @@ for i in range(student_pop):
     person["Hostel"] = student_hostel[i]
     person["Dept"] = student_dept[i]
     person["Periodicity"] = periodicity
-    daily_int_st = {}
     int_st = []
-    hostel_active_duration = 1
-    hostel_duration = active_duration(time_table[i], hostel_active_duration)
-    #if DEBUG : print(hostel_duration)
-    daily_int_st = {student_hostel[i] : hostel_duration[0], student_mess[i] : mess_active_duration}
-    for j in range(1,len(time_table[i])):
-        if time_table[i][j] == -1:
-            days = days + 1
-            int_st.append(daily_int_st)
-            #hostel_act_dur = active_duration(time_table[i], hostel_active_duration)
-            daily_int_st = {student_hostel[i]: hostel_duration[1], student_mess[i] : mess_active_duration}
-            continue
-        if days != num_days:
-            daily_int_st[time_table[i][j]] = class_active_duration
-        else: 
-            break
-
-    while days < num_days:
+    for z in range(periodicity):
+        daily_int_st = {}
         int_st.append(daily_int_st)
+
+    for j in range(1,len(time_table[i])):
+        classID = time_table[i][j]
+        tt_df = class_df[class_df["class_id"] == classID]
+        days_of_the_week = int(tt_df["days"])
+        days_of_the_week = str(days_of_the_week)
+        for k in range(len(days_of_the_week)):
+            if sim_test : 
+                if (int(days_of_the_week[k])-1)%2 == 0: 
+                    int_st[int(days_of_the_week[k])-1][classID] = float(tt_df["active_duration"])
+                else: 
+                    int_st[int(days_of_the_week[k])-1][classID] = 0
+            else: 
+                int_st[int(days_of_the_week[k])-1][classID] = float(tt_df["active_duration"])
 
     person["interaction_strength"] = int_st
     individual.append(person)
+ 
+for i in range(student_pop):
+    count = 0
+    for daily_int_st in individual[i]["interaction_strength"]:
+        sum = 0
+        val = daily_int_st.values()
+        for v in val:
+            sum += v
+        if sim_test : 
+            if count % 2 == 0: 
+                daily_int_st[student_hostel[i]] = 1 - sum - mess_active_duration
+                daily_int_st[student_mess[i]] = mess_active_duration
+            else :
+                daily_int_st[student_hostel[i]] = 0 
+                daily_int_st[student_mess[i]] = 0
+        else :
+            daily_int_st[student_hostel[i]] = 1 - sum - mess_active_duration
+            daily_int_st[student_mess[i]] = mess_active_duration
+        if sim_test : 
+            count += 1
+print("Student done.")
 
-
-for i in range(len(Counter(faculty))):
+for i in range(faculty_pop):
     faculty_dict = {}
     faculty_dict["id"] = student_pop + i
     faculty_dict["Type"] = 1
-    faculty_dict["age"] = np.random.randint(31,55) #Parameterise ALL quantities 
+    faculty_dict["age"] = np.random.randint(31,55) #Parameterise ALL quantities
     faculty_dict["Hostel"] = 0
     faculty_dict["Periodicity"] = periodicity
-    class_fac = []
-    #num_days_fac = 1
-    for x in range(len(class_faculty)):
-        if class_faculty[x] == faculty_dict["id"]:
-            faculty_dict["dept"] = class_dept[x]
-            class_fac.append(x)
-    daily_int_st = {}
-    int_str = []
-    for j in range(num_days):
-        daily_int_st[0] = 1 - (class_active_duration*len(class_fac))
-        #daily_int_st = {0: 0.88}
-        for k in range(len(class_fac)):
-            daily_int_st[class_fac[k]] = class_active_duration
-            #daily_int_st = {class_fac[k]: 0.04}
-        int_str.append(daily_int_st)
-    faculty_dict["interaction_strength"] = int_str 
+    class_fac = class_df[class_df["faculty_id"] == faculty_dict["id"]]
+    class_fac = class_fac.reset_index(drop = True)
+    if DEBUG : print(class_fac)
+    if class_fac.empty: 
+        faculty_dict["dept"] = -1
+    else: 
+        faculty_dict["dept"] = class_fac["dept"][0]
+    
+    int_st = []
+    for j in range(periodicity):
+        daily_int_st = {}
+        int_st.append(daily_int_st)
+    faculty_dict["interaction_strength"] = int_st
     individual.append(faculty_dict)
 
+for i in range(student_pop):
+    dotf = 0
+    count = 0
+    for daily_int_st in individual[i]["interaction_strength"]:
+        if sim_test : count +=1 
+        int_st_keys = list(daily_int_st.keys())
+        for key in int_st_keys:
+            if key > len(class_df):
+                continue 
+            fac = class_df["faculty_id"][key - 1]
+            if sim_test : 
+                if count % 2 ==0 : 
+                    individual[fac]["interaction_strength"][dotf][key] = class_df["active_duration"][key-1] 
+                else : 
+                    individual[fac]["interaction_strength"][dotf][key] = 0 
+            else: 
+                individual[fac]["interaction_strength"][dotf][key] = class_df["active_duration"][key-1]  #list of dictionaries of list of dictionaries
+        dotf = dotf + 1
+        if sim_test : 
+            count += 1
+        #print(dotf)
 
+
+for i in range(faculty_pop):
+    count = 0
+    for daily_int_st in individual[student_pop + i]["interaction_strength"]:
+        sum = 0
+        val = daily_int_st.values()
+        for v in val:
+            sum += v
+        if sim_test : 
+            if count % 2 == 0: 
+                daily_int_st[0] = 1 - sum
+            else :
+                daily_int_st[0] = 0
+        else : 
+            daily_int_st[0] = 1 - sum
+        if sim_test : 
+            count += 1
+
+print("Faculty done")
+
+print("Instantiating staff...")
 for i in range(staff_pop):
     staff_dict = {}
     staff_dict["id"] = student_pop + len(Counter(faculty)) - 1 + i #Take care - verify the -1
@@ -183,19 +224,29 @@ for i in range(staff_pop):
     #num_days_staff = 2
     daily_int_st = {}
     int_st = []
-    for j in range(num_days):
-        if staff_type[i] == 1:
-            daily_int_st = {0: 0.45, staff_dept[i]: 0.55}
-        else :
-            daily_int_st = {0: 0.67, staff_dept[i]: 0.33}
+    for j in range(periodicity):
+        if sim_test :
+            if j%2 == 0: 
+                 daily_int_st = {0: 0, staff_dept[i]: 0}
+            else: 
+                if staff_type[i] == 1:
+                    daily_int_st = {0: 0.45, staff_dept[i]: 0.55}
+                else :
+                    daily_int_st = {0: 0.67, staff_dept[i]: 0.33}
+        else:   
+            if staff_type[i] == 1:
+                daily_int_st = {0: 0.45, staff_dept[i]: 0.55}
+            else :
+                daily_int_st = {0: 0.67, staff_dept[i]: 0.33}
         int_st.append(daily_int_st)
     staff_dict["interaction_strength"] = int_st 
     individual.append(staff_dict)
+print("Staff done.")
 
-f = open(output_file_dir+outputfiles['individuals'], "w+")
+f = open(output_file_dir + outputfiles['individuals'], "w+")
 f.write(json.dumps(individual, cls = NpEncoder))
 f.close
-print("Done.")
+print("individuals.json generated")
 
 print("Creating interaction_spaces.json...")
 
@@ -227,6 +278,8 @@ for i in range(num_classes):
     i_space_class["lon"] = np.random.uniform(15.0,18.0)
     interaction_spaces.append(i_space_class)
 
+print("Classes instantiated")
+
 for i in range(num_hostel):
     i_space_hostel = {}
     i_space_hostel["id"] = i + num_classes + 1
@@ -237,6 +290,8 @@ for i in range(num_hostel):
     i_space_hostel["lat"] = np.random.uniform(10.0,20.0)
     i_space_hostel["lon"] = np.random.uniform(15.0,18.0)
     interaction_spaces.append(i_space_hostel)
+
+print("Hostels instantiated")
 
 for i in range(num_mess):
     i_space_mess = {}
@@ -249,12 +304,10 @@ for i in range(num_mess):
     i_space_mess["lon"] = np.random.uniform(15.0,18.0)
     interaction_spaces.append(i_space_mess)
 
-#Need to have a validaton script for csv and json files
+print("Mess instantiated")
 
-f = open(output_file_dir+outputfiles['interaction_spaces'], "w+")
+f = open(output_file_dir + outputfiles['interaction_spaces'], "w+")
 f.write(json.dumps(interaction_spaces, cls = NpEncoder))
 f.close
-print("Done.")
-#print(num_interaction_spaces)
-#print(interaction_spaces)
-#"""
+print("interaction_spaces.json generated.")
+

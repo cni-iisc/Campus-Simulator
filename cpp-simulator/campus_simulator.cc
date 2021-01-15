@@ -222,7 +222,7 @@ plot_data_struct run_campus_simulator(){
 		count_type n_recovered = 0;
 		count_type n_cases = 0;
 		//count_type n_symptomatic = 0;
-		day = time_step%periodicity;
+		day = (time_step/4)%periodicity;
 		for(count_type j = 0; j < nodes.size(); ++j){
 	  		auto node_update_status = update_infection(nodes[j], time_step, day); 
 	  		nodes[j].psi_T = psi_T(nodes[j], time_step);

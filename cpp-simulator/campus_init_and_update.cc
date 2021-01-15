@@ -467,13 +467,13 @@ void update_interaction_space_lambda(std::vector<agent> &nodes, std::vector<Inte
 {
   //std::cout<<"Inside update interaction space lambda function"<<"\n";
 
-  for (auto& node: nodes){
-    if(day <= 3){
-      for(auto& ispace: node.interaction_strength[day]){
-        ispace.second = 0;
-      }
-    }
-  }
+  // for (auto& node: nodes){
+  //   if(day <= 3){
+  //     for(auto& ispace: node.interaction_strength[day]){
+  //       ispace.second = 0;
+  //     }
+  //   }
+  // }
   for (auto &i_space : i_spaces)
   {
     double sum_value = 0;
@@ -490,7 +490,7 @@ void update_interaction_space_lambda(std::vector<agent> &nodes, std::vector<Inte
     }
     N_k = (1 / i_space.active_duration) * sum_n_k;
     Lam_k_t = i_space.beta * (pow(N_k, -i_space.alpha)) * (1 / i_space.active_duration) * sum_value;
-    std::cout<<"Beta: "<<i_space.beta<<"\t";
+    //std::cout<<"Beta: "<<i_space.beta<<"\t";
     i_space.lambda = (Lam_k_t);
     //std::cout<<"Day: "<<cur_day<<"\n";
     // for(auto& lam: i_space.lambda){
@@ -515,13 +515,13 @@ void update_individual_lambda(std::vector<agent> &nodes, std::vector<Interaction
   // 		}
   // 	}
   //int i = 0;
-  for (auto& node: nodes){
-    if(day <= 3){
-      for(auto& ispace: node.interaction_strength[day]){
-        ispace.second = 0;
-      }
-    }
-  }
+  // for (auto& node: nodes){
+  //   if(day <= 3){
+  //     for(auto& ispace: node.interaction_strength[day]){
+  //       ispace.second = 0;
+  //     }
+  //   }
+  // }
   for (auto &node : nodes)
   {
     //std::cout<<"Inside first for loop\n";

@@ -16,7 +16,7 @@
 plot_data_struct run_campus_simulator(){
 	#ifdef TIMING
   		std::cerr << "simulator: starting JSON read\n";
-  		auto start_time = std::chrono::high_resolution_clock::now();
+  		//auto start_time = std::chrono::high_resolution_clock::now();
 	#endif
   
   //auto homes = init_homes();

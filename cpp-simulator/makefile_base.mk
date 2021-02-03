@@ -26,7 +26,7 @@ obj = models.o campus_simulator.o drive_simulator.o outputs.o campus_init_and_up
 DEPFLAGS = -MMD -MP -MF $*.d
 
 CXX = g++
-CPPFLAGS = -Wall --std=c++14 -O3 $(DEPFLAGS) $(include_paths) $(parallel) $(timing) $(debug) $(random) -D GIT_HASH='"$(GIT_HASH)"' -D GIT_TREE_STATE='"$(GIT_TREE_STATE)"'
+CPPFLAGS = -Wall --std=c++17 -O3 $(DEPFLAGS) $(include_paths) $(parallel) $(timing) $(debug) $(random) -D GIT_HASH='"$(GIT_HASH)"' -D GIT_TREE_STATE='"$(GIT_TREE_STATE)"'
 
 all: drive_simulator check
 

@@ -9,6 +9,7 @@
 #include <string>
 #include <algorithm>
 #include <unordered_map>
+#include <set>
 
 enum class Intervention {
    no_intervention = 0,
@@ -686,6 +687,8 @@ struct agent{
   int hostel;
   int dept;
   int type;
+
+  std::set<int> spaces;
 
   int community;
   double time_of_infection = 0;

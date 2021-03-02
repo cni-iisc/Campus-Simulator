@@ -61,26 +61,35 @@ void modify_kappa_class_isolate_node(agent &node, const std::vector<Interaction_
 {
   node.quarantined = true;
   //std::cout<<std::boolalpha<<node.quarantined<<"\t";
-  for (auto &elem : node.interaction_strength)
-  {
-    for (auto &ispace : elem)
-    {
-      if (i_spaces[ispace.first].interaction_type == InteractionType::classroom)
-      {
-        for (auto individual : i_spaces[ispace.first].individuals)
-        {
-          for (auto &person : individual)
-          {
-            modify_kappa_case_isolate_node(nodes[person], i_spaces, day);
-            //for(auto &temp: nodes[person].interaction_strength[0]){
-            //  std::cout<<"Inside modify class isolate"<<"\n";
-            //  std::cout<<"\n"<<temp.first<<"\t"<<person<<"\t"<<nodes[person].kappa[temp.first]<<"\t";
-            //std::cout<<"Inside modify class isolate"<<"\t"<<nodes[person].kappa[temp.first]<<"\t";
-            //}
-          }
-        }
-      }
-    }
+  // for (auto &elem : node.interaction_strength)
+  // {
+  //   for (auto &ispace : elem)
+  //   {
+  //     if (i_spaces[ispace.first].interaction_type == InteractionType::classroom)
+  //     {
+  //       for (auto individual : i_spaces[ispace.first].individuals)
+  //       {
+  //         for (auto &person : individual)
+  //         {
+  //           modify_kappa_case_isolate_node(nodes[person], i_spaces, day);
+  //           //for(auto &temp: nodes[person].interaction_strength[0]){
+  //           //  std::cout<<"Inside modify class isolate"<<"\n";
+  //           //  std::cout<<"\n"<<temp.first<<"\t"<<person<<"\t"<<nodes[person].kappa[temp.first]<<"\t";
+  //           //std::cout<<"Inside modify class isolate"<<"\t"<<nodes[person].kappa[temp.first]<<"\t";
+  //           //}
+  //         }
+  //       }
+  //     }
+  //   }
+  // }
+  for (auto &space : node.spaces){
+  	if(i_spaces[space].interaction_type == InteractionType::classroom){
+  		for(auto &individual : i_spaces[space].individuals){
+  			for(auto &person : individual){
+  				modify_kappa_case_isolate_node(nodes[person], i_spaces, day);
+  			}
+  		}
+  	}
   }
 }
 

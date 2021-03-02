@@ -4,6 +4,7 @@ import json
 import warnings
 from collections import Counter
 import os 
+from transmission_coefficients import transmission_coefficients
 warnings.filterwarnings('ignore')
 
 DEBUG = False
@@ -43,6 +44,13 @@ def campus_parse(inputfiles):
 
     print("Creating individuals.json...")
     individual = []
+
+    spaces_map = {
+        0 : "Day Scholar",
+        1 : "Classes",
+        2 : "Hostels",
+        3 : "Mess"
+    }
 
     def unique(hostel_mess_list):
         x = np.array(hostel_mess_list)
@@ -270,7 +278,23 @@ def campus_parse(inputfiles):
 
     print("Mess instantiated")
 
-    return individual, interaction_spaces
+    #To bring in initial transmission_coefficents.json
+    type_list = []
+    for spaces in interaction_spaces:
+        type_list.append(spaces["type"])
+    
+    type_arr = np.unique(np.array(type_list))
+
+    names = []
+    for elem in type_arr:
+        names.append(spaces_map[elem])
+
+    BETA = [1,1,1,1]
+    ALPHA = 1
+
+    trans_coeffs = transmission_coefficients(type_arr, BETA, ALPHA, names)
+
+    return individual, interaction_spaces, trans_coeffs
 
 if __name__ == "__main__":
 
@@ -283,8 +307,8 @@ if __name__ == "__main__":
     }
 
     outputfiles = {
-        "individuals" : "individuals.json",
-        "interaction_spaces" : "interaction_spaces.json"
+        "individuals" : "individuals_1.json",
+        "interaction_spaces" : "interaction_spaces_1.json"
     }
 
     if markov_simuls: 
@@ -311,7 +335,7 @@ if __name__ == "__main__":
         "timetable" : timetable_df
     }
 
-    individuals, interaction_spaces = campus_parse(input_dfs)
+    individuals, interaction_spaces, trans_coeff = campus_parse(input_dfs)
 
     individual_json = open(output_file_dir + outputfiles['individuals'], "w+")
     individual_json.write(json.dumps(individuals, cls = NpEncoder))

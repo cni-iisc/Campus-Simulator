@@ -573,6 +573,14 @@ void assign_individual_campus(std::vector<agent> &nodes, std::vector<Interaction
     }
   }
 
+  for (auto &node : nodes){
+    for (auto &elem : node.interaction_strength){
+      for (auto &int_space : elem){
+        node.spaces.insert(int_space.first);
+      }
+    }
+  }
+
   // int count = 0;
   // std::cout<<day<<"\n";
   // for(auto& ispace: interaction_space){

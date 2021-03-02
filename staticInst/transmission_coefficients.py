@@ -17,16 +17,16 @@ class NpEncoder(json.JSONEncoder):
         else:
             return super(NpEncoder, self).default(obj)
 
-def transmission_coefficients(interaction_type_list, BETA, ALPHA):
+def transmission_coefficients(interaction_type_list, BETA, ALPHA, NAMES):
     transmission_json = {}
     print(len(interaction_type_list))
     for type in range(len(interaction_type_list)):
     # print(f"Generating transmission coefficents for {interaction_type[type]}...")
         transmission_json = {
             "type" : interaction_type_list[type], 
-            # "name" : interaction_type[type],
             "beta" : BETA[type],
-            "alpha" : ALPHA
+            "alpha" : ALPHA,
+            "name" : NAMES[type]
         }
         print(type)
         # //print(f"{interaction_type[type]} done.")

@@ -21,10 +21,10 @@ INTERVENTION_ARRAY=(no_intervention case_isolation class_isolation lockdown)
 #lockdown - index 3
 INTERVENTION_NAME=${INTERVENTION_ARRAY[${INTERVENTION_ID}]}
 
-SRCNAME="/Users/Minhaas/CODING/iisc/campus-simulator/markov_simuls/staticInst/data/campus_outputs"
+SRCNAME="/Users/Minhaas/CODING/iisc/campus_test/markov_simuls/staticInst/data/campus_outputs"
 
 #Folder (PRTNAME) name should be changed for every intervention - should be the same as intervention name
-PRTNAME="/Users/Minhaas/CODING/iisc/campus-simulator/markov_simuls/staticInst/data/campus_outputs/plots_data/$INTERVENTION_NAME" 
+PRTNAME="/Users/Minhaas/CODING/iisc/campus_test/markov_simuls/staticInst/data/campus_outputs/plots_data/$INTERVENTION_NAME" 
 
 num_affected="/Users/Minhaas/CODING/iisc/campus-simulator/markov_simuls/staticInst/data/campus_outputs/num_affected.csv"
 num_cases="/Users/Minhaas/CODING/iisc/campus-simulator/markov_simuls/staticInst/data/campus_outputs/num_cases.csv"
@@ -43,10 +43,10 @@ echo
 echo "----------------------------------------$sim RUN DONE------------------------------------------"
 
 #Folder names should be same as PRTNAME & should be for every intervention - should be the same as intervention name  
-DST_NUM_AFFECTED="/Users/Minhaas/CODING/iisc/campus-simulator/markov_simuls/staticInst/data/campus_outputs/plots_data/$INTERVENTION_NAME/num_affected_$sim.csv"
-DST_NUM_CASES="/Users/Minhaas/CODING/iisc/campus-simulator/markov_simuls/staticInst/data/campus_outputs/plots_data/$INTERVENTION_NAME/num_cases_$sim.csv"
-DST_NUM_FATALITIES="/Users/Minhaas/CODING/iisc/campus-simulator/markov_simuls/staticInst/data/campus_outputs/plots_data/$INTERVENTION_NAME/num_fatalities_$sim.csv"
-DST_NUM_RECOVERED="/Users/Minhaas/CODING/iisc/campus-simulator/markov_simuls/staticInst/data/campus_outputs/plots_data/$INTERVENTION_NAME/num_recovered_$sim.csv"
+DST_NUM_AFFECTED="/Users/Minhaas/CODING/iisc/campus_test/markov_simuls/staticInst/data/campus_outputs/plots_data/$INTERVENTION_NAME/num_affected_$sim.csv"
+DST_NUM_CASES="/Users/Minhaas/CODING/iisc/campus_test/markov_simuls/staticInst/data/campus_outputs/plots_data/$INTERVENTION_NAME/num_cases_$sim.csv"
+DST_NUM_FATALITIES="/Users/Minhaas/CODING/iisc/campus_test/markov_simuls/staticInst/data/campus_outputs/plots_data/$INTERVENTION_NAME/num_fatalities_$sim.csv"
+DST_NUM_RECOVERED="/Users/Minhaas/CODING/iisc/campus_test/markov_simuls/staticInst/data/campus_outputs/plots_data/$INTERVENTION_NAME/num_recovered_$sim.csv"
 
 cp $num_affected $DST_NUM_AFFECTED 
 cp $num_cases $DST_NUM_CASES

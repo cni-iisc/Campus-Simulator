@@ -286,10 +286,12 @@ def campus_parse(inputfiles):
     type_arr = np.unique(np.array(type_list))
 
     names = []
+    BETA = []
+    
     for elem in type_arr:
         names.append(spaces_map[elem])
-
-    BETA = [1,1,1,1]
+        BETA.append(1)
+    
     ALPHA = 1
 
     trans_coeffs = transmission_coefficients(type_arr, BETA, ALPHA, names)

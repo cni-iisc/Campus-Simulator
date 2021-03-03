@@ -6,6 +6,8 @@
 #include "models.h"
 #include <vector>
 
+void init_config_params();
+
 std::vector<agent> init_nodes_campus();
 
 std::vector<Interaction_Space> init_interaction_spaces();
@@ -24,7 +26,7 @@ void update_interaction_space_lambda(std::vector<agent> &nodes, std::vector<Inte
 
 void update_individual_lambda(std::vector<agent>& nodes, std::vector<Interaction_Space>& i_spaces, int cur_day);
 
-void assign_individual_campus(std::vector<agent>& nodes, std::vector<Interaction_Space>& interaction_space, int cur_day);
+void assign_individual_campus(std::vector<agent>& nodes, std::vector<Interaction_Space>& interaction_space);
 
 //void print_interaction_strength(agent& node, std::vector<Interaction_Space>& ispace, int day);
 

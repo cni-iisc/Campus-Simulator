@@ -1,0 +1,10 @@
+[
+    {
+        "MIN_GROUP_SIZE": 10,
+        "MAX_GROUP_SIZE": 15,
+        "BETA_SCALING_FACTOR": 10,
+        "PERIODICITY": 7,
+        "AVERAGE_NUMBER_ASSOCIATIONS": 5,
+        "minimum_hostel_time": 0.3
+    }
+]

@@ -84,13 +84,28 @@ void set_node_initial_infection(agent &node,
   // node.infective = (node.infection_status == Progression::infective);
 }
 
+void init_config_params(){
+  auto config_json = readJSONFile(GLOBAL.input_base + "config.json");
+  auto config_size = config_json.GetArray().Size();
+
+  auto size = config_size;
+
+  for (auto& elem : config_json.GetArray()){
+    GLOBAL.MINIMUM_SUBGROUP_SIZE = elem["MIN_GROUP_SIZE"].GetInt();
+    GLOBAL.MAXIMUM_SUBGROUP_SIZE = elem["MAX_GROUP_SIZE"].GetInt();
+    GLOBAL.BETA_SCALING_FACTOR = elem["BETA_SCALING_FACTOR"].GetDouble();
+    GLOBAL.PERIODICITY = elem["PERIODICITY"].GetInt();
+    GLOBAL.AVERAGE_NUMBER_ASSOCIATIONS = elem["AVERAGE_NUMBER_ASSOCIATIONS"].GetInt();
+    GLOBAL.minimum_hostel_time = elem["minimum_hostel_time"].GetDouble();
+  }
+}
+
 std::vector<agent> init_nodes_campus()
 {
   auto indivJSON = readJSONFile(GLOBAL.input_base + "individuals.json");
   auto size = indivJSON.GetArray().Size();
   GLOBAL.num_people = size;
   std::vector<agent> nodes(size);
-  //auto community_infection_prob = compute_prob_infection_given_community(GLOBAL.INIT_FRAC_INFECTED, GLOBAL.USE_SAME_INFECTION_PROB_FOR_ALL_WARDS);
 
   count_type i = 0;
 
@@ -99,8 +114,6 @@ std::vector<agent> init_nodes_campus()
 
   for (auto &elem : indivJSON.GetArray())
   {
-    /*nodes[i].loc = location{elem["lat"].GetDouble(),
-                            elem["lon"].GetDouble()};*/
 
 #ifdef DEBUG
     assert(elem["age"].IsInt());
@@ -110,102 +123,20 @@ std::vector<agent> init_nodes_campus()
     nodes[i].age_group = get_age_group(age);
     nodes[i].age_index = get_age_index(age);
     nodes[i].zeta_a = zeta(age);
-    int periodicity = elem["Periodicity"].GetInt();
-
     nodes[i].infectiousness = gamma(GLOBAL.INFECTIOUSNESS_SHAPE,
                                     GLOBAL.INFECTIOUSNESS_SCALE);
     nodes[i].severity = bernoulli(GLOBAL.SEVERITY_RATE) ? 1 : 0;
-
-    //auto indivJSON_001 = readJSONFile("./individual.json");
-    //count_type var1 = 0;
     int day = 0;
-    nodes[i].interaction_strength.resize(periodicity); //Resize acc to days
+    nodes[i].interaction_strength.resize(GLOBAL.PERIODICITY); //Resize acc to days
     for (auto &x : elem["interaction_strength"].GetArray())
     {
-      //nodes.push_back();
       for (auto &j : x.GetObject())
       {
-        //std::cout<<j.name.GetString()<<" "<<j.value.GetDouble()<<"\n";
         nodes[i].interaction_strength[day][std::stoi(j.name.GetString())] = j.value.GetDouble();
-        //std::cout<<nodes[i].interaction_strength[day][std::stoi(j.name.GetString())];
         nodes[i].kappa[std::stoi(j.name.GetString())] = 1;
-
-        // if(i == 9){
-        //   std::cout<<j.name.GetString()<<"\t"<<j.value.GetDouble()<<"\t";
-        // }
-        //nodes[i].interaction_strength[day].insert({std::stoi(j.name.GetString()),j.value.GetDouble()});
-        //nodes[var1].interaction_strength[day][j.value.GetDouble()];
-        //nodes[j].interaction_strength = elem["interaction_strength"].GetArray();
       }
       day++;
-      //std::cout<<day<<"\n";
     }
-
-    //#ifdef DEBUG
-    //    assert(elem["household"].IsInt());
-    //#endif
-    //change the nodes data structure
-    //include type, hostel, department, interaction strength
-    //nodes[i].hostel = elem["hostel"].GetInt();
-    //nodes[i].dept = elem["dept"].GetInt();
-    //nodes[i].type = elem["type"].GetInt();
-    /*nodes[i].home = elem["household"].GetInt();
-
-    nodes[i].workplace = WORKPLACE_HOME; //null workplace, by default
-    nodes[i].workplace_type = WorkplaceType::home; //home, by default
-    nodes[i].workplace_subnetwork = 0;*/
-
-    /*if(elem["workplaceType"].IsInt()){
-      switch(elem["workplaceType"].GetInt()){
-      case 1:
-        if(elem["workplace"].IsNumber()){
-          nodes[i].workplace_type = WorkplaceType::office;
-          nodes[i].workplace = int(elem["workplace"].GetDouble());
-          //Travel
-          nodes[i].has_to_travel = bernoulli(GLOBAL.P_TRAIN);
-        }
-        break;
-      case 2:
-        if(elem["school"].IsNumber()){
-          nodes[i].workplace_type = WorkplaceType::school;
-          nodes[i].workplace = int(elem["school"].GetDouble());
-          //Travel
-          nodes[i].has_to_travel = bernoulli(GLOBAL.P_TRAIN);
-          nodes[i].workplace_subnetwork = age;
-        }
-        break;
-      default:
-        break;
-      }
-    }*/
-    //#ifdef DEBUG
-    //    assert(elem["wardNo"].IsInt());
-    //#endif
-    //count_type community = elem["wardNo"].GetInt() - 1;
-    //minus 1 for 0-based indexing. PB: Might need to use
-    //"wardIndex" instead, because that is the one actually sent by
-    //the generator scripts.
-
-    // Does the individual live in a slum?  In that case we need to
-    // scale the contribution to their infection rates by a factor.
-    //
-    // Only use this feature if the field is present in the
-    // "individuals" input files.
-    /*if(elem.HasMember("slum")){
-
-#ifdef DEBUG
-      assert(elem["slum"].IsInt());
-#endif
-
-      if(elem["slum"].GetInt()){
-        nodes[i].hd_area_resident = true;
-        nodes[i].hd_area_factor = GLOBAL.HD_AREA_FACTOR;
-        nodes[i].hd_area_exponent = GLOBAL.HD_AREA_EXPONENT;
-      }
-    }*/
-
-    //nodes[i].community = community;
-    //nodes[i].funct_d_ck = f_kernel(elem["CommunityCentreDistance"].GetDouble());
 
     nodes[i].incubation_period = gamma(GLOBAL.INCUBATION_PERIOD_SHAPE,
                                        GLOBAL.INCUBATION_PERIOD_SCALE);
@@ -257,29 +188,22 @@ std::vector<Interaction_Space> init_interaction_spaces()
   auto interactionJSON = readJSONFile(GLOBAL.input_base + "interaction_spaces.json");
 
   auto interactionSize = interactionJSON.GetArray().Size();
-  //GLOBAL.num_workplaces = interactionSize;
-  //GLOBAL.num_people = interactionSize;
-
   auto size = interactionSize;
   std::vector<Interaction_Space> interaction_spaces(size);
-  //Interaction space is a new data structure, we can change models.h later
-  //Need to store in nodes
+
   count_type index = 0;
 
   for (auto &elem : interactionJSON.GetArray())
-  {
+  { 
+    assert(index == elem["id"].GetInt());
     interaction_spaces[index].set(elem["lat"].GetDouble(),
                                   elem["lon"].GetDouble());
 
     interaction_spaces[index].interaction_type = static_cast<InteractionType>(elem["type"].GetInt());
     interaction_spaces[index].set_active_duration(elem["active_duration"].GetDouble());
     interaction_spaces[index].set_id(elem["id"].GetInt());
-    //interaction_spaces[index].set_alpha(elem["alpha"].GetDouble());
-    //interaction_spaces[index].set_beta(elem["beta"].GetDouble());
     ++index;
   }
-  //xassert(index == GLOBAL.num_workplaces);
-  //assert(index == GLOBAL.num_people);
   return interaction_spaces;
 }
 
@@ -290,7 +214,8 @@ void init_transmission_coefficients(std::vector<Interaction_Space> &interaction_
   auto size = transmission_coefficients_json_size;
   std::vector<Interaction_Space> transmission_coefficients(size);
   count_type index = 0;
-  for (auto &elem: transmission_coefficients_json.GetArray()){
+  for (auto & elem: transmission_coefficients_json.GetArray()){
+    assert(index == elem["type"].GetInt());
     transmission_coefficients[index].interaction_type = static_cast<InteractionType>(elem["type"].GetInt());
     transmission_coefficients[index].set_alpha(elem["alpha"].GetDouble());
     transmission_coefficients[index].set_beta(elem["beta"].GetDouble());
@@ -354,7 +279,7 @@ std::vector<intervention_params> init_intervention_params()
   {
     std::cout << std::endl
               << "Inside init_intervention_params";
-    auto intvJSON = readJSONFile(GLOBAL.input_base + "campus_interventions_00.json");
+    auto intvJSON = readJSONFile(GLOBAL.input_base + "campus_interventions_02.json");
 
     intv_params.reserve(intvJSON.GetArray().Size());
 
@@ -546,13 +471,13 @@ void update_individual_lambda(std::vector<agent> &nodes, std::vector<Interaction
 //  }
 
 //Update assign individual to take in more days
-void assign_individual_campus(std::vector<agent> &nodes, std::vector<Interaction_Space> &interaction_space, int day)
+void assign_individual_campus(std::vector<agent> &nodes, std::vector<Interaction_Space> &interaction_space)
 {
 
   std::vector<int> person;
   for (auto &ispace : interaction_space)
   {
-    for (int cur_day = 0; cur_day < day; cur_day++)
+    for (int cur_day = 0; cur_day < GLOBAL.PERIODICITY; cur_day++)
     {
       ispace.individuals.push_back(person);
     }
@@ -561,7 +486,7 @@ void assign_individual_campus(std::vector<agent> &nodes, std::vector<Interaction
   for (count_type i = 0; i < nodes.size(); ++i)
   {
     //std::cout<<"Inside 1st loop"<<"\n";
-    for (int cur_time = 0; cur_time < day; cur_time++)
+    for (int cur_time = 0; cur_time < GLOBAL.PERIODICITY; cur_time++)
     {
       //std::cout<<"Inside 2nd loop"<<"\n";
       for (auto &ispace : nodes[i].interaction_strength[cur_time])
@@ -581,17 +506,6 @@ void assign_individual_campus(std::vector<agent> &nodes, std::vector<Interaction
     }
   }
 
-  // int count = 0;
-  // std::cout<<day<<"\n";
-  // for(auto& ispace: interaction_space){
-  //   std::cout<<"ID: "<<ispace.id<<"\n";
-  //   for (int cur_day = 0; cur_day < day; cur_day++){
-  //     std::cout<<"Day: "<<cur_day<<"\n";
-  //     for (auto& individual: ispace.individuals[cur_day]){
-  //      std::cout<<"Individuals associated: "<<individual<<"\t";
-  //     }
-  //   }
-  // }
 }
 
 node_update_status update_infection(agent &node, int cur_time, int day)

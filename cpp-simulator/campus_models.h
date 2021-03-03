@@ -9,6 +9,7 @@
 #include <string>
 #include <algorithm>
 #include <unordered_map>
+#include<set>
 
 enum class Intervention {
    no_intervention = 0,
@@ -701,7 +702,7 @@ struct agent{
 
   std::unordered_map<int, double> kappa;
   std::vector<std::unordered_map< int , double>> interaction_strength;
-
+  std::set<int> spaces;
   double lambda_campus;
 
   bool infective = false;

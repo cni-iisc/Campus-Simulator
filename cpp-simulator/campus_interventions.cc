@@ -35,52 +35,40 @@ using std::vector;
 void modify_kappa_case_isolate_node(agent &node, const std::vector<Interaction_Space> &i_spaces, int day)
 {
   node.quarantined = true;
-  for (auto &ispace : node.interaction_strength)
+  for (auto &ispace : node.interaction_strength[day])
   {
-    for (auto &elem : ispace)
-    {
-      switch (i_spaces[elem.first].interaction_type)
+      switch (i_spaces[ispace.first].interaction_type)
       {
       case InteractionType ::classroom:
-        node.kappa[elem.first] = 0.0;
-        //std::cout<<node.kappa[ispace.first];
+        node.kappa[ispace.first] = 0.0;
         break;
+
       case InteractionType::hostel:
-        node.kappa[elem.first] = 0.2;
+        node.kappa[ispace.first] = 0.2;
         break;
+
       case InteractionType::mess:
-        node.kappa[elem.first] = 0.1;
+        node.kappa[ispace.first] = 0.1;
         break;
+
       }
-    }
-    ///TODO: Put day as input in interaction_strength - Done
   }
 }
 
 void modify_kappa_class_isolate_node(agent &node, const std::vector<Interaction_Space> &i_spaces, std::vector<agent> &nodes, int day)
 {
   node.quarantined = true;
-  //std::cout<<std::boolalpha<<node.quarantined<<"\t";
-  // for (auto &elem : node.interaction_strength)
+  // for (auto &elem : node.interaction_strength[day])
   // {
-  //   for (auto &ispace : elem)
-  //   {
-  //     if (i_spaces[ispace.first].interaction_type == InteractionType::classroom)
+  //     if (i_spaces[elem.first].interaction_type == InteractionType::classroom)
   //     {
-  //       for (auto individual : i_spaces[ispace.first].individuals)
+  //       for (auto & individual : i_spaces[elem.first].individuals)
   //       {
-  //         for (auto &person : individual)
-  //         {
-  //           modify_kappa_case_isolate_node(nodes[person], i_spaces, day);
-  //           //for(auto &temp: nodes[person].interaction_strength[0]){
-  //           //  std::cout<<"Inside modify class isolate"<<"\n";
-  //           //  std::cout<<"\n"<<temp.first<<"\t"<<person<<"\t"<<nodes[person].kappa[temp.first]<<"\t";
-  //           //std::cout<<"Inside modify class isolate"<<"\t"<<nodes[person].kappa[temp.first]<<"\t";
-  //           //}
-  //         }
+  //           for (auto & person : individual){
+  //             modify_kappa_case_isolate_node(nodes[person], i_spaces, day);
+  //           }
   //       }
   //     }
-  //   }
   // }
   for (auto &space : node.spaces){
   	if(i_spaces[space].interaction_type == InteractionType::classroom){
@@ -95,31 +83,25 @@ void modify_kappa_class_isolate_node(agent &node, const std::vector<Interaction_
 
 void set_kappa_base_value(agent &node, const std::vector<Interaction_Space> &i_spaces, int day)
 {
-  for (auto &ispace : node.interaction_strength)
+  for (auto &ispace : node.interaction_strength[day])
   {
-    for (auto &elem : ispace)
-    {
-      node.kappa[elem.first] = 1;
-    }
+      node.kappa[ispace.first] = 1;
   }
 }
 
 void set_kappa_lockdown_node(agent &node, const int cur_time, const intervention_params intv_params, const std::vector<Interaction_Space> &i_spaces, int day)
 {
   node.quarantined = true; //lockdown implies quarantined
-  for (auto &elem : node.interaction_strength)
+  for (auto &elem : node.interaction_strength[day])
   {
-    for (auto &ispace : elem)
-    {
-      if (i_spaces[ispace.first].interaction_type == InteractionType ::hostel)
+      if (i_spaces[elem.first].interaction_type == InteractionType ::hostel)
       {
-        node.kappa[ispace.first] = 0.2;
+        node.kappa[elem.first] = 0.2;
       }
       else
       {
-        node.kappa[ispace.first] = 0.0;
+        node.kappa[elem.first] = 0.0;
       }
-    }
   }
 }
 

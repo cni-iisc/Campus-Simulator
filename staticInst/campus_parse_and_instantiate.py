@@ -4,11 +4,11 @@ import json
 import warnings
 from collections import Counter
 import os 
-from .transmission_coefficients import transmission_coefficients
+from transmission_coefficients import transmission_coefficients
 warnings.filterwarnings('ignore')
 
 DEBUG = False
-markov_simuls = False
+markov_simuls = True
 sim_test = False
 modularise = True
 
@@ -309,12 +309,12 @@ if __name__ == "__main__":
     }
 
     outputfiles = {
-        "individuals" : "individuals_1.json",
-        "interaction_spaces" : "interaction_spaces_1.json"
+        "individuals" : "individuals.json",
+        "interaction_spaces" : "interaction_spaces.json"
     }
 
     if markov_simuls: 
-        output_file_dir = "/Users/Minhaas/CODING/iisc/campus-simulator/markov_simuls/staticInst/data/campus_data/"
+        output_file_dir = "/Users/Minhaas/CODING/iisc/campus_simulator/markov_simuls/staticInst/data/campus_data/"
     else: 
         output_file_dir = "/Users/Minhaas/CODING/iisc/rough/campus_input_csv/json_files/"
 

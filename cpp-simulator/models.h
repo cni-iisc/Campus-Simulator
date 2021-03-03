@@ -288,6 +288,14 @@ const double HOME_QUARANTINE_DAYS = 14;
 // The default values are as in the js simulator.  These are changed
 // when the input files are read.
 struct global_params{
+
+  count_type MINIMUM_SUBGROUP_SIZE;
+  count_type MAXIMUM_SUBGROUP_SIZE;
+  count_type PERIODICITY; 
+  count_type AVERAGE_NUMBER_ASSOCIATIONS;
+  double minimum_hostel_time; 
+  double BETA_SCALING_FACTOR;
+
   count_type RNG_SEED;
   count_type RNG_SEED_NETWORK;
   double COMPLIANCE_PROBABILITY = 1;

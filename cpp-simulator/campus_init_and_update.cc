@@ -123,6 +123,7 @@ std::vector<agent> init_nodes_campus()
     nodes[i].age_group = get_age_group(age);
     nodes[i].age_index = get_age_index(age);
     nodes[i].zeta_a = zeta(age);
+    nodes[i].personType = static_cast<person_type>(elem["Type"].GetInt());
     nodes[i].infectiousness = gamma(GLOBAL.INFECTIOUSNESS_SHAPE,
                                     GLOBAL.INFECTIOUSNESS_SCALE);
     nodes[i].severity = bernoulli(GLOBAL.SEVERITY_RATE) ? 1 : 0;
@@ -202,9 +203,23 @@ std::vector<Interaction_Space> init_interaction_spaces()
     interaction_spaces[index].interaction_type = static_cast<InteractionType>(elem["type"].GetInt());
     interaction_spaces[index].set_active_duration(elem["active_duration"].GetDouble());
     interaction_spaces[index].set_id(elem["id"].GetInt());
+    interaction_spaces[index].set_avg_time(elem["avg_time"].GetDouble());
     ++index;
   }
   return interaction_spaces;
+}
+
+Interaction_Space create_interaction_space(double lat, double lon, InteractionType type, double active_duration, int id, double alpha, double beta, std::vector<std::vector<int>> individuals, double avg_time){
+ Interaction_Space ispace; 
+ ispace.set(lat, lon);
+ ispace.interaction_type = type;
+ ispace.set_active_duration(active_duration);
+ ispace.set_alpha(alpha);
+ ispace.set_id(id);
+ ispace.set_beta(beta);
+ ispace.set_avg_time(avg_time);
+ ispace.individuals = individuals;
+ return ispace;
 }
 
 void init_transmission_coefficients(std::vector<Interaction_Space> &interaction_spaces){
@@ -244,6 +259,11 @@ void init_transmission_coefficients(std::vector<Interaction_Space> &interaction_
       i_space.set_beta(transmission_coefficients[3].beta);
       break;
 
+    case InteractionType :: cafeteria : 
+      i_space.set_alpha(transmission_coefficients[4].alpha);
+      i_space.set_beta(transmission_coefficients[4].beta);
+      break;
+
     default:
       break;
     }
@@ -279,7 +299,7 @@ std::vector<intervention_params> init_intervention_params()
   {
     std::cout << std::endl
               << "Inside init_intervention_params";
-    auto intvJSON = readJSONFile(GLOBAL.input_base + "campus_interventions_02.json");
+    auto intvJSON = readJSONFile(GLOBAL.input_base + "campus_interventions_03.json");
 
     intv_params.reserve(intvJSON.GetArray().Size());
 
@@ -415,13 +435,19 @@ void update_interaction_space_lambda(std::vector<agent> &nodes, std::vector<Inte
     }
     N_k = (1 / i_space.active_duration) * sum_n_k;
     Lam_k_t = i_space.beta * (pow(N_k, -i_space.alpha)) * (1 / i_space.active_duration) * sum_value;
-    //std::cout<<"Beta: "<<i_space.beta<<"\t";
+    // std::cout<<"Beta: "<<i_space.beta<<"\t";
     i_space.lambda = (Lam_k_t);
     //std::cout<<"Day: "<<cur_day<<"\n";
     // for(auto& lam: i_space.lambda){
     //   if(lam != 0){
     //     std::cout<<"Lambda values: "<<lam<<"\t"<<"ID: "<<i_space.id<<"\n";
     //   }
+    // }
+    // if (i_space.interaction_type == InteractionType :: cafeteria ){
+    //   std::cout<<"Lambda : "<<i_space.lambda<<"\t";
+    //   std::cout<<"Beta: "<<i_space.beta<<"\t";
+    //   std::cout<<"Sum value : "<<sum_value<<"\t";
+    //   std::cout<<"NK: "<<N_k<<"\n";
     // }
   }
   //std::cout<<i_space.id<<"\t"<<Lam_k_t<<"\t"<<i_space.active_duration<<"\t"<<sum_n_k<<"\t"<<sum_value<<"\n";
@@ -506,6 +532,112 @@ void assign_individual_campus(std::vector<agent> &nodes, std::vector<Interaction
     }
   }
 
+}
+
+void sample_groups(std::vector<agent> &nodes, std::vector<Interaction_Space> &interaction_spaces){
+  //std::cout<<"\n BETA is: "<<GLOBAL.BETA_SCALING_FACTOR<<"\n";
+  srand(time(0));
+  std::vector<Interaction_Space> interac_space;
+  int avg_group_size = (GLOBAL.MINIMUM_SUBGROUP_SIZE + GLOBAL.MAXIMUM_SUBGROUP_SIZE)/2;
+  //std::cout<<"Number of groups : "<<NUM_GROUPS<<"\n";
+  int index = interaction_spaces.size();
+  for (auto &ispace : interaction_spaces){
+    if (ispace.interaction_type == InteractionType :: hostel){
+      int NUM_GROUPS = GLOBAL.AVERAGE_NUMBER_ASSOCIATIONS*ispace.individuals[0].size()/avg_group_size;
+      //std::cout<<"\n"<<"Number of sub groups: "<<NUM_GROUPS<<"\n";
+      for(int j =0; j<NUM_GROUPS; j++){
+        //std::cout<<"Create interaction space called"<<"\n";
+        std::vector<int> temp;
+        std::vector<std::vector<int>> GROUPS;
+        int random_value = ((rand() % (GLOBAL.MAXIMUM_SUBGROUP_SIZE - GLOBAL.MINIMUM_SUBGROUP_SIZE +1)) + GLOBAL.MINIMUM_SUBGROUP_SIZE);
+        //std::cout<<"random value: " << random_value << "\n";
+        int GROUP_STRENGTH = random_value > int(ispace.individuals[0].size()) ? int(ispace.individuals[0].size())/2 : random_value;
+        //std::cout<<int(individual.size())<<"\n";
+        //std::cout<<"Group strength is: "<<GROUP_STRENGTH<<"\n";
+        std::sample(ispace.individuals[0].begin(), ispace.individuals[0].end(), std::back_inserter(temp), GROUP_STRENGTH, std::mt19937{std::random_device{}()});
+        for (int i=0; i< GLOBAL.PERIODICITY; i++){
+          GROUPS.push_back(temp);
+        }
+        //`std::cout<<"Create interaction space called"<<"\n";
+        Interaction_Space int_space = create_interaction_space(ispace.lat, ispace.lon, InteractionType::hostel, ispace.active_duration, index, ispace.alpha, ispace.beta*GLOBAL.BETA_SCALING_FACTOR, GROUPS, ispace.avg_time);
+        // std::cout<<int_space.id<<"\n";
+        // for (auto &individual : int_space.individuals){
+ //   for (auto &indi : individual) {
+//     std::cout<<indi<<"\t";
+   // }
+   // std::cout<<"\n";
+    // }
+        interac_space.push_back(int_space);
+        //interaction_spaces.push_back(int_space);
+        for(auto temp1 : temp){
+          for(int k = 0; k < GLOBAL.PERIODICITY; k++){
+            nodes[temp1].interaction_strength[k].insert({index, int_space.avg_time});
+          }
+          nodes[temp1].kappa.insert({index, 1});
+        }
+       
+        index++;
+        // for (auto &temp1 : GROUPS){
+        //   std::cout<<"\n";
+        //   for (auto &sometingelse : temp1){
+        //     std::cout<<sometingelse<<"\t";
+        //   }
+        // }
+      // std::cout<<"Groups are: "<<"\n";
+      // for (auto &group : temp) {
+      //   std::cout<<group<<"\t";
+      //   }
+      }
+    }
+  }
+  interaction_spaces.insert(interaction_spaces.end(), interac_space.begin(), interac_space.end());
+}
+
+void cafeteria_active_duration(std::vector<agent> &nodes, std::vector<Interaction_Space> &interaction_spaces, int day){
+    std::vector<int> cafeteria;
+    for (auto& i_space : interaction_spaces){
+        if(i_space.interaction_type == InteractionType::cafeteria){
+            cafeteria.push_back(i_space.id);
+         }
+     }
+    for(auto& node: nodes){
+        std::vector<int> cafe;
+        std::sample(cafeteria.begin(), cafeteria.end(), std::back_inserter(cafe), 1, std::mt19937{std::random_device{}()});
+        double cafe_time=gamma(GLOBAL.ACTIVE_DURATION_SHAPE, interaction_spaces[cafe[0]].avg_time/GLOBAL.ACTIVE_DURATION_SHAPE);
+        // std::cout<<"Cafe time: "<<cafe_time<<"\t";
+        if(node.personType == person_type::student){
+            node.interaction_strength[day][cafe[0]] =cafe_time;
+            // std::cout<<node.interaction_strength[day][cafe[0]]<<"\n";
+         }
+        for(auto& elem: node.interaction_strength[day]){
+            if(interaction_spaces[elem.first].interaction_type ==InteractionType::hostel){
+                if(elem.second <= cafe_time){
+                    node.interaction_strength[day][cafe[0]] = elem.second - GLOBAL.minimum_hostel_time; //add to config.json
+                    elem.second = GLOBAL.minimum_hostel_time;
+                }
+                else{
+                    elem.second -=cafe_time;
+                }
+             }
+        }
+     }
+}
+
+void cafeteria_reset(std::vector<agent> &nodes, std::vector<Interaction_Space> &interaction_spaces, int day){
+  double temp;
+  for (auto& node : nodes){
+    for (auto& elem: node.interaction_strength[day]){
+      if(interaction_spaces[elem.first].interaction_type == InteractionType::cafeteria && elem.second != 0){
+        temp = elem.second;
+        elem.second = 0;
+      }
+    }
+    for (auto& elem: node.interaction_strength[day]){
+      if(interaction_spaces[elem.first].interaction_type == InteractionType::hostel){
+        elem.second += temp;
+      }
+    }
+  }
 }
 
 node_update_status update_infection(agent &node, int cur_time, int day)

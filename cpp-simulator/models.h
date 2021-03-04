@@ -295,6 +295,7 @@ struct global_params{
   count_type AVERAGE_NUMBER_ASSOCIATIONS;
   double minimum_hostel_time; 
   double BETA_SCALING_FACTOR;
+  double ACTIVE_DURATION_SHAPE = 2;
 
   count_type RNG_SEED;
   count_type RNG_SEED_NETWORK;
@@ -548,6 +549,7 @@ enum class InteractionType {
   classroom = 1,
   hostel = 2,
   mess = 3,
+  cafeteria = 4
 };
 
 //Default workplace value for homebound individuals.
@@ -679,6 +681,13 @@ struct test_struct{
   test_trigger node_test_trigger=test_trigger::not_yet_requested;
 };
 
+
+enum class person_type {
+  student,
+  faculty,
+  staff
+};
+
 struct agent{
   location loc;
   int age;
@@ -696,6 +705,7 @@ struct agent{
   int dept;
   int type;
 
+  person_type personType;
   std::set<int> spaces;
 
   int community;
@@ -891,6 +901,7 @@ struct Interaction_Space{
   //int individual_id;
   InteractionType interaction_type;
 
+  double avg_time;
   double alpha;
   double beta;
   double lambda;
@@ -909,6 +920,10 @@ struct Interaction_Space{
   Interaction_Space(){}
   //Interaction_Space(double latitude, double longitude):
 	 // loc{latitude, longitude} {}
+
+  void set_avg_time(double avg){
+    this->avg_time = avg;
+  }
 
   void set(double latitude, double longitude){
 	this->lat = latitude;

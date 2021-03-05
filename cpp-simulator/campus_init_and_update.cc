@@ -88,7 +88,7 @@ void init_config_params(){
   auto config_json = readJSONFile(GLOBAL.input_base + "config.json");
   auto config_size = config_json.GetArray().Size();
 
-  auto size = config_size;
+  // auto size = config_size;
 
   for (auto& elem : config_json.GetArray()){
     GLOBAL.MINIMUM_SUBGROUP_SIZE = elem["MIN_GROUP_SIZE"].GetInt();
@@ -236,7 +236,6 @@ void init_transmission_coefficients(std::vector<Interaction_Space> &interaction_
     transmission_coefficients[index].set_beta(elem["beta"].GetDouble());
     ++index;
   }
-  std::cout<<int(interaction_spaces[5].interaction_type)<<"\n";
   for (int i =0; i < interaction_spaces.size(); ++i){
     interaction_spaces[i].set_alpha(transmission_coefficients[int(interaction_spaces[i].interaction_type)].alpha);
     interaction_spaces[i].set_beta(transmission_coefficients[int(interaction_spaces[i].interaction_type)].beta);
@@ -271,7 +270,7 @@ std::vector<intervention_params> init_intervention_params()
   {
     std::cout << std::endl
               << "Inside init_intervention_params";
-    auto intvJSON = readJSONFile(GLOBAL.input_base + "campus_interventions_03.json");
+    auto intvJSON = readJSONFile(GLOBAL.input_base + "campus_intervention_04.json");
 
     intv_params.reserve(intvJSON.GetArray().Size());
 

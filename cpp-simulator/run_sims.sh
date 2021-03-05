@@ -1,6 +1,6 @@
 #!/bin/sh
 
-echo -e "Welcome to campus simulator\n Enter the Intervention option that has been set in the simulator : \n -- 0 : No intervention \n -- 1 : Case Isolation \n -- 2 : Class Isolation \n -- 3 : Shutdown \n"
+echo -e "Welcome to campus simulator\n Enter the Intervention option that has been set in the simulator : \n -- 0 : No intervention \n -- 1 : Case Isolation \n -- 2 : Class Isolation \n -- 3 : Shutdown \n -- 4 : Custom Intervention \n"
 read INTERVENTION_ID
 
 echo -e "Enter the seed infection value: \n"
@@ -13,7 +13,7 @@ read SEED_VALUE
 #cd RUN_PATH
 
 
-INTERVENTION_ARRAY=(no_intervention case_isolation class_isolation lockdown)
+INTERVENTION_ARRAY=(no_intervention case_isolation class_isolation lockdown custom_intervention)
 #Change the INTERVENTION_ARRAY index based on the name of the intervention scenario
 #no_intervention - index 0 
 #case_isolation - index 1

@@ -545,11 +545,12 @@ enum class OfficeType{
 };
 
 enum class InteractionType {
-  day_scholar = 0,
+  outside_campus = 0,
   classroom = 1,
   hostel = 2,
   mess = 3,
-  cafeteria = 4
+  cafeteria = 4,
+  smaller_networks = 100
 };
 
 //Default workplace value for homebound individuals.

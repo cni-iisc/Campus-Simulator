@@ -236,38 +236,10 @@ void init_transmission_coefficients(std::vector<Interaction_Space> &interaction_
     transmission_coefficients[index].set_beta(elem["beta"].GetDouble());
     ++index;
   }
-  for (auto &i_space : interaction_spaces){
-    switch (i_space.interaction_type)
-    {
-    case InteractionType ::day_scholar :
-      i_space.set_alpha(transmission_coefficients[0].alpha);
-      i_space.set_beta(transmission_coefficients[0].beta);
-      break;
-
-    case InteractionType ::classroom :
-      i_space.set_alpha(transmission_coefficients[1].alpha);
-      i_space.set_beta(transmission_coefficients[1].beta);
-      break;
-
-    case InteractionType :: hostel : 
-      i_space.set_alpha(transmission_coefficients[2].alpha);
-      i_space.set_beta(transmission_coefficients[2].beta);
-      break;
-    
-    case InteractionType :: mess : 
-      i_space.set_alpha(transmission_coefficients[3].alpha);
-      i_space.set_beta(transmission_coefficients[3].beta);
-      break;
-
-    case InteractionType :: cafeteria : 
-      i_space.set_alpha(transmission_coefficients[4].alpha);
-      i_space.set_beta(transmission_coefficients[4].beta);
-      break;
-
-    default:
-      break;
-    }
-    // i_space.set_alpha(transmission_coefficients[i_space.interaction_type].alpha);
+  std::cout<<int(interaction_spaces[5].interaction_type)<<"\n";
+  for (int i =0; i < interaction_spaces.size(); ++i){
+    interaction_spaces[i].set_alpha(transmission_coefficients[int(interaction_spaces[i].interaction_type)].alpha);
+    interaction_spaces[i].set_beta(transmission_coefficients[int(interaction_spaces[i].interaction_type)].beta);
   }
 }
 
@@ -559,7 +531,7 @@ void sample_groups(std::vector<agent> &nodes, std::vector<Interaction_Space> &in
           GROUPS.push_back(temp);
         }
         //`std::cout<<"Create interaction space called"<<"\n";
-        Interaction_Space int_space = create_interaction_space(ispace.lat, ispace.lon, InteractionType::hostel, ispace.active_duration, index, ispace.alpha, ispace.beta*GLOBAL.BETA_SCALING_FACTOR, GROUPS, ispace.avg_time);
+        Interaction_Space int_space = create_interaction_space(ispace.lat, ispace.lon, InteractionType::smaller_networks, ispace.active_duration, index, ispace.alpha, ispace.beta*GLOBAL.BETA_SCALING_FACTOR, GROUPS, ispace.avg_time);
         // std::cout<<int_space.id<<"\n";
         // for (auto &individual : int_space.individuals){
  //   for (auto &indi : individual) {

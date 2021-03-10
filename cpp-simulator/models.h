@@ -906,6 +906,7 @@ struct Interaction_Space{
   double alpha;
   double beta;
   double lambda;
+  bool quarantined = false;
   //std::vector<double> lambda;
   //std::vector<int> individual_ids;
 

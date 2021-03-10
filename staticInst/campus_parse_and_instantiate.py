@@ -4,7 +4,7 @@ import json
 import warnings
 from collections import Counter
 import os 
-from transmission_coefficients import transmission_coefficients
+from .transmission_coefficients import transmission_coefficients
 warnings.filterwarnings('ignore')
 
 DEBUG = False

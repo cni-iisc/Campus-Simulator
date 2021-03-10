@@ -279,7 +279,7 @@ std::vector<intervention_params> init_intervention_params()
   {
     std::cout << std::endl
               << "Inside init_intervention_params";
-    auto intvJSON = readJSONFile(GLOBAL.input_base + "campus_interventions_02.json");
+    auto intvJSON = readJSONFile(GLOBAL.input_base + "campus_interventions_00.json");
 
     intv_params.reserve(intvJSON.GetArray().Size());
 

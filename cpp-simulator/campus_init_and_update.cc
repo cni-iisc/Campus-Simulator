@@ -96,7 +96,7 @@ void init_config_params(){
     GLOBAL.BETA_SCALING_FACTOR = elem["BETA_SCALING_FACTOR"].GetDouble();
     GLOBAL.PERIODICITY = elem["PERIODICITY"].GetInt();
     GLOBAL.AVERAGE_NUMBER_ASSOCIATIONS = elem["AVERAGE_NUMBER_ASSOCIATIONS"].GetInt();
-    GLOBAL.minimum_hostel_time = elem["minimum_hostel_time"].GetDouble();
+    //GLOBAL.minimum_hostel_time = elem["minimum_hostel_time"].GetDouble();
   }
 }
 

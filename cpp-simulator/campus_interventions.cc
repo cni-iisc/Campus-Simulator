@@ -76,7 +76,6 @@ void modify_kappa_class_isolate_node(agent &node, std::vector<Interaction_Space>
 
 void set_kappa_base_value(agent &node, std::vector<Interaction_Space> &i_spaces, int day)
 {
-  node.quarantined = false;
   for (auto &ispace : node.interaction_strength[day])
   {
       node.kappa[ispace.first] = 1;

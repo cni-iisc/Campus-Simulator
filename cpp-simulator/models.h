@@ -296,6 +296,18 @@ struct global_params{
   double minimum_hostel_time; 
   double BETA_SCALING_FACTOR;
   double ACTIVE_DURATION_SHAPE = 2;
+  double kappa_class_case_isolation;
+  double kappa_hostel_case_isolation;
+  double kappa_mess_case_isolation;
+  double kappa_cafe_case_isolation;
+  double kappa_smaller_networks_case_isolation;
+  double kappa_class_lockdown;
+  double kappa_hostel_lockdown;
+  double kappa_mess_lockdown;
+  double kappa_cafe_lockdown;
+  double kappa_smaller_networks_lockdown;
+  double kappa_base_value = 1;
+  double kappa_default_lockdown = 0.0;
 
   count_type RNG_SEED;
   count_type RNG_SEED_NETWORK;
@@ -456,6 +468,10 @@ struct global_params{
   bool ENABLE_NBR_CELLS = false;
 
   std::string intervention_filename = "intervention_params.json";
+  std::string transmission_coefficients = "transmission_coefficients.json";
+  std::string config_file = "config.json";
+  std::string individuals = "individuals.json";
+  std::string interaction_spaces = "interaction_spaces.json";
 
   double MIN_PROJECT_SIZE = 3; //Min and Max number of members in a project.
   double MAX_PROJECT_SIZE = 10;

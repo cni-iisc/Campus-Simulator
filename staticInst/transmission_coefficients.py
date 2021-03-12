@@ -4,7 +4,6 @@ import pandas as pd
 import numpy as np
 
 markov_simuls = True
-transmission_coeff = []
 
 class NpEncoder(json.JSONEncoder):
     def default(self, obj):
@@ -18,6 +17,7 @@ class NpEncoder(json.JSONEncoder):
             return super(NpEncoder, self).default(obj)
 
 def transmission_coefficients(interaction_type_list, BETA, ALPHA, NAMES):
+    transmission_coeff = []
     transmission_json = {}
     print(len(interaction_type_list))
     for type in range(len(interaction_type_list)):

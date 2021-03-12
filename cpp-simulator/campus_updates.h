@@ -30,6 +30,12 @@ void assign_individual_campus(std::vector<agent>& nodes, std::vector<Interaction
 
 //void print_interaction_strength(agent& node, std::vector<Interaction_Space>& ispace, int day);
 
+void sample_groups(std::vector<agent> &nodes, std::vector<Interaction_Space> &interaction_spaces);
+
+void cafeteria_active_duration(std::vector<agent> &nodes, std::vector<Interaction_Space> &interaction_spaces, int day);
+
+void cafeteria_reset(std::vector<agent> &nodes, std::vector<Interaction_Space> &interaction_spaces, int day);
+
 node_update_status update_infection(agent& node, int cur_time, int day);
 
 //update_all_kappa(nodes, homes, workplaces, communities, nbr_cells, intv_params, time_step);

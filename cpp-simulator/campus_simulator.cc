@@ -56,6 +56,7 @@ plot_data_struct run_campus_simulator(){
 	#endif*/
 	
   	assign_individual_campus(nodes, interaction_spaces);
+	sample_groups(nodes, interaction_spaces);
   //assign_individual_home_community(nodes, homes, workplaces, communities);
   //assign_individual_home_community must be called before assign_homes_nbr_cell
   //assign_homes_nbr_cell(homes,nbr_cells);
@@ -247,6 +248,7 @@ plot_data_struct run_campus_simulator(){
 			//n_cases = n_fatalities+n_recovered;
 			
     	}
+		cafeteria_active_duration(nodes, interaction_spaces, day);
     	update_interaction_space_lambda(nodes, interaction_spaces, day);
     	update_individual_lambda(nodes, interaction_spaces, day);
 
@@ -255,6 +257,7 @@ plot_data_struct run_campus_simulator(){
 		plot_data.nums["num_affected"].push_back({time_step, {n_affected}});
 		plot_data.nums["num_cases"].push_back({time_step, {n_cases}});
 		update_all_kappa(nodes, interaction_spaces, intv_params, time_step, day);
+		cafeteria_reset(nodes, interaction_spaces, day);
 	}
 	///TODO: Check update kappa function call here.
 	/*if(GLOBAL.ENABLE_TESTING){

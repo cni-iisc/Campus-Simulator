@@ -90,8 +90,8 @@ def campus_parse(inputfiles):
         for j in range(1,len(time_table[i])):
             classID = time_table[i][j]
             tt_df = inputfiles["class"][inputfiles["class"]["class_id"] == classID]
-            days_of_the_week = int(tt_df["days"])
-            days_of_the_week = str(days_of_the_week)
+            d_o_t_f = str(tt_df["days"].iloc[0])
+            days_of_the_week = d_o_t_f.split("-")
             for k in range(len(days_of_the_week)):
                 if sim_test : 
                     if (int(days_of_the_week[k])-1)%2 == 0: 

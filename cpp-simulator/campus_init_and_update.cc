@@ -530,12 +530,12 @@ void sample_groups(std::vector<agent> &nodes, std::vector<Interaction_Space> &in
         //std::cout<<"Create interaction space called"<<"\n";
         std::vector<int> temp;
         std::vector<std::vector<int>> GROUPS;
-        int random_value = ((rand() % (GLOBAL.MAXIMUM_SUBGROUP_SIZE - GLOBAL.MINIMUM_SUBGROUP_SIZE +1)) + GLOBAL.MINIMUM_SUBGROUP_SIZE);
+        int random_value = uniform_count_type(GLOBAL.MINIMUM_SUBGROUP_SIZE, GLOBAL.MAXIMUM_SUBGROUP_SIZE);
         //std::cout<<"random value: " << random_value << "\n";
         int GROUP_STRENGTH = random_value > int(ispace.individuals[0].size()) ? int(ispace.individuals[0].size())/2 : random_value;
         //std::cout<<int(individual.size())<<"\n";
         //std::cout<<"Group strength is: "<<GROUP_STRENGTH<<"\n";
-        std::sample(ispace.individuals[0].begin(), ispace.individuals[0].end(), std::back_inserter(temp), GROUP_STRENGTH, std::mt19937{std::random_device{}()});
+        std::sample(ispace.individuals[0].begin(), ispace.individuals[0].end(), std::back_inserter(temp), GROUP_STRENGTH, GENERATOR);
         for (int i=0; i< GLOBAL.PERIODICITY; i++){
           GROUPS.push_back(temp);
         }
@@ -583,7 +583,7 @@ void cafeteria_active_duration(std::vector<agent> &nodes, std::vector<Interactio
      }
     for(auto& node: nodes){
         std::vector<int> cafe;
-        std::sample(cafeteria.begin(), cafeteria.end(), std::back_inserter(cafe), 1, std::mt19937{std::random_device{}()});
+        std::sample(cafeteria.begin(), cafeteria.end(), std::back_inserter(cafe), 1, GENERATOR);
         double cafe_time=gamma(GLOBAL.ACTIVE_DURATION_SHAPE, interaction_spaces[cafe[0]].avg_time/GLOBAL.ACTIVE_DURATION_SHAPE);
         // std::cout<<"Cafe time: "<<cafe_time<<"\t";
         if(node.personType == person_type::student){

@@ -38,23 +38,23 @@ void modify_kappa_case_isolate_node(agent &node, std::vector<Interaction_Space> 
       switch (i_spaces[ispace.first].interaction_type)
       {
       case InteractionType ::classroom:
-        node.kappa[ispace.first] = std::min(0.0, node.kappa[ispace.first]) ;
+        node.kappa[ispace.first] = std::min(GLOBAL.kappa_class_case_isolation, node.kappa[ispace.first]) ;
         break;
 
       case InteractionType::hostel:
-        node.kappa[ispace.first] = std::min(0.2 ,node.kappa[ispace.first]);
+        node.kappa[ispace.first] = std::min(GLOBAL.kappa_hostel_case_isolation,node.kappa[ispace.first]);
         break;
 
       case InteractionType::mess:
-        node.kappa[ispace.first] = std::min(0.1, node.kappa[ispace.first]);
+        node.kappa[ispace.first] = std::min(GLOBAL.kappa_mess_case_isolation, node.kappa[ispace.first]);
         break;
       
       case InteractionType :: cafeteria:
-        node.kappa[ispace.first] = std::min(0.1, node.kappa[ispace.first]); 
+        node.kappa[ispace.first] = std::min(GLOBAL.kappa_cafe_case_isolation, node.kappa[ispace.first]); 
         break;
       
       case InteractionType :: smaller_networks:
-        node.kappa[ispace.first] = std::min(0.4, node.kappa[ispace.first]);
+        node.kappa[ispace.first] = std::min(GLOBAL.kappa_smaller_networks_case_isolation, node.kappa[ispace.first]);
         break;
       }
   }
@@ -78,7 +78,7 @@ void set_kappa_base_value(agent &node, std::vector<Interaction_Space> &i_spaces,
 {
   for (auto &ispace : node.interaction_strength[day])
   {
-      node.kappa[ispace.first] = 1;
+      node.kappa[ispace.first] = GLOBAL.kappa_base_value;
   }
 }
 
@@ -89,11 +89,11 @@ void set_kappa_lockdown_node(agent &node, const int cur_time, const intervention
   {
       if (i_spaces[elem.first].interaction_type == InteractionType ::hostel)
       {
-        node.kappa[elem.first] = std::min(0.2, node.kappa[elem.first]);
+        node.kappa[elem.first] = std::min(GLOBAL.kappa_hostel_lockdown, node.kappa[elem.first]);
       }
       else
       {
-        node.kappa[elem.first] = std::min(0.0, node.kappa[elem.first]);
+        node.kappa[elem.first] = std::min(GLOBAL.kappa_default_lockdown, node.kappa[elem.first]);
       }
   }
 }
@@ -160,6 +160,7 @@ void get_kappa_custom_modular(std::vector<agent> &nodes,
          if (i_spaces[space].interaction_type == InteractionType::classroom){
            if (i_spaces[space].quarantined == true){
              quarantine_flag = true;
+             break;
            }
          }
        }
@@ -168,7 +169,6 @@ void get_kappa_custom_modular(std::vector<agent> &nodes,
         modify_kappa_case_isolate_node(nodes[count], i_spaces, day);
       }
     }
-   
   }
 }
 

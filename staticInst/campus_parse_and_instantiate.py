@@ -11,6 +11,7 @@ DEBUG = False
 markov_simuls = True
 sim_test = False
 modularise = True
+cafe = True
 
 class NpEncoder(json.JSONEncoder):
     def default(self, obj):
@@ -45,13 +46,6 @@ def campus_parse(inputfiles):
     print("Creating individuals.json...")
     individual = []
 
-    spaces_map = {
-        0 : "Day Scholar",
-        1 : "Classes",
-        2 : "Hostels",
-        3 : "Mess"
-    }
-
     def unique(hostel_mess_list):
         x = np.array(hostel_mess_list)
         unique_array = np.unique(x)
@@ -61,16 +55,22 @@ def campus_parse(inputfiles):
     mess_list = unique(student_mess)
 
     duration_sum = 0
-    mess_active_duration = 0.33
-    class_active_duration = 0.04
+    mess_active_duration = inputfiles["mess"]["active_duration"][0]
     weekends = range(2)
 
     time_table = inputfiles["timetable"].values.tolist()
     for i in range(len(time_table)):
         time_table[i] = [x for x in time_table[i] if str(x)!='nan']
 
-    num_days = time_table[1].count(-1) + 2 #To bring 7 day periodicity
     periodicity = 7
+
+    spaces_map = {
+        0 : "Day Scholar",
+        1 : "Classes",
+        2 : "Hostels",
+        3 : "Mess",
+        4 : "Cafe"
+    }
 
     print("Instantiating students...")
     for i in range(student_pop):
@@ -123,6 +123,13 @@ def campus_parse(inputfiles):
                 daily_int_st[student_mess[i]] = mess_active_duration
             if sim_test : 
                 count += 1
+    
+    if cafe:
+        for i in range(student_pop):
+            for daily_int_st in individual[i]["interaction_strength"]:
+                for j in range(inputfiles["common_areas"]["starting_id"][0], inputfiles["common_areas"]["starting_id"][0]+inputfiles["common_areas"]["number"][0]):
+                    daily_int_st[j] = 0
+
     print("Student done.")
 
     for i in range(faculty_pop):
@@ -212,9 +219,9 @@ def campus_parse(inputfiles):
                         daily_int_st = {0: 0.67, staff_dept[i]: 0.33}
             else:   
                 if staff_type[i] == 1:
-                    daily_int_st = {0: 0.45, staff_dept[i]: 0.55}
+                    daily_int_st = {0: 0, staff_dept[i]: 1}
                 else :
-                    daily_int_st = {0: 0.67, staff_dept[i]: 0.33}
+                    daily_int_st = {0: 1-mess_active_duration, staff_dept[i]: mess_active_duration}
             int_st.append(daily_int_st)
         staff_dict["interaction_strength"] = int_st 
         individual.append(staff_dict)
@@ -234,7 +241,8 @@ def campus_parse(inputfiles):
     i_space["type"] = 0
     i_space["beta"] = 0
     i_space["alpha"] = 1
-    i_space["active_duration"] = 0.66
+    i_space["active_duration"] = 1
+    i_space["avg_time"] = 0.66
     i_space["lat"] = np.random.uniform(10.0,20.0)
     i_space["lon"] = np.random.uniform(15.0,18.0)
     interaction_spaces.append(i_space)
@@ -245,7 +253,8 @@ def campus_parse(inputfiles):
         i_space_class["type"] = 1
         i_space_class["beta"] = np.random.uniform(0,0.5) + 1
         i_space_class["alpha"] = 1
-        i_space_class["active_duration"] = 0.04
+        i_space_class["active_duration"] = inputfiles["class"]["active_duration"][i]
+        i_space_class["avg_time"] = inputfiles["class"]["active_duration"][i]
         i_space_class["lat"] = np.random.uniform(10.0,20.0)
         i_space_class["lon"] = np.random.uniform(15.0,18.0)
         interaction_spaces.append(i_space_class)
@@ -258,7 +267,8 @@ def campus_parse(inputfiles):
         i_space_hostel["type"] = 2
         i_space_hostel["beta"] = np.random.uniform(0,0.5) + 1
         i_space_hostel["alpha"] = 1
-        i_space_hostel["active_duration"] = 0.55
+        i_space_hostel["active_duration"] = 1
+        i_space_hostel["avg_time"] = 0.55
         i_space_hostel["lat"] = np.random.uniform(10.0,20.0)
         i_space_hostel["lon"] = np.random.uniform(15.0,18.0)
         interaction_spaces.append(i_space_hostel)
@@ -271,14 +281,30 @@ def campus_parse(inputfiles):
         i_space_mess["type"] = 3
         i_space_mess["beta"] = np.random.uniform(0,0.5) + 1
         i_space_mess["alpha"] = 1
-        i_space_mess["active_duration"] = 0.33
+        i_space_mess["active_duration"] = mess_active_duration
+        i_space_mess["avg_time"] = 0.125
         i_space_mess["lat"] = np.random.uniform(10.0,20.0)
         i_space_mess["lon"] = np.random.uniform(15.0,18.0)
         interaction_spaces.append(i_space_mess)
 
     print("Mess instantiated")
 
-    #To bring in initial transmission_coefficents.json
+    if cafe :     
+        for i in range(inputfiles["common_areas"]["number"][0]):
+            #i_space_cafe = {​​​​​}​​​​​
+            i_space_cafe = {}
+            i_space_cafe["id"] = i + inputfiles["common_areas"]["starting_id"][0]
+            i_space_cafe["type"] = 4
+            i_space_cafe["beta"] = np.random.uniform(0,0.5) + 1
+            i_space_cafe["alpha"] = 1
+            i_space_cafe["active_duration"] = inputfiles["common_areas"]["active_duration"][0]
+            i_space_cafe["avg_time"] = inputfiles["common_areas"]["average_time_spent"][0]
+            i_space_cafe["lat"] = np.random.uniform(10.0,20.0)
+            i_space_cafe["lon"] = np.random.uniform(15.0,18.0)
+            interaction_spaces.append(i_space_cafe)
+
+        print("Cafes instantiated")
+    
     type_list = []
     for spaces in interaction_spaces:
         type_list.append(spaces["type"])
@@ -298,6 +324,7 @@ def campus_parse(inputfiles):
 
     return individual, interaction_spaces, trans_coeffs
 
+
 if __name__ == "__main__":
 
     inputfiles = {
@@ -305,7 +332,8 @@ if __name__ == "__main__":
         "class" : "classes.csv",
         "staff" : "staff.csv",
         "mess" : "mess.csv",
-        "timetable" : "timetable.csv"
+        "timetable" : "timetable.csv",
+        "common_spaces" : "common_areas.csv"
     }
 
     outputfiles = {
@@ -328,16 +356,18 @@ if __name__ == "__main__":
     staff_df = pd.read_csv(input_file_dir + inputfiles["staff"])
     mess_df = pd.read_csv(input_file_dir + inputfiles["mess"])
     timetable_df = pd.read_csv(input_file_dir + inputfiles["timetable"], header=None, names = column_names)
+    common_areas_df = pd.read_csv(input_file_dir + inputfiles["common_spaces"])
 
     input_dfs = {
         "students" : student_df,
         "class" : class_df,
         "staff" : staff_df,
         "mess" : mess_df,
-        "timetable" : timetable_df
+        "timetable" : timetable_df,
+        "common_areas" : common_areas_df
     }
 
-    individuals, interaction_spaces, trans_coeff = campus_parse(input_dfs)
+    individuals, interaction_spaces, trans_coeffs = campus_parse(input_dfs)
 
     individual_json = open(output_file_dir + outputfiles['individuals'], "w+")
     individual_json.write(json.dumps(individuals, cls = NpEncoder))

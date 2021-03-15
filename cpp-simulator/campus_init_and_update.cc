@@ -85,8 +85,8 @@ void set_node_initial_infection(agent &node,
 }
 
 void init_config_params(){
-  auto config_json = readJSONFile(GLOBAL.input_base + "config.json");
-  auto config_size = config_json.GetArray().Size();
+  auto config_json = readJSONFile(GLOBAL.input_base + GLOBAL.config_file);
+  // auto config_size = config_json.GetArray().Size();
 
   // auto size = config_size;
 
@@ -96,13 +96,23 @@ void init_config_params(){
     GLOBAL.BETA_SCALING_FACTOR = elem["BETA_SCALING_FACTOR"].GetDouble();
     GLOBAL.PERIODICITY = elem["PERIODICITY"].GetInt();
     GLOBAL.AVERAGE_NUMBER_ASSOCIATIONS = elem["AVERAGE_NUMBER_ASSOCIATIONS"].GetInt();
-    //GLOBAL.minimum_hostel_time = elem["minimum_hostel_time"].GetDouble();
+    GLOBAL.minimum_hostel_time = elem["minimum_hostel_time"].GetDouble();
+    GLOBAL.kappa_class_case_isolation = elem["kappa_class_case_isolation"].GetDouble();
+    GLOBAL.kappa_hostel_case_isolation = elem["kappa_hostel_case_isolation"].GetDouble();
+    GLOBAL.kappa_mess_case_isolation = elem["kappa_mess_case_isolation"].GetDouble();
+    GLOBAL.kappa_cafe_case_isolation = elem["kappa_cafe_case_isolation"].GetDouble();
+    GLOBAL.kappa_smaller_networks_case_isolation = elem["kappa_smaller_networks_case_isolation"].GetDouble();
+    GLOBAL.kappa_class_lockdown = elem["kappa_class_lockdown"].GetDouble();
+    GLOBAL.kappa_hostel_lockdown = elem["kappa_hostel_lockdown"].GetDouble();
+    GLOBAL.kappa_mess_lockdown = elem["kappa_mess_lockdown"].GetDouble();
+    GLOBAL.kappa_cafe_lockdown = elem["kappa_cafe_lockdown"].GetDouble();
+    GLOBAL.kappa_smaller_networks_lockdown = elem["kappa_smaller_networks_lockdown"].GetDouble();
   }
 }
 
 std::vector<agent> init_nodes_campus()
 {
-  auto indivJSON = readJSONFile(GLOBAL.input_base + "individuals.json");
+  auto indivJSON = readJSONFile(GLOBAL.input_base + GLOBAL.individuals);
   auto size = indivJSON.GetArray().Size();
   GLOBAL.num_people = size;
   std::vector<agent> nodes(size);
@@ -186,7 +196,7 @@ std::vector<agent> init_nodes_campus()
 
 std::vector<Interaction_Space> init_interaction_spaces()
 {
-  auto interactionJSON = readJSONFile(GLOBAL.input_base + "interaction_spaces.json");
+  auto interactionJSON = readJSONFile(GLOBAL.input_base + GLOBAL.interaction_spaces);
 
   auto interactionSize = interactionJSON.GetArray().Size();
   auto size = interactionSize;
@@ -223,7 +233,7 @@ Interaction_Space create_interaction_space(double lat, double lon, InteractionTy
 }
 
 void init_transmission_coefficients(std::vector<Interaction_Space> &interaction_spaces){
-  auto transmission_coefficients_json = readJSONFile(GLOBAL.input_base + "transmission_coefficients.json");
+  auto transmission_coefficients_json = readJSONFile(GLOBAL.input_base + GLOBAL.transmission_coefficients);
   auto transmission_coefficients_json_size = transmission_coefficients_json.GetArray().Size();
 
   auto size = transmission_coefficients_json_size;
@@ -270,7 +280,7 @@ std::vector<intervention_params> init_intervention_params()
   {
     std::cout << std::endl
               << "Inside init_intervention_params";
-    auto intvJSON = readJSONFile(GLOBAL.input_base + "campus_interventions_00.json");
+    auto intvJSON = readJSONFile(GLOBAL.input_base + GLOBAL.intervention_filename);
 
     intv_params.reserve(intvJSON.GetArray().Size());
 

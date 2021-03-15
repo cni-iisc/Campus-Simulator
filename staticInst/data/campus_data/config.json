@@ -5,6 +5,16 @@
         "BETA_SCALING_FACTOR": 1,
         "PERIODICITY": 7,
         "AVERAGE_NUMBER_ASSOCIATIONS": 5,
-        "minimum_hostel_time": 0.3
+        "minimum_hostel_time": 0.3,
+        "kappa_class_case_isolation": 0.0,
+        "kappa_hostel_case_isolation": 0.2,
+        "kappa_mess_case_isolation": 0.1,
+        "kappa_cafe_case_isolation": 0.1,
+        "kappa_smaller_networks_case_isolation": 0.4,
+        "kappa_class_lockdown": 0.0,
+        "kappa_hostel_lockdown": 0.2,
+        "kappa_mess_lockdown": 0.0,
+        "kappa_cafe_lockdown": 0.0,
+        "kappa_smaller_networks_lockdown": 0.0
     }
 ]

@@ -5,7 +5,6 @@ import numpy as np
 
 markov_simuls = True
 
-
 class NpEncoder(json.JSONEncoder):
     def default(self, obj):
         if isinstance(obj, np.integer):
@@ -50,8 +49,9 @@ if __name__ == "__main__":
     BETA_CLASSROOM = np.random.uniform(0,0.5) + 1
     BETA_MESS = np.random.uniform(0,0.5) + 1
     BETA_HOSTEL = np.random.uniform(0,0.5) + 1 
+    BETA_CAFE = np.random.uniform(0,0.5) + 1
     BETA_DAY_SCHOLAR = 0
-    BETA = [BETA_DAY_SCHOLAR, BETA_CLASSROOM, BETA_HOSTEL, BETA_MESS]
+    BETA = [BETA_DAY_SCHOLAR, BETA_CLASSROOM, BETA_HOSTEL, BETA_MESS, BETA_CAFETERIA]
     ALPHA = 1
 
     if not os.path.exists(output_file_dir):
@@ -61,9 +61,15 @@ if __name__ == "__main__":
         0 : "Day Scholar", 
         1 : "Classroom", 
         2 : "Hostel", 
-        3 : "Mess"
+        3 : "Mess",
+        4 : "Cafe"
     }
-    transmission_coefficients_json = transmission_coefficients(interaction_type_list, BETA, ALPHA)
+    
+    NAMES = []
+    for key,value in interaction_type : 
+        NAMES.append(value)
+
+    transmission_coefficients_json = transmission_coefficients(interaction_type_list, BETA, ALPHA, NAMES)
     f = open(output_file_dir+output_file, "w+")
     f.write(json.dumps(transmission_coefficients_json, cls= NpEncoder))
     f.close

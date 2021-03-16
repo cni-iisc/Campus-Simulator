@@ -86,10 +86,6 @@ void set_node_initial_infection(agent &node,
 
 void init_config_params(){
   auto config_json = readJSONFile(GLOBAL.input_base + GLOBAL.config_file);
-  // auto config_size = config_json.GetArray().Size();
-
-  // auto size = config_size;
-
   for (auto& elem : config_json.GetArray()){
     GLOBAL.MINIMUM_SUBGROUP_SIZE = elem["MIN_GROUP_SIZE"].GetInt();
     GLOBAL.MAXIMUM_SUBGROUP_SIZE = elem["MAX_GROUP_SIZE"].GetInt();
@@ -137,6 +133,7 @@ std::vector<agent> init_nodes_campus()
     nodes[i].infectiousness = gamma(GLOBAL.INFECTIOUSNESS_SHAPE,
                                     GLOBAL.INFECTIOUSNESS_SCALE);
     nodes[i].severity = bernoulli(GLOBAL.SEVERITY_RATE) ? 1 : 0;
+    nodes[i].compliance_factor = get_non_compliance_metric();
     int day = 0;
     nodes[i].interaction_strength.resize(GLOBAL.PERIODICITY); //Resize acc to days
     for (auto &x : elem["interaction_strength"].GetArray())
@@ -265,7 +262,7 @@ void print_intervention_params(const int index, const intervention_params intv_p
   //std::cout<<". community_factor : " << intv_params.community_factor;
   //std::cout<<". neighbourhood_containment : " << intv_params.neighbourhood_containment;
   //std::cout<<". ward_containment : " << intv_params.ward_containment;
-  //std::cout<<". compliance : " << intv_params.compliance;
+  std::cout<<". compliance : " << intv_params.compliance;
   //std::cout<<". compliance_hd : " << intv_params.compliance_hd;
   //std::cout<<". trains_active : " << intv_params.trains_active;
   //std::cout<<". fraction_forced_to_take_train : " << intv_params.fraction_forced_to_take_train;
@@ -294,22 +291,12 @@ std::vector<intervention_params> init_intervention_params()
         if (elem.HasMember("compliance"))
         {
           temp.compliance = elem["compliance"].GetDouble();
-          temp.compliance_hd = elem["compliance"].GetDouble();
           //By default, compliance = compliance_hd. Can be reset below
         }
         else
         {
           temp.compliance = GLOBAL.COMPLIANCE_PROBABILITY;
-          temp.compliance_hd = GLOBAL.COMPLIANCE_PROBABILITY;
           //By default, compliance = compliance_hd. Can be reset below
-        }
-        if (elem.HasMember("compliance_hd"))
-        {
-          temp.compliance_hd = elem["compliance_hd"].GetDouble();
-        }
-        else
-        {
-          temp.compliance_hd = GLOBAL.COMPLIANCE_PROBABILITY;
         }
         if (elem.HasMember("case_isolation"))
         {

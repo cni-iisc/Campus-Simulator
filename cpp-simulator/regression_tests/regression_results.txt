@@ -1,4 +1,16 @@
-Test : intervention_00: PASS
-Test : intervention_01: PASS
-Test : intervention_02: PASS
-Test : intervention_03: PASS
+reference_files/intervention_00/num_cases.csv output_files/intervention_00/num_cases.csv differ.
+reference_files/intervention_00/num_recovered.csv output_files/intervention_00/num_recovered.csv differ.
+reference_files/intervention_00/num_affected.csv output_files/intervention_00/num_affected.csv differ.
+Test : intervention_00: FAIL
+reference_files/intervention_01/num_cases.csv output_files/intervention_01/num_cases.csv differ.
+reference_files/intervention_01/num_recovered.csv output_files/intervention_01/num_recovered.csv differ.
+reference_files/intervention_01/num_affected.csv output_files/intervention_01/num_affected.csv differ.
+Test : intervention_01: FAIL
+reference_files/intervention_02/num_cases.csv output_files/intervention_02/num_cases.csv differ.
+reference_files/intervention_02/num_recovered.csv output_files/intervention_02/num_recovered.csv differ.
+reference_files/intervention_02/num_affected.csv output_files/intervention_02/num_affected.csv differ.
+Test : intervention_02: FAIL
+reference_files/intervention_03/num_cases.csv output_files/intervention_03/num_cases.csv differ.
+reference_files/intervention_03/num_recovered.csv output_files/intervention_03/num_recovered.csv differ.
+reference_files/intervention_03/num_affected.csv output_files/intervention_03/num_affected.csv differ.
+Test : intervention_03: FAIL

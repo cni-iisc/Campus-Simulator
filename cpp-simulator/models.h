@@ -776,6 +776,7 @@ struct agent{
   //set to 1 in case neighborhood cell is not enabled.
 
   bool compliant = true;
+  double compliance_factor;
   
   double kappa_H = 1;
   double kappa_W = 1;

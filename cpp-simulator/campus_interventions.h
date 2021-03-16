@@ -29,6 +29,8 @@ void reset_class_quarantines(std::vector<Interaction_Space>& i_space);
 
 void mark_class_for_quarantine(const std::vector<agent>& nodes, std::vector<Interaction_Space> &i_space, const int cur_time);
 
+void set_compliance(std::vector<agent> & nodes, double compliance_probability);
+
 #endif
 
 

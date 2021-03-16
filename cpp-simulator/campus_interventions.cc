@@ -12,23 +12,17 @@
 using std::min;
 using std::vector;
 
-/*void set_compliance(std::vector<agent> & nodes, std::vector<house> & homes,
-					double usual_compliance_probability, double hd_area_compliance_probability){
+void set_compliance(std::vector<agent>& nodes, double compliance_probability){
   //set the compliant flag for a household and it's individuals based on compliance_probability
   for(auto& node: nodes){
-	auto home = node.home;
-	if(node.hd_area_resident){
-	  homes[home].compliant =
-		(homes[home].non_compliance_metric
-		 <= hd_area_compliance_probability);
-	} else {
-	  homes[home].compliant =
-		(homes[home].non_compliance_metric
-		 <= usual_compliance_probability);
-	}
-	node.compliant = homes[home].compliant;
+    if(node.compliance_factor <= compliance_probability){
+      node.compliant = true;
+    }
+    else {
+      node.compliant = false;
+    }
   }
-}*/
+}
 
 void modify_kappa_case_isolate_node(agent &node, std::vector<Interaction_Space> &i_spaces, int day)
 {
@@ -186,6 +180,7 @@ void get_kappa_file_read(std::vector<agent> &nodes,
 
   for (count_type count = 0; count < SIZE - 1; ++count)
   {
+    set_compliance(nodes, intv_params_vector[count].compliance);
     time_threshold += intv_params_vector[count].num_days;
     if (cur_day >= time_threshold)
     {
@@ -195,6 +190,7 @@ void get_kappa_file_read(std::vector<agent> &nodes,
     {
       break;
     }
+   
   }
   get_kappa_custom_modular(nodes, i_spaces, cur_time, intv_params_vector[intv_index], day);
 }

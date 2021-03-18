@@ -42,7 +42,7 @@ if __name__ == "__main__":
     print(interaction_type_list)
 
     if markov_simuls: 
-        output_file_dir = "/Users/Minhaas/CODING/iisc/campus-simulator/markov_simuls/staticInst/data/campus_data/"
+        output_file_dir = "/Users/Minhaas/CODING/iisc/campus_simulator/markov_simuls/staticInst/data/campus_data/"
     else :
         output_file_dir = "/Users/Minhaas/CODING/iisc/rough/campus_input_csv/json_files/"
 
@@ -50,8 +50,9 @@ if __name__ == "__main__":
     BETA_MESS = np.random.uniform(0,0.5) + 1
     BETA_HOSTEL = np.random.uniform(0,0.5) + 1 
     BETA_CAFE = np.random.uniform(0,0.5) + 1
+    BETA_LIBRARY = np.random.uniform(0,0.5) + 1
     BETA_DAY_SCHOLAR = 0
-    BETA = [BETA_DAY_SCHOLAR, BETA_CLASSROOM, BETA_HOSTEL, BETA_MESS, BETA_CAFETERIA]
+    BETA = [BETA_DAY_SCHOLAR, BETA_CLASSROOM, BETA_HOSTEL, BETA_MESS, BETA_CAFE, BETA_LIBRARY]
     ALPHA = 1
 
     if not os.path.exists(output_file_dir):
@@ -62,12 +63,13 @@ if __name__ == "__main__":
         1 : "Classroom", 
         2 : "Hostel", 
         3 : "Mess",
-        4 : "Cafe"
+        4 : "Cafe",
+        5 : "Library"
     }
     
     NAMES = []
-    for key,value in interaction_type : 
-        NAMES.append(value)
+    for key in interaction_type.keys() : 
+        NAMES.append(interaction_type[key])
 
     transmission_coefficients_json = transmission_coefficients(interaction_type_list, BETA, ALPHA, NAMES)
     f = open(output_file_dir+output_file, "w+")

@@ -4,11 +4,11 @@ import json
 import warnings
 from collections import Counter
 import os 
-from .transmission_coefficients import transmission_coefficients
+from transmission_coefficients import transmission_coefficients
 warnings.filterwarnings('ignore')
 
 DEBUG = False
-markov_simuls = True
+markov_simuls = False
 sim_test = False
 modularise = True
 cafe = True
@@ -69,7 +69,8 @@ def campus_parse(inputfiles):
         1 : "Classes",
         2 : "Hostels",
         3 : "Mess",
-        4 : "Cafe"
+        4 : "Cafe",
+        5 : "Library"
     }
 
     print("Instantiating students...")
@@ -127,7 +128,7 @@ def campus_parse(inputfiles):
     if cafe:
         for i in range(student_pop):
             for daily_int_st in individual[i]["interaction_strength"]:
-                for j in range(inputfiles["common_areas"]["starting_id"][0], inputfiles["common_areas"]["starting_id"][0]+inputfiles["common_areas"]["number"][0]):
+                for j in range(inputfiles["common_areas"]["starting_id"][0], inputfiles["common_areas"]["starting_id"][1]+inputfiles["common_areas"]["number"][1]):
                     daily_int_st[j] = 0
 
     print("Student done.")
@@ -290,18 +291,19 @@ def campus_parse(inputfiles):
     print("Mess instantiated")
 
     if cafe :     
-        for i in range(inputfiles["common_areas"]["number"][0]):
-            #i_space_cafe = {​​​​​}​​​​​
-            i_space_cafe = {}
-            i_space_cafe["id"] = i + inputfiles["common_areas"]["starting_id"][0]
-            i_space_cafe["type"] = 4
-            i_space_cafe["beta"] = np.random.uniform(0,0.5) + 1
-            i_space_cafe["alpha"] = 1
-            i_space_cafe["active_duration"] = inputfiles["common_areas"]["active_duration"][0]
-            i_space_cafe["avg_time"] = inputfiles["common_areas"]["average_time_spent"][0]
-            i_space_cafe["lat"] = np.random.uniform(10.0,20.0)
-            i_space_cafe["lon"] = np.random.uniform(15.0,18.0)
-            interaction_spaces.append(i_space_cafe)
+        for j in range(len(inputfiles["common_areas"])):   
+            for i in range(inputfiles["common_areas"]["number"][0]):
+                #i_space_cafe = {​​​​​}​​​​​
+                i_space_cafe = {}
+                i_space_cafe["id"] = i + inputfiles["common_areas"]["starting_id"][0]
+                i_space_cafe["type"] = 4
+                i_space_cafe["beta"] = np.random.uniform(0,0.5) + 1
+                i_space_cafe["alpha"] = 1
+                i_space_cafe["active_duration"] = inputfiles["common_areas"]["active_duration"][0]
+                i_space_cafe["avg_time"] = inputfiles["common_areas"]["average_time_spent"][0]
+                i_space_cafe["lat"] = np.random.uniform(10.0,20.0)
+                i_space_cafe["lon"] = np.random.uniform(15.0,18.0)
+                interaction_spaces.append(i_space_cafe)
 
         print("Cafes instantiated")
     
@@ -349,7 +351,7 @@ if __name__ == "__main__":
     if not os.path.exists(output_file_dir):
         os.makedirs(output_file_dir)
 
-    input_file_dir = "/Users/Minhaas/CODING/iisc/rough/campus_input_csv/"
+    input_file_dir = "/Users/minhaas/CODING/iisc/campus_simulator/markov_simuls/staticInst/data/campus_sample_data/"
     column_names = [i for i in range(24)]
     student_df = pd.read_csv(input_file_dir + inputfiles["students"])
     class_df = pd.read_csv(input_file_dir + inputfiles["class"])

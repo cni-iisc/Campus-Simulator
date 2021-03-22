@@ -2,26 +2,37 @@
     {
         "type": 0,
         "beta": 0,
-        "alpha": 1
+        "alpha": 1,
+        "name": "Day Scholar"
     },
     {
         "type": 1,
-        "beta": 1.34536356,
-        "alpha": 1
+        "beta": 1.1036738925684277,
+        "alpha": 1,
+        "name": "Classroom"
     },
     {
         "type": 2,
-        "beta": 1.0984756,
-        "alpha": 1
+        "beta": 1.0649747705684567,
+        "alpha": 1,
+        "name": "Hostel"
     },
     {
         "type": 3,
-        "beta": 1.7869869,
-        "alpha": 1
+        "beta": 1.475484808180208,
+        "alpha": 1,
+        "name": "Mess"
     },
     {
         "type": 4,
-        "beta": 1.00001023984,
-        "alpha": 1
+        "beta": 1.1477008352442437,
+        "alpha": 1,
+        "name": "Cafe"
+    },
+    {
+        "type": 5,
+        "beta": 1.4262503987229618,
+        "alpha": 1,
+        "name": "Library"
     }
 ]

@@ -4,11 +4,11 @@ import json
 import warnings
 from collections import Counter
 import os 
-from transmission_coefficients import transmission_coefficients
+from .transmission_coefficients import transmission_coefficients
 warnings.filterwarnings('ignore')
 
 DEBUG = False
-markov_simuls = False
+markov_simuls = True
 sim_test = False
 modularise = True
 cafe = True
@@ -162,6 +162,7 @@ def campus_parse(inputfiles):
             if sim_test : count +=1 
             int_st_keys = list(daily_int_st.keys())
             for key in int_st_keys:
+                key = int(key)
                 if key > len(inputfiles["class"]):
                     continue 
                 fac = inputfiles["class"]["faculty_id"][key - 1]
@@ -292,15 +293,15 @@ def campus_parse(inputfiles):
 
     if cafe :     
         for j in range(len(inputfiles["common_areas"])):   
-            for i in range(inputfiles["common_areas"]["number"][0]):
+            for i in range(inputfiles["common_areas"]["number"][j]):
                 #i_space_cafe = {​​​​​}​​​​​
                 i_space_cafe = {}
-                i_space_cafe["id"] = i + inputfiles["common_areas"]["starting_id"][0]
-                i_space_cafe["type"] = 4
+                i_space_cafe["id"] = i + inputfiles["common_areas"]["starting_id"][j]
+                i_space_cafe["type"] = 4 + j
                 i_space_cafe["beta"] = np.random.uniform(0,0.5) + 1
                 i_space_cafe["alpha"] = 1
-                i_space_cafe["active_duration"] = inputfiles["common_areas"]["active_duration"][0]
-                i_space_cafe["avg_time"] = inputfiles["common_areas"]["average_time_spent"][0]
+                i_space_cafe["active_duration"] = inputfiles["common_areas"]["active_duration"][j]
+                i_space_cafe["avg_time"] = inputfiles["common_areas"]["average_time_spent"][j]
                 i_space_cafe["lat"] = np.random.uniform(10.0,20.0)
                 i_space_cafe["lon"] = np.random.uniform(15.0,18.0)
                 interaction_spaces.append(i_space_cafe)
@@ -351,7 +352,7 @@ if __name__ == "__main__":
     if not os.path.exists(output_file_dir):
         os.makedirs(output_file_dir)
 
-    input_file_dir = "/Users/minhaas/CODING/iisc/campus_simulator/markov_simuls/staticInst/data/campus_sample_data/"
+    input_file_dir = "/Users/minhaas/CODING/iisc/rough/campus_input_csv/"
     column_names = [i for i in range(24)]
     student_df = pd.read_csv(input_file_dir + inputfiles["students"])
     class_df = pd.read_csv(input_file_dir + inputfiles["class"])

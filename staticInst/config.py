@@ -3,7 +3,7 @@ import json
 markov_simuls = True
 
 config_json = []
-def configCreate(min_group_size, max_group_size, beta_scaling_factor, avg_num_assns, periodicity, minimum_hostel_time, kappa_class_case_isolation = 0.0, kappa_hostel_case_isolation = 0.2, kappa_mess_case_isolation = 0.1, kappa_cafe_case_isolation = 0.1, kappa_smaller_networks_case_isolation = 0.4, kappa_class_lockdown = 0.0, kappa_hostel_lockdown = 0.2, kappa_mess_lockdown = 0.0, kappa_cafe_lockdown = 0.0, kappa_smaller_networks_lockdown = 0.0):
+def configCreate(min_group_size, max_group_size, beta_scaling_factor, avg_num_assns, periodicity, minimum_hostel_time, kappa_class_case_isolation = 0.0, kappa_hostel_case_isolation = 0.2, kappa_mess_case_isolation = 0.1, kappa_cafe_case_isolation = 0.1, kappa_smaller_networks_case_isolation = 0.4, kappa_lib_case_isolation = 0.1, kappa_class_lockdown = 0.0, kappa_hostel_lockdown = 0.2, kappa_mess_lockdown = 0.0, kappa_cafe_lockdown = 0.0, kappa_smaller_networks_lockdown = 0.0, kappa_lib_lockdown = 0.0):
     config = {}
     config["MIN_GROUP_SIZE"] = min_group_size
     config["MAX_GROUP_SIZE"] = max_group_size
@@ -16,11 +16,14 @@ def configCreate(min_group_size, max_group_size, beta_scaling_factor, avg_num_as
     config["kappa_mess_case_isolation"] = kappa_mess_case_isolation
     config["kappa_cafe_case_isolation"] = kappa_cafe_case_isolation
     config["kappa_smaller_networks_case_isolation"] = kappa_smaller_networks_case_isolation
+    config["kappa_lib_case_isolation"] = kappa_lib_case_isolation
     config["kappa_class_lockdown"] = kappa_class_lockdown
     config["kappa_hostel_lockdown"] = kappa_hostel_lockdown
     config["kappa_mess_lockdown"] = kappa_mess_lockdown
     config["kappa_cafe_lockdown"] = kappa_cafe_lockdown
     config["kappa_smaller_networks_lockdown"] = kappa_smaller_networks_lockdown
+    config["kappa_lib_lockdown"] = kappa_lib_lockdown
+
     config_json.append(config)
 
     return config_json

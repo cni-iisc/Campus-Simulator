@@ -38,6 +38,9 @@ void cafeteria_reset(std::vector<agent> &nodes, std::vector<Interaction_Space> &
 
 node_update_status update_infection(agent& node, int cur_time, int day);
 
+void library_active_duration(std::vector<agent> &nodes, std::vector<Interaction_Space> &interaction_spaces, int day);
+
+void library_reset(std::vector<agent> &nodes, std::vector<Interaction_Space> &interaction_spaces, int day);
 //update_all_kappa(nodes, homes, workplaces, communities, nbr_cells, intv_params, time_step);
 
 #endif

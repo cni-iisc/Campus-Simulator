@@ -301,6 +301,7 @@ struct global_params{
   double kappa_mess_case_isolation;
   double kappa_cafe_case_isolation;
   double kappa_smaller_networks_case_isolation;
+  double kappa_lib_case_isolation;
   double kappa_class_lockdown;
   double kappa_hostel_lockdown;
   double kappa_mess_lockdown;
@@ -308,7 +309,8 @@ struct global_params{
   double kappa_smaller_networks_lockdown;
   double kappa_base_value = 1;
   double kappa_default_lockdown = 0.0;
-
+  double kappa_lib_lockdown;
+  
   count_type RNG_SEED;
   count_type RNG_SEED_NETWORK;
   double COMPLIANCE_PROBABILITY = 1;
@@ -566,6 +568,7 @@ enum class InteractionType {
   hostel = 2,
   mess = 3,
   cafeteria = 4,
+  library = 5,
   smaller_networks = 100
 };
 

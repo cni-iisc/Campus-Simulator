@@ -50,6 +50,10 @@ void modify_kappa_case_isolate_node(agent &node, std::vector<Interaction_Space> 
       case InteractionType :: smaller_networks:
         node.kappa[ispace.first] = std::min(GLOBAL.kappa_smaller_networks_case_isolation, node.kappa[ispace.first]);
         break;
+
+      case InteractionType :: library:
+        node.kappa[ispace.first] = std::min(GLOBAL.kappa_smaller_networks_case_isolation, node.kappa[ispace.first]);
+        break;
       }
   }
 }

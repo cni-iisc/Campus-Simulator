@@ -249,6 +249,7 @@ plot_data_struct run_campus_simulator(){
 			
     	}
 		cafeteria_active_duration(nodes, interaction_spaces, day);
+		library_active_duration(nodes, interaction_spaces, day);
     	update_interaction_space_lambda(nodes, interaction_spaces, day);
     	update_individual_lambda(nodes, interaction_spaces, day);
 
@@ -258,6 +259,7 @@ plot_data_struct run_campus_simulator(){
 		plot_data.nums["num_cases"].push_back({time_step, {n_cases}});
 		update_all_kappa(nodes, interaction_spaces, intv_params, time_step, day);
 		cafeteria_reset(nodes, interaction_spaces, day);
+		library_reset(nodes, interaction_spaces, day);
 	}
 	///TODO: Check update kappa function call here.
 	/*if(GLOBAL.ENABLE_TESTING){

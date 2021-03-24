@@ -575,12 +575,12 @@ void cafeteria_active_duration(std::vector<agent> &nodes, std::vector<Interactio
         std::sample(cafeteria.begin(), cafeteria.end(), std::back_inserter(cafe), 1, GENERATOR);
         double cafe_time=gamma(GLOBAL.ACTIVE_DURATION_SHAPE, interaction_spaces[cafe[0]].avg_time/GLOBAL.ACTIVE_DURATION_SHAPE);
         // std::cout<<"Cafe time: "<<cafe_time<<"\t";
-        if(node.personType == person_type::student){
+        if(node.personType == person_type::student || node.personType == person_type::faculty){
             node.interaction_strength[day][cafe[0]] =cafe_time;
             // std::cout<<node.interaction_strength[day][cafe[0]]<<"\n";
          }
         for(auto& elem: node.interaction_strength[day]){
-            if(interaction_spaces[elem.first].interaction_type ==InteractionType::hostel){
+            if(interaction_spaces[elem.first].interaction_type ==InteractionType::hostel || interaction_spaces[elem.first].interaction_type ==InteractionType::outside_campus){
                 if(elem.second <= cafe_time){
                     node.interaction_strength[day][cafe[0]] = elem.second - GLOBAL.minimum_hostel_time; //add to config.json
                     elem.second = GLOBAL.minimum_hostel_time;
@@ -605,12 +605,12 @@ void library_active_duration(std::vector<agent> &nodes, std::vector<Interaction_
         std::sample(library.begin(), library.end(), std::back_inserter(lib), 1, GENERATOR);
         double lib_time=gamma(GLOBAL.ACTIVE_DURATION_SHAPE, interaction_spaces[lib[0]].avg_time/GLOBAL.ACTIVE_DURATION_SHAPE);
         // std::cout<<"Cafe time: "<<cafe_time<<"\t";
-        if(node.personType == person_type::student){
+        if(node.personType == person_type::student || node.personType == person_type::faculty){
             node.interaction_strength[day][lib[0]] =lib_time;
             // std::cout<<node.interaction_strength[day][cafe[0]]<<"\n";
          }
         for(auto& elem: node.interaction_strength[day]){
-            if(interaction_spaces[elem.first].interaction_type ==InteractionType::hostel){
+            if(interaction_spaces[elem.first].interaction_type ==InteractionType::hostel || interaction_spaces[elem.first].interaction_type ==InteractionType::outside_campus){
                 if(elem.second <= lib_time){
                     node.interaction_strength[day][lib[0]] = elem.second - GLOBAL.minimum_hostel_time; //add to config.json
                     elem.second = GLOBAL.minimum_hostel_time;
@@ -633,7 +633,7 @@ void cafeteria_reset(std::vector<agent> &nodes, std::vector<Interaction_Space> &
       }
     }
     for (auto& elem: node.interaction_strength[day]){
-      if(interaction_spaces[elem.first].interaction_type == InteractionType::hostel){
+      if(interaction_spaces[elem.first].interaction_type == InteractionType::hostel || interaction_spaces[elem.first].interaction_type ==InteractionType::outside_campus){
         elem.second += temp;
       }
     }
@@ -650,7 +650,7 @@ void library_reset(std::vector<agent> &nodes, std::vector<Interaction_Space> &in
       }
     }
     for (auto& elem: node.interaction_strength[day]){
-      if(interaction_spaces[elem.first].interaction_type == InteractionType::hostel){
+      if(interaction_spaces[elem.first].interaction_type == InteractionType::hostel || interaction_spaces[elem.first].interaction_type ==InteractionType::outside_campus){
         elem.second += temp;
       }
     }

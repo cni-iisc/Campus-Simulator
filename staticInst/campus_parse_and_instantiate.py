@@ -4,7 +4,7 @@ import json
 import warnings
 from collections import Counter
 import os 
-from .transmission_coefficients import transmission_coefficients
+from transmission_coefficients import transmission_coefficients
 warnings.filterwarnings('ignore')
 
 DEBUG = False
@@ -195,6 +195,13 @@ def campus_parse(inputfiles):
                 daily_int_st[0] = 1 - sum
             if sim_test : 
                 count += 1
+    
+    if cafe:
+        for i in range(student_pop, student_pop+faculty_pop):
+            for daily_int_st in individual[i]["interaction_strength"]:
+                for j in range(inputfiles["common_areas"]["starting_id"][0], inputfiles["common_areas"]["starting_id"][1]+inputfiles["common_areas"]["number"][1]):
+                    daily_int_st[j] = 0
+
 
     print("Faculty done")
 
@@ -352,7 +359,7 @@ if __name__ == "__main__":
     if not os.path.exists(output_file_dir):
         os.makedirs(output_file_dir)
 
-    input_file_dir = "/Users/minhaas/CODING/iisc/rough/campus_input_csv/"
+    input_file_dir = "/Users/minhaas/CODING/iisc/campus_simulator/markov_simuls/staticInst/data/campus_sample_data/"
     column_names = [i for i in range(24)]
     student_df = pd.read_csv(input_file_dir + inputfiles["students"])
     class_df = pd.read_csv(input_file_dir + inputfiles["class"])

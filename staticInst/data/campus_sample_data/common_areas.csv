@@ -1,3 +1,3 @@
 type,number,average_time_spent,starting_id,active_duration
-Cafeteria,4,0.02,95,0.5
-Library,2,0.1,99,0.67
+Cafeteria,4,0.5,95,12
+Library,2,2.5,99,16

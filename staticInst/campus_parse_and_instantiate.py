@@ -37,6 +37,11 @@ def campus_parse(inputfiles):
     staff_type = [int(x) for x in inputfiles["staff"]["dept_associated"]]
     staff_dept = [int(x) for x in inputfiles["staff"]["interaction_space"]]
     faculty = [float(x) for x in inputfiles["class"]["faculty_id"]] 
+    inputfiles["class"]["active_duration"] = (inputfiles["class"]["active_duration"]/24).astype(float)
+    inputfiles["mess"]["active_duration"] = (inputfiles["mess"]["active_duration"]/24).astype(float)
+    inputfiles["common_areas"]["active_duration"] = (inputfiles["common_areas"]["active_duration"]/24).astype(float)
+    inputfiles["common_areas"]["average_time_spent"] = (inputfiles["common_areas"]["average_time_spent"]/24).astype(float)
+
 
     faculty_pop = 27
     student_pop = inputfiles["students"]["id"].count()
@@ -55,7 +60,10 @@ def campus_parse(inputfiles):
     mess_list = unique(student_mess)
 
     duration_sum = 0
-    mess_active_duration = inputfiles["mess"]["active_duration"][0]
+    mess_active_duration = {}
+    for i in range(len(inputfiles["mess"])):
+        mess_active_duration[inputfiles["mess"]["mess_id"].iloc[i]] = (inputfiles["mess"]["average_time_spent"].iloc[i]/24).astype(float)
+
     weekends = range(2)
 
     time_table = inputfiles["timetable"].values.tolist()
@@ -120,8 +128,8 @@ def campus_parse(inputfiles):
                     daily_int_st[student_hostel[i]] = 0 
                     daily_int_st[student_mess[i]] = 0
             else :
-                daily_int_st[student_hostel[i]] = 1 - sum - mess_active_duration
-                daily_int_st[student_mess[i]] = mess_active_duration
+                daily_int_st[student_hostel[i]] = 1 - sum - mess_active_duration[student_mess[i]]
+                daily_int_st[student_mess[i]] = mess_active_duration[student_mess[i]]
             if sim_test : 
                 count += 1
     
@@ -229,8 +237,13 @@ def campus_parse(inputfiles):
             else:   
                 if staff_type[i] == 1:
                     daily_int_st = {0: 0, staff_dept[i]: 1}
-                else :
-                    daily_int_st = {0: 1-mess_active_duration, staff_dept[i]: mess_active_duration}
+                elif staff_type[i] == 2:
+                    daily_int_st = {0: 1-inputfiles["mess"]["active_duration"].iloc[0], staff_dept[i]: inputfiles["mess"]["active_duration"].iloc[0]}
+                elif staff_type[i] == 3 :
+                    daily_int_st = {0: 1 - inputfiles["common_areas"]["active_duration"].iloc[0], staff_dept[i] : inputfiles["common_areas"]["active_duration"].iloc[0]}
+                elif staff_type[i] == 4 :
+                    daily_int_st = {0: 1 - inputfiles["common_areas"]["active_duration"].iloc[1], staff_dept[i] : inputfiles["common_areas"]["active_duration"].iloc[1]}
+
             int_st.append(daily_int_st)
         staff_dict["interaction_strength"] = int_st 
         individual.append(staff_dict)
@@ -290,7 +303,7 @@ def campus_parse(inputfiles):
         i_space_mess["type"] = 3
         i_space_mess["beta"] = np.random.uniform(0,0.5) + 1
         i_space_mess["alpha"] = 1
-        i_space_mess["active_duration"] = mess_active_duration
+        i_space_mess["active_duration"] = mess_active_duration[i + num_classes + num_hostel + 1]
         i_space_mess["avg_time"] = 0.125
         i_space_mess["lat"] = np.random.uniform(10.0,20.0)
         i_space_mess["lon"] = np.random.uniform(15.0,18.0)
@@ -352,14 +365,14 @@ if __name__ == "__main__":
     }
 
     if markov_simuls: 
-        output_file_dir = "/Users/Minhaas/CODING/iisc/campus_simulator/markov_simuls/staticInst/data/campus_data/"
+        output_file_dir = "/Users/Minhaas/CODING/iisc/campus_simulator/staticInst/data/campus_data/"
     else: 
         output_file_dir = "/Users/Minhaas/CODING/iisc/rough/campus_input_csv/json_files/"
 
     if not os.path.exists(output_file_dir):
         os.makedirs(output_file_dir)
 
-    input_file_dir = "/Users/minhaas/CODING/iisc/campus_simulator/markov_simuls/staticInst/data/campus_sample_data/"
+    input_file_dir = "/Users/minhaas/CODING/iisc/campus_simulator/staticInst/data/campus_sample_data/"
     column_names = [i for i in range(24)]
     student_df = pd.read_csv(input_file_dir + inputfiles["students"])
     class_df = pd.read_csv(input_file_dir + inputfiles["class"])

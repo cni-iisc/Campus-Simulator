@@ -356,6 +356,138 @@ std::vector<intervention_params> init_intervention_params()
   return intv_params;
 }
 
+void print_testing_protocol(const int index, const testing_probability probabilities){
+  std::cout<<std::endl<<"Index : "<<index<<". num_days = "<<probabilities.num_days;
+  std::cout<<".  prob_test_index_symptomatic:  "<<probabilities.prob_test_index_symptomatic;
+  std::cout<<".  prob_test_index_hospitalised:  "<<probabilities.prob_test_index_hospitalised;
+
+  for(int i = 0; i < probabilities.prob_test_positive_symptomatic.size(); i++){
+    std::cout<<". prob_test_positive_symptomatic for interaction type" << i <<" = " << probabilities.prob_test_positive_symptomatic[i];
+  }
+
+  for(int i = 0; i < probabilities.prob_test_hospitalised_symptomatic.size(); i++){
+    std::cout<<". prob_test_hospitalised_symptomatic for interaction type" << i <<" = " << probabilities.prob_test_hospitalised_symptomatic[i];
+  }
+
+  for(int i = 0; i < probabilities.prob_test_symptomatic_symptomatic.size(); i++){
+    std::cout<<". prob_test_symptomatic_symptomatic for interaction type" << i <<" = " << probabilities.prob_test_symptomatic_symptomatic[i];
+  }
+
+  for(int i = 0; i < probabilities.prob_test_positive_asymptomatic.size(); i++){
+    std::cout<<". prob_test_positive_asymptomatic for interaction type" << i <<" = " << probabilities.prob_test_positive_asymptomatic[i];
+  }
+
+  for(int i = 0; i < probabilities.prob_test_hospitalised_asymptomatic.size(); i++){
+    std::cout<<". prob_test_hospitalised_asymptomatic for interaction type" << i <<" = " << probabilities.prob_test_hospitalised_asymptomatic[i];
+  }
+
+  for(int i = 0; i < probabilities.prob_test_symptomatic_asymptomatic.size(); i++){
+    std::cout<<". prob_test_symptomatic_asymptomatic for interaction type" << i <<" = " << probabilities.prob_test_symptomatic_asymptomatic[i];
+  }
+
+  std::cout<<".  prob_retest_recovered:  "<<probabilities.prob_retest_recovered;
+
+}
+
+std::vector<testing_probability> init_testing_protocol(){
+  vector<testing_probability> testing_protocol;
+  if(GLOBAL.TESTING_PROTOCOL==Testing_Protocol::testing_protocol_file_read){
+  std::cout<<std::endl<<"Inside init_testing_protocol";
+  auto testProtJSON = readJSONFile(GLOBAL.input_base + GLOBAL.testing_protocol_filename);
+
+  testing_protocol.reserve(testProtJSON.GetArray().Size());
+  count_type index = 0;
+  for (auto &elem: testProtJSON.GetArray()){
+    testing_probability temp;
+    if((elem.HasMember("num_days")) && (elem["num_days"].GetInt() > 0)){
+    temp.num_days = elem["num_days"].GetInt();
+    if(elem.HasMember("test_false_positive")){
+      GLOBAL.TEST_FALSE_POSITIVE = elem["test_false_positive"].GetDouble();
+    }
+    if(elem.HasMember("test_false_negative")){
+      GLOBAL.TEST_FALSE_NEGATIVE = elem["test_false_negative"].GetDouble();
+    }
+    if(elem.HasMember("prob_test_index_symptomatic")){
+      temp.prob_test_index_symptomatic = elem["prob_test_index_symptomatic"].GetDouble();
+    }
+    if(elem.HasMember("prob_test_index_hospitalised")){
+      temp.prob_test_index_hospitalised = elem["prob_test_index_hospitalised"].GetDouble();
+    }
+
+    //Testing probabilities for household networks
+
+    if(elem.HasMember("prob_test_positive_symptomatic")){
+      for(auto &probmap : elem["prob_test_positive_symptomatic"].GetObject()){
+        temp.prob_test_positive_symptomatic[static_cast<InteractionType>(probmap.name.GetString())] = probmap.value.GetDouble(); //have to static cast? how?
+      }
+    }
+
+    if(elem.HasMember("prob_test_hospitalised_symptomatic")){
+      for(auto &probmap : elem["prob_test_hospitalised_symptomatic"].GetObject()){
+        temp.prob_test_hospitalised_symptomatic[static_cast<InteractionType>(probmap.name.GetString())] = probmap.value.GetDouble();
+      }
+    }
+
+    if(elem.HasMember("prob_test_symptomatic_symptomatic")){
+      for(auto &probmap : elem["prob_test_symptomatic_symptomatic"].GetObject()){
+        temp.prob_test_symptomatic_symptomatic[static_cast<InteractionType>(probmap.name.GetString())] = probmap.value.GetDouble();
+      }
+    }
+
+    if(elem.HasMember("prob_test_positive_asymptomatic")){
+      for(auto &probmap : elem["prob_test_positive_asymptomatic"].GetObject()){
+        temp.prob_test_positive_asymptomatic[static_cast<InteractionType>(probmap.name.GetString())] = probmap.value.GetDouble();
+      }
+    }
+
+    if(elem.HasMember("prob_test_hospitalised_asymptomatic")){
+      for(auto &probmap : elem["prob_test_hospitalised_asymptomatic"].GetObject()){
+        temp.prob_test_hospitalised_asymptomatic[static_cast<InteractionType>(probmap.name.GetString())] = probmap.value.GetDouble();
+      }
+    }
+
+    if(elem.HasMember("prob_test_symptomatic_asymptomatic")){
+      for(auto &probmap : elem["prob_test_symptomatic_asymptomatic"].GetObject()){
+        temp.prob_test_symptomatic_asymptomatic[static_cast<InteractionType>(probmap.name.GetString())] = probmap.value.GetDouble();
+      }
+    }
+
+
+    if(elem.HasMember("prob_retest_recovered")){
+      temp.prob_retest_recovered = elem["prob_retest_recovered"].GetDouble();
+    }
+
+    if(elem.HasMember("prob_contact_trace_shospitalisedymptomatic")){
+      for(auto &probmap : elem["prob_contact_trace_symptomatic"].GetObject()){
+        temp.prob_contact_trace_symptomatic[static_cast<InteractionType>(probmap.name.GetString())] = probmap.value.GetDouble();
+      }
+    }
+
+    if(elem.HasMember("prob_contact_trace_hospitalised")){
+      for(auto &probmap : elem["prob_contact_trace_hospitalised"].GetObject()){
+        temp.prob_contact_trace_hospitalised[static_cast<InteractionType>(probmap.name.GetString())] = probmap.value.GetDouble();
+      }
+    }
+
+    if(elem.HasMember("prob_contact_trace_positive")){
+      for(auto &probmap : elem["prob_contact_trace_positive"].GetObject()){
+        temp.prob_contact_trace_positive[static_cast<InteractionType>(probmap.name.GetString())] = probmap.value.GetDouble();
+      }
+    }
+
+    testing_protocol.push_back(temp);
+    print_testing_protocol(index, temp);
+    ++index;
+    }else{
+    std::cout<<std::endl<<"num_days not specified or less than 1. Skipping current index.";
+    assert(false);
+    }
+  }
+  }
+  std::cout<<std::endl<<"Testing Protocal size = "<<testing_protocol.size();
+  return testing_protocol;
+}
+
 double update_interaction_spaces(agent &node, int cur_time, Interaction_Space &i_space)
 {
   //std::cout<<(node.kappa[i_space.id])<<"\t"<<node.infective<<"\t";
@@ -544,6 +676,7 @@ void sample_groups(std::vector<agent> &nodes, std::vector<Interaction_Space> &in
             nodes[temp1].interaction_strength[k].insert({index, int_space.avg_time});
           }
           nodes[temp1].kappa.insert({index, 1});
+          nodes[temp1].spaces.insert(int_space.id);
         }
        
         index++;

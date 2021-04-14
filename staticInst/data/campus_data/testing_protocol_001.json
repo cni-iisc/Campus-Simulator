@@ -1,0 +1,97 @@
+[{
+  "num_days": 1,
+  "prob_test_index_symptomatic" : 0,
+  "prob_test_index_hospitalised" : 0,
+
+  "prob_test_positive_symptomatic" : {
+    "outside_campus" : 0,
+    "Class" : 0,
+    "Hostel" : 0,
+    "Mess" : 0,
+    "Cafeteria" : 0,
+    "Library" : 0,
+    "smaller_networks" : 0
+  },
+
+    "prob_test_hospitalised_symptomatic" : {
+      "outside_campus" : 0,
+      "Class" : 0,
+      "Hostel" : 0,
+      "Mess" : 0,
+      "Cafeteria" : 0,
+      "Library" : 0,
+      "smaller_networks" : 0
+  },
+
+    "prob_test_symptomatic_symptomatic" : {
+    "outside_campus" : 0,
+    "Class" : 0,
+    "Hostel" : 0,
+    "Mess" : 0,
+    "Cafeteria" : 0,
+    "Library" : 0,
+    "smaller_networks" : 0
+  },
+
+    "prob_test_positive_asymptomatic" : {
+      "outside_campus" : 0,
+      "Class" : 0,
+      "Hostel" : 0,
+      "Mess" : 0,
+      "Cafeteria" : 0,
+      "Library" : 0,
+      "Smaller_Networks" : 0
+  },
+
+    "prob_test_hospitalised_asymptomatic" : {
+      "Outside_Campus" : 0,
+      "Class" : 0,
+      "Hostel" : 0,
+      "Mess" : 0,
+      "Cafeteria" : 0,
+      "Library" : 0,
+      "smaller_networks" : 0
+  },
+
+    "prob_test_symptomatic_asymptomatic" : {
+      "outside_campus" : 0,
+      "Class" : 0,
+      "Hostel" : 0,
+      "Mess" : 0,
+      "Cafeteria" : 0,
+      "Library" : 0,
+      "smaller_networks" : 0
+  },
+ 
+  "prob_retest_recovered" : 0,
+
+  "prob_contact_trace_symptomatic" : {
+    "outside_campus" : 0,
+    "Class" : 0,
+    "Hostel" : 0,
+    "Mess" : 0,
+    "Cafeteria" : 0,
+    "Library" : 0,
+    "smaller_networks" : 0
+  },
+
+  "prob_contact_trace_hospitalised" : {
+    "outside_campus" : 0,
+    "Class" : 0,
+    "Hostel" : 0,
+    "Mess" : 0,
+    "Cafeteria" : 0,
+    "Library" : 0,
+    "smaller_networks" : 0
+  },
+
+  "prob_contact_trace_positive" : {
+    "outside_campus" : 0,
+    "Class" : 0,
+    "Hostel" : 0,
+    "Mess" : 0,
+    "Cafeteria" : 0,
+    "Library" : 0,
+    "smaller_networks" : 0
+  }
+}]

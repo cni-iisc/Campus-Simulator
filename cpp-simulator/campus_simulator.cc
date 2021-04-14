@@ -11,6 +11,7 @@
 #include "campus_updates.h"
 #include "campus_simulator.h"
 #include "campus_interventions.h"
+#include "campus_testing.h"
 //#include "outputs.h"
 
 plot_data_struct run_campus_simulator(){
@@ -31,7 +32,7 @@ plot_data_struct run_campus_simulator(){
   //TODO: Read interaction_spaces.json and assign it to interaction spaces
   //auto nbr_cells = init_nbr_cells(); 
   auto intv_params = init_intervention_params();
-  //auto testing_protocol_file_read = init_testing_protocol();
+  auto testing_protocol_file_read = init_testing_protocol();
 
 
   //auto community_dist_matrix = compute_community_distances(communities);
@@ -258,6 +259,11 @@ plot_data_struct run_campus_simulator(){
 		plot_data.nums["num_affected"].push_back({time_step, {n_affected}});
 		plot_data.nums["num_cases"].push_back({time_step, {n_cases}});
 		update_all_kappa(nodes, interaction_spaces, intv_params, time_step, day);
+		if(GLOBAL.ENABLE_TESTING){
+			update_test_status(nodes, time_step);
+			update_infection_testing(nodes, homes, time_step);
+		    update_test_request(nodes, homes, workplaces, communities, nbr_cells, time_step,testing_protocol_file_read);
+		}
 		cafeteria_reset(nodes, interaction_spaces, day);
 		library_reset(nodes, interaction_spaces, day);
 	}

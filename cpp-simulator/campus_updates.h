@@ -43,4 +43,6 @@ void library_active_duration(std::vector<agent> &nodes, std::vector<Interaction_
 void library_reset(std::vector<agent> &nodes, std::vector<Interaction_Space> &interaction_spaces, int day);
 //update_all_kappa(nodes, homes, workplaces, communities, nbr_cells, intv_params, time_step);
 
+std::vector<testing_probability> init_testing_protocol();
+
 #endif

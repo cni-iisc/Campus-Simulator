@@ -124,61 +124,30 @@ struct testing_probability{
   count_type num_days = 0; //number of days for which this a protocol is active.
   double prob_test_index_symptomatic = 0;
   double prob_test_index_hospitalised = 0;
-
-  double prob_test_household_positive_symptomatic = 0; // network_indexcase_contact
-  double prob_test_household_hospitalised_symptomatic = 0;
-  double prob_test_household_symptomatic_symptomatic = 0;
-  double prob_test_household_positive_asymptomatic = 0;
-  double prob_test_household_hospitalised_asymptomatic = 0;
-  double prob_test_household_symptomatic_asymptomatic = 0;
-
-  double prob_test_workplace_positive_symptomatic = 0;
-  double prob_test_workplace_hospitalised_symptomatic = 0;
-  double prob_test_workplace_symptomatic_symptomatic = 0;  
-  double prob_test_workplace_positive_asymptomatic = 0;
-  double prob_test_workplace_hospitalised_asymptomatic = 0;
-  double prob_test_workplace_symptomatic_asymptomatic = 0;
   
-  double prob_test_random_community_positive_symptomatic = 0;
-  double prob_test_random_community_hospitalised_symptomatic = 0;
-  double prob_test_random_community_symptomatic_symptomatic = 0;
-  double prob_test_random_community_positive_asymptomatic = 0;
-  double prob_test_random_community_hospitalised_asymptomatic = 0;
-  double prob_test_random_community_symptomatic_asymptomatic = 0;
+  std::unordered_map<InteractionType, double> prob_test_positive_symptomatic; //probability that contact of symptomatic individual who tests positive is tested
+  std::unordered_map<InteractionType, double> prob_test_hospitalised_symptomatic; //probability that contact of symptomatic individual who requires hospitalisation is tested
+  std::unordered_map<InteractionType, double> prob_test_symptomatic_symptomatic; //probability that contact of symptomatic individual who is symptomatic is tested ?? doubt
+  std::unordered_map<InteractionType, double> prob_test_positive_asymptomatic; //probability that contact of asymptomatic individual who tests positive is tested
+  std::unordered_map<InteractionType, double> prob_test_hospitalised_asymptomatic; //probability that contact of asymptomatic individual who tests positive is tested
+  std::unordered_map<InteractionType, double> prob_test_symptomatic_asymptomatic; //probability that contact of asymptomatic individual who tests positive is tested ?? doubt
+  std::unordered_map<InteractionType, double> prob_contact_trace_positive; //probability that contact of asymptomatic individual who tests positive is tested
+  std::unordered_map<InteractionType, double> prob_contact_trace_hospitalised; //probability that contact of asymptomatic individual who tests positive is tested
+  std::unordered_map<InteractionType, double> prob_contact_trace_symptomatic; //probability that contact of asymptomatic individual who tests positive is tested ?? doubt
 
-  double prob_test_neighbourhood_positive_symptomatic = 0;
-  double prob_test_neighbourhood_hospitalised_symptomatic = 0;
-  double prob_test_neighbourhood_symptomatic_symptomatic = 0;
-  double prob_test_neighbourhood_positive_asymptomatic = 0;
-  double prob_test_neighbourhood_hospitalised_asymptomatic = 0;
-  double prob_test_neighbourhood_symptomatic_asymptomatic = 0;
- 
-  double prob_test_school_positive_symptomatic = 0;
-  double prob_test_school_hospitalised_symptomatic = 0;
-  double prob_test_school_symptomatic_symptomatic = 0;
-  double prob_test_school_positive_asymptomatic = 0;
-  double prob_test_school_hospitalised_asymptomatic = 0;
-  double prob_test_school_symptomatic_asymptomatic = 0;
- 
+  
   double prob_retest_recovered = 0;
-  
-  double prob_contact_trace_household_symptomatic = 0;
-  double prob_contact_trace_project_symptomatic = 0;
-  double prob_contact_trace_random_community_symptomatic = 0;
-  double prob_contact_trace_neighbourhood_symptomatic = 0;
-  double prob_contact_trace_class_symptomatic = 0;
 
-  double prob_contact_trace_household_hospitalised = 0;
-  double prob_contact_trace_project_hospitalised = 0;
-  double prob_contact_trace_random_community_hospitalised = 0;
-  double prob_contact_trace_neighbourhood_hospitalised = 0;
-  double prob_contact_trace_class_hospitalised = 0;
-
-  double prob_contact_trace_household_positive = 0;
-  double prob_contact_trace_project_positive = 0;
-  double prob_contact_trace_random_community_positive = 0;
-  double prob_contact_trace_neighbourhood_positive = 0;
-  double prob_contact_trace_class_positive = 0;
+  testing_probability(){
+    for (int i = 0; i < static_cast<int>InteractionType::count; i++){
+      prob_test_positive_symptomatic.push_back(0);
+      prob_test_hospitalised_symptomatic.push_back(0);
+      prob_test_symptomatic_symptomatic.push_back(0);
+      prob_test_positive_asymptomatic.push_back(0);
+      prob_test_hospitalised_asymptomatic.push_back(0);
+      prob_test_symptomatic_asymptomatic.push_back(0);
+    }
+  }
 };
 
   
@@ -482,13 +451,13 @@ struct global_params{
   double MIN_RANDOM_COMMUNITY_SIZE = 2; //Min and Max number of households in a random community.
   double MAX_RANDOM_COMMUNITY_SIZE = 5;
   
-  bool ENABLE_TESTING = false;
+  bool ENABLE_TESTING = true;
   double TEST_FALSE_NEGATIVE = 0; //Probability of a true positive person tests negative
   double TEST_FALSE_POSITIVE = 0; //Probability of a true negative person tests positive
-  Testing_Protocol TESTING_PROTOCOL=Testing_Protocol::test_household;
+  Testing_Protocol TESTING_PROTOCOL=Testing_Protocol::testing_protocol_file_read;
   double TIME_TO_TEST_POSITIVE = 3;
   int MINIMUM_TEST_INTERVAL = 7; //Minumum duration between two consecutive tests
-  std::string testing_protocol_filename = "testing_protocol.json";
+  std::string testing_protocol_filename = "testing_protocol_001.json";
 
 };
 extern global_params GLOBAL;
@@ -569,7 +538,8 @@ enum class InteractionType {
   mess = 3,
   cafeteria = 4,
   library = 5,
-  smaller_networks = 100
+  smaller_networks = 100,
+  count = 7
 };
 
 //Default workplace value for homebound individuals.

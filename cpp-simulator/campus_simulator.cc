@@ -260,9 +260,9 @@ plot_data_struct run_campus_simulator(){
 		plot_data.nums["num_cases"].push_back({time_step, {n_cases}});
 		update_all_kappa(nodes, interaction_spaces, intv_params, time_step, day);
 		if(GLOBAL.ENABLE_TESTING){
-			update_test_status(nodes, time_step);
-			update_infection_testing(nodes, homes, time_step);
-		    update_test_request(nodes, homes, workplaces, communities, nbr_cells, time_step,testing_protocol_file_read);
+			//update_test_status(nodes, time_step);
+			update_infection_testing(nodes, interaction_spaces, time_step);
+		    set_test_request_fileread(nodes,interaction_spaces, testing_protocol_file_read, time_step);
 		}
 		cafeteria_reset(nodes, interaction_spaces, day);
 		library_reset(nodes, interaction_spaces, day);

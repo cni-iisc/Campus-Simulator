@@ -120,32 +120,43 @@ const double STATE_TRAN[][3] =
    {0.2730000,   0.7090000,   0.5000000}
   };
 
+enum class InteractionType {
+  outside_campus = 0,
+  classroom = 1,
+  hostel = 2,
+  mess = 3,
+  cafeteria = 4,
+  library = 5,
+  smaller_networks = 6,
+  count = 7
+};
+
 struct testing_probability{
   count_type num_days = 0; //number of days for which this a protocol is active.
   double prob_test_index_symptomatic = 0;
   double prob_test_index_hospitalised = 0;
   
-  std::unordered_map<InteractionType, double> prob_test_positive_symptomatic; //probability that contact of symptomatic individual who tests positive is tested
-  std::unordered_map<InteractionType, double> prob_test_hospitalised_symptomatic; //probability that contact of symptomatic individual who requires hospitalisation is tested
-  std::unordered_map<InteractionType, double> prob_test_symptomatic_symptomatic; //probability that contact of symptomatic individual who is symptomatic is tested ?? doubt
-  std::unordered_map<InteractionType, double> prob_test_positive_asymptomatic; //probability that contact of asymptomatic individual who tests positive is tested
-  std::unordered_map<InteractionType, double> prob_test_hospitalised_asymptomatic; //probability that contact of asymptomatic individual who tests positive is tested
-  std::unordered_map<InteractionType, double> prob_test_symptomatic_asymptomatic; //probability that contact of asymptomatic individual who tests positive is tested ?? doubt
-  std::unordered_map<InteractionType, double> prob_contact_trace_positive; //probability that contact of asymptomatic individual who tests positive is tested
-  std::unordered_map<InteractionType, double> prob_contact_trace_hospitalised; //probability that contact of asymptomatic individual who tests positive is tested
-  std::unordered_map<InteractionType, double> prob_contact_trace_symptomatic; //probability that contact of asymptomatic individual who tests positive is tested ?? doubt
+  std::unordered_map<int, double> prob_test_positive_symptomatic; //probability that contact of symptomatic individual who tests positive is tested
+  std::unordered_map<int, double> prob_test_hospitalised_symptomatic; //probability that contact of symptomatic individual who requires hospitalisation is tested
+  std::unordered_map<int, double> prob_test_symptomatic_symptomatic; //probability that contact of symptomatic individual who is symptomatic is tested ?? doubt
+  std::unordered_map<int, double> prob_test_positive_asymptomatic; //probability that contact of asymptomatic individual who tests positive is tested
+  std::unordered_map<int, double> prob_test_hospitalised_asymptomatic; //probability that contact of asymptomatic individual who tests positive is tested
+  std::unordered_map<int, double> prob_test_symptomatic_asymptomatic; //probability that contact of asymptomatic individual who tests positive is tested ?? doubt
+  std::unordered_map<int, double> prob_contact_trace_positive; //probability that contact of asymptomatic individual who tests positive is tested
+  std::unordered_map<int, double> prob_contact_trace_hospitalised; //probability that contact of asymptomatic individual who tests positive is tested
+  std::unordered_map<int, double> prob_contact_trace_symptomatic; //probability that contact of asymptomatic individual who tests positive is tested ?? doubt
 
   
   double prob_retest_recovered = 0;
 
   testing_probability(){
-    for (int i = 0; i < static_cast<int>InteractionType::count; i++){
-      prob_test_positive_symptomatic.push_back(0);
-      prob_test_hospitalised_symptomatic.push_back(0);
-      prob_test_symptomatic_symptomatic.push_back(0);
-      prob_test_positive_asymptomatic.push_back(0);
-      prob_test_hospitalised_asymptomatic.push_back(0);
-      prob_test_symptomatic_asymptomatic.push_back(0);
+    for (int i = 0; i < static_cast<int>(InteractionType::count); i++){
+      prob_test_positive_symptomatic.insert({i, 0});
+      prob_test_hospitalised_symptomatic.insert({i, 0});
+      prob_test_symptomatic_symptomatic.insert({i, 0});
+      prob_test_positive_asymptomatic.insert({i, 0});
+      prob_test_hospitalised_asymptomatic.insert({i, 0});
+      prob_test_symptomatic_asymptomatic.insert({i, 0});
     }
   }
 };
@@ -531,16 +542,6 @@ enum class OfficeType{
    hospital = 5
 };
 
-enum class InteractionType {
-  outside_campus = 0,
-  classroom = 1,
-  hostel = 2,
-  mess = 3,
-  cafeteria = 4,
-  library = 5,
-  smaller_networks = 100,
-  count = 7
-};
 
 //Default workplace value for homebound individuals.
 const int WORKPLACE_HOME = -1;

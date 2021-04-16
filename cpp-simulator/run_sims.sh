@@ -21,15 +21,15 @@ INTERVENTION_ARRAY=(no_intervention case_isolation class_isolation lockdown cust
 #lockdown - index 3
 INTERVENTION_NAME=${INTERVENTION_ARRAY[${INTERVENTION_ID}]}
 
-SRCNAME="/Users/Minhaas/CODING/iisc/campus_simulator/markov_simuls/staticInst/data/campus_outputs"
+SRCNAME="/Users/Minhaas/CODING/iisc/campus_simulator/staticInst/data/campus_outputs"
 
 #Folder (PRTNAME) name should be changed for every intervention - should be the same as intervention name
-PRTNAME="/Users/Minhaas/CODING/iisc/campus_simulator/markov_simuls/staticInst/data/campus_outputs/plots_data/$INTERVENTION_NAME" 
+PRTNAME="/Users/Minhaas/CODING/iisc/campus_simulator/staticInst/data/campus_outputs/plots_data/$INTERVENTION_NAME" 
 
-num_affected="/Users/Minhaas/CODING/iisc/campus_simulator/markov_simuls/staticInst/data/campus_outputs/num_affected.csv"
-num_cases="/Users/Minhaas/CODING/iisc/campus_simulator/markov_simuls/staticInst/data/campus_outputs/num_cases.csv"
-num_fatalities="/Users/Minhaas/CODING/iisc/campus_simulator/markov_simuls/staticInst/data/campus_outputs/num_fatalities.csv"
-num_recovered="/Users/Minhaas/CODING/iisc/campus_simulator/markov_simuls/staticInst/data/campus_outputs/num_recovered.csv"
+num_affected="/Users/Minhaas/CODING/iisc/campus_simulator/staticInst/data/campus_outputs/num_affected.csv"
+num_cases="/Users/Minhaas/CODING/iisc/campus_simulator/staticInst/data/campus_outputs/num_cases.csv"
+num_fatalities="/Users/Minhaas/CODING/iisc/campus_simulator/staticInst/data/campus_outputs/num_fatalities.csv"
+num_recovered="/Users/Minhaas/CODING/iisc/campus_simulator/staticInst/data/campus_outputs/num_recovered.csv"
 
 #make clean
 make -f makefile_np all
@@ -38,15 +38,15 @@ mkdir $PRTNAME
 
 for sim in {1..10}
 do 
-./drive_simulator --input_directory /Users/Minhaas/CODING/iisc/campus_simulator/markov_simuls/staticInst/data/campus_data --output_directory /Users/Minhaas/CODING/iisc/campus_simulator/markov_simuls/staticInst/data/campus_outputs --SEED_FIXED_NUMBER  --INIT_FIXED_NUMBER_INFECTED $SEED_VALUE
+./drive_simulator --input_directory /Users/Minhaas/CODING/iisc/campus_simulator/staticInst/data/campus_data --output_directory /Users/Minhaas/CODING/iisc/campus_simulator/staticInst/data/campus_outputs --SEED_FIXED_NUMBER  --INIT_FIXED_NUMBER_INFECTED $SEED_VALUE --ENABLE_TESTING --testing_protocol_filename testing_protocol_001.json
 echo 
 echo "----------------------------------------$sim RUN DONE------------------------------------------"
 
 #Folder names should be same as PRTNAME & should be for every intervention - should be the same as intervention name  
-DST_NUM_AFFECTED="/Users/Minhaas/CODING/iisc/campus_simulator/markov_simuls/staticInst/data/campus_outputs/plots_data/$INTERVENTION_NAME/num_affected_$sim.csv"
-DST_NUM_CASES="/Users/Minhaas/CODING/iisc/campus_simulator/markov_simuls/staticInst/data/campus_outputs/plots_data/$INTERVENTION_NAME/num_cases_$sim.csv"
-DST_NUM_FATALITIES="/Users/Minhaas/CODING/iisc/campus_simulator/markov_simuls/staticInst/data/campus_outputs/plots_data/$INTERVENTION_NAME/num_fatalities_$sim.csv"
-DST_NUM_RECOVERED="/Users/Minhaas/CODING/iisc/campus_simulator/markov_simuls/staticInst/data/campus_outputs/plots_data/$INTERVENTION_NAME/num_recovered_$sim.csv"
+DST_NUM_AFFECTED="/Users/Minhaas/CODING/iisc/campus_simulator/staticInst/data/campus_outputs/plots_data/$INTERVENTION_NAME/num_affected_$sim.csv"
+DST_NUM_CASES="/Users/Minhaas/CODING/iisc/campus_simulator/staticInst/data/campus_outputs/plots_data/$INTERVENTION_NAME/num_cases_$sim.csv"
+DST_NUM_FATALITIES="/Users/Minhaas/CODING/iisc/campus_simulator/staticInst/data/campus_outputs/plots_data/$INTERVENTION_NAME/num_fatalities_$sim.csv"
+DST_NUM_RECOVERED="/Users/Minhaas/CODING/iisc/campus_simulator/staticInst/data/campus_outputs/plots_data/$INTERVENTION_NAME/num_recovered_$sim.csv"
 
 cp $num_affected $DST_NUM_AFFECTED 
 cp $num_cases $DST_NUM_CASES

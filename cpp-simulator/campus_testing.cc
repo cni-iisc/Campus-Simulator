@@ -1,28 +1,67 @@
 //Copyright [2020] [Indian Institute of Science, Bangalore & Tata Institute of Fundamental Research, Mumbai]
 //SPDX-License-Identifier: Apache-2.0
 #include "models.h"
-#include "testing.h"
+#include "campus_testing.h"
 #include "campus_interventions.h"
+#include "campus_updates.h"
 #include <cassert>
+#include <cstdio>
+#include <stdio.h>
+#include <stdlib.h>
+#include <iostream>
 using std::vector;
 
 
-void reset_nbr_cell_index_stats(matrix<nbr_cell>& nbr_cells){
-	count_type size_x = nbr_cells.size();
-	for(count_type i=0 ; i < size_x ; ++i){
-		count_type size_y = nbr_cells[i].size();
-		for(count_type j=0; j<size_y; ++j){
-			nbr_cells[i][j].num_index_hospitalised = 0;
-			nbr_cells[i][j].num_index_positive = 0;
-			nbr_cells[i][j].num_index_symptomatic = 0;
+
+// void reset_nbr_cell_index_stats(matrix<nbr_cell>& nbr_cells){
+// 	count_type size_x = nbr_cells.size();
+// 	for(count_type i=0 ; i < size_x ; ++i){
+// 		count_type size_y = nbr_cells[i].size();
+// 		for(count_type j=0; j<size_y; ++j){
+// 			nbr_cells[i][j].num_index_hospitalised = 0;
+// 			nbr_cells[i][j].num_index_positive = 0;
+// 			nbr_cells[i][j].num_index_symptomatic = 0;
+// 		}
+// 	}
+// }
+
+void test_contact_trace(count_type node_index, count_type interaction_index, std::vector<agent>& nodes, std::vector<Interaction_Space>& ispaces, double probability_contact_trace, double probability_test_symptomatic, double probability_test_asymptomatic, count_type current_time ){
+	for(auto& space : nodes[node_index].spaces){
+		if(ispaces[space].interaction_type == static_cast<InteractionType>(interaction_index)){
+			for(auto &individual: ispaces[space].individuals[current_time]){
+				if(bernoulli(probability_contact_trace)){//contact trace a household individual with this probability.
+				  nodes[individual].test_status.contact_traced_epoch = current_time;
+				  if(nodes[individual].disease_label == DiseaseLabel::asymptomatic){
+					nodes[individual].disease_label = DiseaseLabel::primary_contact;
+				  }
+				  if((current_time - nodes[individual].test_status.tested_epoch
+						> GLOBAL.SIM_STEPS_PER_DAY*GLOBAL.MINIMUM_TEST_INTERVAL) && 
+					!nodes[individual].test_status.tested_positive){//If the individual was not tested yet.
+					if(nodes[individual].infection_status == Progression::symptomatic &&
+					 bernoulli(probability_test_symptomatic)){
+					  nodes[individual].test_status.test_requested = true;
+					  nodes[individual].test_status.node_test_trigger = test_trigger::contact_traced;
+					}
+					else if((nodes[individual].infection_status == Progression::susceptible ||
+							nodes[individual].infection_status == Progression::exposed ||
+							nodes[individual].infection_status == Progression::infective ||
+							(nodes[individual].infection_status == Progression::recovered &&
+							 !nodes[individual].entered_hospitalised_state)) && //could remove this check of entered hospital as we are already checking if the node ever tested positive.
+							bernoulli(probability_test_asymptomatic)){
+					  nodes[individual].test_status.test_requested = true;
+					  nodes[individual].test_status.node_test_trigger = test_trigger::contact_traced;
+					}
+				  }
+				}
+			}
 		}
 	}
 }
 
 void set_test_request(vector<agent>& nodes,
-		      const vector<Interaction_Space>& ispaces,
-		      const testing_probability probabilities,
-		      const count_type current_time){
+		      std::vector<Interaction_Space>& ispaces,
+		      testing_probability probabilities,
+		      count_type current_time){
 	
   for(count_type i=0; i<nodes.size(); ++i){
 	double time_since_hospitalised = current_time
@@ -69,19 +108,19 @@ void set_test_request(vector<agent>& nodes,
 	if(!nodes[i].test_status.triggered_contact_trace && nodes[i].test_status.tested_positive){
 		nodes[i].test_status.triggered_contact_trace = true; // record that contact tracing was triggered.
 		if(nodes[i].test_status.node_test_trigger == test_trigger::symptomatic){
-			for(count_type j = 0; j < probabilities.prob_contact_trace_symptomatic.size()){
-				test_contact_trace(i,j,nodes,ispaces,probabilities.prob_contact_trace_symptomatic[static_cast<InteractionType>(j)],probabilities.prob_test_symptomatic_symptomatic[static_cast<InteractionType>(j)],probabilities.prob_test_symptomatic_asymptomatic[static_cast<InteractionType>(j)], current_time);
+			for(count_type j = 0; j < probabilities.prob_contact_trace_symptomatic.size(); j++){
+				test_contact_trace(i,j,nodes,ispaces,probabilities.prob_contact_trace_symptomatic[j],probabilities.prob_test_symptomatic_symptomatic[j],probabilities.prob_test_symptomatic_asymptomatic[j], current_time);
 			}
 		
 		}
 		else if(nodes[i].test_status.node_test_trigger == test_trigger::hospitalised){
-			for(count_type j = 0; j < probabilities.prob_contact_trace_hospitalised.size()){
-				test_contact_trace(i,j,nodes,ispaces,probabilities.prob_contact_trace_hospitalised[static_cast<InteractionType>(j)],probabilities.prob_test_hospitalised_symptomatic[static_cast<InteractionType>(j)],probabilities.prob_test_hospitalised_asymptomatic[static_cast<InteractionType>(j)], current_time);
+			for(count_type j = 0; j < probabilities.prob_contact_trace_hospitalised.size(); j++){
+				test_contact_trace(i,j,nodes,ispaces,probabilities.prob_contact_trace_hospitalised[j],probabilities.prob_test_hospitalised_symptomatic[j],probabilities.prob_test_hospitalised_asymptomatic[j], current_time);
 			}
 		}
 		else if(nodes[i].test_status.node_test_trigger == test_trigger::contact_traced){
-			for(count_type j = 0; j < probabilities.prob_contact_trace_positive.size()){
-				test_contact_trace(i,j,nodes,ispaces,probabilities.prob_contact_trace_positive[static_cast<InteractionType>(j)],probabilities.prob_test_positive_symptomatic[static_cast<InteractionType>(j)],probabilities.prob_test_positive_asymptomatic[static_cast<InteractionType>(j)], current_time);
+			for(count_type j = 0; j < probabilities.prob_contact_trace_positive.size(); j++){
+				test_contact_trace(i,j,nodes,ispaces,probabilities.prob_contact_trace_positive[j],probabilities.prob_test_positive_symptomatic[j],probabilities.prob_test_positive_asymptomatic[j], current_time);
 			}
 		}
 
@@ -125,30 +164,30 @@ void set_test_request(vector<agent>& nodes,
 		// 	test_contact_trace_random_community(i,nodes,homes,probabilities.prob_contact_trace_random_community_positive,probabilities.prob_test_random_community_positive_symptomatic,probabilities.prob_test_random_community_positive_asymptomatic, current_time);
 		// }
 		
-#ifndef DISABLE_CONTACT_TRACE_NBR_CELLS
-		// Test people in neighbourhood cell
-		auto node_nbr_cell_x = homes[nodes[i].home].neighbourhood.cell_x,
-		  node_nbr_cell_y = homes[nodes[i].home].neighbourhood.cell_y;
-		if(nodes[i].test_status.node_test_trigger == test_trigger::symptomatic){
-		  nbr_cells[node_nbr_cell_x][node_nbr_cell_y].num_index_symptomatic += 1;
-		  //test_contact_trace_neighbourhood_cell(i,nodes,homes,nbr_cells,probabilities.prob_contact_trace_neighbourhood_symptomatic,probabilities.prob_test_neighbourhood_symptomatic_symptomatic,probabilities.prob_test_neighbourhood_symptomatic_asymptomatic, current_time);
-		}
-		else if(nodes[i].test_status.node_test_trigger == test_trigger::hospitalised){
-		  nbr_cells[node_nbr_cell_x][node_nbr_cell_y].num_index_hospitalised += 1;
-		  //test_contact_trace_neighbourhood_cell(i,nodes,homes,nbr_cells,probabilities.prob_contact_trace_neighbourhood_hospitalised,probabilities.prob_test_neighbourhood_hospitalised_symptomatic,probabilities.prob_test_neighbourhood_hospitalised_asymptomatic, current_time);
-		}
-		else if(nodes[i].test_status.node_test_trigger == test_trigger::contact_traced){
-		  nbr_cells[node_nbr_cell_x][node_nbr_cell_y].num_index_positive += 1;
-		  //test_contact_trace_neighbourhood_cell(i,nodes,homes,nbr_cells,probabilities.prob_contact_trace_neighbourhood_positive,probabilities.prob_test_neighbourhood_positive_symptomatic,probabilities.prob_test_neighbourhood_positive_asymptomatic, current_time);
-		}
-#endif
+// #ifndef DISABLE_CONTACT_TRACE_NBR_CELLS
+// 		// Test people in neighbourhood cell
+// 		auto node_nbr_cell_x = homes[nodes[i].home].neighbourhood.cell_x,
+// 		  node_nbr_cell_y = homes[nodes[i].home].neighbourhood.cell_y;
+// 		if(nodes[i].test_status.node_test_trigger == test_trigger::symptomatic){
+// 		  nbr_cells[node_nbr_cell_x][node_nbr_cell_y].num_index_symptomatic += 1;
+// 		  //test_contact_trace_neighbourhood_cell(i,nodes,homes,nbr_cells,probabilities.prob_contact_trace_neighbourhood_symptomatic,probabilities.prob_test_neighbourhood_symptomatic_symptomatic,probabilities.prob_test_neighbourhood_symptomatic_asymptomatic, current_time);
+// 		}
+// 		else if(nodes[i].test_status.node_test_trigger == test_trigger::hospitalised){
+// 		  nbr_cells[node_nbr_cell_x][node_nbr_cell_y].num_index_hospitalised += 1;
+// 		  //test_contact_trace_neighbourhood_cell(i,nodes,homes,nbr_cells,probabilities.prob_contact_trace_neighbourhood_hospitalised,probabilities.prob_test_neighbourhood_hospitalised_symptomatic,probabilities.prob_test_neighbourhood_hospitalised_asymptomatic, current_time);
+// 		}
+// 		else if(nodes[i].test_status.node_test_trigger == test_trigger::contact_traced){
+// 		  nbr_cells[node_nbr_cell_x][node_nbr_cell_y].num_index_positive += 1;
+// 		  //test_contact_trace_neighbourhood_cell(i,nodes,homes,nbr_cells,probabilities.prob_contact_trace_neighbourhood_positive,probabilities.prob_test_neighbourhood_positive_symptomatic,probabilities.prob_test_neighbourhood_positive_asymptomatic, current_time);
+// 		}
+// #endif
 	}
   }
-#ifndef DISABLE_CONTACT_TRACE_NBR_CELLS
-  // Test people in neighbourhood cell
-  contact_trace_nbr_cells(nodes, homes, nbr_cells, probabilities, current_time);
-  reset_nbr_cell_index_stats(nbr_cells);
-#endif
+// #ifndef DISABLE_CONTACT_TRACE_NBR_CELLS
+//   // Test people in neighbourhood cell
+//   contact_trace_nbr_cells(nodes, homes, nbr_cells, probabilities, current_time);
+//   reset_nbr_cell_index_stats(nbr_cells);
+// #endif
 
 }
 
@@ -203,8 +242,8 @@ void update_infection_testing(vector<agent>& nodes, vector<Interaction_Space>& i
 
 }
 
-void set_test_request_fileread(vector<agent>& nodes, const vector<Interaction_Space>& ispaces,						 
-						 const vector<testing_probability>& testing_probability_vector, const int cur_time){
+void set_test_request_fileread(std::vector<agent>& nodes, std::vector<Interaction_Space>& ispaces,						 
+						 std::vector<testing_probability>& testing_probability_vector, int cur_time){
   count_type time_threshold = GLOBAL.NUM_DAYS_BEFORE_INTERVENTIONS;
   count_type cur_day = cur_time/GLOBAL.SIM_STEPS_PER_DAY; //get current day. Division to avoid multiplication inside for loop.
   const auto SIZE = testing_probability_vector.size();
@@ -222,39 +261,6 @@ void set_test_request_fileread(vector<agent>& nodes, const vector<Interaction_Sp
 	}
   }
   set_test_request(nodes, ispaces, testing_probability_vector[intv_index], cur_time);
-}
-
-void test_contact_trace(count_type node_index, count_type interaction_index, vector<agent>& nodes, const vector<Interaction_Space>& ispaces, double probability_contact_trace, double probability_test_symptomatic, double probability_test_asymptomatic, const count_type current_time ){
-	for(auto& space : nodes[node_index].spaces){
-		if(ispaces[space].interaction_type == static_cast<InteractionType>(interaction_index)){
-			for(auto individual: ispaces[space].individuals){
-				if(bernoulli(probability_contact_trace)){//contact trace a household individual with this probability.
-				  nodes[individual].test_status.contact_traced_epoch = current_time;
-				  if(nodes[individual].disease_label == DiseaseLabel::asymptomatic){
-					nodes[individual].disease_label = DiseaseLabel::primary_contact;
-				  }
-				  if((current_time - nodes[individual].test_status.tested_epoch
-						> GLOBAL.SIM_STEPS_PER_DAY*GLOBAL.MINIMUM_TEST_INTERVAL) && 
-					!nodes[individual].test_status.tested_positive){//If the individual was not tested yet.
-					if(nodes[individual].infection_status == Progression::symptomatic &&
-					 bernoulli(probabiindividuallity_test_symptomatic)){
-					  nodes[individual].test_status.test_requested = true;
-					  nodes[individual].test_status.node_test_trigger = test_trigger::contact_traced;
-					}
-					else if((nodes[individual].infection_status == Progression::susceptible ||
-							nodes[individual].infection_status == Progression::exposed ||
-							nodes[individual].infection_status == Progression::infective ||
-							(nodes[individual].infection_status == Progression::recovered &&
-							 !nodes[individual].entered_hospitalised_state)) && //could remove this check of entered hospital as we are already checking if the node ever tested positive.
-							bernoulli(probability_test_asymptomatic)){
-					  nodes[individual].test_status.test_requested = true;
-					  nodes[individual].test_status.node_test_trigger = test_trigger::contact_traced;
-					}
-				  }
-				}
-			}
-		}
-	}
 }
 
 

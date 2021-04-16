@@ -223,6 +223,13 @@ plot_data_struct run_campus_simulator(){
 		count_type n_infective = 0;
 		count_type n_recovered = 0;
 		count_type n_cases = 0;
+		count_type n_requested_tests = 0;
+		count_type n_tested_positive = 0;
+		count_type n_mild_symptomatic_tested = 0;
+		count_type n_primary_contact = 0;
+		count_type n_moderate_symptomatic_tested = 0;
+		count_type n_severe_symptomatic_tested = 0;
+		count_type n_icu = 0;
 		//count_type n_symptomatic = 0;
 		day = (time_step/4)%GLOBAL.PERIODICITY;
 		for(count_type j = 0; j < nodes.size(); ++j){
@@ -243,6 +250,28 @@ plot_data_struct run_campus_simulator(){
 			/*if(node_update_status.new_infection){
 			++n_cases;
 	  		}*/
+			if(nodes[j].disease_label == DiseaseLabel::moderate_symptomatic_tested){
+		  		n_moderate_symptomatic_tested +=1;
+	  		}
+      		if(nodes[j].disease_label == DiseaseLabel::severe_symptomatic_tested){
+		  		n_severe_symptomatic_tested +=1;
+	  		}
+	  		if(nodes[j].disease_label == DiseaseLabel::icu){
+		  		n_icu +=1;
+	  		}
+			if(nodes[j].test_status.test_requested){
+		  		n_requested_tests +=1;
+	  		}
+	  		if(nodes[j].test_status.tested_positive){
+		  		n_tested_positive +=1;
+	  		}
+
+			if(nodes[j].disease_label == DiseaseLabel::primary_contact){
+		  		n_primary_contact +=1;
+	  		}
+	 		if(nodes[j].disease_label == DiseaseLabel::mild_symptomatic_tested){
+		  		n_mild_symptomatic_tested +=1;
+	  		}	
 			if(node_update_status.new_symptomatic){
 				n_cases +=1;
 			}

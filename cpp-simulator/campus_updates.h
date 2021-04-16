@@ -45,4 +45,6 @@ void library_reset(std::vector<agent> &nodes, std::vector<Interaction_Space> &in
 
 std::vector<testing_probability> init_testing_protocol();
 
+void print_testing_protocol(const int index, const testing_probability probabilities);
+
 #endif

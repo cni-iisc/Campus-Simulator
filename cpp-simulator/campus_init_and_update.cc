@@ -415,6 +415,7 @@ void print_testing_protocol(const int index, const testing_probability probabili
 
 std::vector<testing_probability> init_testing_protocol(){
   std::vector<testing_probability> testing_protocol;
+  std::cout<<"Function called"<<"\n";
   if(GLOBAL.TESTING_PROTOCOL==Testing_Protocol::testing_protocol_file_read){
   std::cout<<std::endl<<"Inside init_testing_protocol";
   auto testProtJSON = readJSONFile(GLOBAL.input_base + GLOBAL.testing_protocol_filename);

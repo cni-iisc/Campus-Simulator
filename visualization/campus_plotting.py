@@ -8,7 +8,7 @@ DEBUG = False
 CLI_GUI = True
 
 #Change simdir directory to absolute path of markov_simuls/staticInst/data/campus_outputs/plots_data/ folder
-sim_dir = "/Users/Minhaas/CODING/iisc/campus_simulator/markov_simuls/staticInst/data/campus_outputs/plots_data/"
+sim_dir = "/Users/Minhaas/CODING/iisc/campus_simulator/staticInst/data/campus_outputs/plots_data/"
 intv_array = ['no_intervention', 'case_isolation', 'class_isolation', 'lockdown', 'custom_intervention']
 intv_str = {
     0: 'No Intervention',
@@ -144,7 +144,7 @@ plt.tight_layout()
 plt.legend()
 plt.xlabel('Timesteps', fontsize=14)
 plt.ylabel('Cases', fontsize = 14)
-plt.savefig(plots_dir + '/cumulative_cases_all_24032021.png')
+plt.savefig(plots_dir + '/cumulative_cases_all_16Apr_testing_1.0.png')
 
 #Daily cases
 plt.figure(figsize=(16,8))
@@ -159,4 +159,4 @@ plt.tight_layout()
 plt.legend()
 plt.xlabel('Timesteps', fontsize=14)
 plt.ylabel('Cases', fontsize = 14)
-plt.savefig(plots_dir + '/daily_cases_24032021.png')
+plt.savefig(plots_dir + '/daily_cases_16Apr_testing_1.0.png')

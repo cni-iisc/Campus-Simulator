@@ -47,4 +47,8 @@ std::vector<testing_probability> init_testing_protocol();
 
 void print_testing_protocol(const int index, const testing_probability probabilities);
 
+void update_test_request(std::vector<agent>& nodes, std::vector<Interaction_Space>& ispaces, const count_type current_time, std::vector<testing_probability>& testing_protocol);
+
+void update_test_status(std::vector<agent>& nodes, count_type current_time);
+
 #endif

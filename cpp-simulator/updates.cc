@@ -637,6 +637,7 @@ void update_test_request(vector<agent>& nodes, const vector<house>& homes,
 }
 
 void update_test_status(vector<agent>& nodes, count_type current_time){
+	std::cout<<"Inside update_test_status"<<"\n";
   for(auto& node: nodes){
     if(node.test_status.test_requested){
 	  if(node.infection_status == Progression::infective

@@ -342,6 +342,8 @@ void output_csv_files(const std::string& output_directory,
 		//				"critical",
 		//				"dead",
 						"recovered",
+            "tested_positive",
+            "tests_requested"
 		//				"recovered_from_infective",
 		//				"recovered_from_symptomatic",
 		//				"recovered_from_hospitalised",

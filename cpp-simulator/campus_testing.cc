@@ -202,7 +202,7 @@ void set_test_request(vector<agent>& nodes,
 }
 
 
-void update_infection_testing(vector<agent>& nodes, vector<Interaction_Space>& ispaces, count_type current_time){
+void update_infection_testing(std::vector<agent>& nodes, std::vector<Interaction_Space>& ispaces, count_type current_time){
   for(auto& node: nodes){
 	if(node.test_status.state==test_result::positive){
 		if(node.infection_status==Progression::symptomatic){

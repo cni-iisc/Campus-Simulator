@@ -952,7 +952,7 @@ node_update_status update_infection(agent &node, int cur_time, int day)
 
 void update_test_request(std::vector<agent>& nodes, std::vector<Interaction_Space>& ispaces, const count_type current_time, std::vector<testing_probability>& testing_protocol){
   testing_probability probabilities;
-  if(current_time >= GLOBAL.NUM_DAYS_BEFORE_INTERVENTIONS*GLOBAL.SIM_STEPS_PER_DAY){
+  if(current_time >= GLOBAL.NUM_DAYS_BEFORE_INTERVENTIONS){
   // switch(GLOBAL.TESTING_PROTOCOL){
   // case Testing_Protocol::no_testing:
   //   break;
@@ -996,6 +996,7 @@ void update_test_status(std::vector<agent>& nodes, count_type current_time){
     node.test_status.state = bernoulli(GLOBAL.TEST_FALSE_NEGATIVE)?test_result::negative:test_result::positive;
     node.test_status.tested_positive = node.test_status.tested_positive || (node.test_status.state == test_result::positive);
     node.test_status.tested_epoch = current_time;
+    GLOBAL.debug_count_positive ++;
     }
     else if(node.infection_status == Progression::exposed
         && current_time-node.time_of_infection > GLOBAL.SIM_STEPS_PER_DAY*GLOBAL.TIME_TO_TEST_POSITIVE){
@@ -1003,14 +1004,17 @@ void update_test_status(std::vector<agent>& nodes, count_type current_time){
     node.test_status.tested_positive = node.test_status.tested_positive || (node.test_status.state == test_result::positive);
     //We might want to have higher false negative rate here, depending upon updates in the data.
     node.test_status.tested_epoch = current_time;
+    GLOBAL.debug_count_positive ++;
     }
     else{
     // Test could come positive for a succeptible/recovered/dead person
     node.test_status.state = bernoulli(GLOBAL.TEST_FALSE_POSITIVE)?test_result::positive:test_result::negative;
     node.test_status.tested_positive = node.test_status.tested_positive || (node.test_status.state == test_result::positive);
     node.test_status.tested_epoch = current_time;
+    GLOBAL.debug_count_positive ++;
     }
     node.test_status.test_requested = false;
     }
   }
+  //std::cout<<"Debug count positive: "<<GLOBAL.debug_count_positive<<"\t";
 }

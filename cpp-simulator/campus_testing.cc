@@ -83,6 +83,7 @@ void set_test_request(vector<agent>& nodes,
 	  bernoulli(probabilities.prob_test_index_symptomatic) &&
 	  !nodes[i].test_status.tested_positive){		
 		nodes[i].test_status.test_requested = true;
+		GLOBAL.debug_count_tests_requested ++;
 		nodes[i].test_status.node_test_trigger = test_trigger::symptomatic;
 		nodes[i].test_status.contact_traced_epoch = current_time; //This is to ensure that if the node's test turns positive, they are also subjected to restrictions.		
 	}
@@ -92,6 +93,7 @@ void set_test_request(vector<agent>& nodes,
 	  bernoulli(probabilities.prob_test_index_hospitalised) &&
 	  !nodes[i].test_status.tested_positive){
 		nodes[i].test_status.test_requested = true;
+		GLOBAL.debug_count_tests_requested ++;
 		nodes[i].test_status.node_test_trigger = test_trigger::hospitalised;
 		nodes[i].test_status.contact_traced_epoch = current_time; //This is to ensure that if their test turns positive, they are also subjected to contact traced restrictions.
 	}
@@ -100,6 +102,7 @@ void set_test_request(vector<agent>& nodes,
 	  nodes[i].infection_status==Progression::recovered &&
 	  bernoulli(probabilities.prob_retest_recovered)){
 		nodes[i].test_status.test_requested = true;
+		GLOBAL.debug_count_tests_requested ++;
 		nodes[i].test_status.node_test_trigger = test_trigger::re_test;
 	}
 
@@ -188,7 +191,7 @@ void set_test_request(vector<agent>& nodes,
 //   contact_trace_nbr_cells(nodes, homes, nbr_cells, probabilities, current_time);
 //   reset_nbr_cell_index_stats(nbr_cells);
 // #endif
-
+std::cout<<"Tests requested: "<<GLOBAL.debug_count_tests_requested<<"\n";
 }
 
 
@@ -232,6 +235,7 @@ void update_infection_testing(std::vector<agent>& nodes, std::vector<Interaction
 	}
 	if(node.disease_label==DiseaseLabel::primary_contact || node.disease_label==DiseaseLabel::mild_symptomatic_tested || node.disease_label==DiseaseLabel::moderate_symptomatic_tested){
 		if(current_time - node.test_status.contact_traced_epoch <= HOME_QUARANTINE_DAYS*GLOBAL.SIM_STEPS_PER_DAY){
+			//std::cout<<"Day: "<<current_time<<"\t";
 			modify_kappa_case_isolate_node(node, ispaces, current_time);
 		}
 		else{
@@ -245,7 +249,8 @@ void update_infection_testing(std::vector<agent>& nodes, std::vector<Interaction
 void set_test_request_fileread(std::vector<agent>& nodes, std::vector<Interaction_Space>& ispaces,						 
 						 std::vector<testing_probability>& testing_probability_vector, int cur_time){
   count_type time_threshold = GLOBAL.NUM_DAYS_BEFORE_INTERVENTIONS;
-  count_type cur_day = cur_time/GLOBAL.SIM_STEPS_PER_DAY; //get current day. Division to avoid multiplication inside for loop.
+  count_type cur_day = cur_time;
+  //count_type cur_day = cur_time/GLOBAL.SIM_STEPS_PER_DAY; //get current day. Division to avoid multiplication inside for loop.
   const auto SIZE = testing_probability_vector.size();
 
   assert(SIZE > 0);

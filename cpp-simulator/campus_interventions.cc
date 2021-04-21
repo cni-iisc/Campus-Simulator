@@ -27,10 +27,11 @@ void set_compliance(std::vector<agent>& nodes, double compliance_probability){
 void modify_kappa_case_isolate_node(agent &node, std::vector<Interaction_Space> &i_spaces, int day)
 { 
   //std::cout<<"Inside mod"<<"\n";
+  //std::cout<<"Day: "<<day<<"\t";
   node.quarantined = true;
   for (auto &ispace : node.interaction_strength[day])
   {   
-      std::cout<<ispace.first<<"\t";
+      //std::cout<<ispace.first<<"\t";
       switch (i_spaces[ispace.first].interaction_type)
       {
       case InteractionType ::classroom:

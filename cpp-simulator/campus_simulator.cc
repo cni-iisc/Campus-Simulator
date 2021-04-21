@@ -291,9 +291,9 @@ plot_data_struct run_campus_simulator(){
 		plot_data.nums["num_cases"].push_back({time_step, {n_cases}});
 		update_all_kappa(nodes, interaction_spaces, intv_params, time_step, day);
 		if(GLOBAL.ENABLE_TESTING){
-			update_test_status(nodes, time_step);
-			update_infection_testing(nodes, interaction_spaces, time_step);
-		    update_test_request(nodes, interaction_spaces, time_step, testing_protocol_file_read);
+			update_test_status(nodes, day);
+			update_infection_testing(nodes, interaction_spaces, day);
+		    update_test_request(nodes, interaction_spaces, day, testing_protocol_file_read);
 		}
 		plot_data.nums["num_tested_positive"].push_back({time_step, {n_tested_positive}});
 		plot_data.nums["num_tests_requested"].push_back({time_step, {n_requested_tests}});

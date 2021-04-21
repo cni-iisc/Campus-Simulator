@@ -290,7 +290,9 @@ struct global_params{
   double kappa_base_value = 1;
   double kappa_default_lockdown = 0.0;
   double kappa_lib_lockdown;
-  
+  count_type debug_count_positive = 0;
+  count_type debug_count_tests_requested = 0;
+    
   count_type RNG_SEED;
   count_type RNG_SEED_NETWORK;
   double COMPLIANCE_PROBABILITY = 1;

@@ -84,9 +84,11 @@ void set_node_initial_infection(agent &node,
   // node.infective = (node.infection_status == Progression::infective);
 }
 
-void init_config_params(){
+void init_config_params()
+{
   auto config_json = readJSONFile(GLOBAL.input_base + GLOBAL.config_file);
-  for (auto& elem : config_json.GetArray()){
+  for (auto &elem : config_json.GetArray())
+  {
     GLOBAL.MINIMUM_SUBGROUP_SIZE = elem["MIN_GROUP_SIZE"].GetInt();
     GLOBAL.MAXIMUM_SUBGROUP_SIZE = elem["MAX_GROUP_SIZE"].GetInt();
     GLOBAL.BETA_SCALING_FACTOR = elem["BETA_SCALING_FACTOR"].GetDouble();
@@ -157,6 +159,7 @@ std::vector<agent> init_nodes_campus()
     nodes[i].symptomatic_period = gamma(1.0,
                                         GLOBAL.SYMPTOMATIC_PERIOD);
 
+    nodes[i].time_to_test_positive = nodes[i].incubation_period;
     nodes[i].hospital_regular_period = GLOBAL.HOSPITAL_REGULAR_PERIOD;
     nodes[i].hospital_critical_period = GLOBAL.HOSPITAL_CRITICAL_PERIOD;
 
@@ -206,7 +209,7 @@ std::vector<Interaction_Space> init_interaction_spaces()
   count_type index = 0;
 
   for (auto &elem : interactionJSON.GetArray())
-  { 
+  {
     assert(index == elem["id"].GetInt());
     interaction_spaces[index].set(elem["lat"].GetDouble(),
                                   elem["lon"].GetDouble());
@@ -220,34 +223,38 @@ std::vector<Interaction_Space> init_interaction_spaces()
   return interaction_spaces;
 }
 
-Interaction_Space create_interaction_space(double lat, double lon, InteractionType type, double active_duration, int id, double alpha, double beta, std::vector<std::vector<int>> individuals, double avg_time){
- Interaction_Space ispace; 
- ispace.set(lat, lon);
- ispace.interaction_type = type;
- ispace.set_active_duration(active_duration);
- ispace.set_alpha(alpha);
- ispace.set_id(id);
- ispace.set_beta(beta);
- ispace.set_avg_time(avg_time);
- ispace.individuals = individuals;
- return ispace;
+Interaction_Space create_interaction_space(double lat, double lon, InteractionType type, double active_duration, int id, double alpha, double beta, std::vector<std::vector<int> > individuals, double avg_time)
+{
+  Interaction_Space ispace;
+  ispace.set(lat, lon);
+  ispace.interaction_type = type;
+  ispace.set_active_duration(active_duration);
+  ispace.set_alpha(alpha);
+  ispace.set_id(id);
+  ispace.set_beta(beta);
+  ispace.set_avg_time(avg_time);
+  ispace.individuals = individuals;
+  return ispace;
 }
 
-void init_transmission_coefficients(std::vector<Interaction_Space> &interaction_spaces){
+void init_transmission_coefficients(std::vector<Interaction_Space> &interaction_spaces)
+{
   auto transmission_coefficients_json = readJSONFile(GLOBAL.input_base + GLOBAL.transmission_coefficients);
   auto transmission_coefficients_json_size = transmission_coefficients_json.GetArray().Size();
 
   auto size = transmission_coefficients_json_size;
   std::vector<Interaction_Space> transmission_coefficients(size);
   count_type index = 0;
-  for (auto & elem: transmission_coefficients_json.GetArray()){
+  for (auto &elem : transmission_coefficients_json.GetArray())
+  {
     assert(index == elem["type"].GetInt());
     transmission_coefficients[index].interaction_type = static_cast<InteractionType>(elem["type"].GetInt());
     transmission_coefficients[index].set_alpha(elem["alpha"].GetDouble());
     transmission_coefficients[index].set_beta(elem["beta"].GetDouble());
     ++index;
   }
-  for (int i =0; i < interaction_spaces.size(); ++i){
+  for (int i = 0; i < interaction_spaces.size(); ++i)
+  {
     interaction_spaces[i].set_alpha(transmission_coefficients[int(interaction_spaces[i].interaction_type)].alpha);
     interaction_spaces[i].set_beta(transmission_coefficients[int(interaction_spaces[i].interaction_type)].beta);
   }
@@ -255,7 +262,8 @@ void init_transmission_coefficients(std::vector<Interaction_Space> &interaction_
 
 void print_intervention_params(const int index, const intervention_params intv_params)
 {
-  std::cout << std::endl<< "Index : " << index << ". num_days = " << intv_params.num_days;
+  std::cout << std::endl
+            << "Index : " << index << ". num_days = " << intv_params.num_days;
   std::cout << ". Case Isolation : " << intv_params.case_isolation;
   //std::cout<<". Home Quarantine : " << intv_params.home_quarantine;
   std::cout << ". Lockdown : " << intv_params.lockdown;
@@ -266,7 +274,7 @@ void print_intervention_params(const int index, const intervention_params intv_p
   //std::cout<<". community_factor : " << intv_params.community_factor;
   //std::cout<<". neighbourhood_containment : " << intv_params.neighbourhood_containment;
   //std::cout<<". ward_containment : " << intv_params.ward_containment;
-  std::cout<<". compliance : " << intv_params.compliance;
+  std::cout << ". compliance : " << intv_params.compliance;
   //std::cout<<". compliance_hd : " << intv_params.compliance_hd;
   //std::cout<<". trains_active : " << intv_params.trains_active;
   //std::cout<<". fraction_forced_to_take_train : " << intv_params.fraction_forced_to_take_train;
@@ -358,33 +366,41 @@ std::vector<intervention_params> init_intervention_params()
   return intv_params;
 }
 
-void print_testing_protocol(const int index, const testing_probability probabilities){
-  std::cout<<std::endl<<"Index : "<<index<<". num_days = "<<probabilities.num_days;
-  std::cout<<".  prob_test_index_symptomatic:  "<<probabilities.prob_test_index_symptomatic;
-  std::cout<<".  prob_test_index_hospitalised:  "<<probabilities.prob_test_index_hospitalised;
+void print_testing_protocol(const int index, const testing_probability probabilities)
+{
+  std::cout << std::endl
+            << "Index : " << index << ". num_days = " << probabilities.num_days;
+  std::cout << ".  prob_test_index_symptomatic:  " << probabilities.prob_test_index_symptomatic;
+  std::cout << ".  prob_test_index_hospitalised:  " << probabilities.prob_test_index_hospitalised;
 
-  for (auto &prob : probabilities.prob_test_positive_symptomatic){
-    std::cout<<". prob_test_positive_symptomatic for interaction type" << prob.first <<" = " << prob.second; 
+  for (auto &prob : probabilities.prob_test_positive_symptomatic)
+  {
+    std::cout << ". prob_test_positive_symptomatic for interaction type" << prob.first << " = " << prob.second;
   }
 
-  for (auto &prob : probabilities.prob_test_hospitalised_symptomatic){
-    std::cout<<". prob_test_hospitalised_symptomatic for interaction type" << prob.first <<" = " << prob.second; 
+  for (auto &prob : probabilities.prob_test_hospitalised_symptomatic)
+  {
+    std::cout << ". prob_test_hospitalised_symptomatic for interaction type" << prob.first << " = " << prob.second;
   }
 
-  for (auto &prob : probabilities.prob_test_symptomatic_symptomatic){
-    std::cout<<". prob_test_symptomatic_symptomatic for interaction type"<< prob.first <<" = " << prob.second; 
+  for (auto &prob : probabilities.prob_test_symptomatic_symptomatic)
+  {
+    std::cout << ". prob_test_symptomatic_symptomatic for interaction type" << prob.first << " = " << prob.second;
   }
 
-  for (auto &prob : probabilities.prob_test_positive_asymptomatic){
-    std::cout<<". prob_test_positive_asymptomatic for interaction type" << prob.first <<" = " << prob.second; 
+  for (auto &prob : probabilities.prob_test_positive_asymptomatic)
+  {
+    std::cout << ". prob_test_positive_asymptomatic for interaction type" << prob.first << " = " << prob.second;
   }
 
-  for (auto &prob : probabilities.prob_test_hospitalised_asymptomatic){
-    std::cout<<". prob_test_hospitalised_asymptomatic for interaction type" << prob.first <<" = " << prob.second; 
+  for (auto &prob : probabilities.prob_test_hospitalised_asymptomatic)
+  {
+    std::cout << ". prob_test_hospitalised_asymptomatic for interaction type" << prob.first << " = " << prob.second;
   }
 
-  for (auto &prob : probabilities.prob_test_symptomatic_asymptomatic){
-    std::cout<<". prob_test_symptomatic_asymptomatic for interaction type" << prob.first <<" = " << prob.second; 
+  for (auto &prob : probabilities.prob_test_symptomatic_asymptomatic)
+  {
+    std::cout << ". prob_test_symptomatic_asymptomatic for interaction type" << prob.first << " = " << prob.second;
   }
 
   // for(int i = 0; i < probabilities.prob_test_positive_symptomatic.size(); i++){
@@ -411,126 +427,157 @@ void print_testing_protocol(const int index, const testing_probability probabili
   //   std::cout<<". prob_test_symptomatic_asymptomatic for interaction type" << i <<" = " << probabilities.prob_test_symptomatic_asymptomatic[static_cast<InteractionType>(i)];
   // }
 
-  std::cout<<".  prob_retest_recovered:  "<<probabilities.prob_retest_recovered;
-
+  std::cout << ".  prob_retest_recovered:  " << probabilities.prob_retest_recovered;
 }
 
-std::vector<testing_probability> init_testing_protocol(){
+std::vector<testing_probability> init_testing_protocol()
+{
   std::vector<testing_probability> testing_protocol;
-  std::cout<<"Function called"<<"\n";
-  if(GLOBAL.TESTING_PROTOCOL==Testing_Protocol::testing_protocol_file_read){
-  std::cout<<std::endl<<"Inside init_testing_protocol";
-  auto testProtJSON = readJSONFile(GLOBAL.input_base + GLOBAL.testing_protocol_filename);
+  std::cout << "Function called"
+            << "\n";
+  if (GLOBAL.TESTING_PROTOCOL == Testing_Protocol::testing_protocol_file_read)
+  {
+    std::cout << std::endl
+              << "Inside init_testing_protocol";
+    auto testProtJSON = readJSONFile(GLOBAL.input_base + GLOBAL.testing_protocol_filename);
 
-  testing_protocol.reserve(testProtJSON.GetArray().Size());
-  count_type index = 0;
-  count_type num_index = 0;
-  for (auto &elem: testProtJSON.GetArray()){
-    testing_probability temp;
-    if((elem.HasMember("num_days")) && (elem["num_days"].GetInt() > 0)){
-    temp.num_days = elem["num_days"].GetInt();
-    if(elem.HasMember("test_false_positive")){
-      GLOBAL.TEST_FALSE_POSITIVE = elem["test_false_positive"].GetDouble();
-    }
-    if(elem.HasMember("test_false_negative")){
-      GLOBAL.TEST_FALSE_NEGATIVE = elem["test_false_negative"].GetDouble();
-    }
-    if(elem.HasMember("prob_test_index_symptomatic")){
-      temp.prob_test_index_symptomatic = elem["prob_test_index_symptomatic"].GetDouble();
-    }
-    if(elem.HasMember("prob_test_index_hospitalised")){
-      temp.prob_test_index_hospitalised = elem["prob_test_index_hospitalised"].GetDouble();
-    }
+    testing_protocol.reserve(testProtJSON.GetArray().Size());
+    count_type index = 0;
+    count_type num_index = 0;
+    for (auto &elem : testProtJSON.GetArray())
+    {
+      testing_probability temp;
+      if ((elem.HasMember("num_days")) && (elem["num_days"].GetInt() > 0))
+      {
+        temp.num_days = elem["num_days"].GetInt();
+        if (elem.HasMember("test_false_positive"))
+        {
+          GLOBAL.TEST_FALSE_POSITIVE = elem["test_false_positive"].GetDouble();
+        }
+        if (elem.HasMember("test_false_negative"))
+        {
+          GLOBAL.TEST_FALSE_NEGATIVE = elem["test_false_negative"].GetDouble();
+        }
+        if (elem.HasMember("prob_test_index_symptomatic"))
+        {
+          temp.prob_test_index_symptomatic = elem["prob_test_index_symptomatic"].GetDouble();
+        }
+        if (elem.HasMember("prob_test_index_hospitalised"))
+        {
+          temp.prob_test_index_hospitalised = elem["prob_test_index_hospitalised"].GetDouble();
+        }
 
-    //Testing probabilities for household networks
+        //Testing probabilities for household networks
 
-    if(elem.HasMember("prob_test_positive_symptomatic")){
-      for(auto &probmap : elem["prob_test_positive_symptomatic"].GetObject()){
-        temp.prob_test_positive_symptomatic[num_index] = probmap.value.GetDouble();
-        num_index++; //have to static cast? how?
+        if (elem.HasMember("prob_test_positive_symptomatic"))
+        {
+          for (auto &probmap : elem["prob_test_positive_symptomatic"].GetObject())
+          {
+            temp.prob_test_positive_symptomatic[num_index] = probmap.value.GetDouble();
+            num_index++; //have to static cast? how?
+          }
+          num_index = 0;
+        }
+
+        if (elem.HasMember("prob_test_hospitalised_symptomatic"))
+        {
+          for (auto &probmap : elem["prob_test_hospitalised_symptomatic"].GetObject())
+          {
+            temp.prob_test_hospitalised_symptomatic[num_index] = probmap.value.GetDouble();
+            num_index++;
+          }
+          num_index = 0;
+        }
+
+        if (elem.HasMember("prob_test_symptomatic_symptomatic"))
+        {
+          for (auto &probmap : elem["prob_test_symptomatic_symptomatic"].GetObject())
+          {
+            temp.prob_test_symptomatic_symptomatic[num_index] = probmap.value.GetDouble();
+            num_index++;
+          }
+          num_index = 0;
+        }
+
+        if (elem.HasMember("prob_test_positive_asymptomatic"))
+        {
+          for (auto &probmap : elem["prob_test_positive_asymptomatic"].GetObject())
+          {
+            temp.prob_test_positive_asymptomatic[num_index] = probmap.value.GetDouble();
+            num_index++;
+          }
+          num_index = 0;
+        }
+
+        if (elem.HasMember("prob_test_hospitalised_asymptomatic"))
+        {
+          for (auto &probmap : elem["prob_test_hospitalised_asymptomatic"].GetObject())
+          {
+            temp.prob_test_hospitalised_asymptomatic[num_index] = probmap.value.GetDouble();
+            num_index++;
+          }
+          num_index = 0;
+        }
+
+        if (elem.HasMember("prob_test_symptomatic_asymptomatic"))
+        {
+          for (auto &probmap : elem["prob_test_symptomatic_asymptomatic"].GetObject())
+          {
+            temp.prob_test_symptomatic_asymptomatic[num_index] = probmap.value.GetDouble();
+            num_index++;
+          }
+          num_index = 0;
+        }
+
+        if (elem.HasMember("prob_retest_recovered"))
+        {
+          temp.prob_retest_recovered = elem["prob_retest_recovered"].GetDouble();
+        }
+
+        if (elem.HasMember("prob_contact_trace_shospitalisedymptomatic"))
+        {
+          for (auto &probmap : elem["prob_contact_trace_symptomatic"].GetObject())
+          {
+            temp.prob_contact_trace_symptomatic[num_index] = probmap.value.GetDouble();
+            num_index++;
+          }
+          num_index = 0;
+        }
+
+        if (elem.HasMember("prob_contact_trace_hospitalised"))
+        {
+          for (auto &probmap : elem["prob_contact_trace_hospitalised"].GetObject())
+          {
+            temp.prob_contact_trace_hospitalised[num_index] = probmap.value.GetDouble();
+            num_index++;
+          }
+          num_index = 0;
+        }
+
+        if (elem.HasMember("prob_contact_trace_positive"))
+        {
+          for (auto &probmap : elem["prob_contact_trace_positive"].GetObject())
+          {
+            temp.prob_contact_trace_positive[num_index] = probmap.value.GetDouble();
+            num_index++;
+          }
+          num_index = 0;
+        }
+
+        testing_protocol.push_back(temp);
+        print_testing_protocol(index, temp);
+        ++index;
       }
-      num_index = 0;
-    }
-
-    if(elem.HasMember("prob_test_hospitalised_symptomatic")){
-      for(auto &probmap : elem["prob_test_hospitalised_symptomatic"].GetObject()){
-        temp.prob_test_hospitalised_symptomatic[num_index] = probmap.value.GetDouble();
-        num_index++;
+      else
+      {
+        std::cout << std::endl
+                  << "num_days not specified or less than 1. Skipping current index.";
+        assert(false);
       }
-      num_index = 0;
-    }
-
-    if(elem.HasMember("prob_test_symptomatic_symptomatic")){
-      for(auto &probmap : elem["prob_test_symptomatic_symptomatic"].GetObject()){
-        temp.prob_test_symptomatic_symptomatic[num_index] = probmap.value.GetDouble();
-        num_index++;
-      }
-      num_index = 0;
-    }
-
-    if(elem.HasMember("prob_test_positive_asymptomatic")){
-      for(auto &probmap : elem["prob_test_positive_asymptomatic"].GetObject()){
-        temp.prob_test_positive_asymptomatic[num_index] = probmap.value.GetDouble();
-        num_index++;
-      }
-      num_index = 0;
-    }
-
-    if(elem.HasMember("prob_test_hospitalised_asymptomatic")){
-      for(auto &probmap : elem["prob_test_hospitalised_asymptomatic"].GetObject()){
-        temp.prob_test_hospitalised_asymptomatic[num_index] = probmap.value.GetDouble();
-        num_index++;
-      }
-      num_index = 0;
-    }
-
-    if(elem.HasMember("prob_test_symptomatic_asymptomatic")){
-      for(auto &probmap : elem["prob_test_symptomatic_asymptomatic"].GetObject()){
-        temp.prob_test_symptomatic_asymptomatic[num_index] = probmap.value.GetDouble();
-        num_index++;
-      }
-      num_index = 0;
-    }
-
-
-    if(elem.HasMember("prob_retest_recovered")){
-      temp.prob_retest_recovered = elem["prob_retest_recovered"].GetDouble();
-    }
-
-    if(elem.HasMember("prob_contact_trace_shospitalisedymptomatic")){
-      for(auto &probmap : elem["prob_contact_trace_symptomatic"].GetObject()){
-        temp.prob_contact_trace_symptomatic[num_index] = probmap.value.GetDouble();
-        num_index++;
-      }
-      num_index = 0;
-    }
-
-    if(elem.HasMember("prob_contact_trace_hospitalised")){
-      for(auto &probmap : elem["prob_contact_trace_hospitalised"].GetObject()){
-        temp.prob_contact_trace_hospitalised[num_index] = probmap.value.GetDouble();
-        num_index++;
-      }
-      num_index = 0;
-    }
-
-    if(elem.HasMember("prob_contact_trace_positive")){
-      for(auto &probmap : elem["prob_contact_trace_positive"].GetObject()){
-        temp.prob_contact_trace_positive[num_index] = probmap.value.GetDouble();
-        num_index++;
-      }
-      num_index = 0;
-    }
-
-    testing_protocol.push_back(temp);
-    print_testing_protocol(index, temp);
-    ++index;
-    }else{
-    std::cout<<std::endl<<"num_days not specified or less than 1. Skipping current index.";
-    assert(false);
     }
   }
-  }
-  std::cout<<std::endl<<"Testing Protocal size = "<<testing_protocol.size();
+  std::cout << std::endl
+            << "Testing Protocal size = " << testing_protocol.size();
   return testing_protocol;
 }
 
@@ -672,59 +719,68 @@ void assign_individual_campus(std::vector<agent> &nodes, std::vector<Interaction
     }
   }
 
-  for (auto &node : nodes){
-    for (auto &elem : node.interaction_strength){
-      for (auto &int_space : elem){
+  for (auto &node : nodes)
+  {
+    for (auto &elem : node.interaction_strength)
+    {
+      for (auto &int_space : elem)
+      {
         node.spaces.insert(int_space.first);
       }
     }
   }
-
 }
 
-void sample_groups(std::vector<agent> &nodes, std::vector<Interaction_Space> &interaction_spaces){
+void sample_groups(std::vector<agent> &nodes, std::vector<Interaction_Space> &interaction_spaces)
+{
   //std::cout<<"\n BETA is: "<<GLOBAL.BETA_SCALING_FACTOR<<"\n";
   srand(time(0));
   std::vector<Interaction_Space> interac_space;
-  int avg_group_size = (GLOBAL.MINIMUM_SUBGROUP_SIZE + GLOBAL.MAXIMUM_SUBGROUP_SIZE)/2;
+  int avg_group_size = (GLOBAL.MINIMUM_SUBGROUP_SIZE + GLOBAL.MAXIMUM_SUBGROUP_SIZE) / 2;
   //std::cout<<"Number of groups : "<<NUM_GROUPS<<"\n";
   int index = interaction_spaces.size();
-  for (auto &ispace : interaction_spaces){
-    if (ispace.interaction_type == InteractionType :: hostel){
-      int NUM_GROUPS = GLOBAL.AVERAGE_NUMBER_ASSOCIATIONS*ispace.individuals[0].size()/avg_group_size;
+  for (auto &ispace : interaction_spaces)
+  {
+    if (ispace.interaction_type == InteractionType ::hostel)
+    {
+      int NUM_GROUPS = GLOBAL.AVERAGE_NUMBER_ASSOCIATIONS * ispace.individuals[0].size() / avg_group_size;
       //std::cout<<"\n"<<"Number of sub groups: "<<NUM_GROUPS<<"\n";
-      for(int j =0; j<NUM_GROUPS; j++){
+      for (int j = 0; j < NUM_GROUPS; j++)
+      {
         //std::cout<<"Create interaction space called"<<"\n";
         std::vector<int> temp;
-        std::vector<std::vector<int>> GROUPS;
+        std::vector<std::vector<int> > GROUPS;
         int random_value = uniform_count_type(GLOBAL.MINIMUM_SUBGROUP_SIZE, GLOBAL.MAXIMUM_SUBGROUP_SIZE);
         //std::cout<<"random value: " << random_value << "\n";
-        int GROUP_STRENGTH = random_value > int(ispace.individuals[0].size()) ? int(ispace.individuals[0].size())/2 : random_value;
+        int GROUP_STRENGTH = random_value > int(ispace.individuals[0].size()) ? int(ispace.individuals[0].size()) / 2 : random_value;
         //std::cout<<int(individual.size())<<"\n";
         //std::cout<<"Group strength is: "<<GROUP_STRENGTH<<"\n";
         std::sample(ispace.individuals[0].begin(), ispace.individuals[0].end(), std::back_inserter(temp), GROUP_STRENGTH, GENERATOR);
-        for (int i=0; i< GLOBAL.PERIODICITY; i++){
+        for (int i = 0; i < GLOBAL.PERIODICITY; i++)
+        {
           GROUPS.push_back(temp);
         }
         //`std::cout<<"Create interaction space called"<<"\n";
-        Interaction_Space int_space = create_interaction_space(ispace.lat, ispace.lon, InteractionType::smaller_networks, ispace.active_duration, index, ispace.alpha, ispace.beta*GLOBAL.BETA_SCALING_FACTOR, GROUPS, ispace.avg_time);
+        Interaction_Space int_space = create_interaction_space(ispace.lat, ispace.lon, InteractionType::smaller_networks, ispace.active_duration, index, ispace.alpha, ispace.beta * GLOBAL.BETA_SCALING_FACTOR, GROUPS, ispace.avg_time);
         // std::cout<<int_space.id<<"\n";
         // for (auto &individual : int_space.individuals){
- //   for (auto &indi : individual) {
-//     std::cout<<indi<<"\t";
-   // }
-   // std::cout<<"\n";
-    // }
+        //   for (auto &indi : individual) {
+        //     std::cout<<indi<<"\t";
+        // }
+        // std::cout<<"\n";
+        // }
         interac_space.push_back(int_space);
         //interaction_spaces.push_back(int_space);
-        for(auto temp1 : temp){
-          for(int k = 0; k < GLOBAL.PERIODICITY; k++){
+        for (auto temp1 : temp)
+        {
+          for (int k = 0; k < GLOBAL.PERIODICITY; k++)
+          {
             nodes[temp1].interaction_strength[k].insert({index, int_space.avg_time});
           }
           nodes[temp1].kappa.insert({index, 1});
           nodes[temp1].spaces.insert(int_space.id);
         }
-       
+
         index++;
         // for (auto &temp1 : GROUPS){
         //   std::cout<<"\n";
@@ -732,104 +788,134 @@ void sample_groups(std::vector<agent> &nodes, std::vector<Interaction_Space> &in
         //     std::cout<<sometingelse<<"\t";
         //   }
         // }
-      // std::cout<<"Groups are: "<<"\n";
-      // for (auto &group : temp) {
-      //   std::cout<<group<<"\t";
-      //   }
+        // std::cout<<"Groups are: "<<"\n";
+        // for (auto &group : temp) {
+        //   std::cout<<group<<"\t";
+        //   }
       }
     }
   }
   interaction_spaces.insert(interaction_spaces.end(), interac_space.begin(), interac_space.end());
 }
 
-void cafeteria_active_duration(std::vector<agent> &nodes, std::vector<Interaction_Space> &interaction_spaces, int day){
-    std::vector<int> cafeteria;
-    for (auto& i_space : interaction_spaces){
-        if(i_space.interaction_type == InteractionType::cafeteria){
-            cafeteria.push_back(i_space.id);
-         }
-     }
-    for(auto& node: nodes){
-        std::vector<int> cafe;
-        std::sample(cafeteria.begin(), cafeteria.end(), std::back_inserter(cafe), 1, GENERATOR);
-        double cafe_time=gamma(GLOBAL.ACTIVE_DURATION_SHAPE, interaction_spaces[cafe[0]].avg_time/GLOBAL.ACTIVE_DURATION_SHAPE);
-        // std::cout<<"Cafe time: "<<cafe_time<<"\t";
-        if(node.personType == person_type::student || node.personType == person_type::faculty){
-            node.interaction_strength[day][cafe[0]] =cafe_time;
-            // std::cout<<node.interaction_strength[day][cafe[0]]<<"\n";
-         }
-        for(auto& elem: node.interaction_strength[day]){
-            if(interaction_spaces[elem.first].interaction_type ==InteractionType::hostel || interaction_spaces[elem.first].interaction_type ==InteractionType::outside_campus){
-                if(elem.second <= cafe_time){
-                    node.interaction_strength[day][cafe[0]] = elem.second - GLOBAL.minimum_hostel_time; //add to config.json
-                    elem.second = GLOBAL.minimum_hostel_time;
-                }
-                else{
-                    elem.second -=cafe_time;
-                }
-             }
+void cafeteria_active_duration(std::vector<agent> &nodes, std::vector<Interaction_Space> &interaction_spaces, int day)
+{
+  std::vector<int> cafeteria;
+  for (auto &i_space : interaction_spaces)
+  {
+    if (i_space.interaction_type == InteractionType::cafeteria)
+    {
+      cafeteria.push_back(i_space.id);
+    }
+  }
+  for (auto &node : nodes)
+  {
+    std::vector<int> cafe;
+    std::sample(cafeteria.begin(), cafeteria.end(), std::back_inserter(cafe), 1, GENERATOR);
+    double cafe_time = gamma(GLOBAL.ACTIVE_DURATION_SHAPE, interaction_spaces[cafe[0]].avg_time / GLOBAL.ACTIVE_DURATION_SHAPE);
+    // std::cout<<"Cafe time: "<<cafe_time<<"\t";
+    if (node.personType == person_type::student || node.personType == person_type::faculty)
+    {
+      node.interaction_strength[day][cafe[0]] = cafe_time;
+      // std::cout<<node.interaction_strength[day][cafe[0]]<<"\n";
+    }
+    for (auto &elem : node.interaction_strength[day])
+    {
+      if (interaction_spaces[elem.first].interaction_type == InteractionType::hostel || interaction_spaces[elem.first].interaction_type == InteractionType::outside_campus)
+      {
+        if (elem.second <= cafe_time)
+        {
+          node.interaction_strength[day][cafe[0]] = elem.second - GLOBAL.minimum_hostel_time; //add to config.json
+          elem.second = GLOBAL.minimum_hostel_time;
         }
-     }
+        else
+        {
+          elem.second -= cafe_time;
+        }
+      }
+    }
+  }
 }
 
-void library_active_duration(std::vector<agent> &nodes, std::vector<Interaction_Space> &interaction_spaces, int day){
-    std::vector<int> library;
-    for (auto& i_space : interaction_spaces){
-        if(i_space.interaction_type == InteractionType::library){
-            library.push_back(i_space.id);
-         }
-     }
-    for(auto& node: nodes){
-        std::vector<int> lib;
-        std::sample(library.begin(), library.end(), std::back_inserter(lib), 1, GENERATOR);
-        double lib_time=gamma(GLOBAL.ACTIVE_DURATION_SHAPE, interaction_spaces[lib[0]].avg_time/GLOBAL.ACTIVE_DURATION_SHAPE);
-        // std::cout<<"Cafe time: "<<cafe_time<<"\t";
-        if(node.personType == person_type::student || node.personType == person_type::faculty){
-            node.interaction_strength[day][lib[0]] =lib_time;
-            // std::cout<<node.interaction_strength[day][cafe[0]]<<"\n";
-         }
-        for(auto& elem: node.interaction_strength[day]){
-            if(interaction_spaces[elem.first].interaction_type ==InteractionType::hostel || interaction_spaces[elem.first].interaction_type ==InteractionType::outside_campus){
-                if(elem.second <= lib_time){
-                    node.interaction_strength[day][lib[0]] = elem.second - GLOBAL.minimum_hostel_time; //add to config.json
-                    elem.second = GLOBAL.minimum_hostel_time;
-                }
-                else{
-                    elem.second -=lib_time;
-                }
-             }
+void library_active_duration(std::vector<agent> &nodes, std::vector<Interaction_Space> &interaction_spaces, int day)
+{
+  std::vector<int> library;
+  for (auto &i_space : interaction_spaces)
+  {
+    if (i_space.interaction_type == InteractionType::library)
+    {
+      library.push_back(i_space.id);
+    }
+  }
+  for (auto &node : nodes)
+  {
+    std::vector<int> lib;
+    std::sample(library.begin(), library.end(), std::back_inserter(lib), 1, GENERATOR);
+    double lib_time = gamma(GLOBAL.ACTIVE_DURATION_SHAPE, interaction_spaces[lib[0]].avg_time / GLOBAL.ACTIVE_DURATION_SHAPE);
+    // std::cout<<"Cafe time: "<<cafe_time<<"\t";
+    if (node.personType == person_type::student || node.personType == person_type::faculty)
+    {
+      node.interaction_strength[day][lib[0]] = lib_time;
+      // std::cout<<node.interaction_strength[day][cafe[0]]<<"\n";
+    }
+    for (auto &elem : node.interaction_strength[day])
+    {
+      if (interaction_spaces[elem.first].interaction_type == InteractionType::hostel || interaction_spaces[elem.first].interaction_type == InteractionType::outside_campus)
+      {
+        if (elem.second <= lib_time)
+        {
+          node.interaction_strength[day][lib[0]] = elem.second - GLOBAL.minimum_hostel_time; //add to config.json
+          elem.second = GLOBAL.minimum_hostel_time;
         }
-     }
+        else
+        {
+          elem.second -= lib_time;
+        }
+      }
+    }
+  }
 }
 
-void cafeteria_reset(std::vector<agent> &nodes, std::vector<Interaction_Space> &interaction_spaces, int day){
+void cafeteria_reset(std::vector<agent> &nodes, std::vector<Interaction_Space> &interaction_spaces, int day)
+{
   double temp;
-  for (auto& node : nodes){
-    for (auto& elem: node.interaction_strength[day]){
-      if(interaction_spaces[elem.first].interaction_type == InteractionType::cafeteria && elem.second != 0){
+  for (auto &node : nodes)
+  {
+    for (auto &elem : node.interaction_strength[day])
+    {
+      if (interaction_spaces[elem.first].interaction_type == InteractionType::cafeteria && elem.second != 0)
+      {
         temp = elem.second;
         elem.second = 0;
       }
     }
-    for (auto& elem: node.interaction_strength[day]){
-      if(interaction_spaces[elem.first].interaction_type == InteractionType::hostel || interaction_spaces[elem.first].interaction_type ==InteractionType::outside_campus){
+    for (auto &elem : node.interaction_strength[day])
+    {
+      if (interaction_spaces[elem.first].interaction_type == InteractionType::hostel || interaction_spaces[elem.first].interaction_type == InteractionType::outside_campus)
+      {
         elem.second += temp;
       }
     }
   }
 }
 
-void library_reset(std::vector<agent> &nodes, std::vector<Interaction_Space> &interaction_spaces, int day){
+void library_reset(std::vector<agent> &nodes, std::vector<Interaction_Space> &interaction_spaces, int day)
+{
   double temp;
-  for (auto& node : nodes){
-    for (auto& elem: node.interaction_strength[day]){
-      if(interaction_spaces[elem.first].interaction_type == InteractionType::library && elem.second != 0){
+  for (auto &node : nodes)
+  {
+    for (auto &elem : node.interaction_strength[day])
+    {
+      if (interaction_spaces[elem.first].interaction_type == InteractionType::library && elem.second != 0)
+      {
         temp = elem.second;
         elem.second = 0;
       }
     }
-    for (auto& elem: node.interaction_strength[day]){
-      if(interaction_spaces[elem.first].interaction_type == InteractionType::hostel || interaction_spaces[elem.first].interaction_type ==InteractionType::outside_campus){
+    for (auto &elem : node.interaction_strength[day])
+    {
+      if (interaction_spaces[elem.first].interaction_type == InteractionType::hostel || interaction_spaces[elem.first].interaction_type == InteractionType::outside_campus)
+      {
         elem.second += temp;
       }
     }
@@ -894,7 +980,8 @@ node_update_status update_infection(agent &node, int cur_time, int day)
     }
     if (transition)
     {
-      node.infection_status = Progression::hospitalised; //move to hospitalisation
+      node.infection_status = Progression::hospitalised;
+      GLOBAL.debug_hospitalised++; //move to hospitalisation
       node.infective = false;
       update_status.new_hospitalization = true;
       node.entered_hospitalised_state = true;
@@ -914,7 +1001,8 @@ node_update_status update_infection(agent &node, int cur_time, int day)
     }
     if (transition)
     {
-      node.infection_status = Progression::critical; //move to critical care
+      node.infection_status = Progression::critical;
+      GLOBAL.debug_critical++; //move to critical care
       node.infective = false;
     }
     else
@@ -950,71 +1038,82 @@ node_update_status update_infection(agent &node, int cur_time, int day)
   return update_status;
 }
 
-void update_test_request(std::vector<agent>& nodes, std::vector<Interaction_Space>& ispaces, const count_type current_time, std::vector<testing_probability>& testing_protocol){
+void update_test_request(std::vector<agent> &nodes, std::vector<Interaction_Space> &ispaces, const count_type current_time, std::vector<testing_probability> &testing_protocol, count_type day)
+{
   testing_probability probabilities;
-  if(current_time >= GLOBAL.NUM_DAYS_BEFORE_INTERVENTIONS){
-  // switch(GLOBAL.TESTING_PROTOCOL){
-  // case Testing_Protocol::no_testing:
-  //   break;
-  // case Testing_Protocol::test_household:
-  //   probabilities.prob_test_index_hospitalised = 1;
-  //   probabilities.prob_test_household_symptomatic_symptomatic = 0;
-  //   probabilities.prob_test_household_symptomatic_asymptomatic = 0;
+  if (current_time >= GLOBAL.NUM_DAYS_BEFORE_INTERVENTIONS)
+  {
+    // switch(GLOBAL.TESTING_PROTOCOL){
+    // case Testing_Protocol::no_testing:
+    //   break;
+    // case Testing_Protocol::test_household:
+    //   probabilities.prob_test_index_hospitalised = 1;
+    //   probabilities.prob_test_household_symptomatic_symptomatic = 0;
+    //   probabilities.prob_test_household_symptomatic_asymptomatic = 0;
 
-  //   probabilities.prob_test_household_hospitalised_symptomatic = 1;
-  //   probabilities.prob_test_household_hospitalised_asymptomatic = 0;
-  //   probabilities.prob_test_household_positive_symptomatic = 1;
-  //   probabilities.prob_test_household_positive_asymptomatic = 0;
+    //   probabilities.prob_test_household_hospitalised_symptomatic = 1;
+    //   probabilities.prob_test_household_hospitalised_asymptomatic = 0;
+    //   probabilities.prob_test_household_positive_symptomatic = 1;
+    //   probabilities.prob_test_household_positive_asymptomatic = 0;
 
-  //   probabilities.prob_test_neighbourhood_hospitalised_symptomatic = 0;
-  //   probabilities.prob_test_neighbourhood_hospitalised_asymptomatic = 0;
-  //   probabilities.prob_test_neighbourhood_positive_symptomatic = 0;
-  //   probabilities.prob_test_neighbourhood_positive_asymptomatic = 0;
+    //   probabilities.prob_test_neighbourhood_hospitalised_symptomatic = 0;
+    //   probabilities.prob_test_neighbourhood_hospitalised_asymptomatic = 0;
+    //   probabilities.prob_test_neighbourhood_positive_symptomatic = 0;
+    //   probabilities.prob_test_neighbourhood_positive_asymptomatic = 0;
 
-  //   probabilities.prob_contact_trace_household_hospitalised = 1;
-  //   probabilities.prob_contact_trace_household_positive = 1;
+    //   probabilities.prob_contact_trace_household_hospitalised = 1;
+    //   probabilities.prob_contact_trace_household_positive = 1;
 
-  //   probabilities.prob_retest_recovered = 1;
-  //   set_test_request(nodes, homes, workplaces, nbr_cells, communities, probabilities, current_time);
-  //   break;
-  //case Testing_Protocol::testing_protocol_file_read:
-  set_test_request_fileread(nodes, ispaces, testing_protocol, current_time);
-  //   break;
-  // default:
-  //   break;
-  // }
+    //   probabilities.prob_retest_recovered = 1;
+    //   set_test_request(nodes, homes, workplaces, nbr_cells, communities, probabilities, current_time);
+    //   break;
+    //case Testing_Protocol::testing_protocol_file_read:
+    set_test_request_fileread(nodes, ispaces, testing_protocol, current_time, day);
+    //   break;
+    // default:
+    //   break;
+    // }
   }
 }
 
-void update_test_status(std::vector<agent>& nodes, count_type current_time){
-  for(auto& node: nodes){
-    if(node.test_status.test_requested){
-    if(node.infection_status == Progression::infective
-     || node.infection_status == Progression::symptomatic
-     || node.infection_status == Progression::hospitalised
-     || node.infection_status == Progression::critical){
-    node.test_status.state = bernoulli(GLOBAL.TEST_FALSE_NEGATIVE)?test_result::negative:test_result::positive;
-    node.test_status.tested_positive = node.test_status.tested_positive || (node.test_status.state == test_result::positive);
-    node.test_status.tested_epoch = current_time;
-    GLOBAL.debug_count_positive ++;
-    }
-    else if(node.infection_status == Progression::exposed
-        && current_time-node.time_of_infection > GLOBAL.SIM_STEPS_PER_DAY*GLOBAL.TIME_TO_TEST_POSITIVE){
-    node.test_status.state = bernoulli(GLOBAL.TEST_FALSE_NEGATIVE)?test_result::negative:test_result::positive;
-    node.test_status.tested_positive = node.test_status.tested_positive || (node.test_status.state == test_result::positive);
-    //We might want to have higher false negative rate here, depending upon updates in the data.
-    node.test_status.tested_epoch = current_time;
-    GLOBAL.debug_count_positive ++;
-    }
-    else{
-    // Test could come positive for a succeptible/recovered/dead person
-    node.test_status.state = bernoulli(GLOBAL.TEST_FALSE_POSITIVE)?test_result::positive:test_result::negative;
-    node.test_status.tested_positive = node.test_status.tested_positive || (node.test_status.state == test_result::positive);
-    node.test_status.tested_epoch = current_time;
-    GLOBAL.debug_count_positive ++;
-    }
-    node.test_status.test_requested = false;
+void update_test_status(std::vector<agent> &nodes, count_type current_time)
+{
+  for (auto &node : nodes)
+  {
+    if (node.test_status.test_requested)
+    {
+      // GLOBAL.debug_count_tests_requested ++;
+      if (node.infection_status == Progression::infective || node.infection_status == Progression::symptomatic || node.infection_status == Progression::hospitalised || node.infection_status == Progression::critical)
+      {
+        node.test_status.state = bernoulli(GLOBAL.TEST_FALSE_NEGATIVE) ? test_result::negative : test_result::positive;
+        node.test_status.tested_positive = node.test_status.tested_positive || (node.test_status.state == test_result::positive);
+        node.test_status.tested_epoch = current_time;
+        if(node.test_status.tested_positive){
+          GLOBAL.debug_count_positive++;
+        }
+      }
+      else if (node.infection_status == Progression::exposed && current_time - node.time_of_infection > node.time_to_test_positive)
+      {
+        node.test_status.state = bernoulli(GLOBAL.TEST_FALSE_NEGATIVE) ? test_result::negative : test_result::positive;
+        node.test_status.tested_positive = node.test_status.tested_positive || (node.test_status.state == test_result::positive);
+        //We might want to have higher false negative rate here, depending upon updates in the data.
+        node.test_status.tested_epoch = current_time;
+        if(node.test_status.tested_positive){
+          GLOBAL.debug_count_positive++;
+        }
+      }
+      else
+      {
+        // Test could come positive for a succeptible/recovered/dead person
+        node.test_status.state = bernoulli(GLOBAL.TEST_FALSE_POSITIVE) ? test_result::positive : test_result::negative;
+        node.test_status.tested_positive = node.test_status.tested_positive || (node.test_status.state == test_result::positive);
+        node.test_status.tested_epoch = current_time;
+        if(node.test_status.tested_positive){
+          GLOBAL.debug_count_positive++;
+        }
+      }
+      node.test_status.test_requested = false;
     }
   }
-  //std::cout<<"Debug count positive: "<<GLOBAL.debug_count_positive<<"\t";
+  // std::cout<<"Tests requested: "<<GLOBAL.debug_count_tests_requested<<"\n";
 }

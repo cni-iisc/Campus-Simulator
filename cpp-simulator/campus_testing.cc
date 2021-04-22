@@ -25,17 +25,17 @@ using std::vector;
 // 	}
 // }
 
-void test_contact_trace(count_type node_index, count_type interaction_index, std::vector<agent>& nodes, std::vector<Interaction_Space>& ispaces, double probability_contact_trace, double probability_test_symptomatic, double probability_test_asymptomatic, count_type current_time ){
+void test_contact_trace(count_type node_index, count_type interaction_index, std::vector<agent>& nodes, std::vector<Interaction_Space>& ispaces, double probability_contact_trace, double probability_test_symptomatic, double probability_test_asymptomatic, count_type current_time, count_type day ){
 	for(auto& space : nodes[node_index].spaces){
 		if(ispaces[space].interaction_type == static_cast<InteractionType>(interaction_index)){
-			for(auto &individual: ispaces[space].individuals[current_time]){
+			for(auto &individual: ispaces[space].individuals[day]){
 				if(bernoulli(probability_contact_trace)){//contact trace a household individual with this probability.
 				  nodes[individual].test_status.contact_traced_epoch = current_time;
 				  if(nodes[individual].disease_label == DiseaseLabel::asymptomatic){
 					nodes[individual].disease_label = DiseaseLabel::primary_contact;
 				  }
 				  if((current_time - nodes[individual].test_status.tested_epoch
-						> GLOBAL.SIM_STEPS_PER_DAY*GLOBAL.MINIMUM_TEST_INTERVAL) && 
+						> GLOBAL.SIM_STEPS_PER_DAY*GLOBAL.MINIMUM_TEST_INTERVAL) &&
 					!nodes[individual].test_status.tested_positive){//If the individual was not tested yet.
 					if(nodes[individual].infection_status == Progression::symptomatic &&
 					 bernoulli(probability_test_symptomatic)){
@@ -61,8 +61,8 @@ void test_contact_trace(count_type node_index, count_type interaction_index, std
 void set_test_request(vector<agent>& nodes,
 		      std::vector<Interaction_Space>& ispaces,
 		      testing_probability probabilities,
-		      count_type current_time){
-	
+		      count_type current_time, count_type day){
+
   for(count_type i=0; i<nodes.size(); ++i){
 	double time_since_hospitalised = current_time
                 - (nodes[i].time_of_infection
@@ -78,14 +78,16 @@ void set_test_request(vector<agent>& nodes,
 	//First, decide whether to test the node. Triggers for testing.
 
 	//1) Node just turned symptomatic, 2) node was not tested positive before,  and 3) the coin toss decided to test the node
-	if(nodes[i].infection_status == Progression::symptomatic && 
+	if(nodes[i].infection_status == Progression::symptomatic &&
 	  time_since_symptomatic > 0 && time_since_symptomatic <= 1 &&
 	  bernoulli(probabilities.prob_test_index_symptomatic) &&
-	  !nodes[i].test_status.tested_positive){		
+	  !nodes[i].test_status.tested_positive){
 		nodes[i].test_status.test_requested = true;
 		GLOBAL.debug_count_tests_requested ++;
 		nodes[i].test_status.node_test_trigger = test_trigger::symptomatic;
-		nodes[i].test_status.contact_traced_epoch = current_time; //This is to ensure that if the node's test turns positive, they are also subjected to restrictions.		
+		nodes[i].test_status.contact_traced_epoch = current_time;
+		nodes[i].time_tested.push_back(current_time);
+ //This is to ensure that if the node's test turns positive, they are also subjected to restrictions.
 	}
 	//1) Node just turned symptomatic, 2) node was not tested positive before,  and 3) the coin toss decided to test the node
 	else if(nodes[i].infection_status == Progression::hospitalised &&
@@ -95,7 +97,9 @@ void set_test_request(vector<agent>& nodes,
 		nodes[i].test_status.test_requested = true;
 		GLOBAL.debug_count_tests_requested ++;
 		nodes[i].test_status.node_test_trigger = test_trigger::hospitalised;
-		nodes[i].test_status.contact_traced_epoch = current_time; //This is to ensure that if their test turns positive, they are also subjected to contact traced restrictions.
+		nodes[i].test_status.contact_traced_epoch = current_time;
+		nodes[i].time_tested.push_back(current_time);
+		 //This is to ensure that if their test turns positive, they are also subjected to contact traced restrictions.
 	}
 	// Re-test if somebody is recovered
 	else if(nodes[i].test_status.state==test_result::positive &&
@@ -104,26 +108,27 @@ void set_test_request(vector<agent>& nodes,
 		nodes[i].test_status.test_requested = true;
 		GLOBAL.debug_count_tests_requested ++;
 		nodes[i].test_status.node_test_trigger = test_trigger::re_test;
+		nodes[i].time_tested.push_back(current_time);
 	}
 
-	
+
 	// Trigger contact trace from node. Enter only if the node has not yet triggered a contact trace, and if the node tested postive.
 	if(!nodes[i].test_status.triggered_contact_trace && nodes[i].test_status.tested_positive){
 		nodes[i].test_status.triggered_contact_trace = true; // record that contact tracing was triggered.
 		if(nodes[i].test_status.node_test_trigger == test_trigger::symptomatic){
 			for(count_type j = 0; j < probabilities.prob_contact_trace_symptomatic.size(); j++){
-				test_contact_trace(i,j,nodes,ispaces,probabilities.prob_contact_trace_symptomatic[j],probabilities.prob_test_symptomatic_symptomatic[j],probabilities.prob_test_symptomatic_asymptomatic[j], current_time);
+				test_contact_trace(i,j,nodes,ispaces,probabilities.prob_contact_trace_symptomatic[j],probabilities.prob_test_symptomatic_symptomatic[j],probabilities.prob_test_symptomatic_asymptomatic[j], current_time, day);
 			}
-		
+
 		}
 		else if(nodes[i].test_status.node_test_trigger == test_trigger::hospitalised){
 			for(count_type j = 0; j < probabilities.prob_contact_trace_hospitalised.size(); j++){
-				test_contact_trace(i,j,nodes,ispaces,probabilities.prob_contact_trace_hospitalised[j],probabilities.prob_test_hospitalised_symptomatic[j],probabilities.prob_test_hospitalised_asymptomatic[j], current_time);
+				test_contact_trace(i,j,nodes,ispaces,probabilities.prob_contact_trace_hospitalised[j],probabilities.prob_test_hospitalised_symptomatic[j],probabilities.prob_test_hospitalised_asymptomatic[j], current_time, day);
 			}
 		}
 		else if(nodes[i].test_status.node_test_trigger == test_trigger::contact_traced){
 			for(count_type j = 0; j < probabilities.prob_contact_trace_positive.size(); j++){
-				test_contact_trace(i,j,nodes,ispaces,probabilities.prob_contact_trace_positive[j],probabilities.prob_test_positive_symptomatic[j],probabilities.prob_test_positive_asymptomatic[j], current_time);
+				test_contact_trace(i,j,nodes,ispaces,probabilities.prob_contact_trace_positive[j],probabilities.prob_test_positive_symptomatic[j],probabilities.prob_test_positive_asymptomatic[j], current_time, day);
 			}
 		}
 
@@ -152,7 +157,7 @@ void set_test_request(vector<agent>& nodes,
 		// 		else if(nodes[i].test_status.node_test_trigger == test_trigger::contact_traced){
 		// 			test_contact_trace_project(i,nodes,workplaces,probabilities.prob_contact_trace_project_positive,probabilities.prob_test_workplace_positive_symptomatic,probabilities.prob_test_workplace_positive_asymptomatic, current_time);
 		// 		}
-		// 	}		
+		// 	}
 		// }
 
 		// // Test people in random community network
@@ -166,7 +171,7 @@ void set_test_request(vector<agent>& nodes,
 		// else if(nodes[i].test_status.node_test_trigger == test_trigger::contact_traced){
 		// 	test_contact_trace_random_community(i,nodes,homes,probabilities.prob_contact_trace_random_community_positive,probabilities.prob_test_random_community_positive_symptomatic,probabilities.prob_test_random_community_positive_asymptomatic, current_time);
 		// }
-		
+
 // #ifndef DISABLE_CONTACT_TRACE_NBR_CELLS
 // 		// Test people in neighbourhood cell
 // 		auto node_nbr_cell_x = homes[nodes[i].home].neighbourhood.cell_x,
@@ -191,7 +196,7 @@ void set_test_request(vector<agent>& nodes,
 //   contact_trace_nbr_cells(nodes, homes, nbr_cells, probabilities, current_time);
 //   reset_nbr_cell_index_stats(nbr_cells);
 // #endif
-std::cout<<"Tests requested: "<<GLOBAL.debug_count_tests_requested<<"\n";
+// std::cout<<"Tests requested: "<<GLOBAL.debug_count_tests_requested<<"\n";
 }
 
 
@@ -205,7 +210,7 @@ std::cout<<"Tests requested: "<<GLOBAL.debug_count_tests_requested<<"\n";
 }
 
 
-void update_infection_testing(std::vector<agent>& nodes, std::vector<Interaction_Space>& ispaces, count_type current_time){
+void update_infection_testing(std::vector<agent>& nodes, std::vector<Interaction_Space>& ispaces, count_type current_time, count_type day){
   for(auto& node: nodes){
 	if(node.test_status.state==test_result::positive){
 		if(node.infection_status==Progression::symptomatic){
@@ -236,7 +241,7 @@ void update_infection_testing(std::vector<agent>& nodes, std::vector<Interaction
 	if(node.disease_label==DiseaseLabel::primary_contact || node.disease_label==DiseaseLabel::mild_symptomatic_tested || node.disease_label==DiseaseLabel::moderate_symptomatic_tested){
 		if(current_time - node.test_status.contact_traced_epoch <= HOME_QUARANTINE_DAYS*GLOBAL.SIM_STEPS_PER_DAY){
 			//std::cout<<"Day: "<<current_time<<"\t";
-			modify_kappa_case_isolate_node(node, ispaces, current_time);
+			modify_kappa_case_isolate_node(node, ispaces, day);
 		}
 		else{
 				node.disease_label=DiseaseLabel::asymptomatic;
@@ -246,11 +251,11 @@ void update_infection_testing(std::vector<agent>& nodes, std::vector<Interaction
 
 }
 
-void set_test_request_fileread(std::vector<agent>& nodes, std::vector<Interaction_Space>& ispaces,						 
-						 std::vector<testing_probability>& testing_probability_vector, int cur_time){
+void set_test_request_fileread(std::vector<agent>& nodes, std::vector<Interaction_Space>& ispaces,
+						 std::vector<testing_probability>& testing_probability_vector, int cur_time, count_type day){
   count_type time_threshold = GLOBAL.NUM_DAYS_BEFORE_INTERVENTIONS;
-  count_type cur_day = cur_time;
-  //count_type cur_day = cur_time/GLOBAL.SIM_STEPS_PER_DAY; //get current day. Division to avoid multiplication inside for loop.
+  //count_type cur_day = cur_time;
+  count_type cur_day = cur_time/GLOBAL.SIM_STEPS_PER_DAY; //get current day. Division to avoid multiplication inside for loop.
   const auto SIZE = testing_probability_vector.size();
 
   assert(SIZE > 0);
@@ -265,7 +270,7 @@ void set_test_request_fileread(std::vector<agent>& nodes, std::vector<Interactio
 	  break;
 	}
   }
-  set_test_request(nodes, ispaces, testing_probability_vector[intv_index], cur_time);
+  set_test_request(nodes, ispaces, testing_probability_vector[intv_index], cur_time, day);
 }
 
 
@@ -277,7 +282,7 @@ void set_test_request_fileread(std::vector<agent>& nodes, std::vector<Interactio
 // 			nodes[household_member].disease_label = DiseaseLabel::primary_contact;
 // 		  }
 // 		  if((current_time - nodes[household_member].test_status.tested_epoch
-// 				> GLOBAL.SIM_STEPS_PER_DAY*GLOBAL.MINIMUM_TEST_INTERVAL) && 
+// 				> GLOBAL.SIM_STEPS_PER_DAY*GLOBAL.MINIMUM_TEST_INTERVAL) &&
 // 			!nodes[household_member].test_status.tested_positive){//If the individual was not tested yet.
 // 			if(nodes[household_member].infection_status == Progression::symptomatic &&
 // 			 bernoulli(probability_test_symptomatic)){
@@ -300,7 +305,7 @@ void set_test_request_fileread(std::vector<agent>& nodes, std::vector<Interactio
 
 // void test_contact_trace_project(count_type node_index, vector<agent>& nodes, const vector<workplace>& workplaces, double probability_contact_trace, double probability_test_symptomatic, double probability_test_asymptomatic, const count_type current_time ){
 // 	for(const auto colleague_index: workplaces[nodes[node_index].workplace].projects[nodes[node_index].workplace_subnetwork].individuals){
-// 		if(bernoulli(probability_contact_trace) && 
+// 		if(bernoulli(probability_contact_trace) &&
 // 		!nodes[colleague_index].test_status.tested_positive){
 // 			nodes[colleague_index].test_status.contact_traced_epoch = current_time;
 // 			if(nodes[colleague_index].disease_label == DiseaseLabel::asymptomatic){
@@ -317,7 +322,7 @@ void set_test_request_fileread(std::vector<agent>& nodes, std::vector<Interactio
 // 						nodes[colleague_index].infection_status == Progression::exposed ||
 // 						nodes[colleague_index].infection_status == Progression::infective ||
 // 						(nodes[colleague_index].infection_status == Progression::recovered &&
-// 						!nodes[colleague_index].entered_hospitalised_state)) && 
+// 						!nodes[colleague_index].entered_hospitalised_state)) &&
 // 						bernoulli(probability_test_asymptomatic)){
 // 					nodes[colleague_index].test_status.test_requested = true;
 // 					nodes[colleague_index].test_status.node_test_trigger= test_trigger::contact_traced;
@@ -336,7 +341,7 @@ void set_test_request_fileread(std::vector<agent>& nodes, std::vector<Interactio
 // 			  nodes[cohabitant_index].disease_label = DiseaseLabel::primary_contact;
 // 			}
 // 			if((current_time - nodes[cohabitant_index].test_status.tested_epoch
-// 				> GLOBAL.SIM_STEPS_PER_DAY*GLOBAL.MINIMUM_TEST_INTERVAL) && 
+// 				> GLOBAL.SIM_STEPS_PER_DAY*GLOBAL.MINIMUM_TEST_INTERVAL) &&
 // 				(!nodes[cohabitant_index].test_status.tested_positive)){
 // 			  if(nodes[cohabitant_index].infection_status == Progression::symptomatic &&
 // 			   bernoulli(probability_test_symptomatic)){
@@ -406,8 +411,8 @@ void set_test_request_fileread(std::vector<agent>& nodes, std::vector<Interactio
 // 			     const int current_time){
 //   for(auto& node: nodes){
 //     const nbr_cell* const neighbourhood = &nbr_cells[homes[node.home].neighbourhood.cell_x][homes[node.home].neighbourhood.cell_y];
-    
-//     //This is the probability with which a person would be quarantined as a primary contact. 
+
+//     //This is the probability with which a person would be quarantined as a primary contact.
 //     double quarantine_prob = 1 -
 // 	  (std::pow(1 - probabilities.prob_contact_trace_neighbourhood_symptomatic,
 // 				neighbourhood->num_index_symptomatic)
@@ -415,7 +420,7 @@ void set_test_request_fileread(std::vector<agent>& nodes, std::vector<Interactio
 // 				  neighbourhood->num_index_hospitalised)
 // 	   * std::pow(1 - probabilities.prob_contact_trace_neighbourhood_positive,
 // 				  neighbourhood->num_index_positive));
-    
+
 //     if(bernoulli(quarantine_prob) && !node.test_status.tested_positive){
 //       //We contact trace the individual only if he was never tested positive and if the contact trace Bernoulli for the individual is one.
 //       node.test_status.contact_traced_epoch = current_time;
@@ -468,4 +473,3 @@ void set_test_request_fileread(std::vector<agent>& nodes, std::vector<Interactio
 //     }
 //   }
 // }
-

@@ -351,6 +351,8 @@ struct global_params{
   double BETA_CLASS = 0;
   double BETA_RANDOM_COMMUNITY = 0;
   double BETA_NBR_CELLS = 0;
+  count_type debug_hospitalised = 0;
+  count_type debug_critical = 0;
 
   double ALPHA = 0.8;
   //exponent of number of people in a household while normalising
@@ -681,6 +683,11 @@ enum class person_type {
   staff
 };
 
+struct test_info {
+  count_type timestep; 
+  int id;
+}; 
+
 struct agent{
   location loc;
   int age;
@@ -693,14 +700,13 @@ struct agent{
   //a.k.a S_k, is 0 or
   int home; //index of household
   int workplace;
-
+  double time_to_test_positive = 3;
   int hostel;
   int dept;
   int type;
-
+  std::vector<count_type> time_tested;
   person_type personType;
   std::set<int> spaces;
-
   int community;
   double time_of_infection = 0;
   // time_of_infection is initialized to zero before seeding
@@ -809,6 +815,7 @@ struct agent{
   //attendance probability at given time, for the agent
   double get_attendance_probability(count_type time) const;
   test_struct test_status;
+  // std::vector<test_info> testing_info;
   DiseaseLabel disease_label = DiseaseLabel::asymptomatic;
 };
 

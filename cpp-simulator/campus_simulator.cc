@@ -14,31 +14,31 @@
 #include "campus_testing.h"
 //#include "outputs.h"
 
-plot_data_struct run_campus_simulator(){
-	#ifdef TIMING
-  		std::cerr << "simulator: starting JSON read\n";
-  		//auto start_time = std::chrono::high_resolution_clock::now();
-	#endif
+plot_data_struct run_campus_simulator()
+{
+#ifdef TIMING
+	std::cerr << "simulator: starting JSON read\n";
+	//auto start_time = std::chrono::high_resolution_clock::now();
+#endif
 
-  //auto homes = init_homes();
-  //auto workplaces = init_workplaces();
-  //auto communities = init_community();
-  	init_config_params();
-  	auto interaction_spaces = init_interaction_spaces();
+	//auto homes = init_homes();
+	//auto workplaces = init_workplaces();
+	//auto communities = init_community();
+	init_config_params();
+	auto interaction_spaces = init_interaction_spaces();
 	init_transmission_coefficients(interaction_spaces);
-  	auto nodes = init_nodes_campus();
-  	int day =0;
-   //TODO: In init_nodes, read individuals.json
-  //TODO: Read interaction_spaces.json and assign it to interaction spaces
-  //auto nbr_cells = init_nbr_cells();
-  auto intv_params = init_intervention_params();
-  auto testing_protocol_file_read = init_testing_protocol();
+	auto nodes = init_nodes_campus();
+	int day = 0;
+	//TODO: In init_nodes, read individuals.json
+	//TODO: Read interaction_spaces.json and assign it to interaction spaces
+	//auto nbr_cells = init_nbr_cells();
+	auto intv_params = init_intervention_params();
+	auto testing_protocol_file_read = init_testing_protocol();
 
+	//auto community_dist_matrix = compute_community_distances(communities);
+	//auto community_fk_matrix = compute_community_distances_fkernel(community_dist_matrix);
 
-  //auto community_dist_matrix = compute_community_distances(communities);
-  //auto community_fk_matrix = compute_community_distances_fkernel(community_dist_matrix);
-
-  /*svd home_age_matrix,
+	/*svd home_age_matrix,
 	school_age_matrix,
 	workplace_age_matrix,
 	community_age_matrix;
@@ -56,50 +56,49 @@ plot_data_struct run_campus_simulator(){
 	start_time = std::chrono::high_resolution_clock::now();
 	#endif*/
 
-  	assign_individual_campus(nodes, interaction_spaces);
+	assign_individual_campus(nodes, interaction_spaces);
 	sample_groups(nodes, interaction_spaces);
-  //assign_individual_home_community(nodes, homes, workplaces, communities);
-  //assign_individual_home_community must be called before assign_homes_nbr_cell
-  //assign_homes_nbr_cell(homes,nbr_cells);
-  //assign_individual_projects(workplaces, nodes);
-  //assign_household_community(communities, nodes, homes);
-  //assign_household_random_community(homes, communities);
+	//assign_individual_home_community(nodes, homes, workplaces, communities);
+	//assign_individual_home_community must be called before assign_homes_nbr_cell
+	//assign_homes_nbr_cell(homes,nbr_cells);
+	//assign_individual_projects(workplaces, nodes);
+	//assign_household_community(communities, nodes, homes);
+	//assign_household_random_community(homes, communities);
 
 	//TODO: Assign Individuals campus
-  //assign_individual_campus(nodes, i_space, day);
-  /*compute_scale_homes(homes);
+	//assign_individual_campus(nodes, i_space, day);
+	/*compute_scale_homes(homes);
   compute_scale_workplaces(workplaces);
   compute_scale_communities(nodes, communities);
   compute_scale_random_community(homes, nodes);
   compute_scale_nbr_cells(nodes, nbr_cells, homes);
   double travel_fraction = 0;*/
 
-  //This needs to be done after the initilization.
-  plot_data_struct plot_data;
-  plot_data.nums =
+	//This needs to be done after the initilization.
+	plot_data_struct plot_data;
+	plot_data.nums =
+		{
+			{"num_infected", {}},
+			{"num_exposed", {}},
+			{"num_hospitalised", {}},
+			{"num_symptomatic", {}},
+			{"num_critical", {}},
+			{"num_fatalities", {}},
+			{"num_recovered", {}},
+			{"num_affected", {}},
+			{"num_cases", {}},
+			//  {"num_tested_positive", {}},
+			//  {"num_tests_requested", {}}
+			{"num_cumulative_hospitalizations", {}},
+			{"num_cumulative_infective", {}}};
+	for (auto &elem : plot_data.nums)
 	{
-	 //{"num_infected", {}},
-	 //{"num_exposed", {}},
-	 {"num_hospitalised", {}},
-	 //{"num_symptomatic", {}},
-	 //{"num_critical", {}},
-	 {"num_fatalities", {}},
-	 {"num_recovered", {}},
-	 {"num_affected", {}},
-	 {"num_cases", {}},
-	 {"num_tested_positive", {}},
-	 {"num_tests_requested", {}}
-	 //{"num_cumulative_hospitalizations", {}},
-	 //{"num_cumulative_infective", {}}
-	};
-  for(auto& elem: plot_data.nums){
-	elem.second.reserve(GLOBAL.NUM_TIMESTEPS);
-  }
-  //plot_data.nums["csvContent"] = {};
-  //plot_data.nums["csvContent"].reserve(GLOBAL.NUM_TIMESTEPS * GLOBAL.num_communities);
+		elem.second.reserve(GLOBAL.NUM_TIMESTEPS);
+	}
+	//plot_data.nums["csvContent"] = {};
+	//plot_data.nums["csvContent"].reserve(GLOBAL.NUM_TIMESTEPS * GLOBAL.num_communities);
 
-
-  /*plot_data.susceptible_lambdas =
+	/*plot_data.susceptible_lambdas =
 	{
 	 {"susceptible_lambda", {}},
 	 {"susceptible_lambda_H", {}},
@@ -150,11 +149,11 @@ plot_data_struct run_campus_simulator(){
 	 {"curtailment_stats", {}}
 	};*/
 
-  plot_data.disease_label_stats =
-	{
-		{"disease_label_stats", {}},
-	};
-  /*for(auto& elem: plot_data.susceptible_lambdas){
+	plot_data.disease_label_stats =
+		{
+			{"disease_label_stats", {}},
+		};
+	/*for(auto& elem: plot_data.susceptible_lambdas){
 	elem.second.reserve(GLOBAL.NUM_TIMESTEPS);
   }
 
@@ -167,32 +166,33 @@ plot_data_struct run_campus_simulator(){
 	#endif
   lambda_incoming_data total_lambda_fraction_data;
   lambda_incoming_data mean_lambda_fraction_data;
-  lambda_incoming_data cumulative_mean_lambda_fraction_data;
-  count_type num_cases = 0; // Total number of agents who have progessed to symptomatic so far
-  count_type quarantined_num_cases = 0;
-  count_type num_cumulative_hospitalizations = 0; //Total number of agents who have had to go to the hospital so far
-  count_type num_cumulative_infective = 0; //Total number of people who have progressed to the infective state so far
+  lambda_incoming_data cumulative_mean_lambda_fraction_data;*/
+	count_type num_cases = 0; // Total number of agents who have progessed to symptomatic so far
+	count_type quarantined_num_cases = 0;
+	count_type num_cumulative_hospitalizations = 0; //Total number of agents who have had to go to the hospital so far
+	count_type num_cumulative_infective = 0;		//Total number of people who have progressed to the infective state so far
 
-  count_type num_total_infections = 0;
-  //Total number of individuals who have become infected via transmission so far
-  //This does not included the initially seeded infections
+	count_type num_total_infections = 0;
+	//Total number of individuals who have become infected via transmission so far
+	//This does not included the initially seeded infections
 
-  std::vector<long double> infections_by_new_infectives(GLOBAL.NUM_TIMESTEPS, 0);
-  //For keeping track of infections ascribed to agents that became infective at
-  //each time
+	//   std::vector<long double> infections_by_new_infectives(GLOBAL.NUM_TIMESTEPS, 0);
+	//For keeping track of infections ascribed to agents that became infective at
+	//each time
 
-  const auto NUM_PEOPLE = GLOBAL.num_people;*/
+	// const auto NUM_PEOPLE = GLOBAL.num_people;
 
-  int time_step = 0;
+	int time_step = 0;
 
-  for(time_step = 0; time_step < GLOBAL.NUM_TIMESTEPS; ++time_step){
-	  //TODO: Call update_interaction_spaces_lambda
-	  //update_interaction_space_lambda();
-	  //TODO: Call update_individuals_lambda
-	  //update_individual_lambda();
-		#ifdef DEBUG
+	for (time_step = 0; time_step < GLOBAL.NUM_TIMESTEPS; ++time_step)
+	{
+		//TODO: Call update_interaction_spaces_lambda
+		//update_interaction_space_lambda();
+		//TODO: Call update_individuals_lambda
+		//update_individual_lambda();
+#ifdef DEBUG
 		auto start_time_timestep = std::chrono::high_resolution_clock::now();
-		#endif
+#endif
 		/*total_lambda_fraction_data.set_zero();
 		mean_lambda_fraction_data.set_zero();
 
@@ -215,100 +215,156 @@ plot_data_struct run_campus_simulator(){
 		// global state, parallelizing this loop is not straightforward.
 		// Puttting the generator in a critical section can keep it
 		// correct, but slows down the code too much.
-		//int n_affected = 0;
-		//int n_fatalities = 0;
-		//int n_infective = 0;
-		//int n_recovered = 0;
-		//int n_cases = 0;
-		count_type n_affected = 0;
-		count_type n_fatalities = 0;
-		count_type n_infective = 0;
-		count_type n_recovered = 0;
-		count_type n_cases = 0;
-		count_type n_requested_tests = 0;
-		count_type n_tested_positive = 0;
-		count_type n_mild_symptomatic_tested = 0;
-		count_type n_primary_contact = 0;
-		count_type n_hospitalised = 0;
-		count_type n_moderate_symptomatic_tested = 0;
-		count_type n_severe_symptomatic_tested = 0;
-		count_type n_icu = 0;
-		//count_type n_symptomatic = 0;
-		day = (time_step/4)%GLOBAL.PERIODICITY;
-		for(count_type j = 0; j < nodes.size(); ++j){
-	  		auto node_update_status = update_infection(nodes[j], time_step, day);
-	  		nodes[j].psi_T = psi_T(nodes[j], time_step);
-			if(nodes[j].infection_status != Progression::susceptible){
-				n_affected += 1;
-	  		}
-			if(nodes[j].infection_status == Progression::recovered){
-				n_recovered += 1;
-	  		}
-			if(nodes[j].infection_status == Progression::infective){
-				n_infective += 1;
-	  		}
-			if(nodes[j].infection_status == Progression::dead){
-				n_fatalities += 1;
-	  		}
-			if(nodes[j].infection_status == Progression::hospitalised){
-				n_hospitalised += 1;
-	 	 	}
-			/*if(node_update_status.new_infection){
-			++n_cases;
-	  		}*/
-			if(nodes[j].disease_label == DiseaseLabel::moderate_symptomatic_tested){
-		  		n_moderate_symptomatic_tested +=1;
-	  		}
-      		if(nodes[j].disease_label == DiseaseLabel::severe_symptomatic_tested){
-		  		n_severe_symptomatic_tested +=1;
-	  		}
-	  		if(nodes[j].disease_label == DiseaseLabel::icu){
-		  		n_icu +=1;
-	  		}
-			if(nodes[j].test_status.test_requested){
-		  		n_requested_tests +=1;
-				//std::cout <<"Time step: " << time_step<<"\t"<<"Node ID: "<<j<<"\t"<<"Disease label: "<<static_cast<std::underlying_type<Progression>::type>(nodes[j].infection_status)<<"\n";
-	  		}
-	  		if(nodes[j].test_status.tested_positive){
-		  		n_tested_positive +=1;
-					// std::cout <<"Time step: " << time_step<<"\t"<<"Node ID: "<<j<<"\t"<<"Disease label: "<<static_cast<std::underlying_type<Progression>::type>(nodes[j].infection_status)<<"\n";
-	  		}
-
-			if(nodes[j].disease_label == DiseaseLabel::primary_contact){
-		  		n_primary_contact +=1;
-	  		}
-	 		if(nodes[j].disease_label == DiseaseLabel::mild_symptomatic_tested){
-		  		n_mild_symptomatic_tested +=1;
-	  		}
-			if(node_update_status.new_symptomatic){
-				n_cases +=1;
+		day = (time_step / 4) % GLOBAL.PERIODICITY;
+		count_type num_new_infections = 0;
+		for (count_type j = 0; j < nodes.size(); ++j)
+		{
+			auto node_update_status = update_infection(nodes[j], time_step, day);
+			nodes[j].psi_T = psi_T(nodes[j], time_step);
+			if (node_update_status.new_infection)
+			{
+				++num_new_infections;
+				++num_total_infections;
 			}
-			//n_cases = n_fatalities+n_recovered;
-
-    	}
+			if (node_update_status.new_symptomatic)
+			{
+				++num_cases;
+			}
+			if (node_update_status.new_symptomatic && nodes[j].quarantined)
+			{
+				++quarantined_num_cases;
+			}
+			if (node_update_status.new_hospitalization)
+			{
+				++num_cumulative_hospitalizations;
+			}
+			if (node_update_status.new_infective)
+			{
+				++num_cumulative_infective;
+			}
+		}
 		cafeteria_active_duration(nodes, interaction_spaces, day);
 		library_active_duration(nodes, interaction_spaces, day);
-    	update_interaction_space_lambda(nodes, interaction_spaces, day);
-    	update_individual_lambda(nodes, interaction_spaces, day);
-
-    	plot_data.nums["num_fatalities"].push_back({time_step, {n_fatalities}});
-		plot_data.nums["num_recovered"].push_back({time_step, {n_recovered}});
-		plot_data.nums["num_affected"].push_back({time_step, {n_affected}});
-		plot_data.nums["num_cases"].push_back({time_step, {n_cases}});
-		plot_data.nums["num_hospitalised"].push_back({time_step, {n_hospitalised}});
+		update_interaction_space_lambda(nodes, interaction_spaces, day);
+		update_individual_lambda(nodes, interaction_spaces, day);
 		update_all_kappa(nodes, interaction_spaces, intv_params, time_step, day);
-		if(GLOBAL.ENABLE_TESTING){
+		if (GLOBAL.ENABLE_TESTING)
+		{
 			update_test_status(nodes, time_step);
 			update_infection_testing(nodes, interaction_spaces, time_step, day);
-		    update_test_request(nodes, interaction_spaces, time_step, testing_protocol_file_read, day);
+			update_test_request(nodes, interaction_spaces, time_step, testing_protocol_file_read, day);
 		}
-		plot_data.nums["num_tested_positive"].push_back({time_step, {n_tested_positive}});
-		plot_data.nums["num_tests_requested"].push_back({time_step, {n_requested_tests}});
 		cafeteria_reset(nodes, interaction_spaces, day);
 		library_reset(nodes, interaction_spaces, day);
-		
+		count_type n_infected = 0,
+				   n_exposed = 0,
+				   n_hospitalised = 0,
+				   n_symptomatic = 0,
+				   n_critical = 0,
+				   n_fatalities = 0,
+				   n_recovered = 0,
+				   n_affected = 0,
+				   n_infective = 0,
+				   quarantined_individuals = 0,
+				   quarantined_infectious = 0;
+
+		count_type n_primary_contact = 0,
+				   n_mild_symptomatic_tested = 0, //CCC2
+				   n_moderate_symptomatic_tested = 0,	  //DCHC
+				   n_severe_symptomatic_tested = 0,	  //DCH
+				   n_icu = 0,
+				   n_requested_tests = 0,
+				   n_tested_positive = 0;
+		for (count_type j = 0; j < nodes.size(); j++)
+		{
+			auto infection_status = nodes[j].infection_status;
+			if (infection_status == Progression::infective || infection_status == Progression::symptomatic || infection_status == Progression::hospitalised || infection_status == Progression::critical)
+			{
+				n_infected += 1;
+			}
+			if (infection_status == Progression::exposed)
+			{
+				n_exposed += 1;
+			}
+			if (infection_status == Progression::hospitalised)
+			{
+				n_hospitalised += 1;
+			}
+			if (infection_status == Progression::symptomatic)
+			{
+				n_symptomatic += 1;
+			}
+			if (infection_status == Progression::critical)
+			{
+				n_critical += 1;
+			}
+			if (infection_status == Progression::dead)
+			{
+				n_fatalities += 1;
+			}
+			if (infection_status == Progression::recovered)
+			{
+				n_recovered += 1;
+			}
+			if (nodes[j].test_status.test_requested)
+			{
+				n_requested_tests ++;
+			}
+			if (infection_status != Progression::susceptible)
+			{
+				n_affected += 1;
+			}
+			if (nodes[j].infective)
+			{
+				n_infective += 1;
+			}
+			if (nodes[j].quarantined)
+			{
+				quarantined_individuals += 1;
+			}
+			if (nodes[j].quarantined && (infection_status == Progression::infective || infection_status == Progression::symptomatic || infection_status == Progression::hospitalised || infection_status == Progression::critical))
+			{
+				quarantined_infectious += 1;
+			}
+			if (nodes[j].disease_label == DiseaseLabel::primary_contact)
+			{
+				n_primary_contact += 1;
+			}
+			if (nodes[j].disease_label == DiseaseLabel::mild_symptomatic_tested)
+			{
+				n_mild_symptomatic_tested += 1;
+			}
+			if (nodes[j].disease_label == DiseaseLabel::moderate_symptomatic_tested)
+			{
+				n_moderate_symptomatic_tested += 1;
+			}
+			if (nodes[j].disease_label == DiseaseLabel::severe_symptomatic_tested)
+			{
+				n_severe_symptomatic_tested += 1;
+			}
+			if (nodes[j].disease_label == DiseaseLabel::icu)
+			{
+				n_icu += 1;
+			}
+			if (nodes[j].test_status.tested_positive)
+			{
+				n_tested_positive += 1;
+			}
+		}
+		plot_data.nums["num_infected"].push_back({time_step, {n_infected}});
+		plot_data.nums["num_exposed"].push_back({time_step, {n_exposed}});
+		plot_data.nums["num_hospitalised"].push_back({time_step, {n_hospitalised}});
+		plot_data.nums["num_symptomatic"].push_back({time_step, {n_symptomatic}});
+		plot_data.nums["num_critical"].push_back({time_step, {n_critical}});
+		plot_data.nums["num_fatalities"].push_back({time_step, {n_fatalities}});
+		plot_data.nums["num_recovered"].push_back({time_step, {n_recovered}});
+		plot_data.nums["num_affected"].push_back({time_step, {n_affected}});
+		plot_data.nums["num_cases"].push_back({time_step, {num_cases}});
+		plot_data.nums["num_cumulative_hospitalizations"].push_back({time_step, {num_cumulative_hospitalizations}});
+		plot_data.nums["num_cumulative_infective"].push_back({time_step, {num_cumulative_infective}});
+		plot_data.disease_label_stats["disease_label_stats"].push_back({time_step, {n_primary_contact, n_mild_symptomatic_tested, n_moderate_symptomatic_tested, n_severe_symptomatic_tested, n_icu, n_requested_tests, n_tested_positive}});
 	}
-	std::cout<<"Tests requested: " <<GLOBAL.debug_count_tests_requested<<"\t"<<"Tested positive: "<<GLOBAL.debug_count_positive<<'\n';
+	// std::cout<<"Tests requested: " <<GLOBAL.debug_count_tests_requested<<"\t"<<"Tested positive: "<<GLOBAL.debug_count_positive<<'\n';
 	// count_type index_node = 0;
 	// int num_tests_arr [] = {0,0,0};
 	// std::vector<int> difference;
@@ -325,8 +381,8 @@ plot_data_struct run_campus_simulator(){
 	// 	}
 	// 	index_node ++;
 	// }
-	std::cout<<"Number of hospitalised : "<<GLOBAL.debug_hospitalised<<"\n";
-	std::cout<<"Critical : "<<GLOBAL.debug_critical<<"\n";
+	// std::cout<<"Number of hospitalised : "<<GLOBAL.debug_hospitalised<<"\n";
+	// std::cout<<"Critical : "<<GLOBAL.debug_critical<<"\n";
 	// std::cout<<"\n";
 	// for (int i =0; i<3; i++){
 	// 	std::cout<<i<<","<<num_tests_arr[i]<<"\n";
@@ -438,25 +494,7 @@ plot_data_struct run_campus_simulator(){
 	}
 
 	//Get data for this simulation step
-	count_type n_infected = 0,
-	  n_exposed = 0,
-	  n_hospitalised = 0,
-	  n_symptomatic = 0,
-	  n_critical = 0,
-	  n_fatalities = 0,
-	  n_recovered = 0,
-	  n_affected = 0,
-	  n_infective = 0,
-	  quarantined_individuals = 0,
-	  quarantined_infectious = 0;
-
-	count_type n_primary_contact = 0,
-	  n_mild_symptomatic_tested = 0, //CCC2
-   	  n_moderate_symptomatic_tested = 0, //DCHC
-      n_severe_symptomatic_tested = 0, //DCH
-      n_icu = 0,
-	  n_requested_tests = 0,
-	  n_tested_positive = 0;
+	
 
 	double susceptible_lambda = 0,
 	  susceptible_lambda_H = 0,
@@ -683,10 +721,10 @@ plot_data_struct run_campus_simulator(){
 	#endif
   */
 
- 	//plot_data.nums["num_infected"].push_back({time_step, {n_infected}});
+	//plot_data.nums["num_infected"].push_back({time_step, {n_infected}});
 	//plot_data.nums["num_exposed"].push_back({time_step, {n_exposed}});
 	//plot_data.nums["num_hospitalised"].push_back({time_step, {n_hospitalised}});
 	//plot_data.nums["num_symptomatic"].push_back({time_step, {n_symptomatic}});
 	//plot_data.nums["num_critical"].push_back({time_step, {n_critical}});
-  return plot_data;
+	return plot_data;
 }

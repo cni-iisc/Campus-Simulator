@@ -32,6 +32,7 @@ num_fatalities="/Users/Minhaas/CODING/iisc/campus_simulator/staticInst/data/camp
 num_recovered="/Users/Minhaas/CODING/iisc/campus_simulator/staticInst/data/campus_outputs/num_recovered.csv"
 num_tested_positive="/Users/Minhaas/CODING/iisc/campus_simulator/staticInst/data/campus_outputs/num_tested_positive.csv"
 num_tests_requested="/Users/Minhaas/CODING/iisc/campus_simulator/staticInst/data/campus_outputs/num_tests_requested.csv"
+disease_label_stats="/Users/Minhaas/CODING/iisc/campus_simulator/staticInst/data/campus_outputs/disease_label_stats.csv"
 #make clean
 make -f makefile_np all
 
@@ -50,6 +51,8 @@ DST_NUM_FATALITIES="/Users/Minhaas/CODING/iisc/campus_simulator/staticInst/data/
 DST_NUM_RECOVERED="/Users/Minhaas/CODING/iisc/campus_simulator/staticInst/data/campus_outputs/plots_data/$INTERVENTION_NAME/num_recovered_$sim.csv"
 DST_NUM_TESTED_POSITIVE="/Users/Minhaas/CODING/iisc/campus_simulator/staticInst/data/campus_outputs/plots_data/$INTERVENTION_NAME/num_tested_positive_$sim.csv"
 DST_NUM_TESTS_REQUESTED="/Users/Minhaas/CODING/iisc/campus_simulator/staticInst/data/campus_outputs/plots_data/$INTERVENTION_NAME/num_tests_requested_$sim.csv"
+DST_DISEASE_LABEL_STATS="/Users/Minhaas/CODING/iisc/campus_simulator/staticInst/data/campus_outputs/plots_data/$INTERVENTION_NAME/disease_label_stats_$sim.csv"
+
 
 cp $num_affected $DST_NUM_AFFECTED 
 cp $num_cases $DST_NUM_CASES
@@ -57,5 +60,5 @@ cp $num_fatalities $DST_NUM_FATALITIES
 cp $num_recovered $DST_NUM_RECOVERED
 cp $num_tested_positive $DST_NUM_TESTED_POSITIVE
 cp $num_tests_requested $DST_NUM_TESTS_REQUESTED
-
+cp $disease_label_stats $DST_DISEASE_LABEL_STATS
 done

@@ -637,8 +637,10 @@ void update_test_request(vector<agent>& nodes, const vector<house>& homes,
 }
 
 void update_test_status(vector<agent>& nodes, count_type current_time){
-	std::cout<<"Inside update_test_status"<<"\n";
+// std::cout<<"Inside update_test_status"<<"\n"
+  int count = 0; //
   for(auto& node: nodes){
+	std::cout<<"Node ID: "<<count<<"\t"<<node.test_status.test_requested<<"\n";
     if(node.test_status.test_requested){
 	  if(node.infection_status == Progression::infective
 		 || node.infection_status == Progression::symptomatic
@@ -663,8 +665,11 @@ void update_test_status(vector<agent>& nodes, count_type current_time){
 	  }
 	  node.test_status.test_requested = false;
     }
+	std::cout<<"Node ID: "<<count<<"\t"<<node.test_status.test_requested<<"\n";
+	count ++;
   }
 }
+
 casualty_stats get_infected_community(const vector<agent>& nodes, const community& community){
   count_type affected = 0;
   count_type hd_area_affected = 0;

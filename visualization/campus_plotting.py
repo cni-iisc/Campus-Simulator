@@ -23,13 +23,17 @@ file_names = [
     'num_affected',
     'num_cases',
     'num_fatalities',
-    'num_recovered'
+    'num_recovered',
+    'num_tested_positive',
+    'num_tests_requested', 
+    'disease_label_stats'
 ]
 
 underscore = '_'
 offset = -1
 interventions_to_plot = []
 num_intv = range(len(intv_array))
+#num_intv = range(1)
 sym_id_array = range(10)
 timesteps = np.arange(0,120,0.25)
 color_str = ['darkcyan', 'navy', 'darkorchid', 'maroon', 'dodgerblue', 'crimson', 'goldenrod', 'brown', 'darkslateblue', 'darkgreen']
@@ -66,12 +70,19 @@ df_cumulative_cases_matrix = []
 df_fatalities_matrix = []
 df_daily_cases_matrix = [] 
 df_recovered_matrix = []
+df_num_tested_positive_matrix = []
+df_tests_requested_matrix = []
+df_disease_label_stats_matrix = []
 
 for intv in num_intv:
     df_cumulative_cases_intv=[] 
     df_fatalities_intv=[]
     df_daily_cases_intv = []
     df_recovered_intv = []
+    df_num_tested_positive_intv = []
+    df_tests_requested_intv = []
+    df_disease_label_stats_intv = []
+
     
     for sym_id in sym_id_array:        
         dir_name=sim_dir+intv_array[intv] + '/'
@@ -80,12 +91,18 @@ for intv in num_intv:
         df_daily_cases_intv.append(pd.read_csv(dir_name+file_names[1]+ underscore +str(file_num)+'.csv').set_index('Time'))
         df_fatalities_intv.append(pd.read_csv(dir_name+file_names[2]+ underscore +str(file_num)+'.csv').set_index('Time'))
         df_recovered_intv.append(pd.read_csv(dir_name+file_names[3]+ underscore +str(file_num)+'.csv').set_index('Time'))
+        df_num_tested_positive_intv.append(pd.read_csv(dir_name+file_names[4]+ underscore +str(file_num)+'.csv').set_index('Time'))
+        df_tests_requested_intv.append(pd.read_csv(dir_name+file_names[5]+ underscore +str(file_num)+'.csv').set_index('Time'))
+        df_disease_label_stats_intv.append(pd.read_csv(dir_name+file_names[6]+ underscore +str(file_num)+'.csv').set_index('Time'))
 
      
     df_daily_cases_matrix.append(df_daily_cases_intv)
     df_cumulative_cases_matrix.append(df_cumulative_cases_intv)
     df_fatalities_matrix.append(df_fatalities_intv)
     df_recovered_matrix.append(df_recovered_intv)
+    df_num_tested_positive_matrix.append(df_num_tested_positive_intv)
+    df_tests_requested_matrix.append(df_tests_requested_intv)
+    df_disease_label_stats_matrix.append(df_disease_label_stats_intv)
 
 if DEBUG:
     print("Df_matrix printing")
@@ -118,6 +135,9 @@ df_daily_cases_mean_array = mean_array(df_daily_cases_matrix)
 df_fatalities_mean_array = mean_array(df_fatalities_matrix)
 df_recovered_mean_array = mean_array(df_recovered_matrix)
 df_cumulative_cases_mean_array= mean_array(df_cumulative_cases_matrix)
+df_tested_positive_mean_array= mean_array(df_num_tested_positive_matrix)
+df_tests_requested_mean_array= mean_array(df_tests_requested_matrix)
+df_disease_label_mean_array= mean_array(df_disease_label_stats_matrix)
 
 if DEBUG:
     print("DF Mean array printing")
@@ -144,7 +164,61 @@ plt.tight_layout()
 plt.legend()
 plt.xlabel('Timesteps', fontsize=14)
 plt.ylabel('Cases', fontsize = 14)
-plt.savefig(plots_dir + '/cumulative_cases_all_16Apr_testing_1.0.png')
+plt.savefig(plots_dir + '/cumulative_cases_ni_22Apr_testing_0.8.png')
+
+# #Tested Positive cases
+# plt.figure(figsize=(16,8))
+# plt.grid()
+# plt.title('Cumulative cases')
+
+# for intv_index in interventions_to_plot:
+#     time0 = df_tested_positive_mean_array[0].index - offset
+#     plot_df = df_tested_positive_mean_array[intv_index]
+#     if DEBUG: print(f"For Intervention Scenario: {intv_str[intv_index]} \n The dataframe is: \n {plot_df}")
+#     plt.plot(time0, plot_df['num_tested_positive'], color = color_str[intv_index], label = intv_str[intv_index])
+#     plt.fill_between(time0, plot_df['num_tested_positive'] + plot_df['num_tested_positive_std'], plot_df['num_tested_positive'] - plot_df['num_tested_positive_std'], color = color_str[intv_index], alpha = 0.15)
+
+# plt.tight_layout()
+# plt.legend()
+# plt.xlabel('Timesteps', fontsize=14)
+# plt.ylabel('Tested Positive', fontsize = 14)
+# plt.savefig(plots_dir + '/tested_positive__all_23Apr_testing_1.png')
+
+#Tests requested
+plt.figure(figsize=(16,8))
+plt.grid()
+plt.title('Tests requested')
+
+for intv_index in interventions_to_plot:
+    time0 = df_disease_label_mean_array[0].index - offset
+    plot_df = df_disease_label_mean_array[intv_index]
+    # print(f"For Intervention Scenario: {intv_str[intv_index]} \n The dataframe is: \n {plot_df}")
+    plt.plot(time0, plot_df["requested_tests"], color = color_str[intv_index], label = intv_str[intv_index])
+    # plt.fill_between(time0, plot_df['num_tests_requested'] + plot_df['num_tests_requested_std'], plot_df['num_tests_requested'] - plot_df['num_tests_requested_std'], color = color_str[intv_index], alpha = 0.15)
+
+plt.tight_layout()
+plt.legend()
+plt.xlabel('Timesteps', fontsize=14)
+plt.ylabel('Tests', fontsize = 14)
+plt.savefig(plots_dir + '/tests_requested_ni_23Apr_testing_0.5.png')
+
+#Positive cases
+plt.figure(figsize=(16,8))
+plt.grid()
+plt.title('Tests requested')
+
+for intv_index in interventions_to_plot:
+    time0 = df_disease_label_mean_array[0].index - offset
+    plot_df = df_disease_label_mean_array[intv_index]
+    if DEBUG: print(f"For Intervention Scenario: {intv_str[intv_index]} \n The dataframe is: \n {plot_df}")
+    plt.plot(time0, plot_df['cumulative_positive_cases'], color = color_str[intv_index], label = intv_str[intv_index])
+    plt.fill_between(time0, plot_df['cumulative_positive_cases'] + plot_df['cumulative_positive_cases_std'], plot_df['cumulative_positive_cases'] - plot_df['cumulative_positive_cases_std'], color = color_str[intv_index], alpha = 0.15)
+
+plt.tight_layout()
+plt.legend()
+plt.xlabel('Timesteps', fontsize=14)
+plt.ylabel('Cases', fontsize = 14)
+plt.savefig(plots_dir + '/tested_positive_ni_23Apr_testing_0.5.png')
 
 #Daily cases
 plt.figure(figsize=(16,8))

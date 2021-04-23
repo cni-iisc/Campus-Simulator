@@ -1078,11 +1078,14 @@ void update_test_request(std::vector<agent> &nodes, std::vector<Interaction_Spac
 
 void update_test_status(std::vector<agent> &nodes, count_type current_time)
 {
+  // std::cout<<"update_test_status"<<"\n";
+  // int count = 0;
   for (auto &node : nodes)
   {
+    // std::cout<<"Node ID: "<<count<<"\t"<<node.test_status.test_requested<<"\n";
     if (node.test_status.test_requested)
     {
-      // GLOBAL.debug_count_tests_requested ++;
+      // GLOBAL.debug_count_positive ++;
       if (node.infection_status == Progression::infective || node.infection_status == Progression::symptomatic || node.infection_status == Progression::hospitalised || node.infection_status == Progression::critical)
       {
         node.test_status.state = bernoulli(GLOBAL.TEST_FALSE_NEGATIVE) ? test_result::negative : test_result::positive;
@@ -1114,6 +1117,8 @@ void update_test_status(std::vector<agent> &nodes, count_type current_time)
       }
       node.test_status.test_requested = false;
     }
+    // std::cout<<"Node ID: "<<count<<"\t"<<node.test_status.test_requested<<"\n";
+    // count ++;
   }
   // std::cout<<"Tests requested: "<<GLOBAL.debug_count_tests_requested<<"\n";
 }

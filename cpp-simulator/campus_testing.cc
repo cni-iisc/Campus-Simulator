@@ -62,8 +62,10 @@ void set_test_request(vector<agent>& nodes,
 		      std::vector<Interaction_Space>& ispaces,
 		      testing_probability probabilities,
 		      count_type current_time, count_type day){
-
+  
+//   std::cout<<"set_test_request"<<"\n";
   for(count_type i=0; i<nodes.size(); ++i){
+	// std::cout<<"Node ID: "<<i<<"\t"<<nodes[i].test_status.test_requested<<"\n";
 	double time_since_hospitalised = current_time
                 - (nodes[i].time_of_infection
                         + nodes[i].incubation_period
@@ -110,8 +112,9 @@ void set_test_request(vector<agent>& nodes,
 		nodes[i].test_status.node_test_trigger = test_trigger::re_test;
 		nodes[i].time_tested.push_back(current_time);
 	}
-
-
+	if (nodes[i].test_status.test_requested){
+		// GLOBAL.debug_count_tests_requested ++;
+	}
 	// Trigger contact trace from node. Enter only if the node has not yet triggered a contact trace, and if the node tested postive.
 	if(!nodes[i].test_status.triggered_contact_trace && nodes[i].test_status.tested_positive){
 		nodes[i].test_status.triggered_contact_trace = true; // record that contact tracing was triggered.
@@ -190,6 +193,7 @@ void set_test_request(vector<agent>& nodes,
 // 		}
 // #endif
 	}
+	// std::cout<<"Node ID: "<<i<<"\t"<<nodes[i].test_status.test_requested<<"\n";
   }
 // #ifndef DISABLE_CONTACT_TRACE_NBR_CELLS
 //   // Test people in neighbourhood cell
@@ -211,44 +215,48 @@ void set_test_request(vector<agent>& nodes,
 
 
 void update_infection_testing(std::vector<agent>& nodes, std::vector<Interaction_Space>& ispaces, count_type current_time, count_type day){
-  for(auto& node: nodes){
-	if(node.test_status.state==test_result::positive){
-		if(node.infection_status==Progression::symptomatic){
-			if(node.severity==1){
-				node.disease_label = DiseaseLabel::moderate_symptomatic_tested;
+//   int count = 0;
+//   std::cout<<"update_infection_testing"<<"\n";
+	for(auto& node: nodes){
+		// std::cout<<"Node ID: "<<count<<"\t"<<node.test_status.test_requested<<"\n";
+		if(node.test_status.state==test_result::positive){
+			if(node.infection_status==Progression::symptomatic){
+				if(node.severity==1){
+					node.disease_label = DiseaseLabel::moderate_symptomatic_tested;
+				}
+				else{
+					node.disease_label = DiseaseLabel::mild_symptomatic_tested;
+				}
 			}
-			else{
+			else if(node.infection_status==Progression::exposed || node.infection_status==Progression::infective){
 				node.disease_label = DiseaseLabel::mild_symptomatic_tested;
 			}
-		}
-		else if(node.infection_status==Progression::exposed || node.infection_status==Progression::infective){
-			node.disease_label = DiseaseLabel::mild_symptomatic_tested;
-		}
-		else if(node.infection_status==Progression::hospitalised){
-			node.disease_label=DiseaseLabel::severe_symptomatic_tested;
-		}
-		else if(node.infection_status==Progression::critical){
-			node.disease_label=DiseaseLabel::icu;
-		}
-		else if(node.infection_status==Progression::recovered){
-			node.disease_label=DiseaseLabel::recovered;
-		}
-		else if(node.infection_status==Progression::dead){
-			node.disease_label=DiseaseLabel::dead;
-		}
+			else if(node.infection_status==Progression::hospitalised){
+				node.disease_label=DiseaseLabel::severe_symptomatic_tested;
+			}
+			else if(node.infection_status==Progression::critical){
+				node.disease_label=DiseaseLabel::icu;
+			}
+			else if(node.infection_status==Progression::recovered){
+				node.disease_label=DiseaseLabel::recovered;
+			}
+			else if(node.infection_status==Progression::dead){
+				node.disease_label=DiseaseLabel::dead;
+			}
 
-	}
-	if(node.disease_label==DiseaseLabel::primary_contact || node.disease_label==DiseaseLabel::mild_symptomatic_tested || node.disease_label==DiseaseLabel::moderate_symptomatic_tested){
-		if(current_time - node.test_status.contact_traced_epoch <= HOME_QUARANTINE_DAYS*GLOBAL.SIM_STEPS_PER_DAY){
-			//std::cout<<"Day: "<<current_time<<"\t";
-			modify_kappa_case_isolate_node(node, ispaces, day);
 		}
-		else{
-				node.disease_label=DiseaseLabel::asymptomatic;
+		if(node.disease_label==DiseaseLabel::primary_contact || node.disease_label==DiseaseLabel::mild_symptomatic_tested || node.disease_label==DiseaseLabel::moderate_symptomatic_tested){
+			if(current_time - node.test_status.contact_traced_epoch <= HOME_QUARANTINE_DAYS*GLOBAL.SIM_STEPS_PER_DAY){
+				//std::cout<<"Day: "<<current_time<<"\t";
+				modify_kappa_case_isolate_node(node, ispaces, day);
+			}
+			else{
+					node.disease_label=DiseaseLabel::asymptomatic;
+			}
 		}
+	// std::cout<<"Node ID: "<<count<<"\t"<<node.test_status.test_requested<<"\n";
+	// count ++;
 	}
-}
-
 }
 
 void set_test_request_fileread(std::vector<agent>& nodes, std::vector<Interaction_Space>& ispaces,

@@ -342,8 +342,8 @@ void output_csv_files(const std::string& output_directory,
 		//				"critical",
 		//				"dead",
 						"recovered",
-            "tested_positive",
-            "tests_requested"
+            // "tested_positive",
+            // "tests_requested"
 		//				"recovered_from_infective",
 		//				"recovered_from_symptomatic",
 		//				"recovered_from_hospitalised",
@@ -439,7 +439,7 @@ void output_csv_files(const std::string& output_directory,
             "curtailed_interactions"},
     csvfile_path, elem.second);
   }*/
-  /*
+  
   for(const auto& elem: plot_data.disease_label_stats){
     std::string csvfile_name = elem.first + ".csv";
     std::string csvfile_path = output_directory + "/" + csvfile_name;
@@ -450,6 +450,6 @@ void output_csv_files(const std::string& output_directory,
             "severe_symptomatic_tested",
             "icu","requested_tests","cumulative_positive_cases"},
     csvfile_path, elem.second);
-  }*/
+  }
 
 }

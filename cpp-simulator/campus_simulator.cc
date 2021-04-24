@@ -208,7 +208,7 @@ plot_data_struct run_campus_simulator()
 		  		&& bernoulli(GLOBAL.FRACTION_FORCED_TO_TAKE_TRAIN);
       		}
     	}*/
-
+		
 		//#pragma omp parallel for
 		//
 		// Since update_infection uses a random number generator with
@@ -218,7 +218,7 @@ plot_data_struct run_campus_simulator()
 		day = (time_step / 4) % GLOBAL.PERIODICITY;
 		count_type num_new_infections = 0;
 		for (count_type j = 0; j < nodes.size(); ++j)
-		{
+		{	
 			auto node_update_status = update_infection(nodes[j], time_step, day);
 			nodes[j].psi_T = psi_T(nodes[j], time_step);
 			if (node_update_status.new_infection)
@@ -302,13 +302,13 @@ plot_data_struct run_campus_simulator()
 			{
 				n_fatalities += 1;
 			}
-			if (infection_status == Progression::recovered)
-			{
-				n_recovered += 1;
-			}
 			if (nodes[j].test_status.test_requested)
 			{
 				n_requested_tests ++;
+			}
+			if (infection_status == Progression::recovered)
+			{
+				n_recovered += 1;
 			}
 			if (infection_status != Progression::susceptible)
 			{
@@ -364,12 +364,13 @@ plot_data_struct run_campus_simulator()
 		plot_data.nums["num_cumulative_infective"].push_back({time_step, {num_cumulative_infective}});
 		plot_data.disease_label_stats["disease_label_stats"].push_back({time_step, {n_primary_contact, n_mild_symptomatic_tested, n_moderate_symptomatic_tested, n_severe_symptomatic_tested, n_icu, n_requested_tests, n_tested_positive}});
 	}
-	// std::cout<<"Tests requested: " <<GLOBAL.debug_count_tests_requested<<"\t"<<"Tested positive: "<<GLOBAL.debug_count_positive<<'\n';
+	std::cout<<"Tests requested: " <<GLOBAL.debug_count_tests_requested<<"\t"<<"Tested positive: "<<GLOBAL.debug_count_positive<<'\n';
 	// count_type index_node = 0;
-	// int num_tests_arr [] = {0,0,0};
+	int num_tests_arr [] = {0,0,0,0,0,0};
 	// std::vector<int> difference;
-	// for (auto& node : nodes){
-	// 	num_tests_arr[node.time_tested.size()]++;
+	for (auto& node : nodes){
+		num_tests_arr[node.time_tested.size()]++;
+	}
 	// 	if(node.time_tested.size() > 1 ){
 	// 		// std::cout<<"Time of testing for node: "<<index_node<<"\t";
 	// 		// for (auto & temp : node.time_tested){
@@ -384,9 +385,9 @@ plot_data_struct run_campus_simulator()
 	// std::cout<<"Number of hospitalised : "<<GLOBAL.debug_hospitalised<<"\n";
 	// std::cout<<"Critical : "<<GLOBAL.debug_critical<<"\n";
 	// std::cout<<"\n";
-	// for (int i =0; i<3; i++){
-	// 	std::cout<<i<<","<<num_tests_arr[i]<<"\n";
-	// }
+	for (int i =0; i< sizeof(num_tests_arr)/sizeof(num_tests_arr[0]); i++){
+		std::cout<<i<<","<<num_tests_arr[i]<<"\n";
+	}
 	///TODO: Check update kappa function call here.
 	/*if(GLOBAL.ENABLE_TESTING){
 		update_test_status(nodes, time_step);

@@ -85,10 +85,10 @@ void set_test_request(vector<agent>& nodes,
 	  bernoulli(probabilities.prob_test_index_symptomatic) &&
 	  !nodes[i].test_status.tested_positive){
 		nodes[i].test_status.test_requested = true;
-		GLOBAL.debug_count_tests_requested ++;
+		// GLOBAL.debug_count_tests_requested ++;
 		nodes[i].test_status.node_test_trigger = test_trigger::symptomatic;
 		nodes[i].test_status.contact_traced_epoch = current_time;
-		nodes[i].time_tested.push_back(current_time);
+		// nodes[i].time_tested.push_back(current_time);
  //This is to ensure that if the node's test turns positive, they are also subjected to restrictions.
 	}
 	//1) Node just turned symptomatic, 2) node was not tested positive before,  and 3) the coin toss decided to test the node
@@ -97,10 +97,10 @@ void set_test_request(vector<agent>& nodes,
 	  bernoulli(probabilities.prob_test_index_hospitalised) &&
 	  !nodes[i].test_status.tested_positive){
 		nodes[i].test_status.test_requested = true;
-		GLOBAL.debug_count_tests_requested ++;
+		// GLOBAL.debug_count_tests_requested ++;
 		nodes[i].test_status.node_test_trigger = test_trigger::hospitalised;
 		nodes[i].test_status.contact_traced_epoch = current_time;
-		nodes[i].time_tested.push_back(current_time);
+		// nodes[i].time_tested.push_back(current_time);
 		 //This is to ensure that if their test turns positive, they are also subjected to contact traced restrictions.
 	}
 	// Re-test if somebody is recovered
@@ -108,9 +108,9 @@ void set_test_request(vector<agent>& nodes,
 	  nodes[i].infection_status==Progression::recovered &&
 	  bernoulli(probabilities.prob_retest_recovered)){
 		nodes[i].test_status.test_requested = true;
-		GLOBAL.debug_count_tests_requested ++;
+		// GLOBAL.debug_count_tests_requested ++;
 		nodes[i].test_status.node_test_trigger = test_trigger::re_test;
-		nodes[i].time_tested.push_back(current_time);
+		// nodes[i].time_tested.push_back(current_time);
 	}
 	if (nodes[i].test_status.test_requested){
 		// GLOBAL.debug_count_tests_requested ++;

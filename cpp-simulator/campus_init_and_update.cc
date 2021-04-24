@@ -1085,7 +1085,7 @@ void update_test_status(std::vector<agent> &nodes, count_type current_time)
     // std::cout<<"Node ID: "<<count<<"\t"<<node.test_status.test_requested<<"\n";
     if (node.test_status.test_requested)
     {
-      // GLOBAL.debug_count_positive ++;
+      GLOBAL.debug_count_tests_requested ++;
       if (node.infection_status == Progression::infective || node.infection_status == Progression::symptomatic || node.infection_status == Progression::hospitalised || node.infection_status == Progression::critical)
       {
         node.test_status.state = bernoulli(GLOBAL.TEST_FALSE_NEGATIVE) ? test_result::negative : test_result::positive;
@@ -1093,6 +1093,7 @@ void update_test_status(std::vector<agent> &nodes, count_type current_time)
         node.test_status.tested_epoch = current_time;
         if(node.test_status.tested_positive){
           GLOBAL.debug_count_positive++;
+          node.time_tested.push_back(1);
         }
       }
       else if (node.infection_status == Progression::exposed && current_time - node.time_of_infection > node.time_to_test_positive)
@@ -1103,6 +1104,7 @@ void update_test_status(std::vector<agent> &nodes, count_type current_time)
         node.test_status.tested_epoch = current_time;
         if(node.test_status.tested_positive){
           GLOBAL.debug_count_positive++;
+          node.time_tested.push_back(1);
         }
       }
       else
@@ -1113,6 +1115,7 @@ void update_test_status(std::vector<agent> &nodes, count_type current_time)
         node.test_status.tested_epoch = current_time;
         if(node.test_status.tested_positive){
           GLOBAL.debug_count_positive++;
+          node.time_tested.push_back(1);
         }
       }
       node.test_status.test_requested = false;

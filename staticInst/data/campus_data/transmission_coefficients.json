@@ -7,32 +7,44 @@
     },
     {
         "type": 1,
-        "beta": 1.1036738925684277,
+        "beta": 1.1167510346812366,
         "alpha": 1,
         "name": "Classroom"
     },
     {
         "type": 2,
-        "beta": 1.0649747705684567,
+        "beta": 1.198213600184721,
         "alpha": 1,
         "name": "Hostel"
     },
     {
         "type": 3,
-        "beta": 1.475484808180208,
+        "beta": 1.1994713990860166,
         "alpha": 1,
         "name": "Mess"
     },
     {
         "type": 4,
-        "beta": 1.1477008352442437,
+        "beta": 1.0859669703256496,
         "alpha": 1,
         "name": "Cafe"
     },
     {
         "type": 5,
-        "beta": 1.4262503987229618,
+        "beta": 1.0486811130993026,
         "alpha": 1,
         "name": "Library"
+    },
+    {
+        "type": 6,
+        "beta": 1.0102561713289155,
+        "alpha": 1,
+        "name": "Sports_facility"
+    },
+    {
+        "type": 7,
+        "beta": 1.3384210404135595,
+        "alpha": 1,
+        "name": "Recreational_facility"
     }
 ]

@@ -100,6 +100,8 @@ void init_config_params()
     GLOBAL.kappa_mess_case_isolation = elem["kappa_mess_case_isolation"].GetDouble();
     GLOBAL.kappa_cafe_case_isolation = elem["kappa_cafe_case_isolation"].GetDouble();
     GLOBAL.kappa_smaller_networks_case_isolation = elem["kappa_smaller_networks_case_isolation"].GetDouble();
+    GLOBAL.kappa_recreational_facility_case_isolation = elem["kappa_recreational_facility_case_isolation"].GetDouble();
+    GLOBAL.kappa_sports_facility_case_isolation = elem["kappa_sports_facility_case_isolation"].GetDouble();
     GLOBAL.kappa_lib_case_isolation = elem["kappa_lib_case_isolation"].GetDouble();
     GLOBAL.kappa_class_lockdown = elem["kappa_class_lockdown"].GetDouble();
     GLOBAL.kappa_hostel_lockdown = elem["kappa_hostel_lockdown"].GetDouble();

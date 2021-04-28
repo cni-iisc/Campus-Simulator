@@ -56,11 +56,11 @@ void modify_kappa_case_isolate_node(agent &node, std::vector<Interaction_Space> 
         break;
 
       case InteractionType :: sports_facility:
-        node.kappa[ispace.first] = std::min(GLOBAL.kappa_smaller_networks_case_isolation, node.kappa[ispace.first]);
+        node.kappa[ispace.first] = std::min(GLOBAL.kappa_sports_facility_case_isolation, node.kappa[ispace.first]);
         break;
 
       case InteractionType :: recreational_facility:
-        node.kappa[ispace.first] = std::min(GLOBAL.kappa_smaller_networks_case_isolation, node.kappa[ispace.first]);
+        node.kappa[ispace.first] = std::min(GLOBAL.kappa_recreational_facility_case_isolation, node.kappa[ispace.first]);
         break;
       }
   }

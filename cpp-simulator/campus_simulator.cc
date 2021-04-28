@@ -112,6 +112,8 @@ plot_data_struct run_campus_simulator()
 		}
 		cafeteria_active_duration(nodes, interaction_spaces, day);
 		library_active_duration(nodes, interaction_spaces, day);
+		recreational_facility_active_duration(nodes, interaction_spaces, day);
+		sports_facility_active_duration(nodes, interaction_spaces, day);
 		update_interaction_space_lambda(nodes, interaction_spaces, day);
 		update_individual_lambda(nodes, interaction_spaces, day);
 		update_all_kappa(nodes, interaction_spaces, intv_params, time_step, day);
@@ -123,6 +125,8 @@ plot_data_struct run_campus_simulator()
 		}
 		cafeteria_reset(nodes, interaction_spaces, day);
 		library_reset(nodes, interaction_spaces, day);
+		recreational_facility_reset(nodes, interaction_spaces, day);
+		sports_facility_reset(nodes, interaction_spaces, day);
 		count_type n_infected = 0,
 				   n_exposed = 0,
 				   n_hospitalised = 0,

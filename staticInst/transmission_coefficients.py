@@ -35,14 +35,14 @@ def transmission_coefficients(interaction_type_list, BETA, ALPHA, NAMES):
 
 if __name__ == "__main__":
     output_file = "transmission_coefficients.json"
-    input = "/Users/Minhaas/CODING/iisc/rough/campus_input_csv/json_files/"
+    input = "/Users/minhaas/CODING/iisc/campus_simulator/staticInst/data/campus_data/"
     interactionJson = pd.read_json(input + "interaction_spaces.json")
 
     interaction_type_list = interactionJson.type.unique()
     print(interaction_type_list)
 
     if markov_simuls: 
-        output_file_dir = "/Users/Minhaas/CODING/iisc/campus_simulator/markov_simuls/staticInst/data/campus_data/"
+        output_file_dir = "/Users/Minhaas/CODING/iisc/campus_simulator/staticInst/data/campus_data/"
     else :
         output_file_dir = "/Users/Minhaas/CODING/iisc/rough/campus_input_csv/json_files/"
 
@@ -51,8 +51,10 @@ if __name__ == "__main__":
     BETA_HOSTEL = np.random.uniform(0,0.5) + 1 
     BETA_CAFE = np.random.uniform(0,0.5) + 1
     BETA_LIBRARY = np.random.uniform(0,0.5) + 1
+    BETA_REC_FAC = np.random.uniform(0,0.5) + 1
+    BETA_SPORTS_FAC = np.random.uniform(0,0.5) + 1
     BETA_DAY_SCHOLAR = 0
-    BETA = [BETA_DAY_SCHOLAR, BETA_CLASSROOM, BETA_HOSTEL, BETA_MESS, BETA_CAFE, BETA_LIBRARY]
+    BETA = [BETA_DAY_SCHOLAR, BETA_CLASSROOM, BETA_HOSTEL, BETA_MESS, BETA_CAFE, BETA_LIBRARY, BETA_SPORTS_FAC, BETA_REC_FAC]
     ALPHA = 1
 
     if not os.path.exists(output_file_dir):
@@ -64,7 +66,9 @@ if __name__ == "__main__":
         2 : "Hostel", 
         3 : "Mess",
         4 : "Cafe",
-        5 : "Library"
+        5 : "Library",
+        6 : "Sports_facility",
+        7 : "Recreational_facility"
     }
     
     NAMES = []

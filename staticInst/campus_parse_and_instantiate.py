@@ -4,7 +4,7 @@ import json
 import warnings
 from collections import Counter
 import os 
-from transmission_coefficients import transmission_coefficients
+from .transmission_coefficients import transmission_coefficients
 warnings.filterwarnings('ignore')
 
 DEBUG = False
@@ -138,7 +138,7 @@ def campus_parse(inputfiles):
     if cafe:
         for i in range(student_pop):
             for daily_int_st in individual[i]["interaction_strength"]:
-                for j in range(inputfiles["common_areas"]["starting_id"][0], inputfiles["common_areas"]["starting_id"][1]+inputfiles["common_areas"]["number"][1]):
+                for j in range(inputfiles["common_areas"]["starting_id"][0], inputfiles["common_areas"]["starting_id"][3]+inputfiles["common_areas"]["number"][3]):
                     daily_int_st[j] = 0
 
     print("Student done.")
@@ -209,7 +209,7 @@ def campus_parse(inputfiles):
     if cafe:
         for i in range(student_pop, student_pop+faculty_pop):
             for daily_int_st in individual[i]["interaction_strength"]:
-                for j in range(inputfiles["common_areas"]["starting_id"][0], inputfiles["common_areas"]["starting_id"][1]+inputfiles["common_areas"]["number"][1]):
+                for j in range(inputfiles["common_areas"]["starting_id"][0], inputfiles["common_areas"]["starting_id"][3]+inputfiles["common_areas"]["number"][3]):
                     daily_int_st[j] = 0
 
 

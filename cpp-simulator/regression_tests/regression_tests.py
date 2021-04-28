@@ -8,7 +8,6 @@ default_flags={}
 default_options['--NUM_DAYS'] = 20
 default_options['--output_directory'] ="./output_files/"
 default_options['--input_directory'] ="./input_files/"
-#default_options['--input_directory'] ="../../staticInst/data/campus_data"
 default_flags['--SEED_FIXED_NUMBER'] = True
 default_options['--INIT_FIXED_NUMBER_INFECTED'] =100
 default_options['--PROVIDE_INITIAL_SEED'] = 1234
@@ -103,10 +102,10 @@ intervention_map = {
 #5 file based intervention configuration testing
 for intervention in range(4):	
 	current_test={}
-	test_id = 'intervention_'+str(intervention).zfill(2)
+	test_id = 'intervention_'+str(intervention).zfill(2) + '/'
 	test_options = default_options.copy()
 	test_options['--output_directory'] += test_id
-	test_options['--intervention_filename']='intervention_'+str(intervention).zfill(2)+'.json'
+	test_options['--intervention_filename']='/regression_tests/input_files/'+'intervention_'+str(intervention).zfill(2)
 	
 	test_flags = default_flags.copy()
 

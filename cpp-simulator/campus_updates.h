@@ -41,6 +41,14 @@ node_update_status update_infection(agent& node, int cur_time, int day);
 void library_active_duration(std::vector<agent> &nodes, std::vector<Interaction_Space> &interaction_spaces, int day);
 
 void library_reset(std::vector<agent> &nodes, std::vector<Interaction_Space> &interaction_spaces, int day);
+
+void sports_facility_active_duration(std::vector<agent> &nodes, std::vector<Interaction_Space> &interaction_spaces, int day);
+
+void sports_facility_reset(std::vector<agent> &nodes, std::vector<Interaction_Space> &interaction_spaces, int day);
+
+void recreational_facility_active_duration(std::vector<agent> &nodes, std::vector<Interaction_Space> &interaction_spaces, int day);
+
+void recreational_facility_reset(std::vector<agent> &nodes, std::vector<Interaction_Space> &interaction_spaces, int day);
 //update_all_kappa(nodes, homes, workplaces, communities, nbr_cells, intv_params, time_step);
 
 std::vector<testing_probability> init_testing_protocol();
@@ -50,5 +58,8 @@ void print_testing_protocol(const int index, const testing_probability probabili
 void update_test_request(std::vector<agent>& nodes, std::vector<Interaction_Space>& ispaces, const count_type current_time, std::vector<testing_probability>& testing_protocol, count_type day);
 
 void update_test_status(std::vector<agent>& nodes, count_type current_time);
+
+void init_contact_tracing_hierarchy();
+
 
 #endif

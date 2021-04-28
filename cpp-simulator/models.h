@@ -127,8 +127,10 @@ enum class InteractionType {
   mess = 3,
   cafeteria = 4,
   library = 5,
-  smaller_networks = 6,
-  count = 7
+  sports_facility = 6,
+  recreational_facility = 7,
+  smaller_networks = 8,
+  count = 9
 };
 
 struct testing_probability{
@@ -282,6 +284,8 @@ struct global_params{
   double kappa_cafe_case_isolation;
   double kappa_smaller_networks_case_isolation;
   double kappa_lib_case_isolation;
+  double kappa_sports_facility_case_isolation;
+  double kappa_recreational_facility_case_isolation;
   double kappa_class_lockdown;
   double kappa_hostel_lockdown;
   double kappa_mess_lockdown;
@@ -290,6 +294,10 @@ struct global_params{
   double kappa_base_value = 1;
   double kappa_default_lockdown = 0.0;
   double kappa_lib_lockdown;
+
+  int testing_capacity = 0;
+  std::vector<int>contact_tracing_hierarchy;
+
   count_type debug_count_positive = 0;
   count_type debug_count_tests_requested = 0;
     
@@ -674,6 +682,7 @@ struct test_struct{
   test_result state = test_result::not_yet_tested;
   bool triggered_contact_trace = false;
   test_trigger node_test_trigger=test_trigger::not_yet_requested;
+  bool test_done = false;
 };
 
 
@@ -705,6 +714,7 @@ struct agent{
   int dept;
   int type;
   std::vector<count_type> time_tested;
+  std::vector<count_type> time_tested_positive;
   person_type personType;
   std::set<int> spaces;
   int community;

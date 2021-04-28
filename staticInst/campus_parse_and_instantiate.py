@@ -4,7 +4,7 @@ import json
 import warnings
 from collections import Counter
 import os 
-from .transmission_coefficients import transmission_coefficients
+from transmission_coefficients import transmission_coefficients
 warnings.filterwarnings('ignore')
 
 DEBUG = False
@@ -78,7 +78,9 @@ def campus_parse(inputfiles):
         2 : "Hostels",
         3 : "Mess",
         4 : "Cafe",
-        5 : "Library"
+        5 : "Library",
+        6 : "Sports_facility",
+        7 : "Recreational_facility"
     }
 
     print("Instantiating students...")
@@ -326,7 +328,7 @@ def campus_parse(inputfiles):
                 i_space_cafe["lon"] = np.random.uniform(15.0,18.0)
                 interaction_spaces.append(i_space_cafe)
 
-        print("Cafes instantiated")
+        print("Common areas instantiated")
     
     type_list = []
     for spaces in interaction_spaces:

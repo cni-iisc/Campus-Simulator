@@ -6,7 +6,7 @@ from collections import Counter
 import os
 
 from pandas.core.arrays.integer import Int32Dtype 
-from transmission_coefficients import transmission_coefficients
+from .transmission_coefficients import transmission_coefficients
 warnings.filterwarnings('ignore')
 
 DEBUG = False

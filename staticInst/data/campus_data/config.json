@@ -13,6 +13,8 @@
         "kappa_smaller_networks_case_isolation": 0.4,
         "kappa_recreational_facility_case_isolation": 0.1,
         "kappa_sports_facility_case_isolation": 0.1,
+        "kappa_house_case_isolation": 0.9,
+        "kappa_residential_block_case_isolation": 0.6,
         "kappa_lib_case_isolation": 0.1,
         "kappa_class_lockdown": 0.0,
         "kappa_hostel_lockdown": 0.2,

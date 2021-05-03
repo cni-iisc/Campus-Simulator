@@ -3,7 +3,7 @@ import json
 markov_simuls = True
 
 config_json = []
-def configCreate(min_group_size, max_group_size, beta_scaling_factor, avg_num_assns, periodicity, minimum_hostel_time, kappa_class_case_isolation = 0.0, kappa_hostel_case_isolation = 0.2, kappa_mess_case_isolation = 0.1, kappa_cafe_case_isolation = 0.1, kappa_smaller_networks_case_isolation = 0.4, kappa_recreational_facility_case_isolation = 0.1, kappa_sports_facility_case_isolation = 0.1,  kappa_lib_case_isolation = 0.1, kappa_class_lockdown = 0.0, kappa_hostel_lockdown = 0.2, kappa_mess_lockdown = 0.0, kappa_cafe_lockdown = 0.0, kappa_smaller_networks_lockdown = 0.0, kappa_lib_lockdown = 0.0, testing_capacity = 100):
+def configCreate(min_group_size, max_group_size, beta_scaling_factor, avg_num_assns, periodicity, minimum_hostel_time, kappa_class_case_isolation = 0.0, kappa_hostel_case_isolation = 0.2, kappa_mess_case_isolation = 0.1, kappa_cafe_case_isolation = 0.1, kappa_smaller_networks_case_isolation = 0.4, kappa_recreational_facility_case_isolation = 0.1, kappa_sports_facility_case_isolation = 0.1, kappa_residential_block_case_isolation = 0.6, kappa_house_case_isolation = 0.9,  kappa_lib_case_isolation = 0.1, kappa_class_lockdown = 0.0, kappa_hostel_lockdown = 0.2, kappa_mess_lockdown = 0.0, kappa_cafe_lockdown = 0.0, kappa_smaller_networks_lockdown = 0.0, kappa_lib_lockdown = 0.0, testing_capacity = 100):
     config = {}
     config["MIN_GROUP_SIZE"] = min_group_size
     config["MAX_GROUP_SIZE"] = max_group_size
@@ -18,6 +18,8 @@ def configCreate(min_group_size, max_group_size, beta_scaling_factor, avg_num_as
     config["kappa_smaller_networks_case_isolation"] = kappa_smaller_networks_case_isolation
     config["kappa_recreational_facility_case_isolation"] = kappa_recreational_facility_case_isolation
     config["kappa_sports_facility_case_isolation"] = kappa_sports_facility_case_isolation
+    config["kappa_house_case_isolation"] = kappa_house_case_isolation
+    config["kappa_residential_block_case_isolation"] = kappa_residential_block_case_isolation
     config["kappa_lib_case_isolation"] = kappa_lib_case_isolation
     config["kappa_class_lockdown"] = kappa_class_lockdown
     config["kappa_hostel_lockdown"] = kappa_hostel_lockdown
@@ -53,6 +55,8 @@ if __name__ == "__main__":
     kappa_smaller_networks_case_isolation = 0.4 
     kappa_recreational_facility_case_isolation = 0.1 
     kappa_sports_facility_case_isolation = 0.1 
+    kappa_residential_block_case_isolation = 0.6
+    kappa_house_case_isolation = 0.9
     kappa_class_lockdown = 0.0
     kappa_hostel_lockdown = 0.2
     kappa_mess_lockdown = 0.0

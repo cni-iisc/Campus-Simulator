@@ -129,8 +129,10 @@ enum class InteractionType {
   library = 5,
   sports_facility = 6,
   recreational_facility = 7,
-  smaller_networks = 8,
-  count = 9
+  residential_block = 8,
+  house = 9,
+  smaller_networks = 10, 
+  count = 11
 };
 
 struct testing_probability{
@@ -286,6 +288,8 @@ struct global_params{
   double kappa_lib_case_isolation;
   double kappa_sports_facility_case_isolation;
   double kappa_recreational_facility_case_isolation;
+  double kappa_residential_block_case_isolation;
+  double kappa_house_case_isolation;
   double kappa_class_lockdown;
   double kappa_hostel_lockdown;
   double kappa_mess_lockdown;

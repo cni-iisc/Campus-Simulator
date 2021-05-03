@@ -102,6 +102,8 @@ void init_config_params()
     GLOBAL.kappa_smaller_networks_case_isolation = elem["kappa_smaller_networks_case_isolation"].GetDouble();
     GLOBAL.kappa_recreational_facility_case_isolation = elem["kappa_recreational_facility_case_isolation"].GetDouble();
     GLOBAL.kappa_sports_facility_case_isolation = elem["kappa_sports_facility_case_isolation"].GetDouble();
+    GLOBAL.kappa_residential_block_case_isolation = elem["kappa_residential_block_case_isolation"].GetDouble();
+    GLOBAL.kappa_house_case_isolation = elem["kappa_house_case_isolation"].GetDouble();
     GLOBAL.kappa_lib_case_isolation = elem["kappa_lib_case_isolation"].GetDouble();
     GLOBAL.kappa_class_lockdown = elem["kappa_class_lockdown"].GetDouble();
     GLOBAL.kappa_hostel_lockdown = elem["kappa_hostel_lockdown"].GetDouble();
@@ -524,7 +526,9 @@ std::vector<testing_probability> init_testing_protocol()
 
 void init_contact_tracing_hierarchy(){
   GLOBAL.contact_tracing_hierarchy.push_back(8);
+  GLOBAL.contact_tracing_hierarchy.push_back(10);
   GLOBAL.contact_tracing_hierarchy.push_back(2);
+  GLOBAL.contact_tracing_hierarchy.push_back(9);
   GLOBAL.contact_tracing_hierarchy.push_back(1);
   GLOBAL.contact_tracing_hierarchy.push_back(3);
   GLOBAL.contact_tracing_hierarchy.push_back(4);

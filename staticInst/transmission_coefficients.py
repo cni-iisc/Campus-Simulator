@@ -53,8 +53,10 @@ if __name__ == "__main__":
     BETA_LIBRARY = np.random.uniform(0,0.5) + 1
     BETA_REC_FAC = np.random.uniform(0,0.5) + 1
     BETA_SPORTS_FAC = np.random.uniform(0,0.5) + 1
+    BETA_RES_BLOCK = np.random.uniform(0,0.5) + 1
+    BETA_HOUSE = np.random.uniform(0,0.5) + 1
     BETA_DAY_SCHOLAR = 0
-    BETA = [BETA_DAY_SCHOLAR, BETA_CLASSROOM, BETA_HOSTEL, BETA_MESS, BETA_CAFE, BETA_LIBRARY, BETA_SPORTS_FAC, BETA_REC_FAC]
+    BETA = [BETA_DAY_SCHOLAR, BETA_CLASSROOM, BETA_HOSTEL, BETA_MESS, BETA_CAFE, BETA_LIBRARY, BETA_SPORTS_FAC, BETA_REC_FAC, BETA_RES_BLOCK, BETA_HOUSE]
     ALPHA = 1
 
     if not os.path.exists(output_file_dir):
@@ -68,7 +70,9 @@ if __name__ == "__main__":
         4 : "Cafe",
         5 : "Library",
         6 : "Sports_facility",
-        7 : "Recreational_facility"
+        7 : "Recreational_facility",
+        8 : "Residence_block",
+        9 : "House"
     }
     
     NAMES = []

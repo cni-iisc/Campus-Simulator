@@ -62,6 +62,15 @@ void modify_kappa_case_isolate_node(agent &node, std::vector<Interaction_Space> 
       case InteractionType :: recreational_facility:
         node.kappa[ispace.first] = std::min(GLOBAL.kappa_recreational_facility_case_isolation, node.kappa[ispace.first]);
         break;
+      
+      case InteractionType :: residential_block:
+        node.kappa[ispace.first] = std::min(GLOBAL.kappa_residential_block_case_isolation, node.kappa[ispace.first]);
+        break;
+
+      case InteractionType :: house:
+        node.kappa[ispace.first] = std::min(GLOBAL.kappa_house_case_isolation, node.kappa[ispace.first]);
+        break;
+
       }
   }
 }

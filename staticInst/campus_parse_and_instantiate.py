@@ -3,8 +3,10 @@ import numpy as np
 import json 
 import warnings
 from collections import Counter
-import os 
-from .transmission_coefficients import transmission_coefficients
+import os
+
+from pandas.core.arrays.integer import Int32Dtype 
+from transmission_coefficients import transmission_coefficients
 warnings.filterwarnings('ignore')
 
 DEBUG = False
@@ -12,6 +14,10 @@ markov_simuls = True
 sim_test = False
 modularise = True
 cafe = True
+
+def convert(o):
+    if isinstance(o, np.int64): return int(o)
+    raise TypeError
 
 class NpEncoder(json.JSONEncoder):
     def default(self, obj):
@@ -37,13 +43,28 @@ def campus_parse(inputfiles):
     staff_type = [int(x) for x in inputfiles["staff"]["dept_associated"]]
     staff_dept = [int(x) for x in inputfiles["staff"]["interaction_space"]]
     faculty = [float(x) for x in inputfiles["class"]["faculty_id"]] 
+
+    residence_block_list = [int(x) for x in inputfiles["staff"]["residence_block"]  ]
+    adult_family_members = [int(x) for x in inputfiles["staff"]["adult_family_members"]]
+    num_children = [int(x) for x in inputfiles["staff"]["num_children"]]
+
+    # for i in range(len(inputfiles["staff"])):
+    #     residence_block_list[i] = residence_block_list[i].astype(int)
+    #     adult_family_members[i] = adult_family_members[i].astype(int)
+    #     num_children[i] = num_children[i].astype(int)
+
     inputfiles["class"]["active_duration"] = (inputfiles["class"]["active_duration"]/24).astype(float)
     inputfiles["mess"]["active_duration"] = (inputfiles["mess"]["active_duration"]/24).astype(float)
     inputfiles["common_areas"]["active_duration"] = (inputfiles["common_areas"]["active_duration"]/24).astype(float)
     inputfiles["common_areas"]["average_time_spent"] = (inputfiles["common_areas"]["average_time_spent"]/24).astype(float)
+    # inputfiles["staff"]["residence_block"] = (inputfiles["staff"]["residence_block"]/1).astype(int)
+    # inputfiles["staff"]["adult_family_members"] = (inputfiles["staff"]["adult_family_members"]/1).astype(int)
+    # inputfiles["staff"]["num_children"] = (inputfiles["staff"]["num_children"]/1).astype(int)
 
-
+    print(type(inputfiles["staff"]["residence_block"][0]))
+    #faculty_pop = len(inputfiles["class"]["faculty_id"].unique())
     faculty_pop = 27
+    #print(faculty_pop)
     student_pop = inputfiles["students"]["id"].count()
     hostel_pop  = np.bincount(inputfiles["students"]["hostel"])
     staff_pop = inputfiles["staff"]["staff_id"].count()
@@ -80,7 +101,9 @@ def campus_parse(inputfiles):
         4 : "Cafe",
         5 : "Library",
         6 : "Sports_facility",
-        7 : "Recreational_facility"
+        7 : "Recreational_facility",
+        8 : "residence_block",
+        9 : "house"
     }
 
     print("Instantiating students...")
@@ -113,6 +136,7 @@ def campus_parse(inputfiles):
                     int_st[int(days_of_the_week[k])-1][classID] = float(tt_df["active_duration"])
 
         person["interaction_strength"] = int_st
+        person["house"] = 0
         individual.append(person)
     
     for i in range(student_pop):
@@ -165,6 +189,7 @@ def campus_parse(inputfiles):
         faculty_dict["interaction_strength"] = int_st
         individual.append(faculty_dict)
 
+    print(len(individual))
     for i in range(student_pop):
         dotf = 0
         count = 0
@@ -175,7 +200,7 @@ def campus_parse(inputfiles):
                 key = int(key)
                 if key > len(inputfiles["class"]):
                     continue 
-                fac = inputfiles["class"]["faculty_id"][key - 1]
+                fac = inputfiles["class"]["faculty_id"][key-1]
                 if sim_test : 
                     if count % 2 ==0 : 
                         individual[fac]["interaction_strength"][dotf][key] = inputfiles["class"]["active_duration"][key-1] 
@@ -189,7 +214,11 @@ def campus_parse(inputfiles):
             #print(dotf)
 
 
+    house = 116
+
     for i in range(faculty_pop):
+        # residence_block = residence_block_list[450 + i]
+        residence_block = residence_block_list[450 + i]
         count = 0
         for daily_int_st in individual[student_pop + i]["interaction_strength"]:
             sum = 0
@@ -202,9 +231,12 @@ def campus_parse(inputfiles):
                 else :
                     daily_int_st[0] = 0
             else : 
-                daily_int_st[0] = 1 - sum
+                daily_int_st[residence_block] = 1 - sum
+                daily_int_st[house] = 1 - sum
             if sim_test : 
                 count += 1
+        individual[student_pop + i]["house"] = house
+        house += 1
     
     if cafe:
         for i in range(student_pop, student_pop+faculty_pop):
@@ -238,18 +270,66 @@ def campus_parse(inputfiles):
                         daily_int_st = {0: 0.67, staff_dept[i]: 0.33}
             else:   
                 if staff_type[i] == 1:
-                    daily_int_st = {0: 0, staff_dept[i]: 1}
+                    daily_int_st = {residence_block_list[i] : 0.33, staff_dept[i]: 0.67, house : 0.33}
                 elif staff_type[i] == 2:
-                    daily_int_st = {0: 1-inputfiles["mess"]["active_duration"].iloc[0], staff_dept[i]: inputfiles["mess"]["active_duration"].iloc[0]}
+                    daily_int_st = {residence_block_list[i] : 1-inputfiles["mess"]["active_duration"].iloc[0], staff_dept[i]: inputfiles["mess"]["active_duration"].iloc[0], house : 1 - inputfiles["mess"]["active_duration"].iloc[0]}
                 elif staff_type[i] == 3 :
-                    daily_int_st = {0: 1 - inputfiles["common_areas"]["active_duration"].iloc[0], staff_dept[i] : inputfiles["common_areas"]["active_duration"].iloc[0]}
+                    daily_int_st = {residence_block_list[i] : 1 - inputfiles["common_areas"]["active_duration"].iloc[0], staff_dept[i] : inputfiles["common_areas"]["active_duration"].iloc[0], house : 1 - inputfiles["common_areas"]["active_duration"].iloc[0]}
                 elif staff_type[i] == 4 :
-                    daily_int_st = {0: 1 - inputfiles["common_areas"]["active_duration"].iloc[1], staff_dept[i] : inputfiles["common_areas"]["active_duration"].iloc[1]}
+                    daily_int_st = {residence_block_list[i] : 1 - inputfiles["common_areas"]["active_duration"].iloc[1], staff_dept[i] : inputfiles["common_areas"]["active_duration"].iloc[1], house : 1 - inputfiles["common_areas"]["active_duration"].iloc[1]}
+                elif staff_type[i] == 5 :
+                    daily_int_st = {residence_block_list[i] : 1 - inputfiles["common_areas"]["active_duration"].iloc[2], staff_dept[i] : inputfiles["common_areas"]["active_duration"].iloc[2], house : 1 - inputfiles["common_areas"]["active_duration"].iloc[2]}
+                elif staff_type[i] == 6 :
+                    daily_int_st = {residence_block_list[i] : 1 - inputfiles["common_areas"]["active_duration"].iloc[3], staff_dept[i] : inputfiles["common_areas"]["active_duration"].iloc[3], house : 1 - inputfiles["common_areas"]["active_duration"].iloc[3]}
 
             int_st.append(daily_int_st)
         staff_dict["interaction_strength"] = int_st 
+        staff_dict["house"] = house
         individual.append(staff_dict)
+        house += 1
     print("Staff done.")
+
+   
+    print("Instantiating family members. ")
+
+    for i in range(len(inputfiles["staff"])):
+        for j in range(adult_family_members[i]):
+            family_dict = {}
+            family_dict["id"] = len(individual)
+            family_dict["Type"] = 3
+            staff_dict["Hostel"] = 0
+            family_dict["age"] = np.random.randint(31, 80)
+            family_dict["Dept"] = 0
+            family_dict["Periodicity"] = periodicity
+            daily_int_st = {}
+            int_st = []
+            num_hours = np.random.choice([10/24, 1/24])
+            for k in range(periodicity): 
+                daily_int_st = {residence_block_list[i] : 1 -  num_hours, 0 : num_hours, individual[student_pop + len(Counter(faculty)) - 1 + i]["house"] : 1 - num_hours}
+                int_st.append(daily_int_st)
+            family_dict["interaction_strength"] = int_st
+            family_dict["house"] = individual[student_pop + len(Counter(faculty)) - 1 + i]["house"]
+            individual.append(family_dict)
+
+        for j in range(num_children[i]):
+            family_dict = {}
+            family_dict["id"] = len(individual)
+            family_dict["Type"] = 3
+            staff_dict["Hostel"] = 0
+            family_dict["age"] = np.random.randint(4, 18)
+            family_dict["Dept"] = 0
+            family_dict["Periodicity"] = periodicity
+            daily_int_st = {}
+            int_st = []
+            num_hours = np.random.choice([7/24, 3/24])
+            for k in range(periodicity): 
+                daily_int_st = {residence_block_list[i] : 1 -  num_hours, 0 : num_hours, individual[student_pop + len(Counter(faculty)) - 1 + i]["house"] : 1 - num_hours}
+                int_st.append(daily_int_st)
+            family_dict["interaction_strength"] = int_st
+            family_dict["house"] = individual[student_pop + len(Counter(faculty)) - 1 + i]["house"]
+            individual.append(family_dict)
+
+    print("Family members done. ")
 
     print("Creating interaction_spaces.json...")
 
@@ -329,7 +409,49 @@ def campus_parse(inputfiles):
                 interaction_spaces.append(i_space_cafe)
 
         print("Common areas instantiated")
+
+    #TODO: When real data comes in, activate the next 3 lines 
+    # res_list = inputfiles["staff"]["residence_block"].unique()
+    # res_blocks = [i for i in res_list if i != 0]
+    # num_res_blocks = len(res_blocks)
+
+    num_res_blocks = 6
+
+    print("Instantiating residential blocks")
+
+    for i in range(num_res_blocks):
+        # if residential_block[i] == 0:
+        #     continue
+        i_space_res_fac = {}
+        # i_space_res_fac["id"] = inputfiles["staff"]["residence_block"].unique()[i]
+        i_space_res_fac["id"] = len(interaction_spaces)
+        i_space_res_fac["type"] = 8 
+        i_space_res_fac["beta"] = np.random.uniform(0,0.5) + 1
+        i_space_res_fac["alpha"] = 1
+        i_space_res_fac["active_duration"] = 1
+        i_space_res_fac["avg_time"] = 14/24
+        i_space_res_fac["lat"] = np.random.uniform(10.0,20.0)
+        i_space_res_fac["lon"] = np.random.uniform(15.0,18.0)
+        interaction_spaces.append(i_space_res_fac)
     
+    num_houses = house - 116
+
+    print("Instantiating houses")
+
+    for i in range(num_houses):
+        i_space_house = {}
+        i_space_house["id"] = 116 + i
+        i_space_house["type"] = 9
+        i_space_house["beta"] = np.random.uniform(0,0.5) + 1
+        i_space_house["alpha"] = 1
+        i_space_house["active_duration"] = 1
+        i_space_house["avg_time"] = 14/24
+        i_space_house["lat"] = np.random.uniform(10.0,20.0)
+        i_space_house["lon"] = np.random.uniform(15.0,18.0)
+        interaction_spaces.append(i_space_house)
+
+    
+        
     type_list = []
     for spaces in interaction_spaces:
         type_list.append(spaces["type"])

@@ -3,6 +3,7 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
+import time
 
 DEBUG = False
 CLI_GUI = True
@@ -144,9 +145,11 @@ if DEBUG:
     df_array = [df_daily_cases_mean_array, df_cumulative_cases_mean_array, df_fatalities_mean_array, df_recovered_mean_array]
     print(f"{df_array}")
     
-plots_dir = '/Users/Minhaas/CODING/iisc/rough/plots'
-if not os.path.exists(plots_dir):
-    os.mkdir(plots_dir)
+plots_dir = '/Users/Minhaas/CODING/iisc/rough/plots/'
+folder_name = time.strftime("%Y%m%d")
+timestr = time.strftime("%Y%m%d-%H%M%S")
+if not os.path.exists(plots_dir + folder_name):
+    os.mkdir(plots_dir + folder_name)
 
 #Cumulative cases
 plt.figure(figsize=(16,8))
@@ -164,7 +167,7 @@ plt.tight_layout()
 plt.legend()
 plt.xlabel('Timesteps', fontsize=14)
 plt.ylabel('Cases', fontsize = 14)
-plt.savefig(plots_dir + '/cumulative_cases_ni_22Apr_testing_0.8.png')
+plt.savefig(plots_dir + folder_name +  f'/cumulative_cases_{timestr}.png')
 
 # #Tested Positive cases
 # plt.figure(figsize=(16,8))
@@ -187,25 +190,25 @@ plt.savefig(plots_dir + '/cumulative_cases_ni_22Apr_testing_0.8.png')
 #Tests requested
 plt.figure(figsize=(16,8))
 plt.grid()
-plt.title('Tests requested')
+plt.title('People tested')
 
 for intv_index in interventions_to_plot:
     time0 = df_disease_label_mean_array[0].index - offset
     plot_df = df_disease_label_mean_array[intv_index]
     # print(f"For Intervention Scenario: {intv_str[intv_index]} \n The dataframe is: \n {plot_df}")
-    plt.plot(time0, plot_df["requested_tests"], color = color_str[intv_index], label = intv_str[intv_index])
-    # plt.fill_between(time0, plot_df['num_tests_requested'] + plot_df['num_tests_requested_std'], plot_df['num_tests_requested'] - plot_df['num_tests_requested_std'], color = color_str[intv_index], alpha = 0.15)
+    plt.plot(time0, plot_df["people_tested"], color = color_str[intv_index], label = intv_str[intv_index])
+    plt.fill_between(time0, plot_df['people_tested'] + plot_df['people_tested_std'], plot_df['people_tested'] - plot_df['people_tested_std'], color = color_str[intv_index], alpha = 0.15)
 
 plt.tight_layout()
 plt.legend()
 plt.xlabel('Timesteps', fontsize=14)
 plt.ylabel('Tests', fontsize = 14)
-plt.savefig(plots_dir + '/tests_requested_ni_23Apr_testing_0.5.png')
+plt.savefig(plots_dir + folder_name + f'/people_tested_{timestr}.png')
 
 #Positive cases
 plt.figure(figsize=(16,8))
 plt.grid()
-plt.title('Tests requested')
+plt.title('Cumulative positive cases')
 
 for intv_index in interventions_to_plot:
     time0 = df_disease_label_mean_array[0].index - offset
@@ -218,7 +221,7 @@ plt.tight_layout()
 plt.legend()
 plt.xlabel('Timesteps', fontsize=14)
 plt.ylabel('Cases', fontsize = 14)
-plt.savefig(plots_dir + '/tested_positive_ni_23Apr_testing_0.5.png')
+plt.savefig(plots_dir + folder_name + f'/tested_positive_{timestr}.png')
 
 #Daily cases
 plt.figure(figsize=(16,8))
@@ -233,4 +236,4 @@ plt.tight_layout()
 plt.legend()
 plt.xlabel('Timesteps', fontsize=14)
 plt.ylabel('Cases', fontsize = 14)
-plt.savefig(plots_dir + '/daily_cases_16Apr_testing_1.0.png')
+plt.savefig(plots_dir + folder_name + f'/daily_cases_{timestr}.png')

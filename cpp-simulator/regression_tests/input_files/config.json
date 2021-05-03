@@ -2,7 +2,7 @@
     {
         "MIN_GROUP_SIZE": 10,
         "MAX_GROUP_SIZE": 15,
-        "BETA_SCALING_FACTOR": 1,
+        "BETA_SCALING_FACTOR": 5,
         "PERIODICITY": 7,
         "AVERAGE_NUMBER_ASSOCIATIONS": 5,
         "minimum_hostel_time": 0.3,
@@ -11,10 +11,17 @@
         "kappa_mess_case_isolation": 0.1,
         "kappa_cafe_case_isolation": 0.1,
         "kappa_smaller_networks_case_isolation": 0.4,
+        "kappa_recreational_facility_case_isolation": 0.1,
+        "kappa_sports_facility_case_isolation": 0.1,
+        "kappa_house_case_isolation": 0.9,
+        "kappa_residential_block_case_isolation": 0.6,
+        "kappa_lib_case_isolation": 0.1,
         "kappa_class_lockdown": 0.0,
         "kappa_hostel_lockdown": 0.2,
         "kappa_mess_lockdown": 0.0,
         "kappa_cafe_lockdown": 0.0,
-        "kappa_smaller_networks_lockdown": 0.0
+        "kappa_smaller_networks_lockdown": 0.0,
+        "kappa_lib_lockdown": 0.0,
+        "testing_capacity": 100
     }
 ]

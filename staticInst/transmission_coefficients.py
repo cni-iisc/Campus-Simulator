@@ -19,17 +19,15 @@ class NpEncoder(json.JSONEncoder):
 def transmission_coefficients(interaction_type_list, BETA, ALPHA, NAMES):
     transmission_coeff = []
     transmission_json = {}
-    print(len(interaction_type_list))
     for type in range(len(interaction_type_list)):
-    # print(f"Generating transmission coefficents for {interaction_type[type]}...")
+        print(f"Generating transmission coefficents for {interaction_type[type]}...")
         transmission_json = {
             "type" : interaction_type_list[type], 
             "beta" : BETA[type],
             "alpha" : ALPHA,
             "name" : NAMES[type]
         }
-        print(type)
-        # //print(f"{interaction_type[type]} done.")
+        print(f"{interaction_type[type]} done.")
         transmission_coeff.append(transmission_json)
     return transmission_coeff
 
@@ -39,22 +37,21 @@ if __name__ == "__main__":
     interactionJson = pd.read_json(input + "interaction_spaces.json")
 
     interaction_type_list = interactionJson.type.unique()
-    print(interaction_type_list)
 
     if markov_simuls: 
         output_file_dir = "/Users/Minhaas/CODING/iisc/campus_simulator/staticInst/data/campus_data/"
     else :
         output_file_dir = "/Users/Minhaas/CODING/iisc/rough/campus_input_csv/json_files/"
 
-    BETA_CLASSROOM = np.random.uniform(0,0.5) + 1
-    BETA_MESS = np.random.uniform(0,0.5) + 1
-    BETA_HOSTEL = np.random.uniform(0,0.5) + 1 
-    BETA_CAFE = np.random.uniform(0,0.5) + 1
-    BETA_LIBRARY = np.random.uniform(0,0.5) + 1
-    BETA_REC_FAC = np.random.uniform(0,0.5) + 1
-    BETA_SPORTS_FAC = np.random.uniform(0,0.5) + 1
-    BETA_RES_BLOCK = np.random.uniform(0,0.5) + 1
-    BETA_HOUSE = np.random.uniform(0,0.5) + 1
+    BETA_CLASSROOM = np.random.uniform(0,0.5)
+    BETA_MESS = np.random.uniform(0,0.5)
+    BETA_HOSTEL = np.random.uniform(0,0.5)
+    BETA_CAFE = np.random.uniform(0,0.5)
+    BETA_LIBRARY = np.random.uniform(0,0.5)
+    BETA_REC_FAC = np.random.uniform(0,0.5)
+    BETA_SPORTS_FAC = np.random.uniform(0,0.5)
+    BETA_RES_BLOCK = np.random.uniform(0,0.5)
+    BETA_HOUSE = np.random.uniform(0,0.5)
     BETA_DAY_SCHOLAR = 0
     BETA = [BETA_DAY_SCHOLAR, BETA_CLASSROOM, BETA_HOSTEL, BETA_MESS, BETA_CAFE, BETA_LIBRARY, BETA_SPORTS_FAC, BETA_REC_FAC, BETA_RES_BLOCK, BETA_HOUSE]
     ALPHA = 1

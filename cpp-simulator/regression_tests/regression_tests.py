@@ -7,11 +7,12 @@ default_options = {}
 default_flags={}
 default_options['--NUM_DAYS'] = 20
 default_options['--output_directory'] ="./output_files/"
-default_options['--input_directory'] ="./input_files/"
+default_options['--input_directory'] ="./input_files"
 default_flags['--SEED_FIXED_NUMBER'] = True
 default_options['--INIT_FIXED_NUMBER_INFECTED'] =100
 default_options['--PROVIDE_INITIAL_SEED'] = 1234
 
+testing = True
 #print(default_options)
 
 ###############
@@ -71,28 +72,6 @@ def compare_regressions():
 
 regression_tests= []
 
-###############################################
-#### Start adding regression tests
-
-# # 2 Test all interventions
-# for intervention in range(4):	
-# 	current_test={}
-# 	test_id = 'intervention_'+str(intervention).zfill(2)
-	
-# 	test_options = default_options.copy()
-# 	test_options['--output_directory'] += test_id
-# 	test_options['--INTERVENTION'] = intervention
-	
-# 	test_flags = default_flags.copy()
-
-# 	current_test['test_id'] = test_id
-# 	current_test['test_options'] = test_options
-# 	current_test['test_flags'] = test_flags
-
-# 	regression_tests.append(current_test)
-
- 
-###########
 intervention_map = {
 	0 : "No Intervention",
 	1 : "Case Isolation",
@@ -105,20 +84,25 @@ for intervention in range(4):
 	test_id = 'intervention_'+str(intervention).zfill(2) + '/'
 	test_options = default_options.copy()
 	test_options['--output_directory'] += test_id
-	test_options['--intervention_filename']='/regression_tests/input_files/'+'intervention_'+str(intervention).zfill(2)
+	test_options['--intervention_filename']='intervention_'+str(intervention).zfill(2)+'.json'
 	
 	test_flags = default_flags.copy()
 
+	if testing :
+		test_flags['--ENABLE_TESTING'] = True
+		test_options['--testing_protocol_filename'] =  'testing_protocol_001.json'
+	
 	current_test['test_id'] = test_id
 	current_test['test_options'] = test_options
 	current_test['test_flags'] = test_flags
 
+
+
 	regression_tests.append(current_test)
 
-## configure a new regression text
-#6
+# # configure a new regression test for testing
 # current_test={}
-# test_id = 'smaller_networks'
+# test_id = 'TESTING'
 
 # test_options = default_options.copy()
 # test_options['--output_directory'] += test_id

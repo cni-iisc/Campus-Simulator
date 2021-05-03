@@ -1,28 +1,4 @@
-reference_files/intervention_00/gnuplot_script.gnuplot output_files/intervention_00/gnuplot_script.gnuplot differ.
-output_files/intervention_00/num_fatalities.csv does not exist
-reference_files/intervention_00/plots.html output_files/intervention_00/plots.html differ.
-output_files/intervention_00/num_cases.csv does not exist
-output_files/intervention_00/num_recovered.csv does not exist
-output_files/intervention_00/num_affected.csv does not exist
-Test : intervention_00: FAIL
-reference_files/intervention_01/gnuplot_script.gnuplot output_files/intervention_01/gnuplot_script.gnuplot differ.
-output_files/intervention_01/num_fatalities.csv does not exist
-reference_files/intervention_01/plots.html output_files/intervention_01/plots.html differ.
-output_files/intervention_01/num_cases.csv does not exist
-output_files/intervention_01/num_recovered.csv does not exist
-output_files/intervention_01/num_affected.csv does not exist
-Test : intervention_01: FAIL
-reference_files/intervention_02/gnuplot_script.gnuplot output_files/intervention_02/gnuplot_script.gnuplot differ.
-output_files/intervention_02/num_fatalities.csv does not exist
-reference_files/intervention_02/plots.html output_files/intervention_02/plots.html differ.
-output_files/intervention_02/num_cases.csv does not exist
-output_files/intervention_02/num_recovered.csv does not exist
-output_files/intervention_02/num_affected.csv does not exist
-Test : intervention_02: FAIL
-reference_files/intervention_03/gnuplot_script.gnuplot output_files/intervention_03/gnuplot_script.gnuplot differ.
-output_files/intervention_03/num_fatalities.csv does not exist
-reference_files/intervention_03/plots.html output_files/intervention_03/plots.html differ.
-output_files/intervention_03/num_cases.csv does not exist
-output_files/intervention_03/num_recovered.csv does not exist
-output_files/intervention_03/num_affected.csv does not exist
-Test : intervention_03: FAIL
+Test : intervention_00: PASS
+Test : intervention_01: PASS
+Test : intervention_02: PASS
+Test : intervention_03: PASS

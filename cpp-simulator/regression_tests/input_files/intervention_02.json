@@ -1,7 +1,9 @@
-[{
-	"num_days": 1,
-	"compliance" : 0.9,
-	"class_isolation": {
-		"active": true
+[
+	{
+		"num_days": 1,
+		"compliance": 0.9,
+		"class_isolation": {
+			"active": true
+		}
 	}
-}]
+]

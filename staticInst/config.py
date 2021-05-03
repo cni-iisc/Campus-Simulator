@@ -44,7 +44,7 @@ if __name__ == "__main__":
 
     min_group_size = 10
     max_group_size = 15
-    beta_scaling_factor = 10
+    beta_scaling_factor = 5
     periodicity = 7
     avg_num_assns = 5
     min_hostel_time = 0.3

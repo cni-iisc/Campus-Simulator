@@ -615,7 +615,7 @@ void assign_individual_campus(std::vector<agent> &nodes, std::vector<Interaction
 
 void sample_groups(std::vector<agent> &nodes, std::vector<Interaction_Space> &interaction_spaces)
 {
-  srand(time(0));
+  // srand(time(0));
   std::vector<Interaction_Space> interac_space;
   int avg_group_size = (GLOBAL.MINIMUM_SUBGROUP_SIZE + GLOBAL.MAXIMUM_SUBGROUP_SIZE) / 2;
   int index = interaction_spaces.size();
@@ -627,7 +627,7 @@ void sample_groups(std::vector<agent> &nodes, std::vector<Interaction_Space> &in
       for (int j = 0; j < NUM_GROUPS; j++)
       {
         std::vector<int> temp;
-        std::vector<std::vector<int> > GROUPS;
+        std::vector<std::vector<int>> GROUPS;
         int random_value = uniform_count_type(GLOBAL.MINIMUM_SUBGROUP_SIZE, GLOBAL.MAXIMUM_SUBGROUP_SIZE);
         int GROUP_STRENGTH = random_value > int(ispace.individuals[0].size()) ? int(ispace.individuals[0].size()) / 2 : random_value;
         std::sample(ispace.individuals[0].begin(), ispace.individuals[0].end(), std::back_inserter(temp), GROUP_STRENGTH, GENERATOR);

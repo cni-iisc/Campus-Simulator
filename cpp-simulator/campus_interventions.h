@@ -6,8 +6,8 @@
 
 
 #include "models.h"
-#include "intervention_primitives.h"
-#include "interventions.h"
+//#include "intervention_primitives.h"
+//#include "interventions.h"
 
 void modify_kappa_case_isolate_node(agent& node, std::vector<Interaction_Space>& i_spaces, int day);
 

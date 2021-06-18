@@ -1,9 +1,9 @@
 //Copyright [2020] [Indian Institute of Science, Bangalore & Tata Institute of Fundamental Research, Mumbai]
 //SPDX-License-Identifier: Apache-2.0
 //#include "simulator.h"
-//i#include "outputs.h"
+#include "outputs.h"
 #include "defaults.h"
-#include "initializers.h"
+//#include "initializers.h"
 #include "campus_simulator.h"
 #include <cassert>
 #include <iostream>

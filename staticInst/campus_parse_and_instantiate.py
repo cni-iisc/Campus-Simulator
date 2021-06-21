@@ -1,18 +1,12 @@
 import pandas as pd
 import numpy as np 
+import argparse
 import json 
-import warnings
 from collections import Counter
 import os
-
-from pandas.core.arrays.integer import Int32Dtype 
 from .transmission_coefficients import transmission_coefficients
-warnings.filterwarnings('ignore')
 
-DEBUG = False
-markov_simuls = True
 sim_test = False
-modularise = True
 cafe = True
 
 def convert(o):
@@ -106,7 +100,7 @@ def campus_parse(inputfiles):
         9 : "house"
     }
 
-    print("Instantiating students...")
+    print("Instantiating students and faculty", end=" ... ", flush=True)
     for i in range(student_pop):
         person = {}
         person["id"] = student_id[i]
@@ -165,8 +159,6 @@ def campus_parse(inputfiles):
                 for j in range(inputfiles["common_areas"]["starting_id"][0], inputfiles["common_areas"]["starting_id"][3]+inputfiles["common_areas"]["number"][3]):
                     daily_int_st[j] = 0
 
-    print("Student done.")
-
     for i in range(faculty_pop):
         faculty_dict = {}
         faculty_dict["id"] = student_pop + i
@@ -176,7 +168,6 @@ def campus_parse(inputfiles):
         faculty_dict["Periodicity"] = periodicity
         class_fac = inputfiles["class"][inputfiles["class"]["faculty_id"] == faculty_dict["id"]]
         class_fac = class_fac.reset_index(drop = True)
-        if DEBUG : print(class_fac)
         if class_fac.empty: 
             faculty_dict["dept"] = -1
         else: 
@@ -189,7 +180,6 @@ def campus_parse(inputfiles):
         faculty_dict["interaction_strength"] = int_st
         individual.append(faculty_dict)
 
-    print(len(individual))
     for i in range(student_pop):
         dotf = 0
         count = 0
@@ -211,13 +201,11 @@ def campus_parse(inputfiles):
             dotf = dotf + 1
             if sim_test : 
                 count += 1
-            #print(dotf)
 
 
     house = 116
 
     for i in range(faculty_pop):
-        # residence_block = residence_block_list[450 + i]
         residence_block = residence_block_list[450 + i]
         count = 0
         for daily_int_st in individual[student_pop + i]["interaction_strength"]:
@@ -243,11 +231,10 @@ def campus_parse(inputfiles):
             for daily_int_st in individual[i]["interaction_strength"]:
                 for j in range(inputfiles["common_areas"]["starting_id"][0], inputfiles["common_areas"]["starting_id"][3]+inputfiles["common_areas"]["number"][3]):
                     daily_int_st[j] = 0
+    print("done.", flush=True)
 
 
-    print("Faculty done")
-
-    print("Instantiating staff...")
+    print("Instantiating staff", end=" .... ", flush=True)
     for i in range(staff_pop):
         staff_dict = {}
         staff_dict["id"] = student_pop + len(Counter(faculty)) - 1 + i #Take care - verify the -1
@@ -287,11 +274,10 @@ def campus_parse(inputfiles):
         staff_dict["house"] = house
         individual.append(staff_dict)
         house += 1
-    print("Staff done.")
+    print("done.", flush=True)
 
    
-    print("Instantiating family members. ")
-
+    print("Instantiating family members", end=" .... ", flush=True)
     for i in range(len(inputfiles["staff"])):
         for j in range(adult_family_members[i]):
             family_dict = {}
@@ -328,8 +314,7 @@ def campus_parse(inputfiles):
             family_dict["interaction_strength"] = int_st
             family_dict["house"] = individual[student_pop + len(Counter(faculty)) - 1 + i]["house"]
             individual.append(family_dict)
-
-    print("Family members done. ")
+    print("done.", flush=True)
 
     print("Creating interaction_spaces.json...")
 
@@ -362,7 +347,6 @@ def campus_parse(inputfiles):
         i_space_class["lat"] = np.random.uniform(10.0,20.0)
         i_space_class["lon"] = np.random.uniform(15.0,18.0)
         interaction_spaces.append(i_space_class)
-
     print("Classes instantiated")
 
     for i in range(num_hostel):
@@ -376,7 +360,6 @@ def campus_parse(inputfiles):
         i_space_hostel["lat"] = np.random.uniform(10.0,20.0)
         i_space_hostel["lon"] = np.random.uniform(15.0,18.0)
         interaction_spaces.append(i_space_hostel)
-
     print("Hostels instantiated")
 
     for i in range(num_mess):
@@ -390,7 +373,6 @@ def campus_parse(inputfiles):
         i_space_mess["lat"] = np.random.uniform(10.0,20.0)
         i_space_mess["lon"] = np.random.uniform(15.0,18.0)
         interaction_spaces.append(i_space_mess)
-
     print("Mess instantiated")
 
     if cafe :     
@@ -473,6 +455,16 @@ def campus_parse(inputfiles):
 
 
 if __name__ == "__main__":
+    default_outPath = "./data/campus_data"
+    default_inPath = "./data/campus_sample_data"
+
+    my_parser = argparse.ArgumentParser(description='Instantiate a synthetic campus based on a set of input files descirbing the campus')
+    my_parser.add_argument('-i', help='Set the path for the directory containing the input files (without / at the end)', default=default_inPath)
+    my_parser.add_argument('-o', help='Set the path for the directory to store the output (without / at the end)', default=default_outPath)
+    
+    args = my_parser.parse_args()
+    output_file_dir = args.o
+    input_file_dir = args.i
 
     inputfiles = {
         "students" : "student.csv",
@@ -488,22 +480,18 @@ if __name__ == "__main__":
         "interaction_spaces" : "interaction_spaces.json"
     }
 
-    if markov_simuls: 
-        output_file_dir = "/Users/Minhaas/CODING/iisc/campus_simulator/staticInst/data/campus_data/"
-    else: 
-        output_file_dir = "/Users/Minhaas/CODING/iisc/rough/campus_input_csv/json_files/"
+ 
 
     if not os.path.exists(output_file_dir):
         os.makedirs(output_file_dir)
 
-    input_file_dir = "/Users/minhaas/CODING/iisc/campus_simulator/staticInst/data/campus_sample_data/"
     column_names = [i for i in range(24)]
-    student_df = pd.read_csv(input_file_dir + inputfiles["students"])
-    class_df = pd.read_csv(input_file_dir + inputfiles["class"])
-    staff_df = pd.read_csv(input_file_dir + inputfiles["staff"])
-    mess_df = pd.read_csv(input_file_dir + inputfiles["mess"])
-    timetable_df = pd.read_csv(input_file_dir + inputfiles["timetable"], header=None, names = column_names)
-    common_areas_df = pd.read_csv(input_file_dir + inputfiles["common_spaces"])
+    student_df = pd.read_csv(f'{input_file_dir}/{inputfiles["students"]}')
+    class_df = pd.read_csv(f'{input_file_dir}/{inputfiles["class"]}')
+    staff_df = pd.read_csv(f'{input_file_dir}/{inputfiles["staff"]}')
+    mess_df = pd.read_csv(f'{input_file_dir}/{inputfiles["mess"]}')
+    timetable_df = pd.read_csv(f'{input_file_dir}/{inputfiles["timetable"]}', header=None, names = column_names)
+    common_areas_df = pd.read_csv(f'{input_file_dir}/{inputfiles["common_spaces"]}')
 
     input_dfs = {
         "students" : student_df,
@@ -516,12 +504,12 @@ if __name__ == "__main__":
 
     individuals, interaction_spaces, trans_coeffs = campus_parse(input_dfs)
 
-    individual_json = open(output_file_dir + outputfiles['individuals'], "w+")
+    individual_json = open(f'{output_file_dir}/{outputfiles["individuals"]}', "w+")
     individual_json.write(json.dumps(individuals, cls = NpEncoder))
     individual_json.close
     print("individuals.json generated")
 
-    interaction_spaces_json = open(output_file_dir + outputfiles['interaction_spaces'], "w+")
+    interaction_spaces_json = open(f'{output_file_dir}/{outputfiles["interaction_spaces"]}', "w+")
     interaction_spaces_json.write(json.dumps(interaction_spaces, cls = NpEncoder))
     interaction_spaces_json.close
     print("interaction_spaces.json generated.")

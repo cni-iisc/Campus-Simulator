@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 echo -e "Welcome to campus simulator\n Enter the Intervention option that has been set in the simulator : \n -- 0 : No intervention \n -- 1 : Case Isolation \n -- 2 : Class Isolation \n -- 3 : Shutdown \n -- 4 : Custom Intervention \n"
 read INTERVENTION_ID
@@ -21,18 +21,18 @@ INTERVENTION_ARRAY=(no_intervention case_isolation class_isolation lockdown cust
 #lockdown - index 3
 INTERVENTION_NAME=${INTERVENTION_ARRAY[${INTERVENTION_ID}]}
 
-SRCNAME="~/campus_simulator/staticInst/data/campus_outputs"
+SRCNAME="./staticInst/data/campus_outputs"
 
 #Folder (PRTNAME) name should be changed for every intervention - should be the same as intervention name
-PRTNAME="~/campus_simulator/staticInst/data/campus_outputs/plots_data/$INTERVENTION_NAME" 
+PRTNAME="./staticInst/data/campus_outputs/plots_data/$INTERVENTION_NAME" 
 
-num_affected="~/campus_simulator/staticInst/data/campus_outputs/num_affected.csv"
-num_cases="~/campus_simulator/staticInst/data/campus_outputs/num_cases.csv"
-num_fatalities="~/campus_simulator/staticInst/data/campus_outputs/num_fatalities.csv"
-num_recovered="~/campus_simulator/staticInst/data/campus_outputs/num_recovered.csv"
-num_tested_positive="~/campus_simulator/staticInst/data/campus_outputs/num_tested_positive.csv"
-num_tests_requested="~/campus_simulator/staticInst/data/campus_outputs/num_tests_requested.csv"
-disease_label_stats="~/campus_simulator/staticInst/data/campus_outputs/disease_label_stats.csv"
+num_affected="./staticInst/data/campus_outputs/num_affected.csv"
+num_cases="./staticInst/data/campus_outputs/num_cases.csv"
+num_fatalities="./staticInst/data/campus_outputs/num_fatalities.csv"
+num_recovered="./staticInst/data/campus_outputs/num_recovered.csv"
+num_tested_positive="./staticInst/data/campus_outputs/num_tested_positive.csv"
+num_tests_requested="./staticInst/data/campus_outputs/num_tests_requested.csv"
+disease_label_stats="./staticInst/data/campus_outputs/disease_label_stats.csv"
 #make clean
 make -f makefile_np all
 
@@ -40,18 +40,18 @@ mkdir $PRTNAME
 
 for sim in {1..10}
 do 
-./drive_simulator --input_directory ~/campus_simulator/staticInst/data/campus_data --output_directory ~/campus_simulator/staticInst/data/campus_outputs --SEED_FIXED_NUMBER  --INIT_FIXED_NUMBER_INFECTED $SEED_VALUE --ENABLE_TESTING --testing_protocol_filename testing_protocol_001.json
+./drive_simulator --input_directory ./staticInst/data/campus_data --output_directory ./staticInst/data/campus_outputs --SEED_FIXED_NUMBER  --INIT_FIXED_NUMBER_INFECTED $SEED_VALUE --ENABLE_TESTING --testing_protocol_filename testing_protocol_001.json
 echo 
 echo "----------------------------------------$sim RUN DONE------------------------------------------"
 
 #Folder names should be same as PRTNAME & should be for every intervention - should be the same as intervention name  
-DST_NUM_AFFECTED="~/campus_simulator/staticInst/data/campus_outputs/plots_data/$INTERVENTION_NAME/num_affected_$sim.csv"
-DST_NUM_CASES="~/campus_simulator/staticInst/data/campus_outputs/plots_data/$INTERVENTION_NAME/num_cases_$sim.csv"
-DST_NUM_FATALITIES="~/campus_simulator/staticInst/data/campus_outputs/plots_data/$INTERVENTION_NAME/num_fatalities_$sim.csv"
-DST_NUM_RECOVERED="~/campus_simulator/staticInst/data/campus_outputs/plots_data/$INTERVENTION_NAME/num_recovered_$sim.csv"
-DST_NUM_TESTED_POSITIVE="~/campus_simulator/staticInst/data/campus_outputs/plots_data/$INTERVENTION_NAME/num_tested_positive_$sim.csv"
-DST_NUM_TESTS_REQUESTED="~/campus_simulator/staticInst/data/campus_outputs/plots_data/$INTERVENTION_NAME/num_tests_requested_$sim.csv"
-DST_DISEASE_LABEL_STATS="~/campus_simulator/staticInst/data/campus_outputs/plots_data/$INTERVENTION_NAME/disease_label_stats_$sim.csv"
+DST_NUM_AFFECTED="./staticInst/data/campus_outputs/plots_data/$INTERVENTION_NAME/num_affected_$sim.csv"
+DST_NUM_CASES="./staticInst/data/campus_outputs/plots_data/$INTERVENTION_NAME/num_cases_$sim.csv"
+DST_NUM_FATALITIES="./staticInst/data/campus_outputs/plots_data/$INTERVENTION_NAME/num_fatalities_$sim.csv"
+DST_NUM_RECOVERED="./staticInst/data/campus_outputs/plots_data/$INTERVENTION_NAME/num_recovered_$sim.csv"
+DST_NUM_TESTED_POSITIVE="./staticInst/data/campus_outputs/plots_data/$INTERVENTION_NAME/num_tested_positive_$sim.csv"
+DST_NUM_TESTS_REQUESTED="./staticInst/data/campus_outputs/plots_data/$INTERVENTION_NAME/num_tests_requested_$sim.csv"
+DST_DISEASE_LABEL_STATS="./staticInst/data/campus_outputs/plots_data/$INTERVENTION_NAME/disease_label_stats_$sim.csv"
 
 
 cp $num_affected $DST_NUM_AFFECTED 

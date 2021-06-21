@@ -1,6 +1,7 @@
 import json 
+import argparse
 
-markov_simuls = True
+default_outPath = './data/campus_data'
 
 def configCreate(min_group_size, max_group_size, beta_scaling_factor, avg_num_assns, periodicity, minimum_hostel_time, kappa_class_case_isolation = 0.0, kappa_hostel_case_isolation = 0.2, kappa_mess_case_isolation = 0.1, kappa_cafe_case_isolation = 0.1, kappa_smaller_networks_case_isolation = 0.4, kappa_recreational_facility_case_isolation = 0.1, kappa_sports_facility_case_isolation = 0.1, kappa_residential_block_case_isolation = 0.6, kappa_house_case_isolation = 0.9,  kappa_lib_case_isolation = 0.1, kappa_class_lockdown = 0.0, kappa_hostel_lockdown = 0.2, kappa_mess_lockdown = 0.0, kappa_cafe_lockdown = 0.0, kappa_smaller_networks_lockdown = 0.0, kappa_lib_lockdown = 0.0, testing_capacity = 100):
     config = {}
@@ -28,16 +29,13 @@ def configCreate(min_group_size, max_group_size, beta_scaling_factor, avg_num_as
     config["kappa_lib_lockdown"] = kappa_lib_lockdown
     config["testing_capacity"] = testing_capacity
 
-    return [config_json]
+    return [config]
 
 if __name__ == "__main__":
-
-    output_file = "config.json"
-
-    if markov_simuls: 
-        output_file_dir = "/Users/Minhaas/CODING/iisc/campus_simulator/staticInst/data/campus_data/"
-    else :
-        output_file_dir = "/Users/Minhaas/CODING/iisc/rough/campus_input_csv/json_files/"
+    my_parser = argparse.ArgumentParser(description='Create mini-city for COVID-19 simulation')
+    my_parser.add_argument('-o', help='A', default=default_outPath)
+    args = my_parser.parse_args()
+    output_file_dir = args.o
 
     min_group_size = 10
     max_group_size = 15
@@ -63,6 +61,6 @@ if __name__ == "__main__":
 
     config = configCreate(min_group_size, max_group_size, beta_scaling_factor, avg_num_assns, periodicity, min_hostel_time)
 
-    f = open(output_file_dir + output_file, "w+")
+    f = open(f"{ output_file_dir }/config.json", "w")
     f.write(json.dumps(config))
     f.close()

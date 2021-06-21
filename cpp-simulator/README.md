@@ -75,17 +75,15 @@ the city you want to simulate.  For more details on the other parameters
 You can now run the program after providing the parameters at the command line
 in the usual way.  Options that you do not specify will be set to their default
 values as described in the output of the command `./drive_simulator -h` you ran
-above.  Note that the INTERVENTION parameter must be a positive integer.  The
-following interventions are implemented (along with the integer value that one
-needs to provide to run them).
+above.  Note that the `intervention_filename` which is a `JSON file` is the required file in which the interventions can be enabled/disabled for a period of time.
 
-| Code | Identifier for intervention|
-| --: | :-- |
-|    0 | no_intervention|
-|    1 | case_isolation                                |
-|    2 | home_quarantine                               |
-|    3 | lockdown                                      |
-|    4 | case_isolation_and_home_quarantine            |
+| Interventions supported|
+| :-- |
+| no_intervention|
+| case_isolation |
+| class_isolation |
+| lockdown (or) campus shutdown |
+| case_isolation_and_home_quarantine |
 
 
 

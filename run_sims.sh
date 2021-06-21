@@ -6,8 +6,8 @@ read INTERVENTION_ID
 echo -e "Enter the seed infection value: \n"
 read SEED_VALUE
 
-#PARSE_PATH="/Users/Minhaas/CODING/iisc/campus-simulator/markov_simuls/staticInst"
-#RUN_PATH="/Users/Minhaas/CODING/iisc/campus-simulator/markov_simuls/cpp-simulator"
+#PARSE_PATH="./staticInst"
+#RUN_PATH="./cpp-simulator"
 #cd PARSE_PATH
 #python3 campus_parse_and_instantiate.py 
 #cd RUN_PATH

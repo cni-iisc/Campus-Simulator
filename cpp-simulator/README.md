@@ -86,12 +86,7 @@ needs to provide to run them).
 |    2 | home_quarantine                               |
 |    3 | lockdown                                      |
 |    4 | case_isolation_and_home_quarantine            |
-|    5 | case_isolation_and_home_quarantine_sd_70_plus |
-|    6 | lockdown_fper_ci_hq_sd_70_plus_sper_ci        |
-|    7 | lockdown_fper                                 |
-|    8 | ld_fper_ci_hq_sd65_sc_sper_sc_tper            |
-|    9 | ld_fper_ci_hq_sd65_sc_sper                    |
-|   10 | ld_fper_ci_hq_sd65_sc_oe_sper                 |
+
 
 
 The output of the program will be generated in the `output_directory` that you

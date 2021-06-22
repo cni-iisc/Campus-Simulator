@@ -317,6 +317,17 @@ std::vector<intervention_params> init_intervention_params()
           //TODO: collect all these statements in a function.
           temp.lockdown = elem["lockdown"]["active"].GetBool();
         }
+        if (elem.HasMember("selective_shutdown"))
+        {
+          temp.selective_shutdown = elem["selective_shutdown"]["active"].GetBool();
+          for(auto &space : elem["selective_shutdown"]["spaces"].GetArray()){
+            temp.spaces_shutdown.push_back(static_cast<InteractionType>(space.GetInt()));
+          }
+        }
+        if (elem.HasMember("evacuation"))
+        {
+          temp.evacuation = elem["evacuation"]["active"].GetBool();
+        }
         print_intervention_params(index, temp);
         intv_params.push_back(temp);
         ++index;

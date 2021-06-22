@@ -89,6 +89,20 @@ void modify_kappa_class_isolate_node(agent &node, std::vector<Interaction_Space>
   }
 }
 
+void modify_kappa_selective_shutdown(agent& node, std::vector<Interaction_Space> &i_spaces, std::vector<InteractionType> shutdown_spaces, int day){
+  for(auto ispace : node.interaction_strength[day]){
+    if(std::count(shutdown_spaces.begin(), shutdown_spaces.end(), i_spaces[ispace.first].interaction_type)){
+      node.kappa[ispace.first] = 0.0;
+    }
+  }
+}
+
+void modify_kappa_evacuation(agent &node, int day){
+  for(auto ispace : node.interaction_strength[day]){
+    node.kappa[ispace.first] = 0.0;
+  }
+}
+
 void set_kappa_base_value(agent &node, std::vector<Interaction_Space> &i_spaces, int day)
 {
   for (auto &ispace : node.interaction_strength[day])
@@ -182,6 +196,16 @@ void get_kappa_custom_modular(std::vector<agent> &nodes,
       if (quarantine_flag)
       {
         modify_kappa_case_isolate_node(nodes[count], i_spaces, day);
+      }
+    }
+    if(intv_params.selective_shutdown){
+      if(nodes[count].compliant){
+        modify_kappa_selective_shutdown(nodes[count], i_spaces, intv_params.spaces_shutdown, day);
+      }
+    }
+    if(intv_params.evacuation){
+      if(nodes[count].compliant){
+        modify_kappa_evacuation(nodes[count], day);
       }
     }
   }

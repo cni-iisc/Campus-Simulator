@@ -30,7 +30,9 @@ enum class Intervention {
    intv_ward_containment=15,
    intv_file_read=16,
    intv_Mum_cyclic=17,
-   class_isolation = 18
+   class_isolation = 18,
+   selective_shutdown = 19,
+   evacuation = 20
 };
 
 enum class Cycle_Type {
@@ -202,7 +204,10 @@ struct intervention_params {
   bool ward_containment = false;
   bool trains_active = false;
   bool class_isolation = false;
+  bool selective_shutdown = false;
+  bool evacuation = false;
   double fraction_forced_to_take_train = 1;
+  std::vector<InteractionType> spaces_shutdown;
   kappa_values lockdown_kappas_compliant;
   kappa_values lockdown_kappas_non_compliant;
 
@@ -255,6 +260,14 @@ struct intervention_params {
   }
   intervention_params& set_class_isolation(bool c){
   this->class_isolation = c;
+  return *this;
+  }
+  intervention_params& set_selective_shutdown(bool c){
+  this->selective_shutdown = c;
+  return *this;
+  }
+  intervention_params& set_evacuation(bool c){
+  this->evacuation = c;
   return *this;
   }
 };

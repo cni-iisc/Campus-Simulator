@@ -9,14 +9,16 @@ DEBUG = False
 CLI_GUI = True
 
 #Change simdir directory to absolute path of markov_simuls/staticInst/data/campus_outputs/plots_data/ folder
-sim_dir = "/Users/Minhaas/CODING/iisc/campus_simulator/staticInst/data/campus_outputs/plots_data/"
-intv_array = ['no_intervention', 'case_isolation', 'class_isolation', 'lockdown', 'custom_intervention']
+sim_dir = "../staticInst/data/campus_outputs/plots_data/"
+intv_array = ['no_intervention', 'case_isolation', 'class_isolation', 'lockdown', 'selective_shutdown', 'evacuation', 'custom_intervention']
 intv_str = {
     0: 'No Intervention',
     1: 'Case Isolation',
     2: 'Class Isolation',
     3: 'Lockdown',
-    4: 'Custom Intervention',
+    4: 'Selective Shutdown',
+    5: 'Evacuation',
+    6: 'Custom Intervention',
     100: 'All of the above Interventions'
 }
 
@@ -25,8 +27,6 @@ file_names = [
     'num_cases',
     'num_fatalities',
     'num_recovered',
-    'num_tested_positive',
-    'num_tests_requested', 
     'disease_label_stats'
 ]
 
@@ -48,7 +48,7 @@ if CLI_GUI:
     print("Intervention Index: \n")
     for key in intv_str:
         print(f"{key} ––> {intv_str[key]} \n")
-    all_intv = [0,1,2,3,4]
+    all_intv = [0,1,2,3,4,5,6]
     num_INTV = int(input("Enter number of interventions you want to plot (Enter 100 for all): "))
     NUM_INTV = range(num_INTV)
     if num_INTV == 100:
@@ -62,7 +62,7 @@ if CLI_GUI:
         for intv_plot in interventions_to_plot:
             print(f"{intv_str[intv_plot]} \n")
 else: 
-    interventions_to_plot = [0,1,2,3,4]
+    interventions_to_plot = [0,1,2,3,4,5,6]
 
 
 if DEBUG : print(f"Interventions to plot: {interventions_to_plot} ")
@@ -71,8 +71,8 @@ df_cumulative_cases_matrix = []
 df_fatalities_matrix = []
 df_daily_cases_matrix = [] 
 df_recovered_matrix = []
-df_num_tested_positive_matrix = []
-df_tests_requested_matrix = []
+#df_num_tested_positive_matrix = []
+#df_tests_requested_matrix = []
 df_disease_label_stats_matrix = []
 
 for intv in num_intv:
@@ -80,8 +80,8 @@ for intv in num_intv:
     df_fatalities_intv=[]
     df_daily_cases_intv = []
     df_recovered_intv = []
-    df_num_tested_positive_intv = []
-    df_tests_requested_intv = []
+    #df_num_tested_positive_intv = []
+    #df_tests_requested_intv = []
     df_disease_label_stats_intv = []
 
     
@@ -92,17 +92,17 @@ for intv in num_intv:
         df_daily_cases_intv.append(pd.read_csv(dir_name+file_names[1]+ underscore +str(file_num)+'.csv').set_index('Time'))
         df_fatalities_intv.append(pd.read_csv(dir_name+file_names[2]+ underscore +str(file_num)+'.csv').set_index('Time'))
         df_recovered_intv.append(pd.read_csv(dir_name+file_names[3]+ underscore +str(file_num)+'.csv').set_index('Time'))
-        df_num_tested_positive_intv.append(pd.read_csv(dir_name+file_names[4]+ underscore +str(file_num)+'.csv').set_index('Time'))
-        df_tests_requested_intv.append(pd.read_csv(dir_name+file_names[5]+ underscore +str(file_num)+'.csv').set_index('Time'))
-        df_disease_label_stats_intv.append(pd.read_csv(dir_name+file_names[6]+ underscore +str(file_num)+'.csv').set_index('Time'))
+        #df_num_tested_positive_intv.append(pd.read_csv(dir_name+file_names[4]+ underscore +str(file_num)+'.csv').set_index('Time'))
+        #df_tests_requested_intv.append(pd.read_csv(dir_name+file_names[5]+ underscore +str(file_num)+'.csv').set_index('Time'))
+        df_disease_label_stats_intv.append(pd.read_csv(dir_name+file_names[4]+ underscore +str(file_num)+'.csv').set_index('Time'))
 
      
     df_daily_cases_matrix.append(df_daily_cases_intv)
     df_cumulative_cases_matrix.append(df_cumulative_cases_intv)
     df_fatalities_matrix.append(df_fatalities_intv)
     df_recovered_matrix.append(df_recovered_intv)
-    df_num_tested_positive_matrix.append(df_num_tested_positive_intv)
-    df_tests_requested_matrix.append(df_tests_requested_intv)
+    #df_num_tested_positive_matrix.append(df_num_tested_positive_intv)
+    #df_tests_requested_matrix.append(df_tests_requested_intv)
     df_disease_label_stats_matrix.append(df_disease_label_stats_intv)
 
 if DEBUG:
@@ -136,8 +136,8 @@ df_daily_cases_mean_array = mean_array(df_daily_cases_matrix)
 df_fatalities_mean_array = mean_array(df_fatalities_matrix)
 df_recovered_mean_array = mean_array(df_recovered_matrix)
 df_cumulative_cases_mean_array= mean_array(df_cumulative_cases_matrix)
-df_tested_positive_mean_array= mean_array(df_num_tested_positive_matrix)
-df_tests_requested_mean_array= mean_array(df_tests_requested_matrix)
+#df_tested_positive_mean_array= mean_array(df_num_tested_positive_matrix)
+#df_tests_requested_mean_array= mean_array(df_tests_requested_matrix)
 df_disease_label_mean_array= mean_array(df_disease_label_stats_matrix)
 
 if DEBUG:
@@ -145,7 +145,7 @@ if DEBUG:
     df_array = [df_daily_cases_mean_array, df_cumulative_cases_mean_array, df_fatalities_mean_array, df_recovered_mean_array]
     print(f"{df_array}")
     
-plots_dir = '/Users/Minhaas/CODING/iisc/rough/plots/'
+plots_dir = '../../covid_plots/'
 folder_name = time.strftime("%Y%m%d")
 timestr = time.strftime("%Y%m%d-%H%M%S")
 if not os.path.exists(plots_dir + folder_name):

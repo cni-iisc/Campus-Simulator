@@ -13,6 +13,10 @@ void modify_kappa_case_isolate_node(agent& node, std::vector<Interaction_Space>&
 
 void modify_kappa_class_isolate_node(agent& node, std::vector<Interaction_Space>& i_spaces, std::vector<agent>& nodes, int day);
 
+void modify_kappa_selective_shutdown(agent& node, std::vector<Interaction_Space> &i_spaces, std::vector<InteractionType> shutdown_spaces, int day);
+
+void modify_kappa_evacuation(agent &node, int day);
+
 void set_kappa_base_value(agent& node, std::vector<Interaction_Space>& i_spaces, int day);
 
 void set_kappa_lockdown_node(agent& node, const int cur_time, const intervention_params intv_params, std::vector<Interaction_Space>& i_spaces, int day);

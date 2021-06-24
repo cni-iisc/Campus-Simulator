@@ -273,11 +273,11 @@ void output_timed_csv(const std::vector<std::string>& field_row, const std::stri
 gnuplot::gnuplot(const std::string& output_directory){
   std::string gnuplot_script_path = output_directory + "/gnuplot_script.gnuplot";
   fout.open(gnuplot_script_path);
-  check_stream(fout, gnuplot_script_path);
+  //check_stream(fout, gnuplot_script_path);
 
   std::string plots_path = output_directory + "/plots.html";
   html_out.open(plots_path);
-  check_stream(html_out, plots_path);
+  //check_stream(html_out, plots_path);
   
   fout << "set datafile separator ','" << std::endl;
   fout << "set key autotitle columnhead" << std::endl;

@@ -7,10 +7,10 @@ This project is carried out by the Centre for Networked Intelligence at the Indi
 ## Quick start
 
 For ease-of-use there is a single shell script which can be used to test the campus-simulator, called `run_sims.sh`.
-The script intnatiates an example sample campus, compiles the simulator's executable, runs the simulator and makes the plots from the different statistics
+The script instatiates an example sample campus, compiles the simulator's executable, runs the simulator and makes the plots from the different statistics
 
 ```shell
-run_sims.sh
+bash run_sims.sh
 ```
 
 ## Documentation

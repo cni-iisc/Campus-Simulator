@@ -46,6 +46,60 @@ plot_data_struct run_campus_simulator()
 			{"num_cases", {}},
 			{"num_cumulative_hospitalizations", {}},
 			{"num_cumulative_infective", {}}};
+
+	plot_data.susceptible_lambdas =
+		{
+			{"susceptible_lambda", {}},
+			{"susceptible_lambda_hostel", {}},
+			{"susceptible_lambda_classroom", {}},
+			{"susceptible_lambda_mess", {}},
+			{"susceptible_lambda_cafeteria", {}},
+			{"susceptible_lambda_library", {}},
+			{"susceptible_lambda_sports_facility", {}},
+			{"susceptible_lambda_recreational_facility", {}},
+			{"susceptible_lambda_residential_block", {}},
+			{"susceptible_lambda_house", {}},
+			{"susceptible_lambda_smaller_networks", {}}};
+
+	plot_data.total_lambda_fractions =
+		{
+			{"total_fraction_lambda_hostel", {}},
+			{"total_fraction_lambda_classroom", {}},
+			{"total_fraction_lambda_mess", {}},
+			{"total_fraction_lambda_cafeteria", {}},
+			{"total_fraction_lambda_library", {}},
+			{"total_fraction_lambda_sports_facility", {}},
+			{"total_fraction_lambda_recreational_facility", {}},
+			{"total_fraction_lambda_residential_block", {}},
+			{"total_fraction_lambda_house", {}},
+			{"total_fraction_lambda_smaller_networks", {}}};
+
+	plot_data.mean_lambda_fractions =
+		{
+			{"mean_fraction_lambda_hostel", {}},
+			{"mean_fraction_lambda_classroom", {}},
+			{"mean_fraction_lambda_mess", {}},
+			{"mean_fraction_lambda_cafeteria", {}},
+			{"mean_fraction_lambda_library", {}},
+			{"mean_fraction_lambda_sports_facility", {}},
+			{"mean_fraction_lambda_recreational_facility", {}},
+			{"mean_fraction_lambda_residential_block", {}},
+			{"mean_fraction_lambda_house", {}},
+			{"mean_fraction_lambda_smaller_networks", {}}};
+
+	plot_data.cumulative_mean_lambda_fractions =
+		{
+			{"cumulative_mean_fraction_lambda_hostel", {}},
+			{"cumulative_mean_fraction_lambda_classroom", {}},
+			{"cumulative_mean_fraction_lambda_mess", {}},
+			{"cumulative_mean_fraction_lambda_cafeteria", {}},
+			{"cumulative_mean_fraction_lambda_library", {}},
+			{"cumulative_mean_fraction_lambda_sports_facility", {}},
+			{"cumulative_mean_fraction_lambda_recreational_facility", {}},
+			{"cumulative_mean_fraction_lambda_residential_block", {}},
+			{"cumulative_mean_fraction_lambda_house", {}},
+			{"cumulative_mean_fraction_lambda_smaller_networks", {}}};
+
 	for (auto &elem : plot_data.nums)
 	{
 		elem.second.reserve(GLOBAL.NUM_TIMESTEPS);
@@ -62,6 +116,10 @@ plot_data_struct run_campus_simulator()
 	count_type num_cumulative_infective = 0;		//Total number of people who have progressed to the infective state so far
 
 	count_type num_total_infections = 0;
+
+	lambda_incoming_data total_lambda_fraction_data;
+	lambda_incoming_data mean_lambda_fraction_data;
+	lambda_incoming_data cumulative_mean_lambda_fraction_data;
 	//Total number of individuals who have become infected via transmission so far
 	//This does not included the initially seeded infections
 
@@ -83,6 +141,10 @@ plot_data_struct run_campus_simulator()
 		auto start_time_timestep = std::chrono::high_resolution_clock::now();
 #endif
 		day = (time_step / 4) % GLOBAL.PERIODICITY;
+
+		total_lambda_fraction_data.set_zero();
+		mean_lambda_fraction_data.set_zero();
+
 		count_type num_new_infections = 0;
 		for (count_type j = 0; j < nodes.size(); ++j)
 		{	
@@ -92,6 +154,13 @@ plot_data_struct run_campus_simulator()
 			{
 				++num_new_infections;
 				++num_total_infections;
+
+				{
+					total_lambda_fraction_data += nodes[j].lambda_incoming;
+					auto normalized_lambda = (nodes[j].lambda_incoming / nodes[j].lambda);
+					mean_lambda_fraction_data.mean_update(normalized_lambda, num_new_infections);
+					cumulative_mean_lambda_fraction_data.mean_update(normalized_lambda, num_total_infections);
+				}
 			}
 			if (node_update_status.new_symptomatic)
 			{
@@ -147,9 +216,38 @@ plot_data_struct run_campus_simulator()
 				   n_icu = 0,
 				   n_requested_tests = 0,
 				   n_tested_positive = 0;
+
+		double susceptible_lambda = 0,
+			   susceptible_lambda_classroom = 0,
+			   susceptible_lambda_hostel = 0,
+			   susceptible_lambda_mess = 0,
+			   susceptible_lambda_cafeteria = 0,
+			   susceptible_lambda_library = 0,
+			   susceptible_lambda_sports_facility = 0,
+			   susceptible_lambda_recreational_facility = 0,
+			   susceptible_lambda_residential_block = 0,
+			   susceptible_lambda_house = 0,
+			   susceptible_lambda_smaller_networks = 0;
+
 		for (count_type j = 0; j < nodes.size(); j++)
 		{
 			auto infection_status = nodes[j].infection_status;
+
+			if (infection_status == Progression::susceptible)
+			{
+				susceptible_lambda += nodes[j].lambda;
+				susceptible_lambda_classroom += nodes[j].lambda_incoming.classroom;
+				susceptible_lambda_hostel += nodes[j].lambda_incoming.hostel;
+				susceptible_lambda_mess += nodes[j].lambda_incoming.mess;
+				susceptible_lambda_cafeteria += nodes[j].lambda_incoming.cafeteria;
+				susceptible_lambda_library += nodes[j].lambda_incoming.library;
+				susceptible_lambda_sports_facility += nodes[j].lambda_incoming.sports_facility;
+				susceptible_lambda_recreational_facility += nodes[j].lambda_incoming.recreational_facility;
+				susceptible_lambda_residential_block += nodes[j].lambda_incoming.residential_block;
+				susceptible_lambda_house += nodes[j].lambda_incoming.house;
+				susceptible_lambda_smaller_networks += nodes[j].lambda_incoming.smaller_networks;
+			}
+
 			if (infection_status == Progression::infective || infection_status == Progression::symptomatic || infection_status == Progression::hospitalised || infection_status == Progression::critical)
 			{
 				n_infected += 1;
@@ -239,6 +337,55 @@ plot_data_struct run_campus_simulator()
 		plot_data.nums["num_cumulative_hospitalizations"].push_back({time_step, {num_cumulative_hospitalizations}});
 		plot_data.nums["num_cumulative_infective"].push_back({time_step, {num_cumulative_infective}});
 		plot_data.disease_label_stats["disease_label_stats"].push_back({time_step, {n_primary_contact, n_mild_symptomatic_tested, n_moderate_symptomatic_tested, n_severe_symptomatic_tested, n_icu, n_requested_tests, n_tested_positive, n_test_done}});
+
+		plot_data.susceptible_lambdas["susceptible_lambda"].push_back({time_step, {susceptible_lambda}});
+		plot_data.susceptible_lambdas["susceptible_lambda_classroom"].push_back({time_step, {susceptible_lambda_classroom}});
+		plot_data.susceptible_lambdas["susceptible_lambda_hostel"].push_back({time_step, {susceptible_lambda_hostel}});
+		plot_data.susceptible_lambdas["susceptible_lambda_mess"].push_back({time_step, {susceptible_lambda_mess}});
+		plot_data.susceptible_lambdas["susceptible_lambda_cafeteria"].push_back({time_step, {susceptible_lambda_cafeteria}});
+		plot_data.susceptible_lambdas["susceptible_lambda_library"].push_back({time_step, {susceptible_lambda_library}});
+		plot_data.susceptible_lambdas["susceptible_lambda_sports_facility"].push_back({time_step, {susceptible_lambda_sports_facility}});
+		plot_data.susceptible_lambdas["susceptible_lambda_recreational_facility"].push_back({time_step, {susceptible_lambda_recreational_facility}});
+		plot_data.susceptible_lambdas["susceptible_lambda_residential_block"].push_back({time_step, {susceptible_lambda_residential_block}});
+		plot_data.susceptible_lambdas["susceptible_lambda_house"].push_back({time_step, {susceptible_lambda_house}});
+		plot_data.susceptible_lambdas["susceptible_lambda_smaller_networks"].push_back({time_step, {susceptible_lambda_smaller_networks}});	
+
+
+		auto total_lambda_fraction_data_sum = total_lambda_fraction_data.sum();
+		total_lambda_fraction_data /= total_lambda_fraction_data_sum;
+
+		plot_data.total_lambda_fractions["total_fraction_lambda_classroom"].push_back({time_step, {total_lambda_fraction_data.classroom}});
+		plot_data.total_lambda_fractions["total_fraction_lambda_hostel"].push_back({time_step, {total_lambda_fraction_data.hostel}});
+		plot_data.total_lambda_fractions["total_fraction_lambda_mess"].push_back({time_step, {total_lambda_fraction_data.mess}});
+		plot_data.total_lambda_fractions["total_fraction_lambda_cafeteria"].push_back({time_step, {total_lambda_fraction_data.cafeteria}});
+		plot_data.total_lambda_fractions["total_fraction_lambda_library"].push_back({time_step, {total_lambda_fraction_data.library}});
+		plot_data.total_lambda_fractions["total_fraction_lambda_sports_facility"].push_back({time_step, {total_lambda_fraction_data.sports_facility}});
+		plot_data.total_lambda_fractions["total_fraction_lambda_recreational_facility"].push_back({time_step, {total_lambda_fraction_data.recreational_facility}});
+		plot_data.total_lambda_fractions["total_fraction_lambda_residential_block"].push_back({time_step, {total_lambda_fraction_data.residential_block}});
+		plot_data.total_lambda_fractions["total_fraction_lambda_house"].push_back({time_step, {total_lambda_fraction_data.house}});
+		plot_data.total_lambda_fractions["total_fraction_lambda_smaller_networks"].push_back({time_step, {total_lambda_fraction_data.smaller_networks}});
+
+		plot_data.mean_lambda_fractions["mean_fraction_lambda_classroom"].push_back({time_step, {mean_lambda_fraction_data.classroom}});
+		plot_data.mean_lambda_fractions["mean_fraction_lambda_hostel"].push_back({time_step, {mean_lambda_fraction_data.hostel}});
+		plot_data.mean_lambda_fractions["mean_fraction_lambda_mess"].push_back({time_step, {mean_lambda_fraction_data.mess}});
+		plot_data.mean_lambda_fractions["mean_fraction_lambda_cafeteria"].push_back({time_step, {mean_lambda_fraction_data.cafeteria}});
+		plot_data.mean_lambda_fractions["mean_fraction_lambda_library"].push_back({time_step, {mean_lambda_fraction_data.library}});
+		plot_data.mean_lambda_fractions["mean_fraction_lambda_sports_facility"].push_back({time_step, {mean_lambda_fraction_data.sports_facility}});
+		plot_data.mean_lambda_fractions["mean_fraction_lambda_recreational_facility"].push_back({time_step, {mean_lambda_fraction_data.recreational_facility}});
+		plot_data.mean_lambda_fractions["mean_fraction_lambda_residential_block"].push_back({time_step, {mean_lambda_fraction_data.residential_block}});
+		plot_data.mean_lambda_fractions["mean_fraction_lambda_house"].push_back({time_step, {mean_lambda_fraction_data.house}});
+		plot_data.mean_lambda_fractions["mean_fraction_lambda_smaller_networks"].push_back({time_step, {mean_lambda_fraction_data.smaller_networks}});
+
+		plot_data.cumulative_mean_lambda_fractions["cumulative_mean_fraction_lambda_classroom"].push_back({time_step, {cumulative_mean_lambda_fraction_data.classroom}});
+		plot_data.cumulative_mean_lambda_fractions["cumulative_mean_fraction_lambda_hostel"].push_back({time_step, {cumulative_mean_lambda_fraction_data.hostel}});
+		plot_data.cumulative_mean_lambda_fractions["cumulative_mean_fraction_lambda_mess"].push_back({time_step, {cumulative_mean_lambda_fraction_data.mess}});
+		plot_data.cumulative_mean_lambda_fractions["cumulative_mean_fraction_lambda_cafeteria"].push_back({time_step, {cumulative_mean_lambda_fraction_data.cafeteria}});
+		plot_data.cumulative_mean_lambda_fractions["cumulative_mean_fraction_lambda_library"].push_back({time_step, {cumulative_mean_lambda_fraction_data.library}});
+		plot_data.cumulative_mean_lambda_fractions["cumulative_mean_fraction_lambda_sports_facility"].push_back({time_step, {cumulative_mean_lambda_fraction_data.sports_facility}});
+		plot_data.cumulative_mean_lambda_fractions["cumulative_mean_fraction_lambda_recreational_facility"].push_back({time_step, {cumulative_mean_lambda_fraction_data.recreational_facility}});
+		plot_data.cumulative_mean_lambda_fractions["cumulative_mean_fraction_lambda_residential_block"].push_back({time_step, {cumulative_mean_lambda_fraction_data.residential_block}});
+		plot_data.cumulative_mean_lambda_fractions["cumulative_mean_fraction_lambda_house"].push_back({time_step, {cumulative_mean_lambda_fraction_data.house}});
+		plot_data.cumulative_mean_lambda_fractions["cumulative_mean_fraction_lambda_smaller_networks"].push_back({time_step, {cumulative_mean_lambda_fraction_data.smaller_networks}});
 	}
 	return plot_data;
 }

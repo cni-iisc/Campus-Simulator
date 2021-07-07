@@ -133,24 +133,24 @@ enum class InteractionType {
   recreational_facility = 7,
   residential_block = 8,
   house = 9,
-  smaller_networks = 10, 
-  count = 11
+  smaller_networks = 10, //rename to hostel_groups
+  count = 11 //number of interaction types
 };
 
 struct testing_probability{
-  count_type num_days = 0; //number of days for which this a protocol is active.
+  count_type num_days = 0; //number of days for which this protocol is active.
   double prob_test_index_symptomatic = 0;
   double prob_test_index_hospitalised = 0;
-  
+  //in the following, the int index refers to the type of interaction space through which the contact to be tested is associated with the indexed individual
   std::unordered_map<int, double> prob_test_positive_symptomatic; //probability that contact of symptomatic individual who tests positive is tested
   std::unordered_map<int, double> prob_test_hospitalised_symptomatic; //probability that contact of symptomatic individual who requires hospitalisation is tested
-  std::unordered_map<int, double> prob_test_symptomatic_symptomatic; //probability that contact of symptomatic individual who is symptomatic is tested ?? doubt
+  std::unordered_map<int, double> prob_test_symptomatic_symptomatic; //probability that contact of symptomatic individual who is symptomatic is tested 
   std::unordered_map<int, double> prob_test_positive_asymptomatic; //probability that contact of asymptomatic individual who tests positive is tested
   std::unordered_map<int, double> prob_test_hospitalised_asymptomatic; //probability that contact of asymptomatic individual who tests positive is tested
-  std::unordered_map<int, double> prob_test_symptomatic_asymptomatic; //probability that contact of asymptomatic individual who tests positive is tested ?? doubt
+  std::unordered_map<int, double> prob_test_symptomatic_asymptomatic; //probability that contact of asymptomatic individual who tests positive is tested 
   std::unordered_map<int, double> prob_contact_trace_positive; //probability that contact of asymptomatic individual who tests positive is tested
   std::unordered_map<int, double> prob_contact_trace_hospitalised; //probability that contact of asymptomatic individual who tests positive is tested
-  std::unordered_map<int, double> prob_contact_trace_symptomatic; //probability that contact of asymptomatic individual who tests positive is tested ?? doubt
+  std::unordered_map<int, double> prob_contact_trace_symptomatic; //probability that contact of asymptomatic individual who tests positive is tested
 
   
   double prob_retest_recovered = 0;
@@ -315,8 +315,8 @@ struct global_params{
   int testing_capacity = 0;
   std::vector<int>contact_tracing_hierarchy;
 
-  count_type debug_count_positive = 0;
-  count_type debug_count_tests_requested = 0;
+  // count_type debug_count_positive = 0;
+  // count_type debug_count_tests_requested = 0;
     
   count_type RNG_SEED;
   count_type RNG_SEED_NETWORK;
@@ -376,8 +376,8 @@ struct global_params{
   double BETA_CLASS = 0;
   double BETA_RANDOM_COMMUNITY = 0;
   double BETA_NBR_CELLS = 0;
-  count_type debug_hospitalised = 0;
-  count_type debug_critical = 0;
+  // count_type debug_hospitalised = 0;
+  // count_type debug_critical = 0;
 
   double ALPHA = 0.8;
   //exponent of number of people in a household while normalising
@@ -584,18 +584,44 @@ struct lambda_incoming_data {
   double random_community = 0;
   double nbr_cell = 0;
 
+  double classroom = 0;
+  double hostel = 0;
+  double mess = 0;
+  double cafeteria = 0;
+  double library = 0;
+  double sports_facility = 0;
+  double recreational_facility = 0;
+  double residential_block = 0;
+  double house = 0;
+  double smaller_networks = 0;
+
   void set_zero(){
 	home = 0;
 	work = 0;
 	community = 0;
 	travel = 0;
 	project = 0;
-  	random_community = 0;
+  random_community = 0;
 	nbr_cell = 0;
+
+  classroom = 0;
+  hostel = 0;
+  mess = 0;
+  cafeteria = 0;
+  library = 0;
+  sports_facility = 0;
+  recreational_facility = 0;
+  residential_block = 0;
+  house = 0;
+  smaller_networks = 0;
   }
 
+ //  inline double sum() const {
+	// return home + work + community + travel + project + random_community + nbr_cell;
+ //  }
+
   inline double sum() const {
-	return home + work + community + travel + project + random_community + nbr_cell;
+  return classroom + hostel + mess + cafeteria + library + sports_facility + recreational_facility + residential_block + house + smaller_networks;
   }
 
   inline lambda_incoming_data operator/(long double d) const {
@@ -623,57 +649,80 @@ struct lambda_incoming_data {
   }
 
   inline lambda_incoming_data& operator/=(long double d){
-	home /= d;
-	work /= d;
-	community /= d;
-	travel /= d;
-	project /= d;
-	random_community /= d;
-	nbr_cell /= d;
+	classroom /= d;
+  hostel /= d;
+  mess /= d;
+  cafeteria /= d;
+  library /= d;
+  sports_facility /= d;
+  recreational_facility /= d;
+  residential_block /= d;
+  house /= d;
+  smaller_networks /= d;
 	return *this;
   }
 
   inline lambda_incoming_data& operator*=(long double d){
-	home *= d;
-	work *= d;
-	community *= d;
-	travel *= d;
-	project *= d;
-	random_community *= d;
-	nbr_cell *= d;
+	classroom *= d;
+  hostel *= d;
+  mess *= d;
+  cafeteria *= d;
+  library *= d;
+  sports_facility *= d;
+  recreational_facility *= d;
+  residential_block *= d;
+  house *= d;
+  smaller_networks *= d;
 	return *this;
   }
 
   inline lambda_incoming_data& operator+=(const lambda_incoming_data& rhs){
-	home += rhs.home;
-	work += rhs.work;
-	community += rhs.community;
-	travel += rhs.travel;
-	project += rhs.project;
-	random_community += rhs.random_community;
-	nbr_cell += rhs.nbr_cell;
+	classroom += rhs.classroom;
+  hostel += rhs.hostel;
+  mess += rhs.mess;
+  cafeteria += rhs.cafeteria;
+  library += rhs.library;
+  sports_facility += rhs.sports_facility;
+  recreational_facility += rhs.recreational_facility;
+  residential_block += rhs.residential_block;
+  house += rhs.house;
+  smaller_networks += rhs.smaller_networks;
 	return *this;
   }
 
   inline lambda_incoming_data& operator-=(const lambda_incoming_data& rhs){
-	home -= rhs.home;
-	work -= rhs.work;
-	community -= rhs.community;
-	travel -= rhs.travel;
-	project -= rhs.project;
-	random_community -= rhs.random_community;
-	nbr_cell -= rhs.nbr_cell;
+	classroom -= rhs.classroom;
+  hostel -= rhs.hostel;
+  mess -= rhs.mess;
+  cafeteria -= rhs.cafeteria;
+  library -= rhs.library;
+  sports_facility -= rhs.sports_facility;
+  recreational_facility -= rhs.recreational_facility;
+  residential_block -= rhs.residential_block;
+  house -= rhs.house;
+  smaller_networks -= rhs.smaller_networks;
 	return *this;
   }
 
   inline void mean_update(const lambda_incoming_data& update, count_type num){
-	home += (update.home - home)/num;
-	work += (update.work - work)/num;
-	community += (update.community - community)/num;
-	travel += (update.travel - travel)/num;
-	project += (update.project -  project)/num;
-	random_community += (update.random_community - random_community)/num;
-	nbr_cell += (update.nbr_cell - nbr_cell)/num;
+	// home += (update.home - home)/num;
+	// work += (update.work - work)/num;
+	// community += (update.community - community)/num;
+	// travel += (update.travel - travel)/num;
+	// project += (update.project -  project)/num;
+	// random_community += (update.random_community - random_community)/num;
+	// nbr_cell += (update.nbr_cell - nbr_cell)/num;
+
+  classroom += (update.classroom - classroom)/num;
+  hostel += (update.hostel - hostel)/num;
+  mess += (update.mess - mess)/num;
+  cafeteria += (update.cafeteria - cafeteria)/num;
+  library += (update.library - library)/num;
+  sports_facility += (update.sports_facility - sports_facility)/num;
+  recreational_facility += (update.recreational_facility - recreational_facility)/num;
+  residential_block += (update.residential_block - residential_block)/num;
+  house += (update.house - house)/num;
+  smaller_networks += (update.smaller_networks - smaller_networks)/num;
   }
 };
 
@@ -730,8 +779,8 @@ struct agent{
   int hostel;
   int dept;
   int type;
-  std::vector<count_type> time_tested;
-  std::vector<count_type> time_tested_positive;
+  // std::vector<count_type> time_tested;
+  // std::vector<count_type> time_tested_positive;
   person_type personType;
   std::set<int> spaces;
   int community;

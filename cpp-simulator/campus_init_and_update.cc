@@ -152,7 +152,13 @@ std::vector<agent> init_nodes_campus()
         nodes[i].interaction_strength[day][std::stoi(j.name.GetString())] = j.value.GetDouble();
         // std::cout<<nodes[i].interaction_strength[day]<<"\t";
         //std::cout<<j.name.GetString()<<"\t";
-        nodes[i].kappa[std::stoi(j.name.GetString())] = 1;
+        if(std::stoi(j.name.GetString()) == 0){
+          nodes[i].kappa[std::stoi(j.name.GetString())] = 1;  
+        }
+        else{
+          nodes[i].kappa[std::stoi(j.name.GetString())] = 1;  
+        }
+        
       }
       day++;
     }
@@ -581,9 +587,44 @@ void update_individual_lambda(std::vector<agent> &nodes, std::vector<Interaction
 {
   for (auto &node : nodes)
   {
+    node.lambda_incoming.set_zero();
     double sum = 0;
     for (auto &ispace : node.interaction_strength[day])
     {
+      switch(static_cast<int>(i_spaces[ispace.first].interaction_type)){
+        case 0:
+          break;
+        case 1:
+          node.lambda_incoming.classroom += ispace.second * node.kappa[ispace.first] * i_spaces[ispace.first].lambda;
+          break;
+        case 2:
+          node.lambda_incoming.hostel += ispace.second * node.kappa[ispace.first] * i_spaces[ispace.first].lambda;
+          break;
+        case 3:
+          node.lambda_incoming.mess += ispace.second * node.kappa[ispace.first] * i_spaces[ispace.first].lambda;
+          break;
+        case 4:
+          node.lambda_incoming.cafeteria += ispace.second * node.kappa[ispace.first] * i_spaces[ispace.first].lambda;
+          break;
+        case 5:
+          node.lambda_incoming.library += ispace.second * node.kappa[ispace.first] * i_spaces[ispace.first].lambda;
+          break;
+        case 6:
+          node.lambda_incoming.sports_facility += ispace.second * node.kappa[ispace.first] * i_spaces[ispace.first].lambda;
+          break;
+        case 7:
+          node.lambda_incoming.recreational_facility += ispace.second * node.kappa[ispace.first] * i_spaces[ispace.first].lambda;
+          break;
+        case 8:
+          node.lambda_incoming.residential_block += ispace.second * node.kappa[ispace.first] * i_spaces[ispace.first].lambda;
+          break;
+        case 9:
+          node.lambda_incoming.house += ispace.second * node.kappa[ispace.first] * i_spaces[ispace.first].lambda;
+          break;
+        case 10:
+          node.lambda_incoming.smaller_networks += ispace.second * node.kappa[ispace.first] * i_spaces[ispace.first].lambda;
+          break;
+      }
       sum += ispace.second * node.kappa[ispace.first] * i_spaces[ispace.first].lambda;
     }
     node.lambda = sum;
@@ -1021,7 +1062,7 @@ node_update_status update_infection(agent &node, int cur_time, int day)
     if (transition)
     {
       node.infection_status = Progression::hospitalised;
-      GLOBAL.debug_hospitalised++; //move to hospitalisation
+      //GLOBAL.debug_hospitalised++; //move to hospitalisation
       node.infective = false;
       update_status.new_hospitalization = true;
       node.entered_hospitalised_state = true;
@@ -1042,7 +1083,7 @@ node_update_status update_infection(agent &node, int cur_time, int day)
     if (transition)
     {
       node.infection_status = Progression::critical;
-      GLOBAL.debug_critical++; //move to critical care
+      //GLOBAL.debug_critical++; //move to critical care
       node.infective = false;
     }
     else

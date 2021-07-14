@@ -21,6 +21,8 @@ import argparse
 import sys
 import json
 
+from ../staticInst/transmission_coefficients import transmission_coefficients
+
 DEBUG=False
 
 def measure(func):
@@ -49,22 +51,29 @@ def processParams(params_json):
     global smaller_networks_scale
     with open(params_json) as f:
         tmp_params = json.load(f)
-        for k in ['H', 'W', 'C', 'TRAVEL']:
+        for k in ['classroom', 'hostel', 'residential_block']:
             betas[k] = tmp_params['betas'][k]
         del tmp_params['betas']
         params = tmp_params
 
         #Now to process the betas
-        betas['S'] = 2 * betas['W']
-        betas['PROJECT'] = betas['W'] * smaller_networks_scale
-        betas['CLASS'] = betas['S'] * smaller_networks_scale
-        betas['NBR_CELLS'] = betas['C'] * smaller_networks_scale
-        betas['RANDOM_COMMUNITY'] = betas['NBR_CELLS']
+        # betas['S'] = 2 * betas['W']
+        # betas['PROJECT'] = betas['W'] * smaller_networks_scale
+        # betas['CLASS'] = betas['S'] * smaller_networks_scale
+        # betas['NBR_CELLS'] = betas['C'] * smaller_networks_scale
+        # betas['RANDOM_COMMUNITY'] = betas['NBR_CELLS']
+        betas['mess'] = betas['hostel']*0.45
+        betas['cafeteria'] = betas['classroom']*0.2
+        betas['library'] = betas['classroom']*0.2
+        betas['sports_facility'] = betas['classroom']*0.2
+        betas['recreational_facility'] = betas['classroom']*0.2
+        betas['smaller_networks'] = betas['hostel']*smaller_networks_scale
+        betas['house'] = betas['residential_block']*smaller_networks_scale
 
 
-def get_mean_fatalities(outputdir, nruns):
+def get_mean_cases(outputdir, nruns):
     data_dir = Path(outputdir)
-    glob_str = f"run_[0-{nruns-1}]/num_fatalities.csv"
+    glob_str = f"run_[0-{nruns-1}]/num_cases.csv"
     files_list = data_dir.glob(glob_str)
     df = (pd.concat([pd.read_csv(f) for f in files_list], ignore_index = True)
           .groupby('Time').mean())
@@ -72,9 +81,14 @@ def get_mean_fatalities(outputdir, nruns):
 
 def get_mean_lambdas(outputdir, nruns):
     data_dir = Path(outputdir)
-    lambdas = {'H': ["lambda_H"], 
-               'W': ["lambda_W", "lambda_PROJECT"], 
-               'C': ["lambda_C", "lambda_NBR_CELL", "lambda_RANDOM_COMMUNITY"]
+    lambdas = {'classroom': ["lambda_classroom"], 
+               'hostel': ["lambda_hostel", "lambda_smaller_networks"], 
+               #'mess': ["lambda_mess"],
+               #'cafeteria': ["lambda_cafeteria"],
+               #'library': ["lambda_library"],
+               #'sports_facility': ["lambda_sports_facility"],
+               #'recreational_facility': ["lambda_recreational_facility"],
+               'residential_block': ["lambda_residential_block", "lambda_house"]
               }
     values = {}
     for lam in lambdas.keys():
@@ -96,10 +110,14 @@ def print_and_log(outstring, filename=logfile):
 
 def print_betas():
     print("")
-    print_and_log(f"BETA_H       : {betas['H']:.5f}", logfile)
-    print_and_log(f"BETA_C       : {betas['C']:.5f}", logfile)
-    print_and_log(f"BETA_W       : {betas['W']:.5f}", logfile)
-    print_and_log(f"BETA_S       : {betas['S']:.5f}", logfile)
+    print_and_log(f"BETA_classroom                     : {betas['classoom']:.5f}", logfile)
+    print_and_log(f"BETA_hostel                        : {betas['hostel']:.5f}", logfile)
+    #print_and_log(f"BETA_mess                          : {betas['mess']:.5f}", logfile)
+    #print_and_log(f"BETA_cafeteria                     : {betas['cafeteria']:.5f}", logfile)
+    #print_and_log(f"BETA_library                       : {betas['library']:.5f}", logfile)
+    #print_and_log(f"BETA_sports_facility               : {betas['sports_facility']:.5f}", logfile)
+    #print_and_log(f"BETA_recreational_facility         : {betas['recreational_facility']:.5f}", logfile)
+    print_and_log(f"BETA_residential_block             : {betas['residential_block']:.5f}", logfile)
     print("")
 
 
@@ -107,6 +125,27 @@ def print_betas():
 
 
 def run_sim(run, params, betas):
+
+    interaction_type_list = range(1,9)
+    alpha = 1
+    interaction_type_names = {
+        0 : "Day Scholar", 
+        1 : "Classroom", 
+        2 : "Hostel", 
+        3 : "Mess",
+        4 : "Cafe",
+        5 : "Library",
+        6 : "Sports_facility",
+        7 : "Recreational_facility",
+        8 : "Residence_block",
+        9 : "House"
+    }
+    output_file = "..staticInst/data/campus_data/transmission_coefficients.json"
+    trans_coeff = transmission_coefficients(interaction_type_list, betas, alpha, interaction_type_names)
+    f = open(output_file, "w")
+    f.write(json.dumps(trans_coeff, cls= NpEncoder))
+    f.close
+
     output_folder = Path(output_base, f"run_{run}")
     output_folder.mkdir(parents = True, exist_ok = True)
     cmd = [f"{cpp_exec}"]
@@ -116,8 +155,8 @@ def run_sim(run, params, betas):
                 cmd+= [f"--{param}"]
             else:
                 cmd+= [f"--{param}", f"{params[param]}"]
-    for b in betas.keys():
-        cmd+= [f"--BETA_{b}",f"{betas[b]}"]
+    # for b in betas.keys():
+    #     cmd+= [f"--BETA_{b}",f"{betas[b]}"]
     cmd += [f"--input_directory", f"{input_folder}"]
     cmd += [f"--output_directory", f"{output_folder}"]
     print(" ".join(cmd))
@@ -140,23 +179,23 @@ def getTargetSlope():
     global target_slope
     
     ECDP = pd.read_csv('data/ecdp.csv')
-    india_data = ECDP[ECDP['geoId']=='IN'][['dateRep', 'deaths']][::-1]
-    india_data["cumulative_deaths"] = india_data['deaths'].cumsum()
-    india_data = india_data[(india_data['cumulative_deaths'] > 10) 
-                            & (india_data['cumulative_deaths'] < 200)].reset_index(drop=True)
+    india_data = ECDP[ECDP['geoId']=='IN'][['dateRep', 'cases']][::-1]
+    india_data["cumulative_cases"] = india_data['cases'].cumsum()
+    india_data = india_data[(india_data['cumulative_cases'] > 100) 
+                            & (india_data['cumulative_cases'] < 1000)].reset_index(drop=True)
     target_slope = np.polyfit(india_data.index, np.log(india_data['cumulative_deaths']), deg = 1)[0]
 
 # In[ ]:
 
 
 def get_slope(outputdir, nruns, low_thresh = 10, up_thresh = 200):
-    df = get_mean_fatalities(outputdir, nruns)
-    df = df[(df['num_fatalities'] > low_thresh)]
+    df = get_mean_cases(outputdir, nruns)
+    df = df[(df['num_cases'] > low_thresh)]
     if df.shape[0] < 5:
-        raise TypeError("Too few fatalities")
+        raise TypeError("Too few cases")
     else:
-        df = df[df['num_fatalities'] < up_thresh]
-        return np.polyfit(df.index, np.log(df['num_fatalities']), deg = 1)[0]
+        df = df[df['num_cases'] < up_thresh]
+        return np.polyfit(df.index, np.log(df['num_cases']), deg = 1)[0]
 
 
 # In[ ]:
@@ -167,32 +206,51 @@ def update_betas(diffs, count=0):
     
     if diffs == -1: #Happens if the getslope fails due to too few fatalities
         print_betas()
-        print("Too few fatalities. Doubling betas")
-        betas['H'] *= 2
-        betas['W'] *= 2
-        betas['C'] *= 2    
+        print("Too few cases. Doubling betas")
+        betas['classroom'] *= 2
+        betas['hostel'] *= 2
+        #betas['mess'] *= 2
+        #betas['cafeteria'] *= 2
+        # betas['library'] *= 2
+        # betas['sports_facility'] *= 2
+        # betas['recreational_facility'] *= 2
+        betas['residential_block'] *= 2    
     else:
-        (lambda_H_diff, lambda_W_diff, lambda_C_diff, slope_diff) = diffs
-
-        step_beta_H = -1*lambda_H_diff/(3+count) 
-        step_beta_W = -1*lambda_W_diff/(3+count) 
-        step_beta_C = -1*lambda_C_diff/(3+count) 
+        (lambda_classroom_diff, lambda_hostel_diff, lambda_residential_block_diff, slope_diff) = diffs
+        step_beta_classroom = -1*lambda_classroom_diff/(3+count) 
+        step_beta_hostel = -1*lambda_hostel_diff/(3+count) 
+        # step_beta_mess = -1*lambda_mess_diff/(5+count)
+        # step_beta_cafeteria = -1*lambda_cafeteria_diff/(20+count) 
+        # step_beta_library = -1*lambda_library_diff/(20+count) 
+        # step_beta_sports_facility = -1*lambda_sports_facility_diff/(20+count)
+        # step_beta_recreational_facility = -1*lambda_recreational_facility_diff/(20+count) 
+        step_beta_residential_block = -1*lambda_residential_block_diff/(3+count)  
         beta_scale_factor = max(min(np.exp(slope_diff),1.5), 0.66)
 
         if (count>=30):
             beta_scale_factor = max(min(np.exp(slope_diff/(count-25)),1.5), 0.66)
-        elif (abs(lambda_H_diff)<0.02 and abs(lambda_W_diff)<0.02 and abs(lambda_C_diff)<0.02):
+        elif (abs(lambda_classroom_diff) < 0.02 and abs(lambda_hostel_diff) < 0.02 and lambda_residential_block_diff < 0.02):
             beta_scale_factor = max(min(np.exp(slope_diff/(5)),1.5), 0.66)
 
-        betas['H'] = max(betas['H'] + step_beta_H , 0) * beta_scale_factor
-        betas['W'] = max(betas['W'] + step_beta_W , 0) * beta_scale_factor
-        betas['C'] = max(betas['C'] + step_beta_C , 0) * beta_scale_factor
+        betas['classroom'] = max(betas['classroom'] + step_beta_classroom , 0) * beta_scale_factor
+        betas['hostel'] = max(betas['hostel'] + step_beta_hostel , 0) * beta_scale_factor
+        # betas['mess'] = max(betas['mess'] + step_beta_mess , 0) * beta_scale_factor
+        # betas['cafeteria'] = max(betas['cafeteria'] + step_beta_cafeteria , 0) * beta_scale_factor
+        # betas['library'] = max(betas['library'] + step_beta_library , 0) * beta_scale_factor
+        # betas['sports_facility'] = max(betas['sports_facility'] + step_beta_sports_facility , 0) * beta_scale_factor
+        # betas['recreational_facility'] = max(betas['recreational_facility'] + step_beta_recreational_facility , 0) * beta_scale_factor
+        betas['residential_block'] = max(betas['residential_block'] + step_beta_residential_block , 0) * beta_scale_factor
     
-    betas['S'] = betas['W'] * 2
-    betas['CLASS'] = betas['S'] * smaller_networks_scale
-    betas['PROJECT'] = betas['W'] * smaller_networks_scale
-    betas['RANDOM_COMMUNITY']  =  betas['C'] * smaller_networks_scale
-    betas['NBR_CELLS'] = betas['C'] * smaller_networks_scale
+    betas['house'] = betas['residential_block'] * smaller_networks_scale
+    betas['smaller_networks'] = betas['hostel'] * smaller_networks_scale
+    betas['mess'] = betas['hostel']*0.6
+    betas['cafeteria'] = betas['classroom']*0.05
+    betas['library'] = betas['classroom']*0.12
+    betas['sports_facility'] = betas['classroom']*0.12
+    betas['recreational_facility'] = betas['classroom']*0.12
+    # betas['PROJECT'] = betas['W'] * smaller_networks_scale
+    # betas['RANDOM_COMMUNITY']  =  betas['C'] * smaller_networks_scale
+    # betas['NBR_CELLS'] = betas['C'] * smaller_networks_scale
 
 def satisfied(diffs, slope_tolerance = 0.001, lam_tolerance = 0.01):
     if diffs==-1:
@@ -201,6 +259,11 @@ def satisfied(diffs, slope_tolerance = 0.001, lam_tolerance = 0.01):
         return (diffs[0] < lam_tolerance and
             diffs[1] < lam_tolerance and
             diffs[2] < lam_tolerance and
+            # diffs[3] < lam_tolerance and
+            # diffs[4] < lam_tolerance and
+            # diffs[5] < lam_tolerance and
+            # diffs[6] < lam_tolerance and
+            # diffs[7] < lam_tolerance and
             diffs[3] < slope_tolerance)        
 
 
@@ -221,21 +284,34 @@ def calibrate(nruns, ncores, params, betas, resolution=4):
         return -1
 
     lambdas = get_mean_lambdas(output_base, nruns)
-    [lambda_H, lambda_W, lambda_C] = [lambdas[key] for key in ['H', 'W', 'C']]
-    lambda_H_diff = float(lambda_H) - (1.0/3)
-    lambda_W_diff = float(lambda_W) - (1.0/3)
-    lambda_C_diff = float(lambda_C) - (1.0/3)
+    [lambda_classroom, lambda_hostel, lambda_residential_block] 
+        = [lambdas[key] for key in 
+        ['classroom', 'hostel', 'residential_block']]
+    lambda_classroom_diff = float(lambda_classroom) - (1.0/3)
+    lambda_hostel_diff = float(lambda_hostel) - (1.0/3)
+    # lambda_mess_diff = float(lambda_mess) - (1.0/5)
+    # lambda_cafeteria_diff = float(lambda_cafeteria) - (1.0/20)
+    # lambda_library_diff = float(lambda_library) - (1.0/20)
+    # lambda_sports_facility_diff = float(lambda_sports_facility) - (1.0/20)
+    # lambda_recreational_facility_diff = float(lambda_recreational_facility) - (1.0/20)
+    lambda_residential_block_diff = float(lambda_residential_block) - (1.0/3)
         
     slope_diff = target_slope - slope
 
     print_betas()
-    print_and_log(f"lambda_H_diff: {lambda_H_diff:.5f}", logfile)
-    print_and_log(f"lambda_W_diff: {lambda_W_diff:.5f}", logfile)
-    print_and_log(f"lambda_C_diff: {lambda_C_diff:.5f}", logfile)
+    print_and_log(f"lambda_classroom_diff: {lambda_classroom_diff:.5f}", logfile)
+    print_and_log(f"lambda_hostel_diff: {lambda_hostel_diff:.5f}", logfile)
+    # print_and_log(f"lambda_mess_diff: {lambda_mess_diff:.5f}", logfile)
+    # print_and_log(f"lambda_cafeteria_diff: {lambda_cafeteria_diff:.5f}", logfile)
+    # print_and_log(f"lambda_library_diff: {lambda_library_diff:.5f}", logfile)
+    # print_and_log(f"lambda_sports_facility_diff: {lambda_sports_facility_diff:.5f}", logfile)
+    # print_and_log(f"lambda_recreational_facility_diff: {lambda_recreational_facility_diff:.5f}", logfile)
+    print_and_log(f"lambda_residential_block_diff: {lambda_residential_block_diff:.5f}", logfile)
     print_and_log(f"slope_diff   : {slope_diff:.5f}", logfile)
     print_and_log("", logfile)
     logging.info(f"Slope: slope")
-    return (lambda_H_diff, lambda_W_diff, lambda_C_diff, slope_diff)
+    return (lambda_classroom_diff, lambda_hostel_diff, lambda_mess_diff, lambda_cafeteria_diff, lambda_library_diff, 
+            lambda_sports_facility_diff, lambda_recreational_facility_diff, lambda_residential_block_diff, slope_diff)
 
 
 # In[ ]:
@@ -252,7 +328,7 @@ def main():
     resolution = 4
 
     default_binary_path = "../cpp-simulator/drive_simulator"
-    default_input_folder = "../staticInst/data/mumbai_1million/"
+    default_input_folder = "../staticInst/data/campus_data/"
     default_output_folder = "calibration_output/"
     default_nruns = 6
 
@@ -325,7 +401,6 @@ if __name__ == "__main__":
 
 
 # In[ ]:
-
 
 
 

@@ -57,7 +57,7 @@ def campus_parse(inputfiles):
 
     print(type(inputfiles["staff"]["residence_block"][0]))
     #faculty_pop = len(inputfiles["class"]["faculty_id"].unique())
-    faculty_pop = 27
+    faculty_pop = 91
     #print(faculty_pop)
     student_pop = inputfiles["students"]["id"].count()
     hostel_pop  = np.bincount(inputfiles["students"]["hostel"])

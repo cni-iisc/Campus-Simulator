@@ -10,7 +10,7 @@ For ease-of-use there is a single shell script which can be used to test the cam
 The script instatiates an example sample campus, compiles the simulator's executable, runs the simulator and makes the plots from the different statistics
 
 ```shell
-bash run_sims.sh
+bash run_sims.sh or ./run_sims.sh
 ```
 
 ## Documentation

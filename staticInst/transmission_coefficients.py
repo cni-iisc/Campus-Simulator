@@ -47,7 +47,7 @@ if __name__ == "__main__":
     ALPHA = 1
 
     interaction_type = {
-        0 : "Day Scholar", 
+        0 : "outside_campus", 
         1 : "Classroom", 
         2 : "Hostel", 
         3 : "Mess",

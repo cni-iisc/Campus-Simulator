@@ -21,8 +21,19 @@ import argparse
 import sys
 import json
 
-from ../staticInst/transmission_coefficients import transmission_coefficients
+sys.path.append('../staticInst')
+from transmission_coefficients import transmission_coefficients
 
+class NpEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, np.integer):
+            return int(obj)
+        elif isinstance(obj, np.floating):
+            return float(obj)
+        elif isinstance(obj, np.ndarray):
+            return obj.tolist()
+        else:
+            return super(NpEncoder, self).default(obj)
 DEBUG=False
 
 def measure(func):
@@ -49,6 +60,7 @@ def processParams(params_json):
     global params
     global betas
     global smaller_networks_scale
+    betas['outside_campus'] = 0
     with open(params_json) as f:
         tmp_params = json.load(f)
         for k in ['classroom', 'hostel', 'residential_block']:
@@ -75,6 +87,7 @@ def get_mean_cases(outputdir, nruns):
     data_dir = Path(outputdir)
     glob_str = f"run_[0-{nruns-1}]/num_cases.csv"
     files_list = data_dir.glob(glob_str)
+    print(files_list)
     df = (pd.concat([pd.read_csv(f) for f in files_list], ignore_index = True)
           .groupby('Time').mean())
     return df
@@ -126,10 +139,10 @@ def print_betas():
 
 def run_sim(run, params, betas):
 
-    interaction_type_list = range(1,9)
+    
     alpha = 1
     interaction_type_names = {
-        0 : "Day Scholar", 
+        0 : "outside_campus", 
         1 : "Classroom", 
         2 : "Hostel", 
         3 : "Mess",
@@ -140,8 +153,13 @@ def run_sim(run, params, betas):
         8 : "Residence_block",
         9 : "House"
     }
-    output_file = "..staticInst/data/campus_data/transmission_coefficients.json"
-    trans_coeff = transmission_coefficients(interaction_type_list, betas, alpha, interaction_type_names)
+    interaction_type_list = list(range(10))
+   # print(interaction_type_list)
+   # print(betas)
+   # print(interaction_type_names)
+    BETAS = list(betas.values())
+    output_file = "../staticInst/data/campus_data/transmission_coefficients.json"
+    trans_coeff = transmission_coefficients(interaction_type_list, BETAS, alpha, interaction_type_names)
     f = open(output_file, "w")
     f.write(json.dumps(trans_coeff, cls= NpEncoder))
     f.close
@@ -284,9 +302,7 @@ def calibrate(nruns, ncores, params, betas, resolution=4):
         return -1
 
     lambdas = get_mean_lambdas(output_base, nruns)
-    [lambda_classroom, lambda_hostel, lambda_residential_block] 
-        = [lambdas[key] for key in 
-        ['classroom', 'hostel', 'residential_block']]
+    [lambda_classroom, lambda_hostel, lambda_residential_block] = [lambdas[key] for key in ['classroom', 'hostel', 'residential_block']]
     lambda_classroom_diff = float(lambda_classroom) - (1.0/3)
     lambda_hostel_diff = float(lambda_hostel) - (1.0/3)
     # lambda_mess_diff = float(lambda_mess) - (1.0/5)
@@ -329,8 +345,8 @@ def main():
 
     default_binary_path = "../cpp-simulator/drive_simulator"
     default_input_folder = "../staticInst/data/campus_data/"
-    default_output_folder = "calibration_output/"
-    default_nruns = 6
+    default_output_folder = "./calibration_output/"
+    default_nruns = 10
 
     class MyParser(argparse.ArgumentParser):
         def error(self, message):
@@ -359,7 +375,7 @@ def main():
         default = default_nruns)
     my_parser.add_argument(
         '-c', help="Number of cpus to use",
-        default = joblib.cpu_count())
+        default = 4)
     my_parser.add_argument(
         '-p', help='Starting parameters json',
         required=True

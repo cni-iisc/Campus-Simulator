@@ -4,7 +4,7 @@ import argparse
 import json 
 from collections import Counter
 import os
-from .transmission_coefficients import transmission_coefficients
+from transmission_coefficients import transmission_coefficients
 
 sim_test = False
 cafe = True
@@ -205,8 +205,9 @@ def campus_parse(inputfiles):
 
 
     #house = 116
-    house_df = inputfiles["common_areas"].iloc[[-1]]
-    house = house_df["starting_id"].iloc[0] + house_df["number"].iloc[0]
+    house_df = inputfiles["common_areas"].iloc[-1]
+    house = int(house_df["starting_id"] + house_df["number"])
+    #print(type(house))
     start_house = house
 
     fac_res = len(inputfiles["staff"]) - faculty_pop

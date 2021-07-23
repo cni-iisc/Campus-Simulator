@@ -204,7 +204,9 @@ def campus_parse(inputfiles):
                 count += 1
 
 
-    house = 116
+    #house = 116
+    house_df = inputfiles["common_areas"].tail(1)
+    house = house_df["starting_id"] + house_df["number"]
 
     for i in range(faculty_pop):
         residence_block = residence_block_list[450 + i]

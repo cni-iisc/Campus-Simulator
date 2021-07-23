@@ -205,11 +205,13 @@ def campus_parse(inputfiles):
 
 
     #house = 116
-    house_df = inputfiles["common_areas"].tail(1)
+    house_df = inputfiles["common_areas"].iloc[[-1]]
     house = house_df["starting_id"] + house_df["number"]
+    start_house = house
 
+    fac_res = len(inputfiles["staff"]) - faculty_pop
     for i in range(faculty_pop):
-        residence_block = residence_block_list[450 + i]
+        residence_block = residence_block_list[fac_res + i]
         count = 0
         for daily_int_st in individual[student_pop + i]["interaction_strength"]:
             sum = 0
@@ -419,13 +421,13 @@ def campus_parse(inputfiles):
         i_space_res_fac["lon"] = np.random.uniform(15.0,18.0)
         interaction_spaces.append(i_space_res_fac)
     
-    num_houses = house - 116
+    num_houses = house - start_house
 
     print("Instantiating houses")
 
     for i in range(num_houses):
         i_space_house = {}
-        i_space_house["id"] = 116 + i
+        i_space_house["id"] = start_house + i
         i_space_house["type"] = 9
         i_space_house["beta"] = np.random.uniform(0,0.5) + 1
         i_space_house["alpha"] = 1

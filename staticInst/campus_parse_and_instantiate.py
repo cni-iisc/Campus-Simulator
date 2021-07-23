@@ -206,7 +206,7 @@ def campus_parse(inputfiles):
 
     #house = 116
     house_df = inputfiles["common_areas"].iloc[[-1]]
-    house = house_df["starting_id"] + house_df["number"]
+    house = house_df["starting_id"].iloc[0] + house_df["number"][0]
     start_house = house
 
     fac_res = len(inputfiles["staff"]) - faculty_pop

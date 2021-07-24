@@ -4,7 +4,7 @@ import argparse
 import json 
 from collections import Counter
 import os
-from transmission_coefficients import transmission_coefficients
+from .transmission_coefficients import transmission_coefficients
 
 sim_test = False
 cafe = True

@@ -209,11 +209,12 @@ def campus_parse(inputfiles):
     #house = int(house_df["starting_id"] + house_df["number"])
     #print(type(house))
 
-    house = len(inputfiles["class"]) + len(inputfiles["students"]["hostel"].unique()) + len(inputfiles["mess"]) + len(inputfiles["staff"]["residence_block"].unique()) - 1
+    house = len(inputfiles["class"]) + len(inputfiles["students"]["hostel"].unique()) + len(inputfiles["mess"]) + len(inputfiles["staff"]["residence_block"].unique())
     for j in range(len(inputfiles["common_areas"])):   
         house += int(inputfiles["common_areas"]["number"].iloc[j])
 
     start_house = house
+    print(house)
 
     fac_res = len(inputfiles["staff"]) - faculty_pop
     for i in range(faculty_pop):

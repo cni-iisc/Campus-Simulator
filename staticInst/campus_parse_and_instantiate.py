@@ -89,7 +89,7 @@ def campus_parse(inputfiles):
     periodicity = 7
 
     spaces_map = {
-        0 : "Day Scholar",
+        0 : "outside_campus",
         1 : "Classes",
         2 : "Hostels",
         3 : "Mess",
@@ -451,8 +451,8 @@ def campus_parse(inputfiles):
     for spaces in interaction_spaces:
         type_list.append(spaces["type"])
     
-    type_arr = np.unique(np.array(type_list))
-
+    #type_arr = np.unique(np.array(type_list))
+    type_arr = list(range(10))
     names = []
     BETA = []
     

@@ -63,6 +63,15 @@ you want to simulate).  Instructions for doing this are in the README.md
 
 For this, first run the following command
 
+Before you run this command, create the following directories/folders:
+
+```
+cd staticInst/data
+mkdir campus_outputs
+cd campus_outputs
+mkdir plots_data
+```
+
 ```
 ./drive_simulator --input_directory ../staticInst/data/campus_data --output_directory ../staticInst/data/campus_outputs --SEED_FIXED_NUMBER  --INIT_FIXED_NUMBER_INFECTED 100 --NUM_DAYS 120 --ENABLE_TESTING --testing_protocol_filename testing_protocol_001.json --intervention_filename intervention_params.json
 ```

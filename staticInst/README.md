@@ -11,6 +11,6 @@ A sample of these files can be found in "./data/campus_sample_data/"
 
 To instantiate a synthetic version of the desired college/university campus, run the script "campus_parse_and_instantiate.py" on the command line:
 
-python3 campus_parse_and_instantiate.py -i <Input file path> -o <Output file path>
+`python3 campus_parse_and_instantiate.py -i <Input file path> -o <Output file path>`
 
 This will output two json files: individuals.json and interaction_spaces.json which can be found by default in ./data/campus_data

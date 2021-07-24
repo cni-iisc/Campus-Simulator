@@ -4,7 +4,7 @@ import argparse
 import json 
 from collections import Counter
 import os
-from .transmission_coefficients import transmission_coefficients
+from transmission_coefficients import transmission_coefficients
 
 sim_test = False
 cafe = True
@@ -205,9 +205,14 @@ def campus_parse(inputfiles):
 
 
     #house = 116
-    house_df = inputfiles["common_areas"].iloc[-1]
-    house = int(house_df["starting_id"] + house_df["number"])
+    #house_df = inputfiles["common_areas"].iloc[-1]
+    #house = int(house_df["starting_id"] + house_df["number"])
     #print(type(house))
+
+    house = len(inputfiles["class"]) + len(inputfiles["students"]["hostel"].unique()) + len(inputfiles["mess"]) + len(inputfiles["staff"]["residence_block"].unique()) - 1
+    for j in range(len(inputfiles["common_areas"])):   
+        house += int(inputfiles["common_areas"]["number"].iloc[j])
+
     start_house = house
 
     fac_res = len(inputfiles["staff"]) - faculty_pop
@@ -403,7 +408,8 @@ def campus_parse(inputfiles):
     # res_blocks = [i for i in res_list if i != 0]
     # num_res_blocks = len(res_blocks)
 
-    num_res_blocks = 6
+    num_res_blocks = len(inputfiles["staff"]["residence_block"].unique()) - 1
+    
 
     print("Instantiating residential blocks")
 
@@ -428,7 +434,7 @@ def campus_parse(inputfiles):
 
     for i in range(num_houses):
         i_space_house = {}
-        i_space_house["id"] = start_house + i
+        i_space_house["id"] = len(interaction_spaces)
         i_space_house["type"] = 9
         i_space_house["beta"] = np.random.uniform(0,0.5) + 1
         i_space_house["alpha"] = 1

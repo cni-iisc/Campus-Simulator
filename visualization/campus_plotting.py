@@ -145,7 +145,7 @@ if DEBUG:
     df_array = [df_daily_cases_mean_array, df_cumulative_cases_mean_array, df_fatalities_mean_array, df_recovered_mean_array]
     print(f"{df_array}")
     
-plots_dir = '../../covid_plots/'
+plots_dir = '../staticInst/data/campus_outputs/campus_plots/'
 folder_name = time.strftime("%Y%m%d")
 timestr = time.strftime("%Y%m%d-%H%M%S")
 if not os.path.exists(plots_dir + folder_name):

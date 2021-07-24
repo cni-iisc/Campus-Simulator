@@ -70,6 +70,7 @@ cd staticInst/data
 mkdir campus_outputs
 cd campus_outputs
 mkdir plots_data
+mkdir campus_plots
 ```
 
 ```

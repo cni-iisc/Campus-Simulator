@@ -334,7 +334,7 @@ std::vector<intervention_params> init_intervention_params()
         {
           temp.evacuation = elem["evacuation"]["active"].GetBool();
         }
-        print_intervention_params(index, temp);
+        //print_intervention_params(index, temp);
         intv_params.push_back(temp);
         ++index;
       }
@@ -393,8 +393,8 @@ void print_testing_protocol(const int index, const testing_probability probabili
 std::vector<testing_probability> init_testing_protocol()
 {
   std::vector<testing_probability> testing_protocol;
-  std::cout << "Function called"
-            << "\n";
+  //std::cout << "Function called"
+            //<< "\n";
   if (GLOBAL.TESTING_PROTOCOL == Testing_Protocol::testing_protocol_file_read)
   {
     std::cout << std::endl
@@ -525,7 +525,7 @@ std::vector<testing_probability> init_testing_protocol()
         }
 
         testing_protocol.push_back(temp);
-        print_testing_protocol(index, temp);
+        //print_testing_protocol(index, temp);
         ++index;
       }
       else

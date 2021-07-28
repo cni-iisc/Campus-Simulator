@@ -123,7 +123,7 @@ def print_and_log(outstring, filename=logfile):
 
 def print_betas():
     print("")
-    print_and_log(f"BETA_classroom                     : {betas['classoom']:.5f}", logfile)
+    print_and_log(f"BETA_classroom                     : {betas['classroom']:.5f}", logfile)
     print_and_log(f"BETA_hostel                        : {betas['hostel']:.5f}", logfile)
     #print_and_log(f"BETA_mess                          : {betas['mess']:.5f}", logfile)
     #print_and_log(f"BETA_cafeteria                     : {betas['cafeteria']:.5f}", logfile)
@@ -138,31 +138,6 @@ def print_betas():
 
 
 def run_sim(run, params, betas):
-
-    
-    alpha = 1
-    interaction_type_names = {
-        0 : "outside_campus", 
-        1 : "Classroom", 
-        2 : "Hostel", 
-        3 : "Mess",
-        4 : "Cafe",
-        5 : "Library",
-        6 : "Sports_facility",
-        7 : "Recreational_facility",
-        8 : "Residence_block",
-        9 : "House"
-    }
-    interaction_type_list = list(range(10))
-   # print(interaction_type_list)
-   # print(betas)
-   # print(interaction_type_names)
-    BETAS = list(betas.values())
-    output_file = "../staticInst/data/campus_data/transmission_coefficients.json"
-    trans_coeff = transmission_coefficients(interaction_type_list, BETAS, alpha, interaction_type_names)
-    f = open(output_file, "w")
-    f.write(json.dumps(trans_coeff, cls= NpEncoder))
-    f.close
 
     output_folder = Path(output_base, f"run_{run}")
     output_folder.mkdir(parents = True, exist_ok = True)
@@ -295,7 +270,35 @@ def run_parallel(nruns, ncores, params, betas):
     
 @measure
 def calibrate(nruns, ncores, params, betas, resolution=4):
-    run_parallel(nruns, ncores, params, betas)    
+
+    alpha = 1
+    interaction_type_names = {
+        0 : "outside_campus", 
+        1 : "Classroom", 
+        2 : "Hostel", 
+        3 : "Mess",
+        4 : "Cafe",
+        5 : "Library",
+        6 : "Sports_facility",
+        7 : "Recreational_facility",
+        8 : "Residence_block",
+        9 : "House"
+    }
+    interaction_type_list = list(range(10))
+   # print(interaction_type_list)
+   # print(betas)
+   # print(interaction_type_names)
+    BETAS = list(betas.values())
+    output_file = "../staticInst/data/campus_data/transmission_coefficients.json"
+    trans_coeff = transmission_coefficients(interaction_type_list, BETAS, alpha, interaction_type_names)
+    f = open(output_file, "w")
+    f.write(json.dumps(trans_coeff, cls= NpEncoder))
+    f.close
+
+    #run_parallel(nruns, ncores, params, betas)  
+
+    for run in range(nruns):
+        os.system(f"../cpp-simulator/drive_simulator --NUM_DAYS 120 --SEED_FIXED_NUMBER --INIT_FIXED_NUMBER_INFECTED 100 --ENABLE_TESTING --testing_protocol_filename testing_protocol_001.json --input_directory ../staticInst/data/campus_data/ --output_directory calibration_output/run_{run}")  
     try:
         slope = get_slope(output_base, nruns)
     except TypeError:

@@ -266,11 +266,9 @@ def satisfied(diffs, slope_tolerance = 0.001, lam_tolerance = 0.01):
 def run_parallel(nruns, ncores, params, betas):
     processed_list = joblib.Parallel(n_jobs=ncores)(
         joblib.delayed(run_sim)(run, params, betas) for run in range(nruns)
-    )     
-    
-@measure
-def calibrate(nruns, ncores, params, betas, resolution=4):
+    )
 
+def create_beta_file(betas):
     alpha = 1
     interaction_type_names = {
         0 : "outside_campus", 
@@ -288,16 +286,38 @@ def calibrate(nruns, ncores, params, betas, resolution=4):
    # print(interaction_type_list)
    # print(betas)
    # print(interaction_type_names)
-    BETAS = list(betas.values())
+    #BETAS = list(betas.values())
+    #print(betas)
+    #print(BETAS)
+    BETAS = []
+    BETAS.append(betas['outside_campus'])
+    BETAS.append(betas['classroom'])
+    BETAS.append(betas['hostel'])
+    BETAS.append(betas['mess'])
+    BETAS.append(betas['cafeteria'])
+    BETAS.append(betas['library'])
+    BETAS.append(betas['sports_facility'])
+    BETAS.append(betas['recreational_facility'])
+    BETAS.append(betas['residential_block'])
+    BETAS.append(betas['house'])
+    print(BETAS)
     output_file = "../staticInst/data/campus_data/transmission_coefficients.json"
     trans_coeff = transmission_coefficients(interaction_type_list, BETAS, alpha, interaction_type_names)
     f = open(output_file, "w")
     f.write(json.dumps(trans_coeff, cls= NpEncoder))
     f.close
 
-    #run_parallel(nruns, ncores, params, betas)  
+    
+@measure
+def calibrate(nruns, ncores, params, betas, resolution=4):
 
+    
+    #run_parallel(nruns, ncores, params, betas)  
+    create_beta_file(betas)
     for run in range(nruns):
+        #os.mkdir("~campus_simulator/calibrate_betas/calibration_output/run_{run}")
+        output_folder = Path(output_base, f"run_{run}")
+        output_folder.mkdir(parents = True, exist_ok = True)
         os.system(f"../cpp-simulator/drive_simulator --NUM_DAYS 120 --SEED_FIXED_NUMBER --INIT_FIXED_NUMBER_INFECTED 100 --ENABLE_TESTING --testing_protocol_filename testing_protocol_001.json --input_directory ../staticInst/data/campus_data/ --output_directory calibration_output/run_{run}")  
     try:
         slope = get_slope(output_base, nruns)
@@ -329,8 +349,7 @@ def calibrate(nruns, ncores, params, betas, resolution=4):
     print_and_log(f"slope_diff   : {slope_diff:.5f}", logfile)
     print_and_log("", logfile)
     logging.info(f"Slope: slope")
-    return (lambda_classroom_diff, lambda_hostel_diff, lambda_mess_diff, lambda_cafeteria_diff, lambda_library_diff, 
-            lambda_sports_facility_diff, lambda_recreational_facility_diff, lambda_residential_block_diff, slope_diff)
+    return (lambda_classroom_diff, lambda_hostel_diff, lambda_residential_block_diff, slope_diff)
 
 
 # In[ ]:

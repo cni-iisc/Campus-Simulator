@@ -6,8 +6,8 @@ read INTERVENTION_ID
 echo -e "Enter the seed infection value: \n"
 read SEED_VALUE
 
-echo -e "Enter number of runs of simulator: \n"
-read NUM_RUNS
+#echo -e "Enter number of runs of simulator: \n"
+#read NUM_RUNS
 
 #PARSE_PATH="./staticInst"
 #RUN_PATH="./cpp-simulator"
@@ -34,14 +34,15 @@ num_cases="../staticInst/data/campus_outputs/num_cases.csv"
 num_fatalities="../staticInst/data/campus_outputs/num_fatalities.csv"
 num_recovered="../staticInst/data/campus_outputs/num_recovered.csv"
 disease_label_stats="../staticInst/data/campus_outputs/disease_label_stats.csv"
+
 #make clean
 make -f Makefile_np all
 
 mkdir $PRTNAME
 
-for sim in {1..NUM_RUNS}
+for sim in {1..10}
 do 
-./drive_simulator --input_directory ../staticInst/data/campus_data --output_directory ../staticInst/data/campus_outputs --SEED_FIXED_NUMBER  --INIT_FIXED_NUMBER_INFECTED $SEED_VALUE --ENABLE_TESTING --testing_protocol_filename testing_protocol_001.json
+./drive_simulator --input_directory ../staticInst/data/campus_data --output_directory ../staticInst/data/campus_outputs --SEED_FIXED_NUMBER  --INIT_FIXED_NUMBER_INFECTED $SEED_VALUE --ENABLE_TESTING --testing_protocol_filename testing_protocol_001.json 
 echo 
 echo "----------------------------------------$sim RUN DONE------------------------------------------"
 

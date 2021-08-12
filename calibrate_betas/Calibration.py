@@ -74,10 +74,10 @@ def processParams(params_json):
         # betas['CLASS'] = betas['S'] * smaller_networks_scale
         # betas['NBR_CELLS'] = betas['C'] * smaller_networks_scale
         # betas['RANDOM_COMMUNITY'] = betas['NBR_CELLS']
-        betas['mess'] = betas['hostel']*0.45
+        betas['mess'] = betas['hostel']*0.33
         betas['cafeteria'] = betas['classroom']*0.2
         betas['library'] = betas['classroom']*0.2
-        betas['sports_facility'] = betas['classroom']*0.2
+        betas['sports_facility'] = betas['classroom']*0.29
         betas['recreational_facility'] = betas['classroom']*0.2
         betas['smaller_networks'] = betas['hostel']*smaller_networks_scale
         betas['house'] = betas['residential_block']*smaller_networks_scale
@@ -85,7 +85,7 @@ def processParams(params_json):
 
 def get_mean_cases(outputdir, nruns):
     data_dir = Path(outputdir)
-    glob_str = f"run_[0-{nruns-1}]/num_cases.csv"
+    glob_str = f"run_[0-{nruns-1}]/num_affected.csv"
     files_list = data_dir.glob(glob_str)
     print(files_list)
     df = (pd.concat([pd.read_csv(f) for f in files_list], ignore_index = True)
@@ -164,31 +164,41 @@ def run_sim(run, params, betas):
 # In[ ]:
 
 
-target_slope = 0.1803300052477795
+#target_slope = 0.1803300052477795
 
 def getTargetSlope():
+    #print("in function")
     ## Don't need to run this every time.
     ## So putting it in a function that is never called
     global target_slope
     
-    ECDP = pd.read_csv('data/ecdp.csv')
-    india_data = ECDP[ECDP['geoId']=='IN'][['dateRep', 'cases']][::-1]
-    india_data["cumulative_cases"] = india_data['cases'].cumsum()
-    india_data = india_data[(india_data['cumulative_cases'] > 100) 
-                            & (india_data['cumulative_cases'] < 1000)].reset_index(drop=True)
-    target_slope = np.polyfit(india_data.index, np.log(india_data['cumulative_deaths']), deg = 1)[0]
+    ts_df = pd.read_csv('data/iitjodhpurcases.csv')
+    #print(ECDP)
+    ts_df = ts_df[['Date of Testing','Total Positive']]
+    #india_data = ECDP[ECDP['geoId']=='IN'][['dateRep', 'cases']][::-1]
+    ts_df['cumulative_cases'] = ts_df['Total Positive'].cumsum()
+    #print(india_data)
+    ts_df = ts_df[(ts_df['cumulative_cases'] > 3) 
+                           & (ts_df['cumulative_cases'] < 110)].reset_index(drop=True)
+    #print(india_data)
+    target_slope = np.polyfit(ts_df.index, np.log(ts_df['cumulative_cases']), deg = 1)[0]
+    #print(type(target_slope))
 
 # In[ ]:
 
 
-def get_slope(outputdir, nruns, low_thresh = 10, up_thresh = 200):
+def get_slope(outputdir, nruns, low_thresh = 3, up_thresh = 110):
     df = get_mean_cases(outputdir, nruns)
-    df = df[(df['num_cases'] > low_thresh)]
+    df = df[(df['num_affected'] > low_thresh)]
+    #print(df.shape[0])
+    #print(df.shape)
     if df.shape[0] < 5:
+        #print("type error")
         raise TypeError("Too few cases")
     else:
-        df = df[df['num_cases'] < up_thresh]
-        return np.polyfit(df.index, np.log(df['num_cases']), deg = 1)[0]
+        df = df[df['num_affected'] < up_thresh]
+        #print(np.polyfit(df.index, np.log(df['num_affected']), deg = 1)[0])
+        return np.polyfit(df.index, np.log(df['num_affected']), deg = 1)[0]
 
 
 # In[ ]:
@@ -236,11 +246,11 @@ def update_betas(diffs, count=0):
     
     betas['house'] = betas['residential_block'] * smaller_networks_scale
     betas['smaller_networks'] = betas['hostel'] * smaller_networks_scale
-    betas['mess'] = betas['hostel']*0.6
-    betas['cafeteria'] = betas['classroom']*0.05
-    betas['library'] = betas['classroom']*0.12
-    betas['sports_facility'] = betas['classroom']*0.12
-    betas['recreational_facility'] = betas['classroom']*0.12
+    betas['mess'] = betas['hostel']*0.33
+    betas['cafeteria'] = betas['classroom']*0.2
+    betas['library'] = betas['classroom']*0.2
+    betas['sports_facility'] = betas['classroom']*0.29
+    betas['recreational_facility'] = betas['classroom']*0.2
     # betas['PROJECT'] = betas['W'] * smaller_networks_scale
     # betas['RANDOM_COMMUNITY']  =  betas['C'] * smaller_networks_scale
     # betas['NBR_CELLS'] = betas['C'] * smaller_networks_scale
@@ -300,7 +310,7 @@ def create_beta_file(betas):
     BETAS.append(betas['recreational_facility'])
     BETAS.append(betas['residential_block'])
     BETAS.append(betas['house'])
-    print(BETAS)
+    #print(BETAS)
     output_file = "../staticInst/data/campus_data/transmission_coefficients.json"
     trans_coeff = transmission_coefficients(interaction_type_list, BETAS, alpha, interaction_type_names)
     f = open(output_file, "w")
@@ -312,7 +322,8 @@ def create_beta_file(betas):
 def calibrate(nruns, ncores, params, betas, resolution=4):
 
     
-    #run_parallel(nruns, ncores, params, betas)  
+    #run_parallel(nruns, ncores, params, betas)
+    #print("calibrating")
     create_beta_file(betas)
     for run in range(nruns):
         #os.mkdir("~campus_simulator/calibrate_betas/calibration_output/run_{run}")
@@ -321,7 +332,10 @@ def calibrate(nruns, ncores, params, betas, resolution=4):
         os.system(f"../cpp-simulator/drive_simulator --NUM_DAYS 120 --SEED_FIXED_NUMBER --INIT_FIXED_NUMBER_INFECTED 100 --ENABLE_TESTING --testing_protocol_filename testing_protocol_001.json --input_directory ../staticInst/data/campus_data/ --output_directory calibration_output/run_{run}")  
     try:
         slope = get_slope(output_base, nruns)
+        #print(target_slope)
+        #getTargetSlope()
     except TypeError:
+        #print("type error")
         return -1
 
     lambdas = get_mean_lambdas(output_base, nruns)
@@ -349,6 +363,8 @@ def calibrate(nruns, ncores, params, betas, resolution=4):
     print_and_log(f"slope_diff   : {slope_diff:.5f}", logfile)
     print_and_log("", logfile)
     logging.info(f"Slope: slope")
+    #print("calibrating")
+    #print(lambda_classroom_diff, lambda_hostel_diff, lambda_residential_block_diff, slope_diff)
     return (lambda_classroom_diff, lambda_hostel_diff, lambda_residential_block_diff, slope_diff)
 
 
@@ -417,7 +433,7 @@ def main():
     logfile = Path(output_base, "calibration.log")
 
     processParams(params_json)
-    
+    getTargetSlope()
     count = 1
     while True:
         print_and_log("", logfile)

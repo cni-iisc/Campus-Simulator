@@ -1,0 +1,10 @@
+[
+    {
+        "num_days": 1,
+        "compliance": 0.9,
+        "selective_shutdown": {
+            "active": true,
+	    "spaces": [1,3]
+        }
+    }
+]

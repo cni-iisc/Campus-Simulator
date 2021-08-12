@@ -4,7 +4,7 @@ import argparse
 import json 
 from collections import Counter
 import os
-from .transmission_coefficients import transmission_coefficients
+from transmission_coefficients import transmission_coefficients
 
 sim_test = False
 cafe = True
@@ -79,7 +79,7 @@ def campus_parse(inputfiles):
     mess_active_duration = {}
     for i in range(len(inputfiles["mess"])):
         mess_active_duration[inputfiles["mess"]["mess_id"].iloc[i]] = (inputfiles["mess"]["average_time_spent"].iloc[i]/24).astype(float)
-
+    #print(mess_active_duration)
     weekends = range(2)
 
     time_table = inputfiles["timetable"].values.tolist()
@@ -332,7 +332,7 @@ def campus_parse(inputfiles):
 
     num_dept = len(Counter(student_dept).keys())
     num_hostel = len(Counter(student_hostel).keys())
-    num_mess = len(Counter(student_hostel).keys())
+    num_mess = len(Counter(student_mess).keys())
     num_classes = len(class_dept)
     num_interaction_spaces = len(Counter(student_dept).keys()) + (len(Counter(student_hostel).keys())*2) + num_classes
 
@@ -377,6 +377,7 @@ def campus_parse(inputfiles):
     for i in range(num_mess):
         i_space_mess = {}
         i_space_mess["id"] = i + num_classes + num_hostel + 1
+        #print(i)
         i_space_mess["type"] = 3
         i_space_mess["beta"] = np.random.uniform(0,0.5) + 1
         i_space_mess["alpha"] = 1

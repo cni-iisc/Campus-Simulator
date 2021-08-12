@@ -363,13 +363,9 @@ def calibrate(nruns, ncores, params, betas, resolution=4):
     print_and_log(f"slope_diff   : {slope_diff:.5f}", logfile)
     print_and_log("", logfile)
     logging.info(f"Slope: slope")
-<<<<<<< HEAD
     #print("calibrating")
     #print(lambda_classroom_diff, lambda_hostel_diff, lambda_residential_block_diff, slope_diff)
     return (lambda_classroom_diff, lambda_hostel_diff, lambda_residential_block_diff, slope_diff)
-=======
-    return (lambda_classroom_diff, lambda_hostel_diff, lambda_residence_block_diff, slope_diff)
->>>>>>> ceaf791e03f4ca3aeec8bbba63bb43a294e0ad8a
 
 
 # In[ ]:

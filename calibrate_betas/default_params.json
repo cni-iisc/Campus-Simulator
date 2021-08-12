@@ -9,6 +9,6 @@
     "betas": {
 	"classroom": 0.28232,
 	"hostel": 0.28393,
-	"residential_block": 0.2460
+	"residence_block": 0.2460
     }
 }

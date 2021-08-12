@@ -63,7 +63,7 @@ def processParams(params_json):
     betas['outside_campus'] = 0
     with open(params_json) as f:
         tmp_params = json.load(f)
-        for k in ['classroom', 'hostel', 'residential_block']:
+        for k in ['classroom', 'hostel', 'residence_block']:
             betas[k] = tmp_params['betas'][k]
         del tmp_params['betas']
         params = tmp_params
@@ -80,7 +80,7 @@ def processParams(params_json):
         betas['sports_facility'] = betas['classroom']*0.29
         betas['recreational_facility'] = betas['classroom']*0.2
         betas['smaller_networks'] = betas['hostel']*smaller_networks_scale
-        betas['house'] = betas['residential_block']*smaller_networks_scale
+        betas['house'] = betas['residence_block']*smaller_networks_scale
 
 
 def get_mean_cases(outputdir, nruns):
@@ -101,7 +101,7 @@ def get_mean_lambdas(outputdir, nruns):
                #'library': ["lambda_library"],
                #'sports_facility': ["lambda_sports_facility"],
                #'recreational_facility': ["lambda_recreational_facility"],
-               'residential_block': ["lambda_residential_block", "lambda_house"]
+               'residence_block': ["lambda_residence_block", "lambda_house"]
               }
     values = {}
     for lam in lambdas.keys():
@@ -130,7 +130,7 @@ def print_betas():
     #print_and_log(f"BETA_library                       : {betas['library']:.5f}", logfile)
     #print_and_log(f"BETA_sports_facility               : {betas['sports_facility']:.5f}", logfile)
     #print_and_log(f"BETA_recreational_facility         : {betas['recreational_facility']:.5f}", logfile)
-    print_and_log(f"BETA_residential_block             : {betas['residential_block']:.5f}", logfile)
+    print_and_log(f"BETA_residence_block             : {betas['residence_block']:.5f}", logfile)
     print("")
 
 
@@ -217,9 +217,9 @@ def update_betas(diffs, count=0):
         # betas['library'] *= 2
         # betas['sports_facility'] *= 2
         # betas['recreational_facility'] *= 2
-        betas['residential_block'] *= 2    
+        betas['residence_block'] *= 2    
     else:
-        (lambda_classroom_diff, lambda_hostel_diff, lambda_residential_block_diff, slope_diff) = diffs
+        (lambda_classroom_diff, lambda_hostel_diff, lambda_residence_block_diff, slope_diff) = diffs
         step_beta_classroom = -1*lambda_classroom_diff/(3+count) 
         step_beta_hostel = -1*lambda_hostel_diff/(3+count) 
         # step_beta_mess = -1*lambda_mess_diff/(5+count)
@@ -227,12 +227,12 @@ def update_betas(diffs, count=0):
         # step_beta_library = -1*lambda_library_diff/(20+count) 
         # step_beta_sports_facility = -1*lambda_sports_facility_diff/(20+count)
         # step_beta_recreational_facility = -1*lambda_recreational_facility_diff/(20+count) 
-        step_beta_residential_block = -1*lambda_residential_block_diff/(3+count)  
+        step_beta_residence_block = -1*lambda_residence_block_diff/(3+count)  
         beta_scale_factor = max(min(np.exp(slope_diff),1.5), 0.66)
 
         if (count>=30):
             beta_scale_factor = max(min(np.exp(slope_diff/(count-25)),1.5), 0.66)
-        elif (abs(lambda_classroom_diff) < 0.02 and abs(lambda_hostel_diff) < 0.02 and lambda_residential_block_diff < 0.02):
+        elif (abs(lambda_classroom_diff) < 0.02 and abs(lambda_hostel_diff) < 0.02 and lambda_residence_block_diff < 0.02):
             beta_scale_factor = max(min(np.exp(slope_diff/(5)),1.5), 0.66)
 
         betas['classroom'] = max(betas['classroom'] + step_beta_classroom , 0) * beta_scale_factor
@@ -242,9 +242,9 @@ def update_betas(diffs, count=0):
         # betas['library'] = max(betas['library'] + step_beta_library , 0) * beta_scale_factor
         # betas['sports_facility'] = max(betas['sports_facility'] + step_beta_sports_facility , 0) * beta_scale_factor
         # betas['recreational_facility'] = max(betas['recreational_facility'] + step_beta_recreational_facility , 0) * beta_scale_factor
-        betas['residential_block'] = max(betas['residential_block'] + step_beta_residential_block , 0) * beta_scale_factor
+        betas['residence_block'] = max(betas['residence_block'] + step_beta_residence_block , 0) * beta_scale_factor
     
-    betas['house'] = betas['residential_block'] * smaller_networks_scale
+    betas['house'] = betas['residence_block'] * smaller_networks_scale
     betas['smaller_networks'] = betas['hostel'] * smaller_networks_scale
     betas['mess'] = betas['hostel']*0.33
     betas['cafeteria'] = betas['classroom']*0.2
@@ -308,7 +308,7 @@ def create_beta_file(betas):
     BETAS.append(betas['library'])
     BETAS.append(betas['sports_facility'])
     BETAS.append(betas['recreational_facility'])
-    BETAS.append(betas['residential_block'])
+    BETAS.append(betas['residence_block'])
     BETAS.append(betas['house'])
     #print(BETAS)
     output_file = "../staticInst/data/campus_data/transmission_coefficients.json"
@@ -339,7 +339,7 @@ def calibrate(nruns, ncores, params, betas, resolution=4):
         return -1
 
     lambdas = get_mean_lambdas(output_base, nruns)
-    [lambda_classroom, lambda_hostel, lambda_residential_block] = [lambdas[key] for key in ['classroom', 'hostel', 'residential_block']]
+    [lambda_classroom, lambda_hostel, lambda_residence_block] = [lambdas[key] for key in ['classroom', 'hostel', 'residence_block']]
     lambda_classroom_diff = float(lambda_classroom) - (1.0/3)
     lambda_hostel_diff = float(lambda_hostel) - (1.0/3)
     # lambda_mess_diff = float(lambda_mess) - (1.0/5)
@@ -347,7 +347,7 @@ def calibrate(nruns, ncores, params, betas, resolution=4):
     # lambda_library_diff = float(lambda_library) - (1.0/20)
     # lambda_sports_facility_diff = float(lambda_sports_facility) - (1.0/20)
     # lambda_recreational_facility_diff = float(lambda_recreational_facility) - (1.0/20)
-    lambda_residential_block_diff = float(lambda_residential_block) - (1.0/3)
+    lambda_residence_block_diff = float(lambda_residence_block) - (1.0/3)
         
     slope_diff = target_slope - slope
 
@@ -359,13 +359,17 @@ def calibrate(nruns, ncores, params, betas, resolution=4):
     # print_and_log(f"lambda_library_diff: {lambda_library_diff:.5f}", logfile)
     # print_and_log(f"lambda_sports_facility_diff: {lambda_sports_facility_diff:.5f}", logfile)
     # print_and_log(f"lambda_recreational_facility_diff: {lambda_recreational_facility_diff:.5f}", logfile)
-    print_and_log(f"lambda_residential_block_diff: {lambda_residential_block_diff:.5f}", logfile)
+    print_and_log(f"lambda_residence_block_diff: {lambda_residence_block_diff:.5f}", logfile)
     print_and_log(f"slope_diff   : {slope_diff:.5f}", logfile)
     print_and_log("", logfile)
     logging.info(f"Slope: slope")
+<<<<<<< HEAD
     #print("calibrating")
     #print(lambda_classroom_diff, lambda_hostel_diff, lambda_residential_block_diff, slope_diff)
     return (lambda_classroom_diff, lambda_hostel_diff, lambda_residential_block_diff, slope_diff)
+=======
+    return (lambda_classroom_diff, lambda_hostel_diff, lambda_residence_block_diff, slope_diff)
+>>>>>>> ceaf791e03f4ca3aeec8bbba63bb43a294e0ad8a
 
 
 # In[ ]:

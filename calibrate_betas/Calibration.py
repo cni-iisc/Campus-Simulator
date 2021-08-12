@@ -87,21 +87,21 @@ def get_mean_cases(outputdir, nruns):
     data_dir = Path(outputdir)
     glob_str = f"run_[0-{nruns-1}]/num_affected.csv"
     files_list = data_dir.glob(glob_str)
-    print(files_list)
+    #print(files_list)
     df = (pd.concat([pd.read_csv(f) for f in files_list], ignore_index = True)
           .groupby('Time').mean())
     return df
 
 def get_mean_lambdas(outputdir, nruns):
     data_dir = Path(outputdir)
-    lambdas = {'classroom': ["lambda_classroom"], 
-               'hostel': ["lambda_hostel", "lambda_smaller_networks"], 
+    lambdas = {'classroom': ["lambda_classroom","lambda_cafeteria","lambda_library","lambda_sports_facility","lambda_recreational_facility"], 
+               'hostel': ["lambda_hostel", "lambda_mess","lambda_smaller_networks"], 
                #'mess': ["lambda_mess"],
                #'cafeteria': ["lambda_cafeteria"],
                #'library': ["lambda_library"],
                #'sports_facility': ["lambda_sports_facility"],
                #'recreational_facility': ["lambda_recreational_facility"],
-               'residence_block': ["lambda_residence_block", "lambda_house"]
+               'residence_block': ["lambda_residential_block", "lambda_house"]
               }
     values = {}
     for lam in lambdas.keys():
@@ -109,6 +109,7 @@ def get_mean_lambdas(outputdir, nruns):
         for lam_inner in lambdas[lam]:
             glob_str = f"run_[0-{nruns-1}]/cumulative_mean_fraction_{lam_inner}.csv"
             files_list = data_dir.glob(glob_str)
+            #print(files_list)
             df = (pd.concat([pd.read_csv(f) for f in files_list], ignore_index = True)
               .groupby('Time').mean())
             lam_sum += df[f"cumulative_mean_fraction_{lam_inner}"].iloc[-1]
@@ -187,7 +188,7 @@ def getTargetSlope():
 # In[ ]:
 
 
-def get_slope(outputdir, nruns, low_thresh = 3, up_thresh = 110):
+def get_slope(outputdir, nruns, low_thresh = 103, up_thresh = 210):
     df = get_mean_cases(outputdir, nruns)
     df = df[(df['num_affected'] > low_thresh)]
     #print(df.shape[0])
@@ -326,12 +327,13 @@ def calibrate(nruns, ncores, params, betas, resolution=4):
     #print("calibrating")
     create_beta_file(betas)
     for run in range(nruns):
-        #os.mkdir("~campus_simulator/calibrate_betas/calibration_output/run_{run}")
+        #os.mkdir("~/campus_simulator/calibrate_betas/calibration_output/run_{run}")
         output_folder = Path(output_base, f"run_{run}")
         output_folder.mkdir(parents = True, exist_ok = True)
         os.system(f"../cpp-simulator/drive_simulator --NUM_DAYS 120 --SEED_FIXED_NUMBER --INIT_FIXED_NUMBER_INFECTED 100 --ENABLE_TESTING --testing_protocol_filename testing_protocol_001.json --input_directory ../staticInst/data/campus_data/ --output_directory calibration_output/run_{run}")  
     try:
         slope = get_slope(output_base, nruns)
+        print(slope)
         #print(target_slope)
         #getTargetSlope()
     except TypeError:
@@ -365,7 +367,7 @@ def calibrate(nruns, ncores, params, betas, resolution=4):
     logging.info(f"Slope: slope")
     #print("calibrating")
     #print(lambda_classroom_diff, lambda_hostel_diff, lambda_residential_block_diff, slope_diff)
-    return (lambda_classroom_diff, lambda_hostel_diff, lambda_residential_block_diff, slope_diff)
+    return (lambda_classroom_diff, lambda_hostel_diff, lambda_residence_block_diff, slope_diff)
 
 
 # In[ ]:

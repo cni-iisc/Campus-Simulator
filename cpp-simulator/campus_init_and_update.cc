@@ -706,6 +706,93 @@ void sample_groups(std::vector<agent> &nodes, std::vector<Interaction_Space> &in
   interaction_spaces.insert(interaction_spaces.end(), interac_space.begin(), interac_space.end());
 }
 
+void random_time_allocation(std::vector<agent> &nodes, std::vector<Interaction_Space> &interaction_spaces, int day)
+{
+	std::vector<int> random_space;
+	random_space.push_back(-1);
+	int node_index = 0;
+	for (auto &i_space : interaction_spaces)
+	{
+		if (i_space.interaction_type == InteractionType::cafeteria || i_space.interaction_type == InteractionType::library || i_space.interaction_type == InteractionType::sports_facility || i_space.interaction_type == InteractionType::recreational_facility)
+		{
+			random_space.push_back(i_space.id);
+		}
+	}
+	srand(time(NULL));
+	for (auto &node : nodes)
+	{
+		std::vector<int> visited;
+		int num_visited;
+		num_visited = rand()%3;
+		if(num_visited == 0){
+			continue;
+		}
+		std::sample(random_space.begin(), random_space.end(), std::back_inserter(visited), num_visited, GENERATOR);
+		double allocated_time = gamma(GLOBAL.ACTIVE_DURATION_SHAPE, interaction_spaces[visited[0]].avg_time / GLOBAL.ACTIVE_DURATION_SHAPE);
+		double total_allocated_time = allocated_time * num_visited;
+		// std::cout<<"Cafe time: "<<cafe_time<<"\t";
+		if (node.personType == person_type::student || node.personType == person_type::faculty)
+		{
+			for (auto &vis : visited){
+			node.interaction_strength[day][vis] = allocated_time;
+			interaction_spaces[vis].individuals[day].push_back(node_index);
+			}
+		// std::cout<<node.interaction_strength[day][cafe[0]]<<"\n";
+		}
+		for (auto &elem : node.interaction_strength[day])
+		{
+			if (interaction_spaces[elem.first].interaction_type == InteractionType::hostel || interaction_spaces[elem.first].interaction_type == InteractionType::outside_campus || interaction_spaces[elem.first].interaction_type == InteractionType::residential_block)
+			{
+				if(elem.second <= GLOBAL.minimum_hostel_time){
+					continue;
+				}
+				if (elem.second <= total_allocated_time)
+				{
+					double new_total_allocated_time = elem.second - GLOBAL.minimum_hostel_time;
+					for(auto &vis : visited){
+						node.interaction_strength[day][vis] = new_total_allocated_time/num_visited; //add to config.json
+						elem.second = GLOBAL.minimum_hostel_time;  
+					}
+	          
+	          		}
+	          		else
+	          		{
+	          			elem.second -= total_allocated_time;
+	          		}	
+	          	}
+	          }
+	          node_index ++;
+     	}
+ }
+
+void random_time_reset(std::vector<agent> &nodes, std::vector<Interaction_Space> &interaction_spaces, int day)
+{
+	double temp = 0;
+	for (auto &node : nodes)
+	{
+		for (auto &elem : node.interaction_strength[day])
+		{
+			if (interaction_spaces[elem.first].interaction_type == InteractionType::cafeteria || interaction_spaces[elem.first].interaction_type == InteractionType::library || interaction_spaces[elem.first].interaction_type == InteractionType::sports_facility || interaction_spaces[elem.first].interaction_type == InteractionType::recreational_facility && elem.second != 0)
+			{
+				temp+=  elem.second;
+				elem.second = 0;
+			}
+		}
+		for (auto &elem : node.interaction_strength[day])
+		{
+			if (interaction_spaces[elem.first].interaction_type == InteractionType::hostel || interaction_spaces[elem.first].interaction_type == InteractionType::outside_campus || interaction_spaces[elem.first].interaction_type == InteractionType::residential_block)
+			{
+				elem.second += temp;
+			}
+		}
+	}
+	for (auto & i_space : interaction_spaces){
+		if(i_space.interaction_type == InteractionType::cafeteria || i_space.interaction_type == InteractionType::library || i_space.interaction_type == InteractionType::sports_facility || i_space.interaction_type == InteractionType::recreational_facility){
+			i_space.individuals[day].clear();
+		}
+	}
+}
+
 void cafeteria_active_duration(std::vector<agent> &nodes, std::vector<Interaction_Space> &interaction_spaces, int day)
 {
   std::vector<int> cafeteria;
@@ -731,7 +818,7 @@ void cafeteria_active_duration(std::vector<agent> &nodes, std::vector<Interactio
     {
       node.interaction_strength[day][cafe[0]] = cafe_time;
       interaction_spaces[cafe[0]].individuals[day].push_back(node_index);
-      // std::cout<<node.interaction_strength[day][cafe[0]]<<"\n";
+      //std::cout<<node.interaction_strength[day][cafe[0]]<<"\n";
     }
     for (auto &elem : node.interaction_strength[day])
     {
@@ -739,8 +826,9 @@ void cafeteria_active_duration(std::vector<agent> &nodes, std::vector<Interactio
       {
         if (elem.second <= cafe_time)
         {
-          node.interaction_strength[day][cafe[0]] = elem.second - GLOBAL.minimum_hostel_time; //add to config.json
+          node.interaction_strength[day][cafe[0]] = fabs(elem.second - GLOBAL.minimum_hostel_time); //add to config.json
           elem.second = GLOBAL.minimum_hostel_time;
+	  //std::cout<<node.interaction_strength[day][cafe[0]]<<"\n";
         }
         else
         {
@@ -785,7 +873,7 @@ void library_active_duration(std::vector<agent> &nodes, std::vector<Interaction_
       {
         if (elem.second <= lib_time)
         {
-          node.interaction_strength[day][lib[0]] = elem.second - GLOBAL.minimum_hostel_time; //add to config.json
+          node.interaction_strength[day][lib[0]] = fabs(elem.second - GLOBAL.minimum_hostel_time); //add to config.json
           elem.second = GLOBAL.minimum_hostel_time;
         }
         else
@@ -831,7 +919,7 @@ void sports_facility_active_duration(std::vector<agent> &nodes, std::vector<Inte
       {
         if (elem.second <= sports_time)
         {
-          node.interaction_strength[day][sports[0]] = elem.second - GLOBAL.minimum_hostel_time; //add to config.json
+          node.interaction_strength[day][sports[0]] = fabs(elem.second - GLOBAL.minimum_hostel_time); //add to config.json
           elem.second = GLOBAL.minimum_hostel_time;
         }
         else
@@ -877,7 +965,7 @@ void recreational_facility_active_duration(std::vector<agent> &nodes, std::vecto
       {
         if (elem.second <= rec_time)
         {
-          node.interaction_strength[day][rec_fac[0]] = elem.second - GLOBAL.minimum_hostel_time; //add to config.json
+          node.interaction_strength[day][rec_fac[0]] = fabs(elem.second - GLOBAL.minimum_hostel_time); //add to config.json
           elem.second = GLOBAL.minimum_hostel_time;
         }
         else

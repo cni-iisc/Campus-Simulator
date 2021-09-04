@@ -61,5 +61,9 @@ void update_test_status(std::vector<agent>& nodes, count_type current_time);
 
 void init_contact_tracing_hierarchy();
 
+void random_time_reset(std::vector<agent> &nodes, std::vector<Interaction_Space> &interaction_spaces, int day);
+
+void random_time_allocation(std::vector<agent> &nodes, std::vector<Interaction_Space> &interaction_spaces, int day);
+
 
 #endif

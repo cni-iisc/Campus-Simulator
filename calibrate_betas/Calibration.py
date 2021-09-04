@@ -85,7 +85,7 @@ def processParams(params_json):
 
 def get_mean_cases(outputdir, nruns):
     data_dir = Path(outputdir)
-    glob_str = f"run_[0-{nruns-1}]/num_affected.csv"
+    glob_str = f"run_[0-{nruns-1}]/disease_label_stats.csv"
     files_list = data_dir.glob(glob_str)
     #print(files_list)
     df = (pd.concat([pd.read_csv(f) for f in files_list], ignore_index = True)
@@ -112,8 +112,10 @@ def get_mean_lambdas(outputdir, nruns):
             #print(files_list)
             df = (pd.concat([pd.read_csv(f) for f in files_list], ignore_index = True)
               .groupby('Time').mean())
+            df.to_csv("a.csv")
             lam_sum += df[f"cumulative_mean_fraction_{lam_inner}"].iloc[-1]
         values[lam] = lam_sum
+        #print(values)
     return values
 
 def print_and_log(outstring, filename=logfile):
@@ -173,14 +175,13 @@ def getTargetSlope():
     ## So putting it in a function that is never called
     global target_slope
     
-    ts_df = pd.read_csv('data/iitjodhpurcases.csv')
+    ts_df = pd.read_csv('data/iiithcases.csv')
     #print(ECDP)
-    ts_df = ts_df[['Date of Testing','Total Positive']]
+    ts_df = ts_df[['Date','Positive']]
+    ts_df['cumulative_cases'] = ts_df['Positive'].cumsum()
     #india_data = ECDP[ECDP['geoId']=='IN'][['dateRep', 'cases']][::-1]
-    ts_df['cumulative_cases'] = ts_df['Total Positive'].cumsum()
-    #print(india_data)
-    ts_df = ts_df[(ts_df['cumulative_cases'] > 3) 
-                           & (ts_df['cumulative_cases'] < 110)].reset_index(drop=True)
+    ts_df = ts_df[(ts_df['cumulative_cases'] > 0) 
+                           & (ts_df['cumulative_cases'] < 30)].reset_index(drop=True)
     #print(india_data)
     target_slope = np.polyfit(ts_df.index, np.log(ts_df['cumulative_cases']), deg = 1)[0]
     #print(type(target_slope))
@@ -188,18 +189,18 @@ def getTargetSlope():
 # In[ ]:
 
 
-def get_slope(outputdir, nruns, low_thresh = 103, up_thresh = 210):
+def get_slope(outputdir, nruns, low_thresh = 0, up_thresh = 30):
     df = get_mean_cases(outputdir, nruns)
-    df = df[(df['num_affected'] > low_thresh)]
+    df = df[(df['cumulative_positive_cases'] > low_thresh)]
     #print(df.shape[0])
     #print(df.shape)
     if df.shape[0] < 5:
         #print("type error")
         raise TypeError("Too few cases")
     else:
-        df = df[df['num_affected'] < up_thresh]
+        df = df[df['cumulative_positive_cases'] < up_thresh]
         #print(np.polyfit(df.index, np.log(df['num_affected']), deg = 1)[0])
-        return np.polyfit(df.index, np.log(df['num_affected']), deg = 1)[0]
+        return np.polyfit(df.index, np.log(df['cumulative_positive_cases']), deg = 1)[0]
 
 
 # In[ ]:
@@ -221,14 +222,14 @@ def update_betas(diffs, count=0):
         betas['residence_block'] *= 2    
     else:
         (lambda_classroom_diff, lambda_hostel_diff, lambda_residence_block_diff, slope_diff) = diffs
-        step_beta_classroom = -1*lambda_classroom_diff/(3+count) 
-        step_beta_hostel = -1*lambda_hostel_diff/(3+count) 
+        step_beta_classroom = -1*lambda_classroom_diff/(10+count) 
+        step_beta_hostel = -1*lambda_hostel_diff/(10+count) 
         # step_beta_mess = -1*lambda_mess_diff/(5+count)
         # step_beta_cafeteria = -1*lambda_cafeteria_diff/(20+count) 
         # step_beta_library = -1*lambda_library_diff/(20+count) 
         # step_beta_sports_facility = -1*lambda_sports_facility_diff/(20+count)
         # step_beta_recreational_facility = -1*lambda_recreational_facility_diff/(20+count) 
-        step_beta_residence_block = -1*lambda_residence_block_diff/(3+count)  
+        step_beta_residence_block = -1*lambda_residence_block_diff/(10+count)  
         beta_scale_factor = max(min(np.exp(slope_diff),1.5), 0.66)
 
         if (count>=30):
@@ -244,7 +245,8 @@ def update_betas(diffs, count=0):
         # betas['sports_facility'] = max(betas['sports_facility'] + step_beta_sports_facility , 0) * beta_scale_factor
         # betas['recreational_facility'] = max(betas['recreational_facility'] + step_beta_recreational_facility , 0) * beta_scale_factor
         betas['residence_block'] = max(betas['residence_block'] + step_beta_residence_block , 0) * beta_scale_factor
-    
+        #betas['residence_block'] = 0
+
     betas['house'] = betas['residence_block'] * smaller_networks_scale
     betas['smaller_networks'] = betas['hostel'] * smaller_networks_scale
     betas['mess'] = betas['hostel']*0.33
@@ -260,15 +262,15 @@ def satisfied(diffs, slope_tolerance = 0.001, lam_tolerance = 0.01):
     if diffs==-1:
         return False
     else:
-        return (diffs[0] < lam_tolerance and
-            diffs[1] < lam_tolerance and
-            diffs[2] < lam_tolerance and
+        return (abs(diffs[0]) < lam_tolerance and
+            abs(diffs[1]) < lam_tolerance and
+            abs(diffs[2]) < lam_tolerance and
             # diffs[3] < lam_tolerance and
             # diffs[4] < lam_tolerance and
             # diffs[5] < lam_tolerance and
             # diffs[6] < lam_tolerance and
             # diffs[7] < lam_tolerance and
-            diffs[3] < slope_tolerance)        
+            abs(diffs[3]) < slope_tolerance)        
 
 
 # In[ ]:
@@ -330,10 +332,10 @@ def calibrate(nruns, ncores, params, betas, resolution=4):
         #os.mkdir("~/campus_simulator/calibrate_betas/calibration_output/run_{run}")
         output_folder = Path(output_base, f"run_{run}")
         output_folder.mkdir(parents = True, exist_ok = True)
-        os.system(f"../cpp-simulator/drive_simulator --NUM_DAYS 120 --SEED_FIXED_NUMBER --INIT_FIXED_NUMBER_INFECTED 100 --ENABLE_TESTING --testing_protocol_filename testing_protocol_001.json --input_directory ../staticInst/data/campus_data/ --output_directory calibration_output/run_{run}")  
+        os.system(f"../cpp-simulator/drive_simulator --NUM_DAYS 19 --SEED_FIXED_NUMBER --INIT_FIXED_NUMBER_INFECTED 100 --ENABLE_TESTING --testing_protocol_filename testing_protocol_001.json --input_directory ../staticInst/data/campus_data/ --output_directory calibration_output/run_{run}")  
     try:
         slope = get_slope(output_base, nruns)
-        print(slope)
+        #print(slope)
         #print(target_slope)
         #getTargetSlope()
     except TypeError:
@@ -365,6 +367,9 @@ def calibrate(nruns, ncores, params, betas, resolution=4):
     print_and_log(f"slope_diff   : {slope_diff:.5f}", logfile)
     print_and_log("", logfile)
     logging.info(f"Slope: slope")
+    #print("lambda classroom: ", lambda_classroom)
+    #print("lambda hostel: ", lambda_hostel)
+    #print("lambda residence block: ", lambda_residence_block)
     #print("calibrating")
     #print(lambda_classroom_diff, lambda_hostel_diff, lambda_residential_block_diff, slope_diff)
     return (lambda_classroom_diff, lambda_hostel_diff, lambda_residence_block_diff, slope_diff)

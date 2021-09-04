@@ -150,35 +150,39 @@ plot_data_struct run_campus_simulator()
 		{	
 			auto node_update_status = update_infection(nodes[j], time_step, day);
 			nodes[j].psi_T = psi_T(nodes[j], time_step);
-			if (node_update_status.new_infection)
-			{
-				++num_new_infections;
-				++num_total_infections;
-
+			if(true){
+				if (node_update_status.new_infection)
 				{
-					total_lambda_fraction_data += nodes[j].lambda_incoming;
-					auto normalized_lambda = (nodes[j].lambda_incoming / nodes[j].lambda);
-					mean_lambda_fraction_data.mean_update(normalized_lambda, num_new_infections);
-					cumulative_mean_lambda_fraction_data.mean_update(normalized_lambda, num_total_infections);
+					++num_new_infections;
+					++num_total_infections;
+
+					{
+						total_lambda_fraction_data += nodes[j].lambda_incoming;
+						auto normalized_lambda = (nodes[j].lambda_incoming / nodes[j].lambda);
+						mean_lambda_fraction_data.mean_update(normalized_lambda, num_new_infections);
+						cumulative_mean_lambda_fraction_data.mean_update(normalized_lambda, num_total_infections);
+					}
 				}
+				if (node_update_status.new_symptomatic)
+				{
+					++num_cases;
+				}
+				if (node_update_status.new_symptomatic && nodes[j].quarantined)
+				{
+					++quarantined_num_cases;
+				}
+				if (node_update_status.new_hospitalization)
+				{
+					++num_cumulative_hospitalizations;
+				}
+				if (node_update_status.new_infective)
+				{
+					++num_cumulative_infective;
+				}	
 			}
-			if (node_update_status.new_symptomatic)
-			{
-				++num_cases;
-			}
-			if (node_update_status.new_symptomatic && nodes[j].quarantined)
-			{
-				++quarantined_num_cases;
-			}
-			if (node_update_status.new_hospitalization)
-			{
-				++num_cumulative_hospitalizations;
-			}
-			if (node_update_status.new_infective)
-			{
-				++num_cumulative_infective;
-			}
+			
 		}
+		//random_time_allocation(nodes, interaction_spaces, day);
 		cafeteria_active_duration(nodes, interaction_spaces, day);
 		library_active_duration(nodes, interaction_spaces, day);
 		recreational_facility_active_duration(nodes, interaction_spaces, day);
@@ -192,6 +196,7 @@ plot_data_struct run_campus_simulator()
 			update_infection_testing(nodes, interaction_spaces, time_step, day);
 			update_test_request(nodes, interaction_spaces, time_step, testing_protocol_file_read, day);
 		}
+		//random_time_reset(nodes, interaction_spaces, day);
 		cafeteria_reset(nodes, interaction_spaces, day);
 		library_reset(nodes, interaction_spaces, day);
 		recreational_facility_reset(nodes, interaction_spaces, day);
@@ -231,98 +236,101 @@ plot_data_struct run_campus_simulator()
 
 		for (count_type j = 0; j < nodes.size(); j++)
 		{
+
 			auto infection_status = nodes[j].infection_status;
 
-			if (infection_status == Progression::susceptible)
-			{
-				susceptible_lambda += nodes[j].lambda;
-				susceptible_lambda_classroom += nodes[j].lambda_incoming.classroom;
-				susceptible_lambda_hostel += nodes[j].lambda_incoming.hostel;
-				susceptible_lambda_mess += nodes[j].lambda_incoming.mess;
-				susceptible_lambda_cafeteria += nodes[j].lambda_incoming.cafeteria;
-				susceptible_lambda_library += nodes[j].lambda_incoming.library;
-				susceptible_lambda_sports_facility += nodes[j].lambda_incoming.sports_facility;
-				susceptible_lambda_recreational_facility += nodes[j].lambda_incoming.recreational_facility;
-				susceptible_lambda_residential_block += nodes[j].lambda_incoming.residential_block;
-				susceptible_lambda_house += nodes[j].lambda_incoming.house;
-				susceptible_lambda_smaller_networks += nodes[j].lambda_incoming.smaller_networks;
-			}
+			if(true){
+				if (infection_status == Progression::susceptible)
+				{
+					susceptible_lambda += nodes[j].lambda;
+					susceptible_lambda_classroom += nodes[j].lambda_incoming.classroom;
+					susceptible_lambda_hostel += nodes[j].lambda_incoming.hostel;
+					susceptible_lambda_mess += nodes[j].lambda_incoming.mess;
+					susceptible_lambda_cafeteria += nodes[j].lambda_incoming.cafeteria;
+					susceptible_lambda_library += nodes[j].lambda_incoming.library;
+					susceptible_lambda_sports_facility += nodes[j].lambda_incoming.sports_facility;
+					susceptible_lambda_recreational_facility += nodes[j].lambda_incoming.recreational_facility;
+					susceptible_lambda_residential_block += nodes[j].lambda_incoming.residential_block;
+					susceptible_lambda_house += nodes[j].lambda_incoming.house;
+					susceptible_lambda_smaller_networks += nodes[j].lambda_incoming.smaller_networks;
+				}
 
-			if (infection_status == Progression::infective || infection_status == Progression::symptomatic || infection_status == Progression::hospitalised || infection_status == Progression::critical)
-			{
-				n_infected += 1;
-			}
-			if (infection_status == Progression::exposed)
-			{
-				n_exposed += 1;
-			}
-			if (infection_status == Progression::hospitalised)
-			{
-				n_hospitalised += 1;
-			}
-			if (infection_status == Progression::symptomatic)
-			{
-				n_symptomatic += 1;
-			}
-			if (infection_status == Progression::critical)
-			{
-				n_critical += 1;
-			}
-			if (infection_status == Progression::dead)
-			{
-				n_fatalities += 1;
-			}
-			if (nodes[j].test_status.test_requested)
-			{
-				n_requested_tests ++;
-			}
-			if (infection_status == Progression::recovered)
-			{
-				n_recovered += 1;
-			}
-			if (infection_status != Progression::susceptible)
-			{
-				n_affected += 1;
-			}
-			if (nodes[j].infective)
-			{
-				n_infective += 1;
-			}
-			if (nodes[j].quarantined)
-			{
-				quarantined_individuals += 1;
-			}
-			if (nodes[j].quarantined && (infection_status == Progression::infective || infection_status == Progression::symptomatic || infection_status == Progression::hospitalised || infection_status == Progression::critical))
-			{
-				quarantined_infectious += 1;
-			}
-			if (nodes[j].disease_label == DiseaseLabel::primary_contact)
-			{
-				n_primary_contact += 1;
-			}
-			if (nodes[j].disease_label == DiseaseLabel::mild_symptomatic_tested)
-			{
-				n_mild_symptomatic_tested += 1;
-			}
-			if (nodes[j].disease_label == DiseaseLabel::moderate_symptomatic_tested)
-			{
-				n_moderate_symptomatic_tested += 1;
-			}
-			if (nodes[j].disease_label == DiseaseLabel::severe_symptomatic_tested)
-			{
-				n_severe_symptomatic_tested += 1;
-			}
-			if (nodes[j].disease_label == DiseaseLabel::icu)
-			{
-				n_icu += 1;
-			}
-			if (nodes[j].test_status.tested_positive)
-			{
-				n_tested_positive += 1;
-			}
-			if (nodes[j].test_status.test_done)
-			{
-				n_test_done += 1;
+				if (infection_status == Progression::infective || infection_status == Progression::symptomatic || infection_status == Progression::hospitalised || infection_status == Progression::critical)
+				{
+					n_infected += 1;
+				}
+				if (infection_status == Progression::exposed)
+				{
+					n_exposed += 1;
+				}
+				if (infection_status == Progression::hospitalised)
+				{
+					n_hospitalised += 1;
+				}
+				if (infection_status == Progression::symptomatic)
+				{
+					n_symptomatic += 1;
+				}
+				if (infection_status == Progression::critical)
+				{
+					n_critical += 1;
+				}
+				if (infection_status == Progression::dead)
+				{
+					n_fatalities += 1;
+				}
+				if (nodes[j].test_status.test_requested)
+				{
+					n_requested_tests ++;
+				}
+				if (infection_status == Progression::recovered)
+				{
+					n_recovered += 1;
+				}
+				if (infection_status != Progression::susceptible)
+				{
+					n_affected += 1;
+				}
+				if (nodes[j].infective)
+				{
+					n_infective += 1;
+				}
+				if (nodes[j].quarantined)
+				{
+					quarantined_individuals += 1;
+				}
+				if (nodes[j].quarantined && (infection_status == Progression::infective || infection_status == Progression::symptomatic || infection_status == Progression::hospitalised || infection_status == Progression::critical))
+				{
+					quarantined_infectious += 1;
+				}
+				if (nodes[j].disease_label == DiseaseLabel::primary_contact)
+				{
+					n_primary_contact += 1;
+				}
+				if (nodes[j].disease_label == DiseaseLabel::mild_symptomatic_tested)
+				{
+					n_mild_symptomatic_tested += 1;
+				}
+				if (nodes[j].disease_label == DiseaseLabel::moderate_symptomatic_tested)
+				{
+					n_moderate_symptomatic_tested += 1;
+				}
+				if (nodes[j].disease_label == DiseaseLabel::severe_symptomatic_tested)
+				{
+					n_severe_symptomatic_tested += 1;
+				}
+				if (nodes[j].disease_label == DiseaseLabel::icu)
+				{
+					n_icu += 1;
+				}
+				if (nodes[j].test_status.tested_positive)
+				{
+					n_tested_positive += 1;
+				}
+				if (nodes[j].test_status.test_done)
+				{
+					n_test_done += 1;
+				}
 			}
 		}
 		plot_data.nums["num_infected"].push_back({time_step, {n_infected}});

@@ -36,29 +36,29 @@ def default_betas(campus_df):
 
 	betas = []
 
-	if campus_df[name][0] == "iitjodhpur":
+	if campus_df["name"][0] == "iitjodhpur":
 		betas.append(0)
-		betas.append(campus_df[beta_classroom][0])
-		betas.append(campus_df[beta_hostel][0])
-		betas.append(campus_df[beta_hostel][0]*0.16)
-		betas.append(campus_df[beta_classroom][0]*0.2)
-		betas.append(campus_df[beta_classroom][0]*0.2)
-		betas.append(campus_df[beta_classroom][0]*0.2)
-		betas.append(campus_df[beta_classroom][0]*0.2)
-		betas.append(campus_df[beta_residential_block][0])
-		betas.append(campus_df[beta_residential_block][0]*9)
+		betas.append(campus_df["beta_classroom"][0])
+		betas.append(campus_df["beta_hostel"][0])
+		betas.append(campus_df["beta_hostel"][0]*0.16)
+		betas.append(campus_df["beta_classroom"][0]*0.2)
+		betas.append(campus_df["beta_classroom"][0]*0.2)
+		betas.append(campus_df["beta_classroom"][0]*0.2)
+		betas.append(campus_df["beta_classroom"][0]*0.2)
+		betas.append(campus_df["beta_residential_block"][0])
+		betas.append(campus_df["beta_residential_block"][0]*9)
 		
 	elif campus_df[name][0] == "iiithyderabad":
 		betas.append(0)
-		betas.append(campus_df[beta_classroom][0])
-		betas.append(campus_df[beta_hostel][0])
-		betas.append(campus_df[beta_hostel][0]*0.33)
-		betas.append(campus_df[beta_classroom][0]*0.2)
-		betas.append(campus_df[beta_classroom][0]*0.2)
-		betas.append(campus_df[beta_classroom][0]*0.29)
-		betas.append(campus_df[beta_classroom][0]*0.2)
-		betas.append(campus_df[beta_residential_block][0])
-		betas.append(campus_df[beta_residential_block][0]*9)
+		betas.append(campus_df["beta_classroom"][0])
+		betas.append(campus_df["beta_hostel"][0])
+		betas.append(campus_df["beta_hostel"][0]*0.33)
+		betas.append(campus_df["beta_classroom"][0]*0.2)
+		betas.append(campus_df["beta_classroom"][0]*0.2)
+		betas.append(campus_df["beta_classroom"][0]*0.29)
+		betas.append(campus_df["beta_classroom"][0]*0.2)
+		betas.append(campus_df["beta_residential_block"][0])
+		betas.append(campus_df["beta_residential_block"][0]*9)
 
 	else:
 		print("wrong campus")
@@ -68,7 +68,7 @@ def default_betas(campus_df):
 
 if __name__ == "__main__":
 	output_file = "./data/campus_data/transmission_coefficients.json"
-	campus_df = pd.read_csv("./data/campus_data/campus_name.csv")
+	campus_df = pd.read_csv("./data/campus_data/campus_setup.csv")
 	calibrated_betas = default_betas(campus_df)
 	f = open(output_file, "w")
     f.write(json.dumps(calibrated_betas, cls= NpEncoder))

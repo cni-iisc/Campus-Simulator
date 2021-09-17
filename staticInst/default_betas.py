@@ -69,7 +69,7 @@ def default_betas(campus_df):
 
 if __name__ == "__main__":
 	output_file = "./data/campus_data/transmission_coefficients.json"
-	campus_df = pd.read_csv("./data/campus_data/campus_name.csv")
+	campus_df = pd.read_csv("./data/campus_sample_data/campus_setup.csv")
 	calibrated_betas = default_betas(campus_df)
 	f = open(output_file, "w")
 	f.write(json.dumps(calibrated_betas, cls= NpEncoder))

@@ -1,7 +1,7 @@
 import json 
 import argparse
 
-def configCreate(min_group_size, max_group_size, beta_scaling_factor, avg_num_assns, periodicity, minimum_hostel_time, kappa_class_case_isolation = 0.0, kappa_hostel_case_isolation = 0.2, kappa_mess_case_isolation = 0.1, kappa_cafe_case_isolation = 0.1, kappa_smaller_networks_case_isolation = 0.4, kappa_recreational_facility_case_isolation = 0.1, kappa_sports_facility_case_isolation = 0.1, kappa_residential_block_case_isolation = 0.6, kappa_house_case_isolation = 0.9,  kappa_lib_case_isolation = 0.1, kappa_class_lockdown = 0.0, kappa_hostel_lockdown = 0.2, kappa_mess_lockdown = 0.0, kappa_cafe_lockdown = 0.0, kappa_smaller_networks_lockdown = 0.0, kappa_lib_lockdown = 0.0, testing_capacity = 100):
+def configCreate(min_group_size, max_group_size, beta_scaling_factor, avg_num_assns, periodicity, minimum_hostel_time, kappa_class_case_isolation = 0.0, kappa_hostel_case_isolation = 0.2, kappa_mess_case_isolation = 0.1, kappa_cafe_case_isolation = 0.1, kappa_smaller_networks_case_isolation = 0.4, kappa_recreational_facility_case_isolation = 0.1, kappa_sports_facility_case_isolation = 0.1, kappa_residential_block_case_isolation = 0.6, kappa_house_case_isolation = 0.9,  kappa_lib_case_isolation = 0.1, kappa_class_lockdown = 0.0, kappa_hostel_lockdown = 0.2, kappa_mess_lockdown = 0.0, kappa_cafe_lockdown = 0.0, kappa_smaller_networks_lockdown = 0.0, kappa_lib_lockdown = 0.0, testing_capacity = 100, restart = 0, restart_batch_size = 1000, restart_batch_frequency = 30):
     config = {}
     config["MIN_GROUP_SIZE"] = min_group_size
     config["MAX_GROUP_SIZE"] = max_group_size
@@ -26,6 +26,9 @@ def configCreate(min_group_size, max_group_size, beta_scaling_factor, avg_num_as
     config["kappa_smaller_networks_lockdown"] = kappa_smaller_networks_lockdown
     config["kappa_lib_lockdown"] = kappa_lib_lockdown
     config["testing_capacity"] = testing_capacity
+    config["restart"] = restart
+    config["restart_batch_size"] = restart_batch_size
+    config["restart_batch_frequency"] = restart_batch_frequency
 
     return [config]
 
@@ -44,8 +47,11 @@ if __name__ == "__main__":
     avg_num_assns = 5
     min_hostel_time = 0.3
     testing_capacity = 100
+    restart = 1
+    restart_batch_size = 1000
+    restart_batch_frequency = 30
 
-    config = configCreate(min_group_size, max_group_size, beta_scaling_factor, avg_num_assns, periodicity, min_hostel_time)
+    config = configCreate(min_group_size, max_group_size, beta_scaling_factor, avg_num_assns, periodicity, min_hostel_time, restart, restart_batch_size, restart_batch_frequency)
 
     f = open(f"{ output_file_dir }/config.json", "w")
     f.write(json.dumps(config))

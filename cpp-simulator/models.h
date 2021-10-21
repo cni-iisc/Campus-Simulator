@@ -211,6 +211,8 @@ struct intervention_params {
   kappa_values lockdown_kappas_compliant;
   kappa_values lockdown_kappas_non_compliant;
 
+
+
   intervention_params(){
     lockdown_kappas_compliant.kappa_H = 2.0;
     lockdown_kappas_compliant.kappa_H_incoming = 1.0;
@@ -314,6 +316,11 @@ struct global_params{
 
   int testing_capacity = 0;
   std::vector<int>contact_tracing_hierarchy;
+
+  int restart_batch_size;
+  int restart_batch_frequency;
+
+  int restart = 0;
 
   // count_type debug_count_positive = 0;
   // count_type debug_count_tests_requested = 0;
@@ -785,6 +792,8 @@ struct agent{
   std::set<int> spaces;
   int community;
   double time_of_infection = 0;
+
+  bool active_node = false;
   // time_of_infection is initialized to zero before seeding
 
   Progression infection_status = Progression::susceptible;

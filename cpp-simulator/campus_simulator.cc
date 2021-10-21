@@ -24,6 +24,9 @@ plot_data_struct run_campus_simulator()
 	auto interaction_spaces = init_interaction_spaces();
 	init_transmission_coefficients(interaction_spaces);
 	auto nodes = init_nodes_campus();
+	if(GLOBAL.restart == 1){
+		initial_batch(nodes);
+	}
 	int day = 0;
 	auto intv_params = init_intervention_params();
 	auto testing_protocol_file_read = init_testing_protocol();
@@ -187,6 +190,9 @@ plot_data_struct run_campus_simulator()
 		library_active_duration(nodes, interaction_spaces, day);
 		recreational_facility_active_duration(nodes, interaction_spaces, day);
 		sports_facility_active_duration(nodes, interaction_spaces, day);
+		if(GLOBAL.restart == 1 && time_step > 0 && time_step%(GLOBAL.restart_batch_frequency*4) == 0){
+			subsequent_batches(nodes);
+		}
 		update_interaction_space_lambda(nodes, interaction_spaces, day);
 		update_individual_lambda(nodes, interaction_spaces, day);
 		update_all_kappa(nodes, interaction_spaces, intv_params, time_step, day);

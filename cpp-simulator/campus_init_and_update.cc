@@ -112,6 +112,64 @@ void init_config_params()
     GLOBAL.kappa_smaller_networks_lockdown = elem["kappa_smaller_networks_lockdown"].GetDouble();
     GLOBAL.kappa_lib_lockdown = elem["kappa_lib_lockdown"].GetDouble();
     GLOBAL.testing_capacity = elem["testing_capacity"].GetInt();
+    GLOBAL.restart = elem["restart"].GetInt();
+    GLOBAL.restart_batch_size = elem["restart_batch_size"].GetInt();
+    GLOBAL.restart_batch_frequency = elem["restart_batch_frequency"].GetInt();
+  }
+}
+
+/*
+  check if restart is active in simulator.cc
+  then sample batch_size number of students
+  activate those students
+  if the students are active, their kappas are 1 else they are 0
+  this gives us the initial batch
+  do this every batch_frequency time_step
+  the intervention params will take care of the rest
+  */
+
+void initial_batch(std::vector<agent> &nodes){
+  std::vector<agent> students;
+  for (auto &node : nodes){
+    if (node.personType == person_type::student){
+      students.push_back(node);
+    }
+  }
+  double initial_active_fraction = GLOBAL.restart_batch_size/students.size();
+  for (auto &student : students){
+    if(bernoulli(initial_active_fraction)){
+      student.active_node = true;
+    }
+    if(student.active_node == false){
+      for (auto &elem : student.kappa){
+        elem.second = 0;
+      }
+    }
+  }  
+}
+
+/*set_node_initial_infection(nodes[i],
+                               community_infection_prob,
+                               i, elem,
+                               seed_candidates);*/
+
+void subsequent_batches(std::vector<agent> &nodes){
+  std::vector<agent> inactive_students;
+  for (auto &node : nodes){
+    if (node.personType == person_type::student && node.active_node == false){
+      inactive_students.push_back(node);
+    }
+  }
+  double active_fraction = GLOBAL.restart_batch_size/inactive_students.size();
+  for (auto &student : inactive_students){
+    if(bernoulli(active_fraction)){
+      student.active_node = true;
+      for (auto &elem : student.kappa){
+        if (elem.first != 0){
+          elem.second = 1;
+        }
+      }
+    }
   }
 }
 
@@ -153,7 +211,7 @@ std::vector<agent> init_nodes_campus()
         // std::cout<<nodes[i].interaction_strength[day]<<"\t";
         //std::cout<<j.name.GetString()<<"\t";
         if(std::stoi(j.name.GetString()) == 0){
-          nodes[i].kappa[std::stoi(j.name.GetString())] = 1;  
+          nodes[i].kappa[std::stoi(j.name.GetString())] = 0;  
         }
         else{
           nodes[i].kappa[std::stoi(j.name.GetString())] = 1;  

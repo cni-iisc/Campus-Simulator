@@ -5,6 +5,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <iostream>
+#include <algorithm>
+#include <random>
 
 #include "models.h"
 #include "campus_interventions.h"
@@ -103,8 +105,9 @@ void modify_kappa_selective_shutdown(agent& node, std::vector<Interaction_Space>
 }
 
 void modify_kappa_evacuation(agent &node, int day){
-  for(auto ispace : node.interaction_strength[day]){
-    node.kappa[ispace.first] = 0.0;
+  for (auto &ispace : node.interaction_strength[day])
+  {
+      node.kappa[ispace.first] = 0.0;
   }
 }
 
@@ -240,7 +243,6 @@ void get_kappa_file_read(std::vector<agent> &nodes,
     {
       break;
     }
-   
   }
   get_kappa_custom_modular(nodes, i_spaces, cur_time, intv_params_vector[intv_index], day);
 }

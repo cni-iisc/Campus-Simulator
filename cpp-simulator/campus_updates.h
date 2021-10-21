@@ -65,5 +65,8 @@ void random_time_reset(std::vector<agent> &nodes, std::vector<Interaction_Space>
 
 void random_time_allocation(std::vector<agent> &nodes, std::vector<Interaction_Space> &interaction_spaces, int day);
 
+void initial_batch(std::vector<agent> &nodes);
+
+void subsequent_batches(std::vector<agent> &nodes);
 
 #endif

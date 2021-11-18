@@ -132,6 +132,11 @@ plot_data_struct run_campus_simulator()
 
 	// const auto NUM_PEOPLE = GLOBAL.num_people;
 
+	std::vector<count_type> new_vaccinated_candidates;
+  	new_vaccinated_candidates.reserve(nodes.size());
+  	std::vector<count_type> new_vaccinated_candidates_45;
+  	new_vaccinated_candidates_45.reserve(nodes.size());
+
 	int time_step = 0;
 
 	for (time_step = 0; time_step < GLOBAL.NUM_TIMESTEPS; ++time_step)
@@ -145,12 +150,36 @@ plot_data_struct run_campus_simulator()
 #endif
 		day = (time_step / 4) % GLOBAL.PERIODICITY;
 
+		new_vaccinated_candidates.clear();
+        //new_vaccinated_candidates_45.clear();
+
 		total_lambda_fraction_data.set_zero();
 		mean_lambda_fraction_data.set_zero();
 
 		count_type num_new_infections = 0;
 		for (count_type j = 0; j < nodes.size(); ++j)
 		{	
+			if(GLOBAL.vax == true){
+				int vaccine_timestep = (GLOBAL.restart == 1)? (GLOBAL.restart_batch_frequency*GLOBAL.SIM_STEPS_PER_DAY) : (GLOBAL.vaccination_frequency*GLOBAL.SIM_STEPS_PER_DAY);
+				int remainder = (GLOBAL.restart == 1)? (GLOBAL.vax_restart_delay*GLOBAL.SIM_STEPS_PER_DAY) : 0;
+				if (time_step%vaccine_timestep == remainder){
+	           		if (!nodes[j].vaccinated && nodes[j].active_node == true){
+	                	new_vaccinated_candidates.push_back(j);                  
+	                }
+	            }	
+			}
+			
+				   
+		   	/*if (((time_step == 1752)||(time_step == 1780)||(time_step == 1808)||(time_step == 1836))&&(nodes[j].age<60)&&(nodes[j].age>=45)&&(!nodes[j].vaccinated)){
+				new_vaccinated_candidates_45.push_back(j);
+		   	}
+			
+			
+		   	if (((time_step == 1876)||(time_step == 1904)||(time_step == 1932)||(time_step == 1960)||(time_step == 1996)||(time_step == 2024)||(time_step == 2052)||(time_step == 2080)||(time_step == 2120)||(time_step == 2148)||(time_step == 2176)||(time_step == 2204))&&(!nodes[j].vaccinated)&&(nodes[j].age>=18)){
+				new_vaccinated_candidates_45.push_back(j);
+		   	}*/
+
+
 			auto node_update_status = update_infection(nodes[j], time_step, day);
 			nodes[j].psi_T = psi_T(nodes[j], time_step);
 			if(true){
@@ -183,14 +212,81 @@ plot_data_struct run_campus_simulator()
 					++num_cumulative_infective;
 				}	
 			}
+
+
 			
 		}
+
+		if (GLOBAL.vax == 1){
+			int vaccine_timestep = (GLOBAL.restart == 1)? (GLOBAL.restart_batch_frequency*GLOBAL.SIM_STEPS_PER_DAY) : (GLOBAL.vaccination_frequency*GLOBAL.SIM_STEPS_PER_DAY);
+			int remainder = (GLOBAL.restart == 1)? (GLOBAL.vax_restart_delay*GLOBAL.SIM_STEPS_PER_DAY) : 0; 
+			if (time_step%vaccine_timestep == remainder){
+	        	count_type new_vaccinated_candidates_list_size = new_vaccinated_candidates.size();
+	            if (new_vaccinated_candidates_list_size > GLOBAL.daily_vaccination_capacity){ //daily vaccine capacity
+	             //Randomly permute the list of candidates
+		     		std::shuffle(new_vaccinated_candidates.begin(), new_vaccinated_candidates.end(), GENERATOR);
+		   		}
+	          	bool vaccination_works = false;
+	         	count_type num_of_individuals_to_be_vaccinated = GLOBAL.daily_vaccination_capacity;
+		  		count_type num = std::min(new_vaccinated_candidates_list_size, num_of_individuals_to_be_vaccinated);
+	       		for(count_type a = 0; a < num; ++a){
+		    		nodes[new_vaccinated_candidates[a]].vaccinated = true;
+	             	vaccination_works = bernoulli(GLOBAL.VACCINATION_EFFECTIVENESS);
+	         		if ((vaccination_works)&&(nodes[new_vaccinated_candidates[a]].infection_status==Progression::susceptible)){ 
+	             		nodes[new_vaccinated_candidates[a]].infection_status = Progression::recovered;
+	             		nodes[new_vaccinated_candidates[a]].state_before_recovery = Progression::vaccinated;
+	          		}
+	        	}
+     		}
+		}
+
+
+	
+	    /*if ((time_step == 1752)||(time_step == 1780)||(time_step == 1808)||(time_step == 1836)){
+        	count_type new_vaccinated_candidates_list_size_45 = new_vaccinated_candidates_45.size();
+            if (new_vaccinated_candidates_list_size_45 > 237500){
+             //Randomly permute the list of candidates
+	     		std::shuffle(new_vaccinated_candidates_45.begin(), new_vaccinated_candidates_45.end(), GENERATOR);
+	  		}
+           	bool vaccination_works = false;
+          	count_type num_of_individuals_to_be_vaccinated_45 = 237500;
+	  		count_type num_45 = std::min(new_vaccinated_candidates_list_size_45, num_of_individuals_to_be_vaccinated_45);
+       		for(count_type a = 0; a < num_45; ++a){
+	    		nodes[new_vaccinated_candidates_45[a]].vaccinated = true;
+             	vaccination_works = bernoulli(GLOBAL.VACCINATION_EFFECTIVENESS);
+         		if ((vaccination_works)&&(nodes[new_vaccinated_candidates_45[a]].infection_status==Progression::susceptible)){ 
+             		nodes[new_vaccinated_candidates_45[a]].infection_status = Progression::recovered;
+             		nodes[new_vaccinated_candidates_45[a]].state_before_recovery = Progression::vaccinated;
+          		}
+        	}	
+     	}
+	
+	 
+	 
+	 	if ((time_step == 1876)||(time_step == 1904)||(time_step == 1932)||(time_step == 1960)||(time_step == 1996)||(time_step == 2024)||(time_step == 2052)||(time_step == 2080)||(time_step == 2120)||(time_step == 2148)||(time_step == 2176)||(time_step == 2204)){
+        	count_type new_vaccinated_candidates_list_size_45 = new_vaccinated_candidates_45.size();
+            if (new_vaccinated_candidates_list_size_45 > 500000){
+             //Randomly permute the list of candidates
+	     		std::shuffle(new_vaccinated_candidates_45.begin(), new_vaccinated_candidates_45.end(), GENERATOR);
+	   		}
+           bool vaccination_works = false;
+          	count_type num_of_individuals_to_be_vaccinated_45 = 500000;
+	  		count_type num_45 = std::min(new_vaccinated_candidates_list_size_45, num_of_individuals_to_be_vaccinated_45);
+       		for(count_type a = 0; a < num_45; ++a){
+	    		nodes[new_vaccinated_candidates_45[a]].vaccinated = true;
+             	vaccination_works = bernoulli(GLOBAL.VACCINATION_EFFECTIVENESS);
+         		if ((vaccination_works)&&(nodes[new_vaccinated_candidates_45[a]].infection_status==Progression::susceptible)){ 
+             		nodes[new_vaccinated_candidates_45[a]].infection_status = Progression::recovered;
+             		nodes[new_vaccinated_candidates_45[a]].state_before_recovery = Progression::vaccinated;
+          		}
+        	}
+     	}*/
 		//random_time_allocation(nodes, interaction_spaces, day);
 		cafeteria_active_duration(nodes, interaction_spaces, day);
 		library_active_duration(nodes, interaction_spaces, day);
 		recreational_facility_active_duration(nodes, interaction_spaces, day);
 		sports_facility_active_duration(nodes, interaction_spaces, day);
-		if(GLOBAL.restart == 1 && time_step > 0 && time_step%(GLOBAL.restart_batch_frequency*4) == 0){
+		if(GLOBAL.restart == 1 && time_step > 0 && time_step%(GLOBAL.restart_batch_frequency*GLOBAL.SIM_STEPS_PER_DAY) == 0){
 			subsequent_batches(nodes);
 		}
 		update_interaction_space_lambda(nodes, interaction_spaces, day);
@@ -293,7 +389,7 @@ plot_data_struct run_campus_simulator()
 				{
 					n_recovered += 1;
 				}
-				if (infection_status != Progression::susceptible)
+				if (infection_status != Progression::susceptible &&(nodes[j].state_before_recovery != Progression::vaccinated))
 				{
 					n_affected += 1;
 				}

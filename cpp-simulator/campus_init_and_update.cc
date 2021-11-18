@@ -115,7 +115,11 @@ void init_config_params()
     GLOBAL.restart = elem["restart"].GetInt();
     GLOBAL.restart_batch_size = elem["restart_batch_size"].GetInt();
     GLOBAL.restart_batch_frequency = elem["restart_batch_frequency"].GetInt();
-  }
+    GLOBAL.vax = elem["vax"].GetInt();
+    GLOBAL.vaccination_frequency = elem["vaccination_frequency"].GetInt();
+    GLOBAL.vax_restart_delay = elem["vax_restart_delay"].GetInt();
+    GLOBAL.daily_vaccination_capacity = elem["daily_vaccination_capacity"].GetInt();
+    }
 }
 
 /*
@@ -140,11 +144,11 @@ void initial_batch(std::vector<agent> &nodes){
     if(bernoulli(initial_active_fraction)){
       student.active_node = true;
     }
-    if(student.active_node == false){
+    /*if(student.active_node == false){
       for (auto &elem : student.kappa){
         elem.second = 0;
       }
-    }
+    }*/
   }  
 }
 
@@ -164,11 +168,11 @@ void subsequent_batches(std::vector<agent> &nodes){
   for (auto &student : inactive_students){
     if(bernoulli(active_fraction)){
       student.active_node = true;
-      for (auto &elem : student.kappa){
+      /*for (auto &elem : student.kappa){
         if (elem.first != 0){
           elem.second = 1;
         }
-      }
+      }*/
     }
   }
 }
@@ -197,6 +201,12 @@ std::vector<agent> init_nodes_campus()
     nodes[i].age_index = get_age_index(age);
     nodes[i].zeta_a = zeta(age);
     nodes[i].personType = static_cast<person_type>(elem["Type"].GetInt());
+    if (nodes[i].personType == person_type::faculty || nodes[i].personType == person_type::staff){
+      nodes[i].active_node = true;
+    }
+    if (GLOBAL.restart == 0){
+      nodes[i].active_node = true;
+    }
     nodes[i].infectiousness = gamma(GLOBAL.INFECTIOUSNESS_SHAPE,
                                     GLOBAL.INFECTIOUSNESS_SCALE);
     nodes[i].severity = bernoulli(GLOBAL.SEVERITY_RATE) ? 1 : 0;
@@ -615,7 +625,7 @@ void init_contact_tracing_hierarchy(){
 
 double update_interaction_spaces(agent &node, int cur_time, Interaction_Space &i_space)
 {
-  return ((node.infective ? 1.0 : 0.0) * node.kappa[i_space.id] * node.infectiousness * node.interaction_strength[cur_time][i_space.id]);
+  return ((node.active_node ? 1.0 : 0.0) * (node.infective ? 1.0 : 0.0) * node.kappa[i_space.id] * node.infectiousness * node.interaction_strength[cur_time][i_space.id]);
 }
 
 double update_n_k(agent &node, int cur_time, Interaction_Space &i_space)
@@ -645,6 +655,9 @@ void update_individual_lambda(std::vector<agent> &nodes, std::vector<Interaction
 {
   for (auto &node : nodes)
   {
+    if (node.active_node == 0){
+      continue;
+    }
     node.lambda_incoming.set_zero();
     double sum = 0;
     for (auto &ispace : node.interaction_strength[day])

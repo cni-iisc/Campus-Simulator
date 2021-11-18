@@ -462,6 +462,12 @@ struct global_params{
   std::string input_base;
   std::string attendance_filename;
 
+  double VACCINATION_EFFECTIVENESS = 0.75;
+  int vax = 1;
+  int vaccination_frequency;
+  int vax_restart_delay;
+  int daily_vaccination_capacity;
+
   //Status
   count_type INIT_ACTUALLY_INFECTED = 0;
 
@@ -549,7 +555,8 @@ enum class Progression {
    recovered,
    hospitalised,
    critical,
-   dead
+   dead,
+   vaccinated
 };
 
 enum class DiseaseLabel{
@@ -799,6 +806,9 @@ struct agent{
   Progression infection_status = Progression::susceptible;
   bool entered_symptomatic_state = false;
   bool entered_hospitalised_state = false;
+
+  bool received_vaccination = false;
+  bool vaccinated = false;
 
   // for recovered nodes, what was the last stage before recovery?
   Progression state_before_recovery = Progression::recovered;

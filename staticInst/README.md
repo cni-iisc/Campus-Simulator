@@ -14,3 +14,7 @@ To instantiate a synthetic version of the desired college/university campus, run
 `python3 campus_parse_and_instantiate.py -i <Input file path> -o <Output file path>`
 
 This will output two json files: individuals.json and interaction_spaces.json which can be found by default in ./data/campus_data
+
+NOTE: If you're running this on a terminal, please make the following edit to campus_parse_and_instantiate.py:
+The line: from .transmission_coefficients import transmission_coefficients
+Changes to: from transmission_coefficients import transmission_coefficients

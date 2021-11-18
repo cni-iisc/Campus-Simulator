@@ -72,7 +72,7 @@ cd campus_outputs
 mkdir plots_data
 mkdir campus_plots
 ```
-
+The command for 1 run of the simulator (one needs to plot this manually):
 ```
 ./drive_simulator --input_directory ../staticInst/data/campus_data --output_directory ../staticInst/data/campus_outputs --SEED_FIXED_NUMBER  --INIT_FIXED_NUMBER_INFECTED 100 --NUM_DAYS 120 --ENABLE_TESTING --testing_protocol_filename testing_protocol_001.json --intervention_filename intervention_params.json
 ```
@@ -98,6 +98,14 @@ above.  Note that the `intervention_filename` which is a `JSON file` is the requ
 
 Check ../staticInst/data/campus_data to see the different intervention files and modify them.
 
+For 10 runs of the simulator:
+Run the following shell script:
+```
+./run_sims.sh
+```
+Importantly, the first time you run the simulator using the shell script you need to do the following:
+1. Run the shell script by running each basic intervention one after the other. You can do this by copying the contents of the appropriate intervention json file to intervention_params.json in the staticInst file.
+2. If you want to change the number of days, you need to run the all basic interventions with those number of days once again before running the custom intervention.
 
 
 The output of the program will be generated in the `output_directory` that you

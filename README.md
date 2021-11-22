@@ -7,7 +7,7 @@ This project is carried out by the Centre for Networked Intelligence at the Indi
 ## Quick start
 
 For ease-of-use there is a single shell script which can be used to test the campus-simulator, called `run_sims.sh`.
-The script instatiates an example sample campus, compiles the simulator's executable, runs the simulator and makes the plots from the different statistics
+The script instatiates an example sample campus, compiles the simulator's executable, runs the simulator and makes the plots from the different statistics. Please do not try the quickstart on your first use of the simulator.
 
 ```shell
 bash run_sims.sh or ./run_sims.sh
@@ -16,9 +16,13 @@ bash run_sims.sh or ./run_sims.sh
 This shell script will run the simulator 10 times by default.
 
 ## Documentation
-Detailed instructions to instantiate campuses is available at [staticInst/README.md](#)
-Detailed instructions to run the simulator is available at [cpp-simulator/README.md](#)
-Detailed instructions to calibrate the simulator is available at [calibrate_betas/README.md](#)
+Detailed instructions to instantiate campuses is available at [link](staticInst/README.md)
+
+<a href="https://github.com/cni-iisc/campus-rakshak-simulator/blob/master/staticInst/README.md" target="_blank">comment</a>
+
+Detailed instructions to run the simulator is available at [link](cpp-simulator/README.md)
+
+<a href="https://github.com/cni-iisc/campus-rakshak-simulator/blob/master/cpp-simulator/README.md" target="_blank">comment</a>
 
 `visualization/` has a script to generate the plots of the consolidated 10 runs
 

@@ -18,11 +18,11 @@ This shell script will run the simulator 10 times by default.
 ## Documentation
 Detailed instructions to instantiate campuses is available at [link](staticInst/README.md)
 
-<a href="https://github.com/cni-iisc/campus-rakshak-simulator/blob/master/staticInst/README.md" target="_blank">comment</a>
+<a href="https://github.com/cni-iisc/campus-rakshak-simulator/blob/master/staticInst/README.md" target="_blank">Instantiate</a>
 
 Detailed instructions to run the simulator is available at [link](cpp-simulator/README.md)
 
-<a href="https://github.com/cni-iisc/campus-rakshak-simulator/blob/master/cpp-simulator/README.md" target="_blank">comment</a>
+<a href="https://github.com/cni-iisc/campus-rakshak-simulator/blob/master/cpp-simulator/README.md" target="_blank">Simulator</a>
 
 `visualization/` has a script to generate the plots of the consolidated 10 runs
 

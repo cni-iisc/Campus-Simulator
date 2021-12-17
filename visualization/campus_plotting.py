@@ -41,7 +41,7 @@ num_days = input("Enter number of days: ")
 timesteps = np.arange(0,num_days,0.25)
 color_str = ['darkcyan', 'navy', 'darkorchid', 'maroon', 'dodgerblue', 'crimson', 'goldenrod', 'brown', 'darkslateblue', 'darkgreen']
 blues = ["#a4a4ac", "#B2EFAF", "#EFC5AF", "#EEAFEF",  "#AFB4EF", "#D2AFEF"]
-timesteps = np.arange(0,120,0.25)
+timesteps = np.arange(0,num_days,0.25)
 sns.palplot(color_str)
 sns.palplot(blues)
 

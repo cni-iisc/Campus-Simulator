@@ -4,7 +4,7 @@ CampusSim is an agent-based simulator that models the disease's spread via vario
 
 This project is carried out by the Centre for Networked Intelligence at the Indian Institute of Science, Bangalore and is funded as part of the Campus Rakshak project by the Department of Science and Technology, Govt. of India.
 
-## First time use
+## Initial Setup
 
 For ease-of-use there is a single shell script which can be used to test the campus-simulator, called `initial_simulation.sh`.
 The script instatiates an example sample campus, compiles the simulator's executable, runs the simulator and makes the plots from the different statistics. Please do not try the quickstart on your first use of the simulator.

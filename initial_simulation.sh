@@ -30,9 +30,9 @@ INTERVENTION_ARRAY=(no_intervention case_isolation class_isolation lockdown cust
 
 SRCNAME="./staticInst/data/campus_outputs"
 
-mkdir SRCNAME
-mkdir "./staticInst/data/campus_outputs/plots_data"
-mkdir "./staticInst/data/campus_outputs/campus_plots"
+mkdir -p SRCNAME
+mkdir -p "./staticInst/data/campus_outputs/plots_data"
+mkdir -p "./staticInst/data/campus_outputs/campus_plots"
 
 #Folder (PRTNAME) name should be changed for every intervention - should be the same as intervention name 
 
@@ -56,7 +56,7 @@ INTERVENTION_ID=$i
 INTERVENTION_FILE=${INTERVENTION_FILE_ARRAY[${INTERVENTION_ID}]} 
 INTERVENTION_NAME=${INTERVENTION_ARRAY[${INTERVENTION_ID}]}
 PRTNAME="./staticInst/data/campus_outputs/plots_data/$INTERVENTION_NAME"
-mkdir $PRTNAME
+mkdir -p $PRTNAME
 
 for sim in $(eval echo {1..$NUM_RUNS})
 do 

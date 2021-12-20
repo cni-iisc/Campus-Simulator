@@ -1,81 +1,77 @@
-# Campussim: An agent-based epidemic simulator for campuses
+# Campus Rakshak Simulator: An agent-based epidemic simulator for campuses
 
 CampusSim is an agent-based simulator that models the disease's spread via various interaction spaces on the campus. It generates an interaction graph between agents and interaction spaces. Agents are assigned different interactions spaces such as classrooms, hostels, messes, and cafeterias. CampusSim is a parsimonious model that enables a fast and concise simulation of the epidemic spread. The simulator models intervention strategies (case isolation, hostel quarantine, etc.) and users can also define their own, custom interventions to simulate. The simulator is a derivative based out of the [IISc-TIFR City-Scale simulator](https://github.com/cni-iisc/epidemic-simulator). 
 
 This project is carried out by the Centre for Networked Intelligence at the Indian Institute of Science, Bangalore and is funded as part of the Campus Rakshak project by the Department of Science and Technology, Govt. of India.
 
-## Initial Setup
+# Running the Simulator with Default Inputs
 
-For ease-of-use there is a single shell script which can be used to test the campus-simulator, called `initial_simulation.sh`.
-The script instatiates an example sample campus, compiles the simulator's executable, runs the simulator and makes the plots from the different statistics. Please do not try the quickstart on your first use of the simulator.
+To run the simulator with default input files, then simply run the following shell script:
 
 ```shell
 bash initial_simulation.sh
 ```
 
-This shell script will run the simulator 10 times by default.
+Then check the visualization secion to obtain your plots.
+It is recommended that you do this immediately after you clone the repository.
 
-## Documentation
-Detailed instructions to instantiate campuses is available at [link](staticInst/README.md)
-
-<a href="https://github.com/cni-iisc/campus-rakshak-simulator/blob/master/staticInst/README.md" target="_blank">Instantiate</a>
-
-Detailed instructions to run the simulator is available at [link](cpp-simulator/README.md)
-
-<a href="https://github.com/cni-iisc/campus-rakshak-simulator/blob/master/cpp-simulator/README.md" target="_blank">Simulator</a>
-
-`visualization/` has a script to generate the plots of the consolidated 10 runs
-
-Use the following command to run the plotting script:
-`python3 campus_plotting.py`
-
-The output will be found in:
-staticInst/data/campus_outputs/campus_plots
-
-## How to Run Campus Rakshak Simulator from the Terminal
-
-1. If one wants to run the campus simulator through their terminal, the following tips will help:
-
-2. Clone the repository from the Github link provided in the email.
-
-3. You can find the required python packages in requirements.txt. Install them before you run the script.
-
-4. Parse and instantiate runs with the default input directory being staticInst/data/campus_sample_data. You can either specify the input directory while running the command or transfer your custom csvs to the above folder before you run the script.
-
-5. The default intervention parameters json is intervention_params.json found in staticInst/data/campus_data which can be modified to run the intervention that you desire. You can also create your own intervention file, store it in the above folder and specify the intervention file in the command to run the simulator script. An intervention file’s format for a basic intervention is given below:
-[
-	{
-		“num_days”: <any positive integer>,
-		“compliance”: <value between 0 and 1>,
-		“<name of the intervention>”:
-		{
-			“active”: true
-		}
-	}
-]
-For no intervention, the last field is unnessecary.
-
-The default testing protocol json is testing_protocol_001.json found in staticInst/data/campus_data which can be modified to run the testing protocol that you desire. You can also create your own testing protocol file, store it in the above folder and specify the testing protocol file in the command to run the simulator script. The format for a testing protocol file is the exact same as that in testing_protocol_001.json and the only changes that need to be made are the values. With the exception of testing capacity which is a positive integer, every other value lies between 0 and 1.
-
-6. You can also change some of the parameters by going to /staticInst/data/campus_data/config.json. It is recommended that you do not change the parameters that have "kappa" in the name.
-
-7. The commands for both Parse and Instantiate and the Campus Simulator are provided in the READMEs in the Github repository. Please read those before running the simulator.
-
-8. To get a holistic view of the simulator’s results, it is best to first run the shell command provided above for each basic intervention -- No Intervention, Case Isolation, Class Isolation, Lockdown, Selective Shutdown, Evacuation, and a Custom Intervention -- that consolidates 10 runs of the simulator. Each of these basic interventions have a json file associated with them in /staticInst/data/campus_data
-
-9. The plots will be generated by going to the visualization and running the campus_plotting.py script. Before you run this script create the following directory: /staticInst/data/campus_outputs/campus_plots. You can find the csvs for the plots in staticInst/data/campus_outputs/plots_data/.
-
-10. Order of running the scripts for ideal results:
-	1. Go to staticInst and run campus_parse_and_instantiate.py
-	2. Go to staticInst/data/campus_data to set the values in config.json, testing_protocol_001.json, and intervention_params.json
-	3. Go to cpp-simulator and run the shell script for each basic intervention (you only have to do this once) and a custom intervention of your choice.
-	4. Go to visualize and plot the interventions that you want.
-	5. Find the plots as instructed in point 9.
+If you want to make custom simulations, follow the instructions given below sequentially.
 
 
-NOTE: The campus simulator has been tested extensively with GNU on a linux/mac os terminal, it might be preferable to run the simulator on those terminals.
+# Instantiation of the campus
 
+1. Go to the directory staticInst/
+2. In order to create your own campus, you need the following csv files:
+	1. classes.csv
+	2. common_areas.csv
+	3. mess.csv
+	8. staff.csv
+	7. student.csv
+	6. timetable.csv
+A sample of these files is present in /staticInst/data/campus_sample_data. Make sure to follow the format of the files perfectly.
+3. Run the following command:
+```python
+python3 campus_parse_and_instantiate.py -i /data/campus_sample_data -o /data/campus_data
+```
+-i option allows you to specify input file path, -o option allows you to follow output file path
+4. Then go to the directory /staticInst/data/campus_data. There you can change the parameters of the following input files:
+	1. transmission_coefficients.json to change the crowding factor and contact rates of each type of interaction space.
+	2. config.json to change various configuration parameters.
+	3. intervention_params.json to change the default intervention policy.
+	4. testing_protocol_001.json to change the testing protocol parameters.
+5. The simulator offers the following interventions:
+	1. Case Isolation
+	2. Class Isolation
+	3. Lockdown
+	4. Selective Shutdown of Buildings
+	5. Evacuation
+	6. A Combination of two or more of the above
 
+# Running the simulation
+
+1. Go back to the root directory and then go to the directory cpp-simulator/
+2. Run the following commands to build the simulator:
+```cpp
+make clean
+make -f Makefile_np all
+```
+3. For one run of the simulation, run the following command:
+```cpp
+./drive_simulator --input_directory ../staticInst/data/campus_data --output_directory ../staticInst/data/campus_outputs --SEED_FIXED_NUMBER  --INIT_FIXED_NUMBER_INFECTED 100 --NUM_DAYS 120 --ENABLE_TESTING --testing_protocol_filename testing_protocol_001.json --intervention_filename intervention_params.json
+```
+4. To average multiple runs of the simulator (recommended), run the following command:
+```shell
+bash run_sims.sh
+```
+
+# Visualization
+
+1. Go back to the root directory and go the the directory visualization/
+2. Run the following command:
+```python
+python3 campus_plotting.py
+```
+3. You will find the plots in /staticInst/data/campus_outputs/campus_plots/. Look in the directory that specifies the date that you ran the simulations and rename the folder to your convenience.
 
 ## License
 The source code provided in this repository is available for public-use under the [Apache2 License terms](License.md).

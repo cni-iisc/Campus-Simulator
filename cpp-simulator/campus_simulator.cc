@@ -159,7 +159,7 @@ plot_data_struct run_campus_simulator()
 		count_type num_new_infections = 0;
 		for (count_type j = 0; j < nodes.size(); ++j)
 		{	
-			if(GLOBAL.vax == true){
+			if(GLOBAL.vax == 1){
 				int vaccine_timestep = (GLOBAL.restart == 1)? (GLOBAL.restart_batch_frequency*GLOBAL.SIM_STEPS_PER_DAY) : (GLOBAL.vaccination_frequency*GLOBAL.SIM_STEPS_PER_DAY);
 				int remainder = (GLOBAL.restart == 1)? (GLOBAL.vax_restart_delay*GLOBAL.SIM_STEPS_PER_DAY) : 0;
 				if (time_step%vaccine_timestep == remainder){

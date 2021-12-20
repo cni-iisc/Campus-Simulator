@@ -35,9 +35,9 @@ offset = -1
 interventions_to_plot = []
 num_intv = range(len(intv_array))
 #num_intv = range(1)
-num_runs = input("Enter number of runs: ")
+num_runs = int(input("Enter number of runs: "))
 sym_id_array = range(num_runs)
-num_days = input("Enter number of days: ")
+num_days = int(input("Enter number of days: "))
 timesteps = np.arange(0,num_days,0.25)
 color_str = ['darkcyan', 'navy', 'darkorchid', 'maroon', 'dodgerblue', 'crimson', 'goldenrod', 'brown', 'darkslateblue', 'darkgreen']
 blues = ["#a4a4ac", "#B2EFAF", "#EFC5AF", "#EEAFEF",  "#AFB4EF", "#D2AFEF"]
@@ -239,3 +239,33 @@ plt.legend()
 plt.xlabel('Timesteps', fontsize=14)
 plt.ylabel('Cases', fontsize = 14)
 plt.savefig(plots_dir + folder_name + f'/daily_cases_{timestr}.png')
+
+#Cumulative Recovered
+plt.figure(figsize=(16,8))
+plt.grid()
+plt.title("Cumulative Recovered")
+for intv_index in interventions_to_plot:
+    time0 = df_recovered_mean_array[0].index - offset
+    plot_df = df_recovered_mean_array[intv_index]
+    plt.plot(time0, plot_df['num_recovered'], color = color_str[intv_index], label = intv_str[intv_index])
+    plt.fill_between(time0, plot_df['num_recovered'] + plot_df['num_recovered_std'], plot_df['num_recovered'] - plot_df['num_recovered_std'], color = color_str[intv_index], alpha = 0.15)
+plt.tight_layout()
+plt.legend()
+plt.xlabel('Timesteps', fontsize = 14)
+plt.ylabel('Recovered', fontsize = 14)
+plt.savefig(plots_dir + folder_name + f'/recovered_{timestr}.png')
+
+#Cumulative Fatalities
+plt.figure(figsize=(16,8))
+plt.grid()
+plt.title("Cumulative Fatalities")
+for intv_index in interventions_to_plot:
+    time0 = df_fatalities_mean_array[0].index - offset
+    plot_df = df_fatalities_mean_array[intv_index]
+    plt.plot(time0, plot_df['num_fatalities'], color = color_str[intv_index], label = intv_str[intv_index])
+    plt.fill_between(time0, plot_df['num_fatalities'] + plot_df['num_fatalities_std'], plot_df['num_fatalities'] - plot_df['num_fatalities_std'], color = color_str[intv_index], alpha = 0.15)
+plt.tight_layout()
+plt.legend()
+plt.xlabel('Timesteps', fontsize = 14)
+plt.ylabel('Fatalities', fontsize = 14)
+plt.savefig(plots_dir + folder_name + f'/fatalities_{timestr}.png')

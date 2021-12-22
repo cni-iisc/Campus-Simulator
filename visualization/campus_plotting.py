@@ -269,3 +269,5 @@ plt.legend()
 plt.xlabel('Timesteps', fontsize = 14)
 plt.ylabel('Fatalities', fontsize = 14)
 plt.savefig(plots_dir + folder_name + f'/fatalities_{timestr}.png')
+
+print("Plotting complete. You can find the plots at /staticInst/data/campus_outputs/campus_plots/")

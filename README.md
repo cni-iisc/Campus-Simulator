@@ -12,7 +12,7 @@ To run the simulator with default input files, then simply run the following she
 bash initial_simulation.sh
 ```
 
-Then check the visualization secion to obtain your plots.
+Then check the visualization section to obtain your plots.
 It is recommended that you do this immediately after you clone the repository.
 
 If you want to make custom simulations, follow the instructions given below sequentially.
